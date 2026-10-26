@@ -10,7 +10,7 @@ export default function CO2Widget({ eco }) {
     <View style={styles.container}>
       <View style={styles.topRow}>
         <View style={styles.titleGroup}>
-          <Ionicons name="leaf-outline" size={14} color="#047857" />
+          <Ionicons name="leaf-outline" size={14} color="#00A896" />
           <Text style={styles.title}>CHỈ SỐ TIẾT GIẢM PHÁT THẢI (GREEN MOBILITY INDEX)</Text>
         </View>
         <View style={styles.ptsPill}>
@@ -47,11 +47,11 @@ export default function CO2Widget({ eco }) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#F0FDF4',
+    backgroundColor: '#E6F8F6',
     borderRadius: 8,
     padding: 10,
     borderWidth: 1,
-    borderColor: '#BBF7D0',
+    borderColor: '#B3E5DF',
     marginVertical: 8
   },
   topRow: {
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 9,
     fontWeight: '800',
-    color: '#064E3B',
+    color: '#0A3641',
     letterSpacing: 0.6
   },
   ptsPill: {
@@ -77,12 +77,12 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     borderRadius: 4,
     borderWidth: 1,
-    borderColor: '#86EFAC'
+    borderColor: '#80CBC4'
   },
   ptsText: {
     fontSize: 8,
     fontWeight: '800',
-    color: '#047857',
+    color: '#00A896',
     letterSpacing: 0.4
   },
   metricsRow: {
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 8,
     borderWidth: 1,
-    borderColor: '#DCFCE7'
+    borderColor: '#D5EBE7'
   },
   metricItem: {
     flex: 1,
@@ -103,28 +103,28 @@ const styles = StyleSheet.create({
   divider: {
     width: 1,
     height: 28,
-    backgroundColor: '#E2E8F0'
+    backgroundColor: '#D5EBE7'
   },
   metricLabel: {
     fontSize: 8,
-    color: '#64748B',
+    color: '#4A6B74',
     fontWeight: '700',
     letterSpacing: 0.4
   },
   metricValue: {
     fontSize: 14,
     fontWeight: '800',
-    color: '#0F172A',
+    color: '#0A2533',
     marginTop: 2
   },
   metricUnit: {
     fontSize: 9,
     fontWeight: '700',
-    color: '#047857'
+    color: '#00A896'
   },
   metricSub: {
     fontSize: 8,
-    color: '#94A3B8',
+    color: '#7D9DA6',
     marginTop: 1
   }
 });

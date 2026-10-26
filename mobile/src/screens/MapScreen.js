@@ -179,7 +179,7 @@ export default function MapScreen({ navigation, onSelectVehicle }) {
                   <Text style={styles.miniPrice}>{veh.hourlyPrice.toLocaleString('vi-VN')} đ/h</Text>
                   <View style={styles.miniBadge}>
                     <Ionicons name="battery-charging" size={10} color={COLORS.secondaryDark} />
-                    <Text style={styles.miniBattery}>{veh.telematics.batteryLevelPct}% Pin</Text>
+                    <Text style={styles.miniBattery}>{Math.round(veh.telematics.batteryLevelPct)}% Pin</Text>
                   </View>
                 </View>
               </TouchableOpacity>

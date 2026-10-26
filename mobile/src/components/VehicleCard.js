@@ -23,7 +23,7 @@ export default function VehicleCard({ vehicle, onSelect, onBook }) {
           resizeMode="cover"
         />
 
-        {/* Top Identification Badges */}
+        {/* Top Badges - Green SM Signature Cyan */}
         <View style={styles.badgeTopLeft}>
           <View style={[styles.pill, isElectric ? styles.electricPill : styles.hybridPill]}>
             <Ionicons
@@ -39,7 +39,7 @@ export default function VehicleCard({ vehicle, onSelect, onBook }) {
 
         {vehicle.noDeposit && (
           <View style={styles.badgeTopRight}>
-            <Ionicons name="shield-checkmark-outline" size={10} color="#059669" />
+            <Ionicons name="shield-checkmark" size={10} color="#00A896" />
             <Text style={styles.noDepositText}>BẢO CHỨNG eKYC (MIỄN CỌC)</Text>
           </View>
         )}
@@ -55,7 +55,7 @@ export default function VehicleCard({ vehicle, onSelect, onBook }) {
             <Ionicons
               name={isElectric ? "battery-charging" : "speedometer-outline"}
               size={12}
-              color="#34D399"
+              color="#26C6DA"
             />
             <Text style={styles.batteryText}>
               {isElectric ? `PIN: ${batteryPct}%` : `XĂNG: ${vehicle.telematics.fuelLevelPct}%`}
@@ -121,10 +121,10 @@ const styles = StyleSheet.create({
     marginBottom: 14,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: '#CBD5E1',
-    shadowColor: '#000',
+    borderColor: '#D5EBE7',
+    shadowColor: '#00A896',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.04,
+    shadowOpacity: 0.05,
     shadowRadius: 6,
     elevation: 2
   },
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
     width: '100%',
     aspectRatio: 16 / 10,
     position: 'relative',
-    backgroundColor: '#0F172A'
+    backgroundColor: '#0A2533'
   },
   image: {
     width: '100%',
@@ -153,10 +153,10 @@ const styles = StyleSheet.create({
     gap: 4
   },
   electricPill: {
-    backgroundColor: 'rgba(4, 120, 87, 0.95)'
+    backgroundColor: 'rgba(0, 168, 150, 0.95)'
   },
   hybridPill: {
-    backgroundColor: 'rgba(30, 58, 138, 0.95)'
+    backgroundColor: 'rgba(2, 132, 199, 0.95)'
   },
   pillText: {
     color: '#FFFFFF',
@@ -170,17 +170,17 @@ const styles = StyleSheet.create({
     right: 8,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    backgroundColor: '#FFFFFF',
     paddingHorizontal: 7,
     paddingVertical: 3,
     borderRadius: 4,
     gap: 3,
     zIndex: 2,
     borderWidth: 1,
-    borderColor: '#E2E8F0'
+    borderColor: '#B3E5DF'
   },
   noDepositText: {
-    color: '#047857',
+    color: '#00A896',
     fontSize: 8,
     fontWeight: '800',
     letterSpacing: 0.5
@@ -195,7 +195,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 10,
     paddingVertical: 5,
-    backgroundColor: 'rgba(11, 19, 43, 0.85)'
+    backgroundColor: 'rgba(10, 37, 51, 0.82)'
   },
   ratingBox: {
     flexDirection: 'row',
@@ -208,7 +208,7 @@ const styles = StyleSheet.create({
     fontWeight: '800'
   },
   tripsText: {
-    color: '#94A3B8',
+    color: '#B2DFDB',
     fontSize: 9
   },
   batteryPill: {
@@ -234,23 +234,23 @@ const styles = StyleSheet.create({
   vehicleName: {
     fontSize: 15,
     fontWeight: '800',
-    color: '#0F172A',
+    color: '#0A2533',
     flex: 1,
     marginRight: 6,
     letterSpacing: -0.2
   },
   plateTag: {
-    backgroundColor: '#F1F5F9',
+    backgroundColor: '#E6F8F6',
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 4,
     borderWidth: 1,
-    borderColor: '#CBD5E1'
+    borderColor: '#B3E5DF'
   },
   plateNumber: {
     fontSize: 10,
     fontWeight: '800',
-    color: '#0F2942',
+    color: '#00897B',
     letterSpacing: 0.5
   },
   specsRow: {
@@ -260,26 +260,26 @@ const styles = StyleSheet.create({
     marginBottom: 10
   },
   specBadge: {
-    backgroundColor: '#F8FAFC',
+    backgroundColor: '#F4F9F8',
     paddingHorizontal: 6,
     paddingVertical: 3,
     borderRadius: 4,
     borderWidth: 1,
-    borderColor: '#E2E8F0'
+    borderColor: '#D5EBE7'
   },
   bleBadge: {
-    backgroundColor: '#EFF6FF',
-    borderColor: '#BFDBFE'
+    backgroundColor: '#E6F8F6',
+    borderColor: '#80CBC4'
   },
   specText: {
     fontSize: 9,
-    color: '#475569',
+    color: '#4A6B74',
     fontWeight: '700',
     letterSpacing: 0.3
   },
   bleText: {
     fontSize: 9,
-    color: '#1E3A8A',
+    color: '#00897B',
     fontWeight: '800',
     letterSpacing: 0.3
   },
@@ -288,7 +288,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     borderTopWidth: 1,
-    borderTopColor: '#F1F5F9',
+    borderTopColor: '#EDF6F5',
     paddingTop: 8
   },
   priceContainer: {
@@ -301,26 +301,31 @@ const styles = StyleSheet.create({
   priceAmount: {
     fontSize: 16,
     fontWeight: '800',
-    color: '#0F2942'
+    color: '#00A896'
   },
   priceUnit: {
     fontSize: 10,
-    color: '#64748B',
+    color: '#4A6B74',
     fontWeight: '600',
     marginLeft: 2
   },
   dailySub: {
     fontSize: 9,
-    color: '#94A3B8'
+    color: '#7D9DA6'
   },
   bookButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#0F2942',
+    backgroundColor: '#00A896',
     paddingHorizontal: 14,
     paddingVertical: 8,
     borderRadius: 6,
-    gap: 4
+    gap: 4,
+    shadowColor: '#00A896',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 2
   },
   bookButtonText: {
     color: '#FFFFFF',

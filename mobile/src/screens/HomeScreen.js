@@ -107,13 +107,13 @@ export default function HomeScreen({ onNavigateToKey }) {
         contentContainerStyle={styles.scrollContent}
       >
         {/* =========================================
-            1. EXECUTIVE DISPATCH & BOOKING CARD
+            1. GREEN SM STYLE HERO BOOKING CARD
         ========================================= */}
         <View style={styles.heroDispatchCard}>
           <View style={styles.cardHeaderStrip}>
             <Text style={styles.cardHeaderTitle}>PHƯƠNG THỨC GIAO NHẬN VÀ LỊCH TRÌNH</Text>
             <View style={styles.systemTag}>
-              <Text style={styles.systemTagText}>ITS PROTOCOL 2026</Text>
+              <Text style={styles.systemTagText}>GSM ECO PROTOCOL</Text>
             </View>
           </View>
 
@@ -126,7 +126,7 @@ export default function HomeScreen({ onNavigateToKey }) {
               <Ionicons
                 name="key-outline"
                 size={13}
-                color={bookingMode === 'SELF_DRIVE' ? '#0F2942' : '#64748B'}
+                color={bookingMode === 'SELF_DRIVE' ? '#00A896' : '#4A6B74'}
               />
               <Text style={[styles.modeTabText, bookingMode === 'SELF_DRIVE' && styles.modeTabTextActive]}>
                 Tự nhận xe số hóa 24/7 (BLE)
@@ -140,7 +140,7 @@ export default function HomeScreen({ onNavigateToKey }) {
               <Ionicons
                 name="business-outline"
                 size={13}
-                color={bookingMode === 'STATION_HUB' ? '#0F2942' : '#64748B'}
+                color={bookingMode === 'STATION_HUB' ? '#00A896' : '#4A6B74'}
               />
               <Text style={[styles.modeTabText, bookingMode === 'STATION_HUB' && styles.modeTabTextActive]}>
                 Giao nhận tại Trạm Hub Metro
@@ -151,7 +151,7 @@ export default function HomeScreen({ onNavigateToKey }) {
           {/* Location Field */}
           <View style={styles.fieldRow}>
             <View style={styles.fieldIconBox}>
-              <Ionicons name="location-outline" size={15} color="#0F2942" />
+              <Ionicons name="location-outline" size={15} color="#00A896" />
             </View>
             <View style={styles.fieldContent}>
               <Text style={styles.fieldLabel}>ĐỊA ĐIỂM NHẬN VÀ HOÀN TRẢ PHƯƠNG TIỆN</Text>
@@ -163,20 +163,20 @@ export default function HomeScreen({ onNavigateToKey }) {
 
           {/* Time & Policy Field */}
           <View style={styles.fieldRow}>
-            <View style={[styles.fieldIconBox, { backgroundColor: '#F0FDF4' }]}>
-              <Ionicons name="time-outline" size={15} color="#047857" />
+            <View style={[styles.fieldIconBox, { backgroundColor: '#E6F8F6' }]}>
+              <Ionicons name="time-outline" size={15} color="#00A896" />
             </View>
             <View style={styles.fieldContent}>
               <Text style={styles.fieldLabel}>KHUNG GIỜ KHAI THÁC DỊCH VỤ</Text>
               <Text style={styles.fieldValue}>{rentalTimeRange}</Text>
             </View>
             <View style={styles.policyTag}>
-              <Ionicons name="shield-checkmark" size={10} color="#047857" />
+              <Ionicons name="shield-checkmark" size={10} color="#00A896" />
               <Text style={styles.policyTagText}>BẢO CHỨNG eKYC</Text>
             </View>
           </View>
 
-          {/* Action Button */}
+          {/* Action Button - Green SM Cyan Mint */}
           <TouchableOpacity
             style={styles.actionButton}
             activeOpacity={0.88}
@@ -199,7 +199,7 @@ export default function HomeScreen({ onNavigateToKey }) {
             <View style={{ flex: 1 }}>
               <Text style={styles.corridorRoute}>Trục Giao Thông: ĐH GTVT (UTH) - Mai Chí Thọ</Text>
               <Text style={styles.corridorDetail}>
-                Vận tốc thiết kế đồng bộ: 45 km/h • Giảm thiểu 18.5% tiêu hao năng lượng
+                Vận tốc thiết kế đồng bộ: 45 km/h • Giảm thiểu 18.5% tiêu hao pin
               </Text>
             </View>
             <View style={styles.gaugeBox}>
@@ -225,7 +225,7 @@ export default function HomeScreen({ onNavigateToKey }) {
                 <Ionicons
                   name={cat.icon}
                   size={13}
-                  color={isSelected ? '#FFFFFF' : '#475569'}
+                  color={isSelected ? '#FFFFFF' : '#4A6B74'}
                 />
                 <Text style={[styles.categoryTabText, isSelected && styles.categoryTabTextActive]}>
                   {cat.label}
@@ -241,7 +241,7 @@ export default function HomeScreen({ onNavigateToKey }) {
             DANH MỤC ĐỘI XE KHẢ DỤNG ({filteredVehicles.length})
           </Text>
           <TouchableOpacity style={styles.filterButton}>
-            <Ionicons name="options-outline" size={13} color="#0F2942" />
+            <Ionicons name="options-outline" size={13} color="#00A896" />
             <Text style={styles.filterButtonText}>Tùy chọn lọc</Text>
           </TouchableOpacity>
         </View>
@@ -249,7 +249,7 @@ export default function HomeScreen({ onNavigateToKey }) {
         {/* Vehicle List */}
         {loading ? (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="small" color="#0F2942" />
+            <ActivityIndicator size="small" color="#00A896" />
             <Text style={styles.loadingText}>Đang đồng bộ dữ liệu đội xe...</Text>
           </View>
         ) : (
@@ -275,7 +275,7 @@ export default function HomeScreen({ onNavigateToKey }) {
                 <Text style={styles.modalPlateText}>Biển số đăng ký: {selectedVehicle?.plateNumber}</Text>
               </View>
               <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.modalCloseIcon}>
-                <Ionicons name="close" size={18} color="#475569" />
+                <Ionicons name="close" size={18} color="#4A6B74" />
               </TouchableOpacity>
             </View>
 
@@ -318,7 +318,7 @@ export default function HomeScreen({ onNavigateToKey }) {
                   </View>
                   <View style={styles.priceSheetRow}>
                     <Text style={styles.sheetLabel}>Ký quỹ thế chấp (eKYC bảo đảm)</Text>
-                    <Text style={[styles.sheetValue, { color: '#047857', fontWeight: '800' }]}>0 VNĐ (Miễn ký quỹ)</Text>
+                    <Text style={[styles.sheetValue, { color: '#00A896', fontWeight: '800' }]}>0 VNĐ (Miễn ký quỹ)</Text>
                   </View>
                   <View style={[styles.priceSheetRow, styles.totalPriceRow]}>
                     <Text style={styles.totalPriceLabel}>TỔNG CHI PHÍ TẠM TÍNH:</Text>
@@ -355,7 +355,7 @@ export default function HomeScreen({ onNavigateToKey }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8FAFC'
+    backgroundColor: '#F4F9F8'
   },
   scrollContent: {
     paddingBottom: 85
@@ -367,11 +367,11 @@ const styles = StyleSheet.create({
     marginTop: 12,
     padding: 14,
     borderWidth: 1,
-    borderColor: '#CBD5E1',
-    shadowColor: '#000',
+    borderColor: '#D5EBE7',
+    shadowColor: '#00A896',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.04,
-    shadowRadius: 6,
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
     elevation: 2
   },
   cardHeaderStrip: {
@@ -380,29 +380,29 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#F1F5F9',
+    borderBottomColor: '#EDF6F5',
     paddingBottom: 8
   },
   cardHeaderTitle: {
     fontSize: 10,
     fontWeight: '800',
-    color: '#0F2942',
+    color: '#0A3641',
     letterSpacing: 0.8
   },
   systemTag: {
-    backgroundColor: '#F1F5F9',
+    backgroundColor: '#E6F8F6',
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 4
   },
   systemTagText: {
     fontSize: 9,
-    fontWeight: '700',
-    color: '#64748B'
+    fontWeight: '800',
+    color: '#00A896'
   },
   modeTabsRow: {
     flexDirection: 'row',
-    backgroundColor: '#F1F5F9',
+    backgroundColor: '#EDF6F5',
     borderRadius: 6,
     padding: 2,
     marginBottom: 12
@@ -419,15 +419,15 @@ const styles = StyleSheet.create({
   modeTabActive: {
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#CBD5E1'
+    borderColor: '#B3E5DF'
   },
   modeTabText: {
     fontSize: 11,
     fontWeight: '600',
-    color: '#64748B'
+    color: '#4A6B74'
   },
   modeTabTextActive: {
-    color: '#0F2942',
+    color: '#00A896',
     fontWeight: '800'
   },
   fieldRow: {
@@ -439,12 +439,12 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 6,
-    backgroundColor: '#F1F5F9',
+    backgroundColor: '#E6F8F6',
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 10,
     borderWidth: 1,
-    borderColor: '#E2E8F0'
+    borderColor: '#B3E5DF'
   },
   fieldContent: {
     flex: 1
@@ -452,46 +452,51 @@ const styles = StyleSheet.create({
   fieldLabel: {
     fontSize: 9,
     fontWeight: '700',
-    color: '#64748B',
+    color: '#4A6B74',
     letterSpacing: 0.6
   },
   fieldValue: {
     fontSize: 12,
     fontWeight: '700',
-    color: '#0F172A',
+    color: '#0A2533',
     marginTop: 2
   },
   policyTag: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F0FDF4',
+    backgroundColor: '#E6F8F6',
     paddingHorizontal: 6,
     paddingVertical: 3,
     borderRadius: 4,
     borderWidth: 1,
-    borderColor: '#BBF7D0',
+    borderColor: '#80CBC4',
     gap: 3
   },
   policyTagText: {
     fontSize: 9,
     fontWeight: '800',
-    color: '#047857',
+    color: '#00897B',
     letterSpacing: 0.4
   },
   fieldSeparator: {
     height: 1,
-    backgroundColor: '#F1F5F9',
+    backgroundColor: '#EDF6F5',
     marginVertical: 8
   },
   actionButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#0F2942',
+    backgroundColor: '#00A896',
     paddingVertical: 12,
     borderRadius: 6,
     marginTop: 10,
-    gap: 8
+    gap: 8,
+    shadowColor: '#00A896',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.25,
+    shadowRadius: 5,
+    elevation: 3
   },
   actionButtonText: {
     color: '#FFFFFF',
@@ -500,13 +505,13 @@ const styles = StyleSheet.create({
     letterSpacing: 0.8
   },
   corridorBanner: {
-    backgroundColor: '#0B132B',
+    backgroundColor: '#0A3641',
     borderRadius: 8,
     marginHorizontal: 16,
     marginTop: 12,
     padding: 12,
     borderWidth: 1,
-    borderColor: '#1C2541'
+    borderColor: '#144E5E'
   },
   corridorHeader: {
     flexDirection: 'row',
@@ -518,12 +523,12 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: '#10B981'
+    backgroundColor: '#26C6DA'
   },
   corridorTitle: {
     fontSize: 9,
     fontWeight: '800',
-    color: '#93C5FD',
+    color: '#80DEEA',
     letterSpacing: 0.6
   },
   corridorBody: {
@@ -537,18 +542,18 @@ const styles = StyleSheet.create({
     fontWeight: '800'
   },
   corridorDetail: {
-    color: '#94A3B8',
+    color: '#B2DFDB',
     fontSize: 10,
     marginTop: 2
   },
   gaugeBox: {
     paddingHorizontal: 10,
     paddingVertical: 4,
-    backgroundColor: '#1C2541',
+    backgroundColor: '#0E4453',
     borderRadius: 6,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#3A506B'
+    borderColor: '#26C6DA'
   },
   gaugeValue: {
     color: '#FFFFFF',
@@ -556,7 +561,7 @@ const styles = StyleSheet.create({
     fontWeight: '800'
   },
   gaugeUnit: {
-    color: '#60A5FA',
+    color: '#80DEEA',
     fontSize: 8,
     fontWeight: '700'
   },
@@ -574,17 +579,17 @@ const styles = StyleSheet.create({
     paddingVertical: 7,
     borderRadius: 6,
     borderWidth: 1,
-    borderColor: '#CBD5E1',
+    borderColor: '#D5EBE7',
     gap: 5
   },
   categoryTabActive: {
-    backgroundColor: '#0F2942',
-    borderColor: '#0F2942'
+    backgroundColor: '#00A896',
+    borderColor: '#00A896'
   },
   categoryTabText: {
     fontSize: 11,
     fontWeight: '600',
-    color: '#475569'
+    color: '#4A6B74'
   },
   categoryTabTextActive: {
     color: '#FFFFFF',
@@ -601,7 +606,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 12,
     fontWeight: '800',
-    color: '#0F172A',
+    color: '#0A2533',
     letterSpacing: 0.6
   },
   filterButton: {
@@ -611,7 +616,7 @@ const styles = StyleSheet.create({
   },
   filterButtonText: {
     fontSize: 11,
-    color: '#0F2942',
+    color: '#00A896',
     fontWeight: '700'
   },
   loadingContainer: {
@@ -621,11 +626,11 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: 8,
     fontSize: 11,
-    color: '#64748B'
+    color: '#4A6B74'
   },
   modalBackdrop: {
     flex: 1,
-    backgroundColor: 'rgba(15, 23, 42, 0.7)',
+    backgroundColor: 'rgba(10, 37, 51, 0.75)',
     justifyContent: 'center',
     padding: 16
   },
@@ -634,7 +639,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: '#D5EBE7',
     maxHeight: '90%'
   },
   modalHeaderStrip: {
@@ -642,25 +647,25 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     borderBottomWidth: 1,
-    borderBottomColor: '#F1F5F9',
+    borderBottomColor: '#EDF6F5',
     paddingBottom: 10,
     marginBottom: 12
   },
   modalContractTitle: {
     fontSize: 9,
     fontWeight: '800',
-    color: '#64748B',
+    color: '#00A896',
     letterSpacing: 0.8
   },
   modalVehicleName: {
     fontSize: 16,
     fontWeight: '800',
-    color: '#0F172A',
+    color: '#0A2533',
     marginTop: 2
   },
   modalPlateText: {
     fontSize: 11,
-    color: '#0F2942',
+    color: '#00897B',
     fontWeight: '700'
   },
   modalCloseIcon: {
@@ -669,7 +674,7 @@ const styles = StyleSheet.create({
   modalSectionLabel: {
     fontSize: 10,
     fontWeight: '800',
-    color: '#475569',
+    color: '#4A6B74',
     marginBottom: 6,
     letterSpacing: 0.5
   },
@@ -683,30 +688,30 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 6,
-    backgroundColor: '#F8FAFC',
+    backgroundColor: '#F4F9F8',
     borderWidth: 1,
-    borderColor: '#CBD5E1'
+    borderColor: '#D5EBE7'
   },
   durationChipActive: {
-    backgroundColor: '#0F2942',
-    borderColor: '#0F2942'
+    backgroundColor: '#00A896',
+    borderColor: '#00A896'
   },
   durationText: {
     fontSize: 11,
     fontWeight: '600',
-    color: '#475569'
+    color: '#4A6B74'
   },
   durationTextActive: {
     color: '#FFFFFF',
     fontWeight: '800'
   },
   priceSheet: {
-    backgroundColor: '#F8FAFC',
+    backgroundColor: '#F4F9F8',
     borderRadius: 8,
     padding: 10,
     marginVertical: 10,
     borderWidth: 1,
-    borderColor: '#E2E8F0'
+    borderColor: '#D5EBE7'
   },
   priceSheetRow: {
     flexDirection: 'row',
@@ -715,16 +720,16 @@ const styles = StyleSheet.create({
   },
   sheetLabel: {
     fontSize: 11,
-    color: '#64748B'
+    color: '#4A6B74'
   },
   sheetValue: {
     fontSize: 11,
-    color: '#0F172A',
+    color: '#0A2533',
     fontWeight: '700'
   },
   totalPriceRow: {
     borderTopWidth: 1,
-    borderTopColor: '#E2E8F0',
+    borderTopColor: '#D5EBE7',
     paddingTop: 6,
     marginTop: 4,
     marginBottom: 0
@@ -732,18 +737,18 @@ const styles = StyleSheet.create({
   totalPriceLabel: {
     fontSize: 11,
     fontWeight: '800',
-    color: '#0F172A'
+    color: '#0A2533'
   },
   totalPriceValue: {
     fontSize: 14,
     fontWeight: '800',
-    color: '#0F2942'
+    color: '#00A896'
   },
   modalSubmitButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#0F2942',
+    backgroundColor: '#00A896',
     paddingVertical: 12,
     borderRadius: 6,
     gap: 8,

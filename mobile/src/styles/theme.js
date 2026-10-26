@@ -1,47 +1,46 @@
-// Executive Automotive Design System - Formal & Prestigious
+// Official Green SM (Xanh SM / GSM Eco Mobility) Design System
 export const COLORS = {
-  // Formal Corporate & Automotive Palette
-  primary: '#0F2942',        // Deep Executive Navy (VinFast / BMW style)
-  primaryLight: '#1E3A8A',
-  primaryDark: '#0A192F',
-  primaryMuted: '#F0F4F8',
+  // Signature Green SM Cyan & Petrol Palette
+  primary: '#00A896',         // GSM Signature Cyan Mint (#00A896 / #00B4A7)
+  primaryLight: '#26C6DA',
+  primaryDark: '#0A3641',     // Deep Petrol Teal for formal headings
+  primaryMuted: '#E6F8F6',    // Soft Mint Ice surface
 
-  secondary: '#047857',      // Deep British Racing / Forest Green (Clean Mobility)
-  secondaryLight: '#059669',
-  secondaryDark: '#064E3B',
-  secondaryMuted: '#ECFDF5',
+  secondary: '#00897B',       // Deep Emerald Teal
+  secondaryLight: '#4DB6AC',
+  secondaryDark: '#004D40',
+  secondaryMuted: '#E0F2F1',
 
-  accent: '#92400E',         // Rich Amber Bronze
+  accent: '#F59E0B',          // Warm Amber for ratings
   accentLight: '#FEF3C7',
 
-  success: '#059669',
+  success: '#00A896',
   warning: '#D97706',
-  danger: '#B91C1C',
-  info: '#1D4ED8',
+  danger: '#DC2626',
+  info: '#0284C7',
 
-  // Neutrals (Subtle, crisp, high-contrast)
-  background: '#F8FAFC',
+  // Clean Harmonious Backgrounds (Green SM clean aesthetic)
+  background: '#F4F9F8',      // Ultra-clean light mint-tinted backdrop
   surface: '#FFFFFF',
-  surfaceVariant: '#F1F5F9',
-  border: '#E2E8F0',
-  borderDark: '#94A3B8',
+  surfaceVariant: '#EDF6F5',
+  border: '#D5EBE7',
+  borderDark: '#99C7BF',
 
-  // Formal Typography (Crisp Slate)
-  textPrimary: '#0F172A',    // Slate 900
-  textSecondary: '#475569',  // Slate 600
-  textMuted: '#64748B',      // Slate 500
+  // High-contrast refined typography
+  textPrimary: '#0A2533',     // Deep Petrol Slate
+  textSecondary: '#4A6B74',   // Muted Petrol
+  textMuted: '#7D9DA6',
   textInverse: '#FFFFFF',
 
-  // Formal Cockpit (Executive Dark)
-  cockpitBg: '#090D16',
-  cockpitCard: '#111827',
-  cockpitBorder: '#1F2937',
-  cockpitGlow: 'rgba(30, 58, 138, 0.2)'
+  // Formal Cockpit
+  cockpitBg: '#06161D',       // Dark Petrol Obsidian
+  cockpitCard: '#0C232E',
+  cockpitBorder: '#163C4D',
+  cockpitGlow: 'rgba(0, 168, 150, 0.25)'
 };
 
 export const FONTS = {
-  family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif',
-  formalSerif: '"Times New Roman", Times, serif',
+  family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif'
 };
 
 export const SPACING = {

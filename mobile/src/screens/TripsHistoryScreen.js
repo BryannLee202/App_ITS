@@ -161,10 +161,12 @@ const styles = StyleSheet.create({
     marginTop: 2
   },
   ecoSummaryCard: {
-    backgroundColor: '#0F172A',
-    borderRadius: RADIUS.lg,
+    backgroundColor: '#0A3641',
+    borderRadius: RADIUS.md,
     padding: SPACING.md,
-    marginBottom: SPACING.lg
+    marginBottom: SPACING.lg,
+    borderWidth: 1,
+    borderColor: '#144E5E'
   },
   ecoRow: {
     flexDirection: 'row',
@@ -178,21 +180,21 @@ const styles = StyleSheet.create({
   ecoDivider: {
     width: 1,
     height: 35,
-    backgroundColor: '#334155'
+    backgroundColor: '#1E5866'
   },
   ecoNum: {
     fontSize: 18,
     fontWeight: '800',
-    color: COLORS.secondaryLight
+    color: '#26C6DA'
   },
   ecoUnit: {
     fontSize: 10,
-    color: '#94A3B8',
+    color: '#80DEEA',
     fontWeight: '600'
   },
   ecoLabel: {
     fontSize: 9,
-    color: '#CBD5E1',
+    color: '#B2DFDB',
     marginTop: 2
   },
   listSection: {},

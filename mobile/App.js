@@ -54,7 +54,7 @@ export default function App() {
         {/* Screen Content Body */}
         <View style={styles.body}>{renderContent()}</View>
 
-        {/* Fixed Bottom Navigation (Strictly contained inside mobile frame) */}
+        {/* Fixed Bottom Navigation - Green SM Signature Styling */}
         <View style={[styles.bottomNav, currentTab === 'KEY' && styles.bottomNavDark]}>
           <TouchableOpacity
             style={styles.navItem}
@@ -64,7 +64,7 @@ export default function App() {
             <Ionicons
               name={currentTab === 'HOME' ? 'compass' : 'compass-outline'}
               size={20}
-              color={currentTab === 'HOME' ? '#0F2942' : '#94A3B8'}
+              color={currentTab === 'HOME' ? '#00A896' : '#7D9DA6'}
             />
             <Text style={[styles.navLabel, currentTab === 'HOME' && styles.navLabelActive]}>
               Khám phá
@@ -79,7 +79,7 @@ export default function App() {
             <Ionicons
               name={currentTab === 'MAP' ? 'map' : 'map-outline'}
               size={20}
-              color={currentTab === 'MAP' ? '#0F2942' : '#94A3B8'}
+              color={currentTab === 'MAP' ? '#00A896' : '#7D9DA6'}
             />
             <Text style={[styles.navLabel, currentTab === 'MAP' && styles.navLabelActive]}>
               Trạm Hub
@@ -108,7 +108,7 @@ export default function App() {
             <Ionicons
               name={currentTab === 'TRIPS' ? 'document-text' : 'document-text-outline'}
               size={20}
-              color={currentTab === 'TRIPS' ? '#0F2942' : '#94A3B8'}
+              color={currentTab === 'TRIPS' ? '#00A896' : '#7D9DA6'}
             />
             <Text style={[styles.navLabel, currentTab === 'TRIPS' && styles.navLabelActive]}>
               Hợp đồng
@@ -123,7 +123,7 @@ export default function App() {
             <Ionicons
               name={currentTab === 'PROFILE' ? 'person' : 'person-outline'}
               size={20}
-              color={currentTab === 'PROFILE' ? '#0F2942' : '#94A3B8'}
+              color={currentTab === 'PROFILE' ? '#00A896' : '#7D9DA6'}
             />
             <Text style={[styles.navLabel, currentTab === 'PROFILE' && styles.navLabelActive]}>
               Hồ sơ
@@ -138,7 +138,7 @@ export default function App() {
 const styles = StyleSheet.create({
   webBackdrop: {
     flex: 1,
-    backgroundColor: '#0F172A', // Dark luxurious PC canvas
+    backgroundColor: '#06161D', // Green SM Deep Petrol Night Backdrop
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
@@ -146,29 +146,29 @@ const styles = StyleSheet.create({
   },
   mobileFull: {
     flex: 1,
-    backgroundColor: '#F8FAFC'
+    backgroundColor: '#F4F9F8'
   },
   deviceCanvas: {
     flex: 1,
     width: '100%',
-    backgroundColor: '#F8FAFC',
+    backgroundColor: '#F4F9F8',
     position: 'relative'
   },
   deviceCanvasWeb: {
-    maxWidth: 440, // Strict smartphone width (iPhone 16 Pro Max ratio)
+    maxWidth: 440,
     height: '100vh',
     maxHeight: 932,
     borderRadius: 24,
     overflow: 'hidden',
-    shadowColor: '#000',
+    shadowColor: '#00A896',
     shadowOffset: { width: 0, height: 16 },
-    shadowOpacity: 0.45,
+    shadowOpacity: 0.25,
     shadowRadius: 32,
     borderWidth: 1,
-    borderColor: '#334155'
+    borderColor: '#163C4D'
   },
   deviceCanvasDark: {
-    backgroundColor: '#0B0F19'
+    backgroundColor: '#06161D'
   },
   body: {
     flex: 1
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
     borderTopWidth: 1,
-    borderTopColor: '#E2E8F0',
+    borderTopColor: '#D5EBE7',
     paddingVertical: 6,
     position: 'absolute',
     bottom: 0,
@@ -187,15 +187,15 @@ const styles = StyleSheet.create({
     right: 0,
     height: 62,
     zIndex: 100,
-    shadowColor: '#000',
+    shadowColor: '#00A896',
     shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 6,
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
     elevation: 8
   },
   bottomNavDark: {
-    backgroundColor: '#0F172A',
-    borderTopColor: '#1E293B'
+    backgroundColor: '#0C232E',
+    borderTopColor: '#163C4D'
   },
   navItem: {
     alignItems: 'center',
@@ -205,11 +205,11 @@ const styles = StyleSheet.create({
   navLabel: {
     fontSize: 10,
     fontWeight: '600',
-    color: '#94A3B8',
+    color: '#7D9DA6',
     marginTop: 2
   },
   navLabelActive: {
-    color: '#0F2942',
+    color: '#00A896',
     fontWeight: '800'
   },
   centerKeyItem: {
@@ -222,21 +222,21 @@ const styles = StyleSheet.create({
     width: 46,
     height: 46,
     borderRadius: 8,
-    backgroundColor: '#0F2942',
+    backgroundColor: '#00A896',
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.25,
-    shadowRadius: 6,
-    elevation: 5
+    shadowColor: '#00A896',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.35,
+    shadowRadius: 8,
+    elevation: 6
   },
   centerKeyCircleActive: {
-    backgroundColor: '#047857',
-    shadowColor: '#047857'
+    backgroundColor: '#004D40',
+    shadowColor: '#004D40'
   },
   navLabelKeyActive: {
-    color: '#047857',
+    color: '#00A896',
     fontWeight: '800'
   }
 });
