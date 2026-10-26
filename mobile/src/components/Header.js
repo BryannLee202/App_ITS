@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
     backgroundColor: '#FFFFFF',
     borderBottomWidth: 1,
-    borderBottomColor: '#D5EBE7'
+    borderBottomColor: '#E2E8F0'
   },
   leftRow: {
     flexDirection: 'row',
@@ -61,12 +61,12 @@ const styles = StyleSheet.create({
     width: 38,
     height: 38,
     borderRadius: 8,
-    backgroundColor: '#E6F8F6',
+    backgroundColor: '#E0F7F4',
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 10,
     borderWidth: 1,
-    borderColor: '#B3E5DF'
+    borderColor: '#B2DFDB'
   },
   userInfo: {
     justifyContent: 'center',
@@ -75,8 +75,8 @@ const styles = StyleSheet.create({
   subGreeting: {
     fontSize: 9,
     fontWeight: '800',
-    color: '#00897B',
-    letterSpacing: 0.8
+    color: '#008E7B',
+    letterSpacing: 0.6
   },
   nameRow: {
     flexDirection: 'row',
@@ -87,13 +87,13 @@ const styles = StyleSheet.create({
   userName: {
     fontSize: 14,
     fontWeight: '800',
-    color: '#0A2533',
+    color: '#1E293B',
     letterSpacing: -0.2
   },
   ekycBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#00A896',
+    backgroundColor: '#00BFA5',
     paddingHorizontal: 5,
     paddingVertical: 1.5,
     borderRadius: 4,
@@ -113,18 +113,18 @@ const styles = StyleSheet.create({
   },
   locationText: {
     fontSize: 10,
-    color: '#4A6B74',
+    color: '#64748B',
     fontWeight: '600'
   },
   notifButton: {
     width: 36,
     height: 36,
     borderRadius: 8,
-    backgroundColor: '#F4F9F8',
+    backgroundColor: '#F8FAFC',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: '#D5EBE7',
+    borderColor: '#E2E8F0',
     position: 'relative',
     marginLeft: 8
   },

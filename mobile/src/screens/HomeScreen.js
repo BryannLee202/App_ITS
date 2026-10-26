@@ -355,21 +355,21 @@ export default function HomeScreen({ onNavigateToKey }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F4F9F8'
+    backgroundColor: '#F8FAFC'
   },
   scrollContent: {
     paddingBottom: 85
   },
   heroDispatchCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 8,
+    borderRadius: 12,
     marginHorizontal: 16,
     marginTop: 12,
     padding: 14,
     borderWidth: 1,
-    borderColor: '#D5EBE7',
-    shadowColor: '#00A896',
-    shadowOffset: { width: 0, height: 2 },
+    borderColor: '#E2E8F0',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.05,
     shadowRadius: 8,
     elevation: 2
@@ -380,31 +380,31 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#EDF6F5',
+    borderBottomColor: '#F1F5F9',
     paddingBottom: 8
   },
   cardHeaderTitle: {
     fontSize: 10,
     fontWeight: '800',
-    color: '#0A3641',
-    letterSpacing: 0.8
+    color: '#1E293B',
+    letterSpacing: 0.6
   },
   systemTag: {
-    backgroundColor: '#E6F8F6',
-    paddingHorizontal: 6,
-    paddingVertical: 2,
+    backgroundColor: '#E0F7F4',
+    paddingHorizontal: 7,
+    paddingVertical: 2.5,
     borderRadius: 4
   },
   systemTagText: {
     fontSize: 9,
     fontWeight: '800',
-    color: '#00A896'
+    color: '#008E7B'
   },
   modeTabsRow: {
     flexDirection: 'row',
-    backgroundColor: '#EDF6F5',
-    borderRadius: 6,
-    padding: 2,
+    backgroundColor: '#F1F5F9',
+    borderRadius: 8,
+    padding: 3,
     marginBottom: 12
   },
   modeTab: {
@@ -413,21 +413,26 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 8,
-    borderRadius: 4,
+    borderRadius: 6,
     gap: 6
   },
   modeTabActive: {
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#B3E5DF'
+    borderColor: '#CBD5E1',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.06,
+    shadowRadius: 2,
+    elevation: 1
   },
   modeTabText: {
     fontSize: 11,
     fontWeight: '600',
-    color: '#4A6B74'
+    color: '#64748B'
   },
   modeTabTextActive: {
-    color: '#00A896',
+    color: '#00BFA5',
     fontWeight: '800'
   },
   fieldRow: {
@@ -436,15 +441,13 @@ const styles = StyleSheet.create({
     paddingVertical: 4
   },
   fieldIconBox: {
-    width: 32,
-    height: 32,
-    borderRadius: 6,
-    backgroundColor: '#E6F8F6',
+    width: 34,
+    height: 34,
+    borderRadius: 8,
+    backgroundColor: '#E0F7F4',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 10,
-    borderWidth: 1,
-    borderColor: '#B3E5DF'
+    marginRight: 10
   },
   fieldContent: {
     flex: 1
@@ -452,47 +455,45 @@ const styles = StyleSheet.create({
   fieldLabel: {
     fontSize: 9,
     fontWeight: '700',
-    color: '#4A6B74',
-    letterSpacing: 0.6
+    color: '#64748B',
+    letterSpacing: 0.5
   },
   fieldValue: {
     fontSize: 12,
     fontWeight: '700',
-    color: '#0A2533',
+    color: '#1E293B',
     marginTop: 2
   },
   policyTag: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#E6F8F6',
-    paddingHorizontal: 6,
+    backgroundColor: '#E0F7F4',
+    paddingHorizontal: 7,
     paddingVertical: 3,
     borderRadius: 4,
-    borderWidth: 1,
-    borderColor: '#80CBC4',
     gap: 3
   },
   policyTagText: {
     fontSize: 9,
     fontWeight: '800',
-    color: '#00897B',
+    color: '#008E7B',
     letterSpacing: 0.4
   },
   fieldSeparator: {
     height: 1,
-    backgroundColor: '#EDF6F5',
+    backgroundColor: '#F1F5F9',
     marginVertical: 8
   },
   actionButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#00A896',
+    backgroundColor: '#00BFA5',
     paddingVertical: 12,
-    borderRadius: 6,
+    borderRadius: 8,
     marginTop: 10,
     gap: 8,
-    shadowColor: '#00A896',
+    shadowColor: '#00BFA5',
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.25,
     shadowRadius: 5,
@@ -502,16 +503,16 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 12,
     fontWeight: '800',
-    letterSpacing: 0.8
+    letterSpacing: 0.6
   },
   corridorBanner: {
-    backgroundColor: '#0A3641',
-    borderRadius: 8,
+    backgroundColor: '#0F172A',
+    borderRadius: 12,
     marginHorizontal: 16,
     marginTop: 12,
     padding: 12,
     borderWidth: 1,
-    borderColor: '#144E5E'
+    borderColor: '#1E293B'
   },
   corridorHeader: {
     flexDirection: 'row',
@@ -523,13 +524,13 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: '#26C6DA'
+    backgroundColor: '#00BFA5'
   },
   corridorTitle: {
     fontSize: 9,
     fontWeight: '800',
-    color: '#80DEEA',
-    letterSpacing: 0.6
+    color: '#5EEAD4',
+    letterSpacing: 0.5
   },
   corridorBody: {
     flexDirection: 'row',
@@ -542,18 +543,18 @@ const styles = StyleSheet.create({
     fontWeight: '800'
   },
   corridorDetail: {
-    color: '#B2DFDB',
+    color: '#94A3B8',
     fontSize: 10,
     marginTop: 2
   },
   gaugeBox: {
     paddingHorizontal: 10,
     paddingVertical: 4,
-    backgroundColor: '#0E4453',
+    backgroundColor: '#1E293B',
     borderRadius: 6,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#26C6DA'
+    borderColor: '#00BFA5'
   },
   gaugeValue: {
     color: '#FFFFFF',
@@ -561,7 +562,7 @@ const styles = StyleSheet.create({
     fontWeight: '800'
   },
   gaugeUnit: {
-    color: '#80DEEA',
+    color: '#5EEAD4',
     fontSize: 8,
     fontWeight: '700'
   },
@@ -579,17 +580,17 @@ const styles = StyleSheet.create({
     paddingVertical: 7,
     borderRadius: 6,
     borderWidth: 1,
-    borderColor: '#D5EBE7',
+    borderColor: '#E2E8F0',
     gap: 5
   },
   categoryTabActive: {
-    backgroundColor: '#00A896',
-    borderColor: '#00A896'
+    backgroundColor: '#00BFA5',
+    borderColor: '#00BFA5'
   },
   categoryTabText: {
     fontSize: 11,
     fontWeight: '600',
-    color: '#4A6B74'
+    color: '#64748B'
   },
   categoryTabTextActive: {
     color: '#FFFFFF',
@@ -606,8 +607,8 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 12,
     fontWeight: '800',
-    color: '#0A2533',
-    letterSpacing: 0.6
+    color: '#1E293B',
+    letterSpacing: 0.5
   },
   filterButton: {
     flexDirection: 'row',
@@ -616,7 +617,7 @@ const styles = StyleSheet.create({
   },
   filterButtonText: {
     fontSize: 11,
-    color: '#00A896',
+    color: '#00BFA5',
     fontWeight: '700'
   },
   loadingContainer: {

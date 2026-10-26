@@ -9,7 +9,7 @@ import {
   Platform
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { COLORS, RADIUS } from './src/styles/theme';
+import { COLORS } from './src/styles/theme';
 
 import HomeScreen from './src/screens/HomeScreen';
 import MapScreen from './src/screens/MapScreen';
@@ -41,7 +41,7 @@ export default function App() {
 
   return (
     <View style={isWeb ? styles.webBackdrop : styles.mobileFull}>
-      {/* Centered Mobile Device Frame (Prevents wide-screen distortion) */}
+      {/* Centered Mobile Device Frame (Clean daylight studio mock on PC) */}
       <SafeAreaView
         style={[
           styles.deviceCanvas,
@@ -54,7 +54,7 @@ export default function App() {
         {/* Screen Content Body */}
         <View style={styles.body}>{renderContent()}</View>
 
-        {/* Fixed Bottom Navigation - Green SM Signature Styling */}
+        {/* Fixed Bottom Navigation - Clean Fresh Cyan Xanh SM Styling */}
         <View style={[styles.bottomNav, currentTab === 'KEY' && styles.bottomNavDark]}>
           <TouchableOpacity
             style={styles.navItem}
@@ -63,8 +63,8 @@ export default function App() {
           >
             <Ionicons
               name={currentTab === 'HOME' ? 'compass' : 'compass-outline'}
-              size={20}
-              color={currentTab === 'HOME' ? '#00A896' : '#7D9DA6'}
+              size={22}
+              color={currentTab === 'HOME' ? '#00BFA5' : '#94A3B8'}
             />
             <Text style={[styles.navLabel, currentTab === 'HOME' && styles.navLabelActive]}>
               Khám phá
@@ -78,8 +78,8 @@ export default function App() {
           >
             <Ionicons
               name={currentTab === 'MAP' ? 'map' : 'map-outline'}
-              size={20}
-              color={currentTab === 'MAP' ? '#00A896' : '#7D9DA6'}
+              size={22}
+              color={currentTab === 'MAP' ? '#00BFA5' : '#94A3B8'}
             />
             <Text style={[styles.navLabel, currentTab === 'MAP' && styles.navLabelActive]}>
               Trạm Hub
@@ -93,7 +93,7 @@ export default function App() {
             activeOpacity={0.85}
           >
             <View style={[styles.centerKeyCircle, currentTab === 'KEY' && styles.centerKeyCircleActive]}>
-              <Ionicons name="key" size={20} color="#FFFFFF" />
+              <Ionicons name="key" size={22} color="#FFFFFF" />
             </View>
             <Text style={[styles.navLabel, currentTab === 'KEY' && styles.navLabelKeyActive]}>
               Điều khiển
@@ -107,8 +107,8 @@ export default function App() {
           >
             <Ionicons
               name={currentTab === 'TRIPS' ? 'document-text' : 'document-text-outline'}
-              size={20}
-              color={currentTab === 'TRIPS' ? '#00A896' : '#7D9DA6'}
+              size={22}
+              color={currentTab === 'TRIPS' ? '#00BFA5' : '#94A3B8'}
             />
             <Text style={[styles.navLabel, currentTab === 'TRIPS' && styles.navLabelActive]}>
               Hợp đồng
@@ -122,8 +122,8 @@ export default function App() {
           >
             <Ionicons
               name={currentTab === 'PROFILE' ? 'person' : 'person-outline'}
-              size={20}
-              color={currentTab === 'PROFILE' ? '#00A896' : '#7D9DA6'}
+              size={22}
+              color={currentTab === 'PROFILE' ? '#00BFA5' : '#94A3B8'}
             />
             <Text style={[styles.navLabel, currentTab === 'PROFILE' && styles.navLabelActive]}>
               Hồ sơ
@@ -138,37 +138,39 @@ export default function App() {
 const styles = StyleSheet.create({
   webBackdrop: {
     flex: 1,
-    backgroundColor: '#06161D', // Green SM Deep Petrol Night Backdrop
+    backgroundColor: '#EEF2F6', // Clean, bright, soft daylight grey studio canvas (no dark scary void)
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
-    minHeight: '100vh'
+    minHeight: '100vh',
+    paddingVertical: 16
   },
   mobileFull: {
     flex: 1,
-    backgroundColor: '#F4F9F8'
+    backgroundColor: '#F8FAFC'
   },
   deviceCanvas: {
     flex: 1,
     width: '100%',
-    backgroundColor: '#F4F9F8',
+    backgroundColor: '#F8FAFC',
     position: 'relative'
   },
   deviceCanvasWeb: {
-    maxWidth: 440,
-    height: '100vh',
-    maxHeight: 932,
-    borderRadius: 24,
+    maxWidth: 420,
+    height: '96vh',
+    maxHeight: 900,
+    borderRadius: 32,
     overflow: 'hidden',
-    shadowColor: '#00A896',
-    shadowOffset: { width: 0, height: 16 },
-    shadowOpacity: 0.25,
-    shadowRadius: 32,
-    borderWidth: 1,
-    borderColor: '#163C4D'
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.12,
+    shadowRadius: 28,
+    borderWidth: 5,
+    borderColor: '#FFFFFF',
+    backgroundColor: '#F8FAFC'
   },
   deviceCanvasDark: {
-    backgroundColor: '#06161D'
+    backgroundColor: '#0F172A'
   },
   body: {
     flex: 1
@@ -179,7 +181,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
     borderTopWidth: 1,
-    borderTopColor: '#D5EBE7',
+    borderTopColor: '#E2E8F0',
     paddingVertical: 6,
     position: 'absolute',
     bottom: 0,
@@ -187,15 +189,15 @@ const styles = StyleSheet.create({
     right: 0,
     height: 62,
     zIndex: 100,
-    shadowColor: '#00A896',
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
+    shadowOpacity: 0.05,
+    shadowRadius: 6,
     elevation: 8
   },
   bottomNavDark: {
-    backgroundColor: '#0C232E',
-    borderTopColor: '#163C4D'
+    backgroundColor: '#1E293B',
+    borderTopColor: '#334155'
   },
   navItem: {
     alignItems: 'center',
@@ -205,12 +207,12 @@ const styles = StyleSheet.create({
   navLabel: {
     fontSize: 10,
     fontWeight: '600',
-    color: '#7D9DA6',
+    color: '#94A3B8',
     marginTop: 2
   },
   navLabelActive: {
-    color: '#00A896',
-    fontWeight: '800'
+    color: '#00BFA5',
+    fontWeight: '700'
   },
   centerKeyItem: {
     alignItems: 'center',
@@ -219,24 +221,24 @@ const styles = StyleSheet.create({
     marginTop: -22
   },
   centerKeyCircle: {
-    width: 46,
-    height: 46,
-    borderRadius: 8,
-    backgroundColor: '#00A896',
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#00BFA5',
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#00A896',
+    shadowColor: '#00BFA5',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.35,
     shadowRadius: 8,
     elevation: 6
   },
   centerKeyCircleActive: {
-    backgroundColor: '#004D40',
-    shadowColor: '#004D40'
+    backgroundColor: '#008E7B',
+    shadowColor: '#008E7B'
   },
   navLabelKeyActive: {
-    color: '#00A896',
+    color: '#00BFA5',
     fontWeight: '800'
   }
 });

@@ -1,42 +1,42 @@
-// Official Green SM (Xanh SM / GSM Eco Mobility) Design System
+// Official Xanh SM (GSM) Fresh Cyan-Turquoise & Pure White Design System
 export const COLORS = {
-  // Signature Green SM Cyan & Petrol Palette
-  primary: '#00A896',         // GSM Signature Cyan Mint (#00A896 / #00B4A7)
-  primaryLight: '#26C6DA',
-  primaryDark: '#0A3641',     // Deep Petrol Teal for formal headings
-  primaryMuted: '#E6F8F6',    // Soft Mint Ice surface
+  // Signature Xanh SM Fresh Cyan-Turquoise (#00BFA5 / #00C4B4)
+  primary: '#00BFA5',         // Fresh Signature Xanh SM Cyan
+  primaryLight: '#26E1CC',    // Bright Cyan Highlight
+  primaryDark: '#008E7B',     // Rich Deep Cyan
+  primaryMuted: '#E0F7F4',    // Soft Fresh Mint Ice
 
-  secondary: '#00897B',       // Deep Emerald Teal
-  secondaryLight: '#4DB6AC',
-  secondaryDark: '#004D40',
-  secondaryMuted: '#E0F2F1',
+  secondary: '#10B981',       // Fresh Eco Leaf Green
+  secondaryLight: '#34D399',
+  secondaryDark: '#059669',
+  secondaryMuted: '#ECFDF5',
 
-  accent: '#F59E0B',          // Warm Amber for ratings
+  accent: '#F59E0B',          // Warm Amber Star Rating
   accentLight: '#FEF3C7',
 
-  success: '#00A896',
-  warning: '#D97706',
-  danger: '#DC2626',
-  info: '#0284C7',
+  success: '#00BFA5',
+  warning: '#F59E0B',
+  danger: '#EF4444',
+  info: '#0EA5E9',
 
-  // Clean Harmonious Backgrounds (Green SM clean aesthetic)
-  background: '#F4F9F8',      // Ultra-clean light mint-tinted backdrop
-  surface: '#FFFFFF',
-  surfaceVariant: '#EDF6F5',
-  border: '#D5EBE7',
-  borderDark: '#99C7BF',
+  // Clean, Bright, Harmonious Surfaces (Exact Xanh SM daylight feel)
+  background: '#F8FAFC',      // Crisp, clean, daylight backdrop
+  surface: '#FFFFFF',         // Pure White Cards
+  surfaceVariant: '#F1F5F9',
+  border: '#E2E8F0',          // Subtle elegant divider
+  borderDark: '#CBD5E1',
 
-  // High-contrast refined typography
-  textPrimary: '#0A2533',     // Deep Petrol Slate
-  textSecondary: '#4A6B74',   // Muted Petrol
-  textMuted: '#7D9DA6',
+  // Natural, Soft, High-Legibility Typography
+  textPrimary: '#1E293B',     // Soft Dark Slate (not harsh black)
+  textSecondary: '#64748B',   // Balanced Neutral Slate
+  textMuted: '#94A3B8',
   textInverse: '#FFFFFF',
 
-  // Formal Cockpit
-  cockpitBg: '#06161D',       // Dark Petrol Obsidian
-  cockpitCard: '#0C232E',
-  cockpitBorder: '#163C4D',
-  cockpitGlow: 'rgba(0, 168, 150, 0.25)'
+  // Cockpit Mode (Clean Dark Blue-Grey instead of murky black)
+  cockpitBg: '#0F172A',
+  cockpitCard: '#1E293B',
+  cockpitBorder: '#334155',
+  cockpitGlow: 'rgba(0, 191, 165, 0.25)'
 };
 
 export const FONTS = {
