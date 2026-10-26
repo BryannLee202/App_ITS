@@ -6,7 +6,8 @@ import {
   StyleSheet,
   TouchableOpacity,
   StatusBar,
-  Platform
+  Platform,
+  useWindowDimensions
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from './src/styles/theme';
@@ -19,6 +20,8 @@ import ProfileScreen from './src/screens/ProfileScreen';
 
 export default function App() {
   const [currentTab, setCurrentTab] = useState('HOME');
+  const { width } = useWindowDimensions();
+  const isDesktop = width > 768;
 
   const renderContent = () => {
     switch (currentTab) {
@@ -37,25 +40,88 @@ export default function App() {
     }
   };
 
-  const isWeb = Platform.OS === 'web';
-
   return (
-    <View style={isWeb ? styles.webBackdrop : styles.mobileFull}>
-      {/* Centered Mobile Device Frame (Clean daylight studio mock on PC) */}
-      <SafeAreaView
-        style={[
-          styles.deviceCanvas,
-          isWeb && styles.deviceCanvasWeb,
-          currentTab === 'KEY' && styles.deviceCanvasDark
-        ]}
-      >
-        <StatusBar barStyle={currentTab === 'KEY' ? 'light-content' : 'dark-content'} />
+    <SafeAreaView style={[styles.rootContainer, currentTab === 'KEY' && styles.rootContainerDark]}>
+      <StatusBar barStyle={currentTab === 'KEY' ? 'light-content' : 'dark-content'} />
 
-        {/* Screen Content Body */}
-        <View style={styles.body}>{renderContent()}</View>
+      {/* Desktop Top Header Bar (Only visible on PC/Desktop browser) */}
+      {isDesktop && (
+        <View style={styles.desktopNavBar}>
+          <View style={styles.desktopNavInner}>
+            <View style={styles.desktopBrandCol}>
+              <View style={styles.brandIconCircle}>
+                <Ionicons name="car-sport" size={20} color="#FFFFFF" />
+              </View>
+              <View>
+                <Text style={styles.desktopBrandName}>ITS SMART MOBILITY</Text>
+                <Text style={styles.desktopBrandSub}>Hệ Thống Thuê Phương Tiện Giao Thông Thông Minh • ĐH GTVT TP.HCM</Text>
+              </View>
+            </View>
 
-        {/* Floating Capsule Bottom Navigation - Exact Xanh SM Screenshot Style */}
-        <View style={[styles.bottomNav, currentTab === 'KEY' && styles.bottomNavDark]}>
+            {/* Desktop Navigation Links */}
+            <View style={styles.desktopLinksRow}>
+              <TouchableOpacity
+                style={[styles.desktopTabLink, currentTab === 'HOME' && styles.desktopTabLinkActive]}
+                onPress={() => setCurrentTab('HOME')}
+              >
+                <Ionicons name="compass-outline" size={17} color={currentTab === 'HOME' ? '#00BFA5' : '#64748B'} />
+                <Text style={[styles.desktopTabText, currentTab === 'HOME' && styles.desktopTabTextActive]}>
+                  Khám phá xe
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.desktopTabLink, currentTab === 'MAP' && styles.desktopTabLinkActive]}
+                onPress={() => setCurrentTab('MAP')}
+              >
+                <Ionicons name="map-outline" size={17} color={currentTab === 'MAP' ? '#00BFA5' : '#64748B'} />
+                <Text style={[styles.desktopTabText, currentTab === 'MAP' && styles.desktopTabTextActive]}>
+                  Bản đồ Trạm Hub
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.desktopTabLink, currentTab === 'KEY' && styles.desktopTabLinkActive]}
+                onPress={() => setCurrentTab('KEY')}
+              >
+                <Ionicons name="key-outline" size={17} color={currentTab === 'KEY' ? '#00BFA5' : '#64748B'} />
+                <Text style={[styles.desktopTabText, currentTab === 'KEY' && styles.desktopTabTextActive]}>
+                  Buồng lái Digital Key
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.desktopTabLink, currentTab === 'TRIPS' && styles.desktopTabLinkActive]}
+                onPress={() => setCurrentTab('TRIPS')}
+              >
+                <Ionicons name="document-text-outline" size={17} color={currentTab === 'TRIPS' ? '#00BFA5' : '#64748B'} />
+                <Text style={[styles.desktopTabText, currentTab === 'TRIPS' && styles.desktopTabTextActive]}>
+                  Hợp đồng & CO₂
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.desktopTabLink, currentTab === 'PROFILE' && styles.desktopTabLinkActive]}
+                onPress={() => setCurrentTab('PROFILE')}
+              >
+                <Ionicons name="person-outline" size={17} color={currentTab === 'PROFILE' ? '#00BFA5' : '#64748B'} />
+                <Text style={[styles.desktopTabText, currentTab === 'PROFILE' && styles.desktopTabTextActive]}>
+                  Tài khoản eKYC
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      )}
+
+      {/* Main Responsive Body (Full width on Desktop with max-width content, Native ratio on Phone) */}
+      <View style={[styles.bodyContainer, isDesktop && styles.desktopBodyContainer]}>
+        {renderContent()}
+      </View>
+
+      {/* Mobile Floating Bottom Bar (Only visible on Phones / Screens <= 768px) */}
+      {!isDesktop && (
+        <View style={[styles.mobileBottomNav, currentTab === 'KEY' && styles.mobileBottomNavDark]}>
           <TouchableOpacity
             style={styles.navItem}
             onPress={() => setCurrentTab('HOME')}
@@ -117,52 +183,105 @@ export default function App() {
             />
           </TouchableOpacity>
         </View>
-      </SafeAreaView>
-    </View>
+      )}
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  webBackdrop: {
-    flex: 1,
-    backgroundColor: '#EEF2F6', // Clean, bright, soft daylight grey studio canvas (no dark scary void)
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
-    minHeight: '100vh',
-    paddingVertical: 16
-  },
-  mobileFull: {
-    flex: 1,
-    backgroundColor: '#F8FAFC'
-  },
-  deviceCanvas: {
+  rootContainer: {
     flex: 1,
     width: '100%',
-    backgroundColor: '#F8FAFC',
-    position: 'relative'
-  },
-  deviceCanvasWeb: {
-    maxWidth: 420,
-    height: '96vh',
-    maxHeight: 900,
-    borderRadius: 32,
-    overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 12 },
-    shadowOpacity: 0.12,
-    shadowRadius: 28,
-    borderWidth: 5,
-    borderColor: '#FFFFFF',
     backgroundColor: '#F8FAFC'
   },
-  deviceCanvasDark: {
+  rootContainerDark: {
     backgroundColor: '#0F172A'
   },
-  body: {
-    flex: 1
+  desktopNavBar: {
+    width: '100%',
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E2E8F0',
+    paddingVertical: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 6,
+    elevation: 3,
+    zIndex: 100
   },
-  bottomNav: {
+  desktopNavInner: {
+    width: '100%',
+    maxWidth: 1200,
+    alignSelf: 'center',
+    paddingHorizontal: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  desktopBrandCol: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12
+  },
+  brandIconCircle: {
+    width: 38,
+    height: 38,
+    borderRadius: 10,
+    backgroundColor: '#00BFA5',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#00BFA5',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4
+  },
+  desktopBrandName: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: '#0F172A',
+    letterSpacing: 0.5
+  },
+  desktopBrandSub: {
+    fontSize: 11,
+    color: '#64748B',
+    fontWeight: '500'
+  },
+  desktopLinksRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12
+  },
+  desktopTabLink: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 8,
+    gap: 6
+  },
+  desktopTabLinkActive: {
+    backgroundColor: '#E0F7F4'
+  },
+  desktopTabText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#64748B'
+  },
+  desktopTabTextActive: {
+    color: '#00BFA5',
+    fontWeight: '700'
+  },
+  bodyContainer: {
+    flex: 1,
+    width: '100%'
+  },
+  desktopBodyContainer: {
+    maxWidth: 1200,
+    alignSelf: 'center',
+    width: '100%'
+  },
+  mobileBottomNav: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
@@ -172,7 +291,7 @@ const styles = StyleSheet.create({
     left: 16,
     right: 16,
     height: 60,
-    borderRadius: 30, // Floating capsule
+    borderRadius: 30,
     zIndex: 100,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 6 },
@@ -182,7 +301,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#E8ECEF'
   },
-  bottomNavDark: {
+  mobileBottomNavDark: {
     backgroundColor: '#1E293B',
     borderColor: '#334155'
   },

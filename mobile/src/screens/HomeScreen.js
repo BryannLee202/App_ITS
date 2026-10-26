@@ -9,7 +9,8 @@ import {
   Image,
   Modal,
   ActivityIndicator,
-  Alert
+  Alert,
+  useWindowDimensions
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from '../styles/theme';
@@ -18,6 +19,9 @@ import CO2Widget from '../components/CO2Widget';
 import ApiService from '../services/api';
 
 export default function HomeScreen({ onNavigateToKey }) {
+  const { width } = useWindowDimensions();
+  const isDesktop = width > 768;
+
   const [vehicles, setVehicles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -206,43 +210,43 @@ export default function HomeScreen({ onNavigateToKey }) {
         {/* =========================================
             3. TWO BIG HERO ACTION CARDS (XANH SM STYLE)
         ========================================= */}
-        <View style={styles.bigHeroCardsRow}>
+        <View style={[styles.bigHeroCardsRow, isDesktop && styles.desktopHeroRow]}>
           {/* Card 1: Thuê xe tự lái (Cyan Gradient) */}
           <TouchableOpacity
-            style={styles.heroActionCardLeft}
+            style={[styles.heroActionCardLeft, isDesktop && styles.desktopHeroCard]}
             activeOpacity={0.88}
             onPress={() => setSelectedFilter('CAR')}
           >
             <View style={styles.heroTextCol}>
-              <Text style={styles.heroCardTitle}>Thuê xe tự lái</Text>
-              <Text style={styles.heroCardSub}>Nhận xe 24/7</Text>
+              <Text style={[styles.heroCardTitle, isDesktop && { fontSize: 16 }]}>Thuê xe tự lái</Text>
+              <Text style={[styles.heroCardSub, isDesktop && { fontSize: 12 }]}>Nhận xe 24/7</Text>
               <View style={styles.heroTagPill}>
                 <Text style={styles.heroTagText}>0đ cọc</Text>
               </View>
             </View>
             <Image
               source={{ uri: 'https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&w=400&q=80' }}
-              style={styles.heroCarImage}
+              style={[styles.heroCarImage, isDesktop && { width: 140, height: 75 }]}
               resizeMode="contain"
             />
           </TouchableOpacity>
 
           {/* Card 2: Xe máy điện / Đổi pin (Peach-Mint Gradient) */}
           <TouchableOpacity
-            style={styles.heroActionCardRight}
+            style={[styles.heroActionCardRight, isDesktop && styles.desktopHeroCard]}
             activeOpacity={0.88}
             onPress={() => setSelectedFilter('MOTORBIKE')}
           >
             <View style={styles.heroTextCol}>
-              <Text style={styles.heroCardTitle}>Xe máy điện</Text>
-              <Text style={styles.heroCardSub}>Đổi pin miễn phí</Text>
+              <Text style={[styles.heroCardTitle, isDesktop && { fontSize: 16 }]}>Xe máy điện</Text>
+              <Text style={[styles.heroCardSub, isDesktop && { fontSize: 12 }]}>Đổi pin miễn phí</Text>
               <View style={[styles.heroTagPill, { backgroundColor: '#FEEFD6' }]}>
                 <Text style={[styles.heroTagText, { color: '#B45309' }]}>Từ 22k/h</Text>
               </View>
             </View>
             <Image
               source={{ uri: 'https://images.unsplash.com/photo-1593764592116-bfb2a97c642a?auto=format&fit=crop&w=400&q=80' }}
-              style={styles.heroCarImage}
+              style={[styles.heroCarImage, isDesktop && { width: 140, height: 75 }]}
               resizeMode="contain"
             />
           </TouchableOpacity>
@@ -259,16 +263,16 @@ export default function HomeScreen({ onNavigateToKey }) {
             </TouchableOpacity>
           </View>
 
-          <View style={styles.servicesGrid}>
+          <View style={[styles.servicesGrid, isDesktop && styles.desktopServicesGrid]}>
             {/* Row 1 */}
-            <TouchableOpacity style={styles.serviceItem} onPress={() => setSelectedFilter('MOTORBIKE')}>
+            <TouchableOpacity style={isDesktop ? styles.desktopServiceItem : styles.serviceItem} onPress={() => setSelectedFilter('MOTORBIKE')}>
               <View style={styles.serviceIconWrap}>
                 <Ionicons name="bicycle" size={26} color="#00BFA5" />
               </View>
               <Text style={styles.serviceLabel}>Xe máy điện</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.serviceItem} onPress={() => setSelectedFilter('CAR')}>
+            <TouchableOpacity style={isDesktop ? styles.desktopServiceItem : styles.serviceItem} onPress={() => setSelectedFilter('CAR')}>
               <View style={styles.badgeTopCorner}>
                 <Text style={styles.badgeTopCornerText}>-20%</Text>
               </View>
@@ -278,14 +282,14 @@ export default function HomeScreen({ onNavigateToKey }) {
               <Text style={styles.serviceLabel}>Xe tự lái EV</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.serviceItem}>
+            <TouchableOpacity style={isDesktop ? styles.desktopServiceItem : styles.serviceItem}>
               <View style={styles.serviceIconWrap}>
                 <Ionicons name="bus" size={26} color="#10B981" />
               </View>
               <Text style={styles.serviceLabel}>VinBus & Metro</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.serviceItem}>
+            <TouchableOpacity style={isDesktop ? styles.desktopServiceItem : styles.serviceItem}>
               <View style={[styles.badgeTopCorner, { backgroundColor: '#FEF3C7' }]}>
                 <Text style={[styles.badgeTopCornerText, { color: '#B45309' }]}>MỚI</Text>
               </View>
@@ -296,28 +300,28 @@ export default function HomeScreen({ onNavigateToKey }) {
             </TouchableOpacity>
 
             {/* Row 2 */}
-            <TouchableOpacity style={styles.serviceItem} onPress={onNavigateToKey}>
+            <TouchableOpacity style={isDesktop ? styles.desktopServiceItem : styles.serviceItem} onPress={onNavigateToKey}>
               <View style={styles.serviceIconWrap}>
                 <Ionicons name="key" size={26} color="#6366F1" />
               </View>
               <Text style={styles.serviceLabel}>Digital Key</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.serviceItem}>
+            <TouchableOpacity style={isDesktop ? styles.desktopServiceItem : styles.serviceItem}>
               <View style={styles.serviceIconWrap}>
                 <Ionicons name="battery-charging" size={26} color="#00BFA5" />
               </View>
               <Text style={styles.serviceLabel}>Trạm sạc Hub</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.serviceItem}>
+            <TouchableOpacity style={isDesktop ? styles.desktopServiceItem : styles.serviceItem}>
               <View style={styles.serviceIconWrap}>
                 <Ionicons name="git-network" size={26} color="#0284C7" />
               </View>
               <Text style={styles.serviceLabel}>Làn sóng xanh</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.serviceItem}>
+            <TouchableOpacity style={isDesktop ? styles.desktopServiceItem : styles.serviceItem}>
               <View style={styles.serviceIconWrap}>
                 <Ionicons name="gift" size={26} color="#EC4899" />
               </View>
@@ -357,21 +361,24 @@ export default function HomeScreen({ onNavigateToKey }) {
           </TouchableOpacity>
         </View>
 
-        {loading ? (
-          <View style={styles.loadingBox}>
-            <ActivityIndicator size="small" color="#00BFA5" />
-            <Text style={styles.loadingText}>Đang đồng bộ đội xe...</Text>
-          </View>
-        ) : (
-          filteredVehicles.map((veh) => (
-            <VehicleCard
-              key={veh.id}
-              vehicle={veh}
-              onSelect={handleOpenBooking}
-              onBook={handleOpenBooking}
-            />
-          ))
-        )}
+        <View style={isDesktop ? styles.desktopCardGrid : styles.mobileCardList}>
+          {loading ? (
+            <View style={styles.loadingBox}>
+              <ActivityIndicator size="small" color="#00BFA5" />
+              <Text style={styles.loadingText}>Đang đồng bộ đội xe...</Text>
+            </View>
+          ) : (
+            filteredVehicles.map((veh) => (
+              <VehicleCard
+                key={veh.id}
+                vehicle={veh}
+                style={isDesktop ? { width: width > 1050 ? '31.8%' : '48.5%', marginHorizontal: 0 } : null}
+                onSelect={handleOpenBooking}
+                onBook={handleOpenBooking}
+              />
+            ))
+          )}
+        </View>
       </ScrollView>
 
       {/* Booking Modal */}
@@ -977,5 +984,38 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '800',
     letterSpacing: 0.5
+  },
+  desktopCardGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    rowGap: 16,
+    width: '100%',
+    paddingBottom: 40
+  },
+  mobileCardList: {
+    width: '100%',
+    paddingBottom: 24
+  },
+  desktopHeroRow: {
+    gap: 16,
+    marginTop: 18
+  },
+  desktopHeroCard: {
+    height: 110,
+    padding: 16,
+    borderRadius: 16
+  },
+  desktopServicesGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    paddingHorizontal: 12
+  },
+  desktopServiceItem: {
+    width: '12%',
+    alignItems: 'center',
+    position: 'relative'
   }
 });

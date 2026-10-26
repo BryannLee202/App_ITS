@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from '../styles/theme';
 
-export default function VehicleCard({ vehicle, onSelect, onBook }) {
+export default function VehicleCard({ vehicle, onSelect, onBook, style: customStyle }) {
   const isElectric = vehicle.powerType === 'ELECTRIC';
   const formattedHourlyPrice = vehicle.hourlyPrice.toLocaleString('vi-VN');
   const formattedDailyPrice = vehicle.dailyPrice.toLocaleString('vi-VN');
@@ -11,7 +11,7 @@ export default function VehicleCard({ vehicle, onSelect, onBook }) {
 
   return (
     <TouchableOpacity
-      style={styles.card}
+      style={[styles.card, customStyle]}
       activeOpacity={0.92}
       onPress={() => onSelect(vehicle)}
     >
