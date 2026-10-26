@@ -1,0 +1,86 @@
+[
+  {
+    "id": "hub-uth-01",
+    "name": "ITS Mobility Hub - ĐH Giao Thông Vận Tải (UTH)",
+    "address": "Số 2, Đường Võ Oanh, P.25, Q. Bình Thạnh, TP.HCM",
+    "coordinates": {
+      "latitude": 10.8018,
+      "longitude": 106.7142
+    },
+    "type": "CAMPUS_HUB",
+    "capacity": 20,
+    "availableVehicles": 8,
+    "hasFastCharger": true,
+    "nearbyTransit": ["Bus 08", "Bus 14", "Metro Số 1 Văn Thánh (800m)"]
+  },
+  {
+    "id": "hub-metro-01",
+    "name": "ITS Multimodal Station - Ga Trung Tâm Bến Thành",
+    "address": "Quảng trường Quách Thị Trang, P. Bến Thành, Quận 1, TP.HCM",
+    "coordinates": {
+      "latitude": 10.7719,
+      "longitude": 106.6983
+    },
+    "type": "METRO_INTERCHANGE",
+    "capacity": 35,
+    "availableVehicles": 14,
+    "hasFastCharger": true,
+    "nearbyTransit": ["Metro Tuyến 1 Bến Thành - Suối Tiên", "Tuyến Xe Buýt Hàm Nghi"]
+  },
+  {
+    "id": "hub-landmark-01",
+    "name": "Smart Station - Landmark 81 & Vinhomes Central Park",
+    "address": "720A Điện Biên Phủ, P.22, Q. Bình Thạnh, TP.HCM",
+    "coordinates": {
+      "latitude": 10.7952,
+      "longitude": 106.7218
+    },
+    "type": "URBAN_HUB",
+    "capacity": 25,
+    "availableVehicles": 11,
+    "hasFastCharger": true,
+    "nearbyTransit": ["Waterbus Tân Cảng", "Metro Ga Tân Cảng"]
+  },
+  {
+    "id": "hub-tsn-01",
+    "name": "Airport Transit Hub - Ga Quốc Tế Tân Sơn Nhất",
+    "address": "Đường Trường Sơn, P.2, Q. Tân Bình, TP.HCM",
+    "coordinates": {
+      "latitude": 10.8185,
+      "longitude": 106.6588
+    },
+    "type": "AIRPORT_HUB",
+    "capacity": 40,
+    "availableVehicles": 18,
+    "hasFastCharger": true,
+    "nearbyTransit": ["Tuyến Xe Buýt 109", "Tuyến Buýt Điện 152"]
+  },
+  {
+    "id": "hub-thuthiem-01",
+    "name": "ITS Eco Station - Khu Đô Thị Mới Thủ Thiêm",
+    "address": "Đại lộ Mai Chí Thọ, P. An Khánh, TP. Thủ Đức, TP.HCM",
+    "coordinates": {
+      "latitude": 10.7758,
+      "longitude": 106.7245
+    },
+    "type": "ECO_CORRIDOR",
+    "capacity": 20,
+    "availableVehicles": 9,
+    "hasFastCharger": true,
+    "nearbyTransit": ["Cầu Ba Son", "Hành lang Làn Sóng Xanh Mai Chí Thọ"]
+  },
+  {
+    "id": "hub-shtp-01",
+    "name": "High-Tech Mobility Hub - Khu Công Nghệ Cao (SHTP)",
+    "address": "Đường D1, Khu Công Nghệ Cao, P. Tân Phú, TP. Thủ Đức, TP.HCM",
+    "coordinates": {
+      "latitude": 10.8542,
+      "longitude": 106.7865
+    },
+    "type": "TECH_HUB",
+    "capacity": 30,
+    "availableVehicles": 12,
+    "hasFastCharger": true,
+    "nearbyTransit": ["Metro Ga Khu Công Nghệ Cao", "VinBus D4"]
+  }
+]

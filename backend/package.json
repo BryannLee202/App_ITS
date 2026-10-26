@@ -1,0 +1,28 @@
+{
+  "name": "its-vehicle-rental-backend",
+  "version": "1.0.0",
+  "description": "Enterprise Backend API & Real-time ITS Telematics Engine for Smart Vehicle Rental System",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "jsonwebtoken": "^9.0.2",
+    "socket.io": "^4.8.1",
+    "uuid": "^10.0.0"
+  },
+  "keywords": [
+    "its",
+    "telematics",
+    "vehicle-rental",
+    "iot",
+    "green-wave",
+    "smart-mobility"
+  ],
+  "author": "ITS Engineering Team - UTH",
+  "license": "MIT"
+}

@@ -1,0 +1,29 @@
+{
+  "expo": {
+    "name": "ITS Smart Mobility",
+    "slug": "its-smart-mobility",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#1E1B4B"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.its.smartmobility"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icon.png",
+        "backgroundColor": "#1E1B4B"
+      },
+      "package": "com.its.smartmobility"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}
