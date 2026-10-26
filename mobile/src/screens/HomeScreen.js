@@ -6,35 +6,24 @@ import {
   ScrollView,
   TextInput,
   TouchableOpacity,
+  Image,
   Modal,
   ActivityIndicator,
   Alert
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from '../styles/theme';
-import Header from '../components/Header';
 import VehicleCard from '../components/VehicleCard';
 import CO2Widget from '../components/CO2Widget';
 import ApiService from '../services/api';
 
-const CATEGORIES = [
-  { id: 'ALL', label: 'Tất cả phương tiện', icon: 'grid-outline' },
-  { id: 'CAR', label: 'Ô tô thuần điện (EV)', icon: 'car-sport-outline' },
-  { id: 'MOTORBIKE', label: 'Xe máy điện đô thị', icon: 'bicycle-outline' }
-];
-
 export default function HomeScreen({ onNavigateToKey }) {
   const [vehicles, setVehicles] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState('ALL');
   const [searchQuery, setSearchQuery] = useState('');
-  
-  // Formal booking state
-  const [bookingMode, setBookingMode] = useState('SELF_DRIVE');
-  const [pickupLocation, setPickupLocation] = useState('Trường ĐH Giao Thông Vận Tải (UTH) - Cơ sở 2, Q. Bình Thạnh');
-  const [rentalTimeRange, setRentalTimeRange] = useState('08:00 - 20:00 (Thời lượng: 12 giờ)');
+  const [selectedFilter, setSelectedFilter] = useState('ALL');
 
-  // Modal State
+  // Booking Modal State
   const [selectedVehicle, setSelectedVehicle] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [durationHours, setDurationHours] = useState(3);
@@ -42,12 +31,12 @@ export default function HomeScreen({ onNavigateToKey }) {
 
   useEffect(() => {
     loadVehicles();
-  }, [selectedCategory]);
+  }, []);
 
   const loadVehicles = async () => {
     try {
       setLoading(true);
-      const res = await ApiService.getVehicles(selectedCategory);
+      const res = await ApiService.getVehicles();
       setVehicles(res.vehicles || []);
     } catch (err) {
       console.warn('Load vehicles error:', err.message);
@@ -75,11 +64,11 @@ export default function HomeScreen({ onNavigateToKey }) {
 
       setModalVisible(false);
       Alert.alert(
-        'XÁC NHẬN HỢP ĐỒNG ĐIỆN TỬ',
-        `Hợp đồng thuê phương tiện số ${res.trip.contractNumber} đã được xác thực ký số điện tử thành công.\n\nChìa khóa điều khiển từ xa (Digital Key) đã kích hoạt trên tab Điều Khiển.`,
+        'Thuê Xe Thành Công',
+        `Hợp đồng điện tử ${res.trip.contractNumber} đã được ký.\nChìa khóa số Digital Key đã kích hoạt trong tab Điều Khiển.`,
         [
           {
-            text: 'Truy Cập Buồng Lái Điều Khiển',
+            text: 'Mở Điều Khiển Xe Ngay',
             onPress: () => {
               if (onNavigateToKey) onNavigateToKey();
             }
@@ -93,170 +82,291 @@ export default function HomeScreen({ onNavigateToKey }) {
     }
   };
 
-  const filteredVehicles = vehicles.filter(v => 
-    v.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    v.brand.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredVehicles = vehicles.filter(v => {
+    if (selectedFilter === 'CAR') return v.category === 'CAR';
+    if (selectedFilter === 'MOTORBIKE') return v.category === 'MOTORBIKE';
+    return (
+      v.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      v.brand.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  });
 
   return (
     <View style={styles.container}>
-      <Header user={{ fullName: 'Nguyễn Văn An', isEkycVerified: true }} />
-
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
         {/* =========================================
-            1. GREEN SM STYLE HERO BOOKING CARD
+            1. TOP FLOATING SEARCH BAR (XANH SM STYLE)
         ========================================= */}
-        <View style={styles.heroDispatchCard}>
-          <View style={styles.cardHeaderStrip}>
-            <Text style={styles.cardHeaderTitle}>PHƯƠNG THỨC GIAO NHẬN VÀ LỊCH TRÌNH</Text>
-            <View style={styles.systemTag}>
-              <Text style={styles.systemTagText}>GSM ECO PROTOCOL</Text>
-            </View>
+        <View style={styles.topSearchWrapper}>
+          <View style={styles.searchPill}>
+            <Ionicons name="search" size={20} color="#64748B" style={styles.searchIcon} />
+            <TextInput
+              placeholder="Bạn muốn đi đâu, thuê xe gì?"
+              placeholderTextColor="#94A3B8"
+              style={styles.searchInput}
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+            />
+            {searchQuery ? (
+              <TouchableOpacity onPress={() => setSearchQuery('')}>
+                <Ionicons name="close-circle" size={18} color="#94A3B8" />
+              </TouchableOpacity>
+            ) : null}
           </View>
+        </View>
 
-          {/* Mode Switch Tabs */}
-          <View style={styles.modeTabsRow}>
-            <TouchableOpacity
-              style={[styles.modeTab, bookingMode === 'SELF_DRIVE' && styles.modeTabActive]}
-              onPress={() => setBookingMode('SELF_DRIVE')}
-            >
-              <Ionicons
-                name="key-outline"
-                size={13}
-                color={bookingMode === 'SELF_DRIVE' ? '#00A896' : '#4A6B74'}
-              />
-              <Text style={[styles.modeTabText, bookingMode === 'SELF_DRIVE' && styles.modeTabTextActive]}>
-                Tự nhận xe số hóa 24/7 (BLE)
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[styles.modeTab, bookingMode === 'STATION_HUB' && styles.modeTabActive]}
-              onPress={() => setBookingMode('STATION_HUB')}
-            >
-              <Ionicons
-                name="business-outline"
-                size={13}
-                color={bookingMode === 'STATION_HUB' ? '#00A896' : '#4A6B74'}
-              />
-              <Text style={[styles.modeTabText, bookingMode === 'STATION_HUB' && styles.modeTabTextActive]}>
-                Giao nhận tại Trạm Hub Metro
-              </Text>
+        {/* =========================================
+            2. "GẦN BẠN" HORIZONTAL CAROUSEL
+        ========================================= */}
+        <View style={styles.nearbySection}>
+          <View style={styles.nearbyHeaderRow}>
+            <View style={styles.nearbyTitleGroup}>
+              <Ionicons name="sparkles" size={15} color="#00BFA5" />
+              <Text style={styles.nearbyTitle}>Đội xe thông minh gần đây đang sẵn sàng</Text>
+            </View>
+            <TouchableOpacity>
+              <Ionicons name="ellipsis-horizontal" size={18} color="#94A3B8" />
             </TouchableOpacity>
           </View>
 
-          {/* Location Field */}
-          <View style={styles.fieldRow}>
-            <View style={styles.fieldIconBox}>
-              <Ionicons name="location-outline" size={15} color="#00A896" />
-            </View>
-            <View style={styles.fieldContent}>
-              <Text style={styles.fieldLabel}>ĐỊA ĐIỂM NHẬN VÀ HOÀN TRẢ PHƯƠNG TIỆN</Text>
-              <Text style={styles.fieldValue} numberOfLines={1}>{pickupLocation}</Text>
-            </View>
-          </View>
-
-          <View style={styles.fieldSeparator} />
-
-          {/* Time & Policy Field */}
-          <View style={styles.fieldRow}>
-            <View style={[styles.fieldIconBox, { backgroundColor: '#E6F8F6' }]}>
-              <Ionicons name="time-outline" size={15} color="#00A896" />
-            </View>
-            <View style={styles.fieldContent}>
-              <Text style={styles.fieldLabel}>KHUNG GIỜ KHAI THÁC DỊCH VỤ</Text>
-              <Text style={styles.fieldValue}>{rentalTimeRange}</Text>
-            </View>
-            <View style={styles.policyTag}>
-              <Ionicons name="shield-checkmark" size={10} color="#00A896" />
-              <Text style={styles.policyTagText}>BẢO CHỨNG eKYC</Text>
-            </View>
-          </View>
-
-          {/* Action Button - Green SM Cyan Mint */}
-          <TouchableOpacity
-            style={styles.actionButton}
-            activeOpacity={0.88}
-            onPress={() => {}}
+          {/* Quick Vehicle Mini Carousel */}
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.carouselRow}
           >
-            <Ionicons name="search" size={14} color="#FFFFFF" />
-            <Text style={styles.actionButtonText}>TRA CỨU DANH MỤC PHƯƠNG TIỆN KHẢ DỤNG</Text>
+            {vehicles.slice(0, 4).map((veh) => (
+              <TouchableOpacity
+                key={veh.id}
+                style={styles.miniCard}
+                activeOpacity={0.88}
+                onPress={() => handleOpenBooking(veh)}
+              >
+                <View style={styles.miniCardImageWrap}>
+                  <Image source={{ uri: veh.thumbnail }} style={styles.miniCardImage} />
+                  <View style={styles.priceTagOver}>
+                    <Text style={styles.priceTagOverText}>
+                      {veh.hourlyPrice >= 100000 
+                        ? `${Math.round(veh.hourlyPrice / 1000)}k/h` 
+                        : `${veh.hourlyPrice.toLocaleString('vi-VN')}đ/h`}
+                    </Text>
+                  </View>
+                  <View style={styles.miniRatingTag}>
+                    <Ionicons name="star" size={10} color="#F59E0B" />
+                    <Text style={styles.miniRatingText}>{veh.rating}</Text>
+                  </View>
+                </View>
+                <View style={styles.miniCardContent}>
+                  <View style={styles.verifiedRow}>
+                    <Ionicons name="checkmark-circle" size={11} color="#00BFA5" />
+                    <Text style={styles.miniVehName} numberOfLines={1}>{veh.name}</Text>
+                  </View>
+                  <Text style={styles.miniDistText}>
+                    📍 {veh.stationId === 'hub-uth-01' ? 'UTH Cơ sở 2 • 0.6 km' : 'Ga Metro • 1.1 km'}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+
+          {/* Quick Filter Pill Buttons */}
+          <View style={styles.filterPillsRow}>
+            <TouchableOpacity
+              style={[styles.filterPill, selectedFilter === 'ALL' && styles.filterPillActive]}
+              onPress={() => setSelectedFilter('ALL')}
+            >
+              <Text style={[styles.filterPillText, selectedFilter === 'ALL' && styles.filterPillTextActive]}>
+                Tất cả xe
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.filterPill, selectedFilter === 'CAR' && styles.filterPillActive]}
+              onPress={() => setSelectedFilter('CAR')}
+            >
+              <Text style={[styles.filterPillText, selectedFilter === 'CAR' && styles.filterPillTextActive]}>
+                Ô tô điện EV
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.filterPill, selectedFilter === 'MOTORBIKE' && styles.filterPillActive]}
+              onPress={() => setSelectedFilter('MOTORBIKE')}
+            >
+              <Text style={[styles.filterPillText, selectedFilter === 'MOTORBIKE' && styles.filterPillTextActive]}>
+                Xe máy điện
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* =========================================
+            3. TWO BIG HERO ACTION CARDS (XANH SM STYLE)
+        ========================================= */}
+        <View style={styles.bigHeroCardsRow}>
+          {/* Card 1: Thuê xe tự lái (Cyan Gradient) */}
+          <TouchableOpacity
+            style={styles.heroActionCardLeft}
+            activeOpacity={0.88}
+            onPress={() => setSelectedFilter('CAR')}
+          >
+            <View style={styles.heroTextCol}>
+              <Text style={styles.heroCardTitle}>Thuê xe tự lái</Text>
+              <Text style={styles.heroCardSub}>Nhận xe 24/7</Text>
+              <View style={styles.heroTagPill}>
+                <Text style={styles.heroTagText}>0đ cọc</Text>
+              </View>
+            </View>
+            <Image
+              source={{ uri: 'https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&w=400&q=80' }}
+              style={styles.heroCarImage}
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
+
+          {/* Card 2: Xe máy điện / Đổi pin (Peach-Mint Gradient) */}
+          <TouchableOpacity
+            style={styles.heroActionCardRight}
+            activeOpacity={0.88}
+            onPress={() => setSelectedFilter('MOTORBIKE')}
+          >
+            <View style={styles.heroTextCol}>
+              <Text style={styles.heroCardTitle}>Xe máy điện</Text>
+              <Text style={styles.heroCardSub}>Đổi pin miễn phí</Text>
+              <View style={[styles.heroTagPill, { backgroundColor: '#FEEFD6' }]}>
+                <Text style={[styles.heroTagText, { color: '#B45309' }]}>Từ 22k/h</Text>
+              </View>
+            </View>
+            <Image
+              source={{ uri: 'https://images.unsplash.com/photo-1593764592116-bfb2a97c642a?auto=format&fit=crop&w=400&q=80' }}
+              style={styles.heroCarImage}
+              resizeMode="contain"
+            />
           </TouchableOpacity>
         </View>
 
         {/* =========================================
-            2. ITS CORRIDOR INSTRUMENT BANNER
+            4. "DỊCH VỤ KHÁC" (GRID OF 8 ROUNDED ICONS)
+        ========================================= */}
+        <View style={styles.servicesSection}>
+          <View style={styles.servicesHeaderRow}>
+            <Text style={styles.servicesSectionTitle}>Dịch vụ giao thông thông minh</Text>
+            <TouchableOpacity>
+              <Text style={styles.seeAllText}>Xem tất cả</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.servicesGrid}>
+            {/* Row 1 */}
+            <TouchableOpacity style={styles.serviceItem} onPress={() => setSelectedFilter('MOTORBIKE')}>
+              <View style={styles.serviceIconWrap}>
+                <Ionicons name="bicycle" size={26} color="#00BFA5" />
+              </View>
+              <Text style={styles.serviceLabel}>Xe máy điện</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.serviceItem} onPress={() => setSelectedFilter('CAR')}>
+              <View style={styles.badgeTopCorner}>
+                <Text style={styles.badgeTopCornerText}>-20%</Text>
+              </View>
+              <View style={styles.serviceIconWrap}>
+                <Ionicons name="car-sport" size={26} color="#0EA5E9" />
+              </View>
+              <Text style={styles.serviceLabel}>Xe tự lái EV</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.serviceItem}>
+              <View style={styles.serviceIconWrap}>
+                <Ionicons name="bus" size={26} color="#10B981" />
+              </View>
+              <Text style={styles.serviceLabel}>VinBus & Metro</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.serviceItem}>
+              <View style={[styles.badgeTopCorner, { backgroundColor: '#FEF3C7' }]}>
+                <Text style={[styles.badgeTopCornerText, { color: '#B45309' }]}>MỚI</Text>
+              </View>
+              <View style={styles.serviceIconWrap}>
+                <Ionicons name="diamond" size={26} color="#F59E0B" />
+              </View>
+              <Text style={styles.serviceLabel}>Hội viên ITS</Text>
+            </TouchableOpacity>
+
+            {/* Row 2 */}
+            <TouchableOpacity style={styles.serviceItem} onPress={onNavigateToKey}>
+              <View style={styles.serviceIconWrap}>
+                <Ionicons name="key" size={26} color="#6366F1" />
+              </View>
+              <Text style={styles.serviceLabel}>Digital Key</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.serviceItem}>
+              <View style={styles.serviceIconWrap}>
+                <Ionicons name="battery-charging" size={26} color="#00BFA5" />
+              </View>
+              <Text style={styles.serviceLabel}>Trạm sạc Hub</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.serviceItem}>
+              <View style={styles.serviceIconWrap}>
+                <Ionicons name="git-network" size={26} color="#0284C7" />
+              </View>
+              <Text style={styles.serviceLabel}>Làn sóng xanh</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.serviceItem}>
+              <View style={styles.serviceIconWrap}>
+                <Ionicons name="gift" size={26} color="#EC4899" />
+              </View>
+              <Text style={styles.serviceLabel}>Thẻ quà tặng</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* =========================================
+            5. ITS GREEN WAVE CORRIDOR TICKER
         ========================================= */}
         <View style={styles.corridorBanner}>
-          <View style={styles.corridorHeader}>
-            <View style={styles.statusIndicator} />
-            <Text style={styles.corridorTitle}>HÀNH LANG TỐI ƯU TÍN HIỆU LÀN SÓNG XANH (GLOSA)</Text>
+          <View style={styles.corridorLeft}>
+            <View style={styles.corridorTagRow}>
+              <View style={styles.pulseDot} />
+              <Text style={styles.corridorTagTitle}>HÀNH LANG LÀN SÓNG XANH GLOSA</Text>
+            </View>
+            <Text style={styles.corridorName}>Trục UTH - Điện Biên Phủ - Mai Chí Thọ</Text>
+            <Text style={styles.corridorDetail}>Vận tốc đồng bộ 45 km/h • Giảm 18.5% pin</Text>
           </View>
-          <View style={styles.corridorBody}>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.corridorRoute}>Trục Giao Thông: ĐH GTVT (UTH) - Mai Chí Thọ</Text>
-              <Text style={styles.corridorDetail}>
-                Vận tốc thiết kế đồng bộ: 45 km/h • Giảm thiểu 18.5% tiêu hao pin
-              </Text>
-            </View>
-            <View style={styles.gaugeBox}>
-              <Text style={styles.gaugeValue}>45</Text>
-              <Text style={styles.gaugeUnit}>KM/H</Text>
-            </View>
+          <View style={styles.gaugePill}>
+            <Text style={styles.gaugeNumber}>45</Text>
+            <Text style={styles.gaugeLabel}>km/h</Text>
           </View>
         </View>
 
         {/* =========================================
-            3. CATEGORY SELECTOR (FORMAL TABS)
+            6. VEHICLE CATALOG LIST
         ========================================= */}
-        <View style={styles.categoryRow}>
-          {CATEGORIES.map(cat => {
-            const isSelected = selectedCategory === cat.id;
-            return (
-              <TouchableOpacity
-                key={cat.id}
-                style={[styles.categoryTab, isSelected && styles.categoryTabActive]}
-                onPress={() => setSelectedCategory(cat.id)}
-                activeOpacity={0.8}
-              >
-                <Ionicons
-                  name={cat.icon}
-                  size={13}
-                  color={isSelected ? '#FFFFFF' : '#4A6B74'}
-                />
-                <Text style={[styles.categoryTabText, isSelected && styles.categoryTabTextActive]}>
-                  {cat.label}
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
-
-        {/* Section Header */}
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>
-            DANH MỤC ĐỘI XE KHẢ DỤNG ({filteredVehicles.length})
+        <View style={styles.catalogHeaderRow}>
+          <Text style={styles.catalogTitle}>
+            Danh mục xe sẵn sàng ({filteredVehicles.length})
           </Text>
-          <TouchableOpacity style={styles.filterButton}>
-            <Ionicons name="options-outline" size={13} color="#00A896" />
-            <Text style={styles.filterButtonText}>Tùy chọn lọc</Text>
+          <TouchableOpacity style={styles.filterBtn}>
+            <Ionicons name="options-outline" size={14} color="#00BFA5" />
+            <Text style={styles.filterBtnText}>Lọc</Text>
           </TouchableOpacity>
         </View>
 
-        {/* Vehicle List */}
         {loading ? (
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator size="small" color="#00A896" />
-            <Text style={styles.loadingText}>Đang đồng bộ dữ liệu đội xe...</Text>
+          <View style={styles.loadingBox}>
+            <ActivityIndicator size="small" color="#00BFA5" />
+            <Text style={styles.loadingText}>Đang đồng bộ đội xe...</Text>
           </View>
         ) : (
-          filteredVehicles.map(vehicle => (
+          filteredVehicles.map((veh) => (
             <VehicleCard
-              key={vehicle.id}
-              vehicle={vehicle}
+              key={veh.id}
+              vehicle={veh}
               onSelect={handleOpenBooking}
               onBook={handleOpenBooking}
             />
@@ -264,26 +374,26 @@ export default function HomeScreen({ onNavigateToKey }) {
         )}
       </ScrollView>
 
-      {/* Formal Booking Modal */}
+      {/* Booking Modal */}
       <Modal visible={modalVisible} transparent animationType="fade">
         <View style={styles.modalBackdrop}>
           <View style={styles.modalContainer}>
             <View style={styles.modalHeaderStrip}>
               <View style={{ flex: 1 }}>
-                <Text style={styles.modalContractTitle}>HỢP ĐỒNG THUÊ PHƯƠNG TIỆN ĐIỆN TỬ</Text>
+                <Text style={styles.modalContractTitle}>HỢP ĐỒNG THUÊ XE THÔNG MINH</Text>
                 <Text style={styles.modalVehicleName}>{selectedVehicle?.name}</Text>
-                <Text style={styles.modalPlateText}>Biển số đăng ký: {selectedVehicle?.plateNumber}</Text>
+                <Text style={styles.modalPlateText}>Biển số: {selectedVehicle?.plateNumber}</Text>
               </View>
               <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.modalCloseIcon}>
-                <Ionicons name="close" size={18} color="#4A6B74" />
+                <Ionicons name="close" size={20} color="#64748B" />
               </TouchableOpacity>
             </View>
 
             {selectedVehicle && (
               <>
-                <Text style={styles.modalSectionLabel}>THỜI LƯỢNG KHAI THÁC (THEO GIỜ):</Text>
+                <Text style={styles.modalSectionLabel}>Chọn thời gian thuê (theo giờ):</Text>
                 <View style={styles.durationRow}>
-                  {[1, 2, 3, 5, 8, 24].map(h => (
+                  {[1, 2, 3, 5, 8, 24].map((h) => (
                     <TouchableOpacity
                       key={h}
                       style={[styles.durationChip, durationHours === h && styles.durationChipActive]}
@@ -296,7 +406,7 @@ export default function HomeScreen({ onNavigateToKey }) {
                   ))}
                 </View>
 
-                {/* Eco Impact Evaluation */}
+                {/* Eco Impact Widget */}
                 <CO2Widget
                   eco={{
                     distanceKm: Math.round(durationHours * 22),
@@ -306,24 +416,24 @@ export default function HomeScreen({ onNavigateToKey }) {
                   }}
                 />
 
-                {/* Formal Price Sheet */}
+                {/* Price Breakdown */}
                 <View style={styles.priceSheet}>
                   <View style={styles.priceSheetRow}>
-                    <Text style={styles.sheetLabel}>Đơn giá niêm yết</Text>
-                    <Text style={styles.sheetValue}>{selectedVehicle.hourlyPrice.toLocaleString('vi-VN')} VNĐ / giờ</Text>
+                    <Text style={styles.sheetLabel}>Đơn giá</Text>
+                    <Text style={styles.sheetValue}>{selectedVehicle.hourlyPrice.toLocaleString('vi-VN')} đ/giờ</Text>
                   </View>
                   <View style={styles.priceSheetRow}>
-                    <Text style={styles.sheetLabel}>Thời lượng đăng ký</Text>
+                    <Text style={styles.sheetLabel}>Thời gian</Text>
                     <Text style={styles.sheetValue}>{durationHours} giờ</Text>
                   </View>
                   <View style={styles.priceSheetRow}>
-                    <Text style={styles.sheetLabel}>Ký quỹ thế chấp (eKYC bảo đảm)</Text>
-                    <Text style={[styles.sheetValue, { color: '#00A896', fontWeight: '800' }]}>0 VNĐ (Miễn ký quỹ)</Text>
+                    <Text style={styles.sheetLabel}>Ký quỹ thế chấp (eKYC)</Text>
+                    <Text style={[styles.sheetValue, { color: '#00BFA5', fontWeight: '800' }]}>0 đ (Miễn cọc)</Text>
                   </View>
                   <View style={[styles.priceSheetRow, styles.totalPriceRow]}>
-                    <Text style={styles.totalPriceLabel}>TỔNG CHI PHÍ TẠM TÍNH:</Text>
+                    <Text style={styles.totalPriceLabel}>TỔNG THANH TOÁN:</Text>
                     <Text style={styles.totalPriceValue}>
-                      {(selectedVehicle.hourlyPrice * durationHours).toLocaleString('vi-VN')} VNĐ
+                      {(selectedVehicle.hourlyPrice * durationHours).toLocaleString('vi-VN')} đ
                     </Text>
                   </View>
                 </View>
@@ -338,8 +448,8 @@ export default function HomeScreen({ onNavigateToKey }) {
                     <ActivityIndicator color="#FFFFFF" size="small" />
                   ) : (
                     <>
-                      <Ionicons name="document-text-outline" size={16} color="#FFFFFF" />
-                      <Text style={styles.modalSubmitText}>KÝ SỐ VÀ NHẬN QUYỀN ĐIỀU KHIỂN</Text>
+                      <Ionicons name="key-outline" size={17} color="#FFFFFF" />
+                      <Text style={styles.modalSubmitText}>KÝ SỐ VÀ NHẬN XE NGAY</Text>
                     </>
                   )}
                 </TouchableOpacity>
@@ -355,191 +465,330 @@ export default function HomeScreen({ onNavigateToKey }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8FAFC'
+    backgroundColor: '#F5F7F9'
   },
   scrollContent: {
-    paddingBottom: 85
+    paddingBottom: 95
   },
-  heroDispatchCard: {
+  topSearchWrapper: {
+    paddingHorizontal: 16,
+    paddingTop: 12,
+    paddingBottom: 8
+  },
+  searchPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    marginHorizontal: 16,
-    marginTop: 12,
-    padding: 14,
+    height: 48,
+    borderRadius: 24,
+    paddingHorizontal: 16,
     borderWidth: 1,
     borderColor: '#E2E8F0',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 6,
     elevation: 2
   },
-  cardHeaderStrip: {
+  searchIcon: {
+    marginRight: 10
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 14,
+    color: '#1E293B',
+    fontWeight: '500'
+  },
+  nearbySection: {
+    paddingHorizontal: 16,
+    marginTop: 8
+  },
+  nearbyHeaderRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F1F5F9',
-    paddingBottom: 8
+    marginBottom: 10
   },
-  cardHeaderTitle: {
-    fontSize: 10,
-    fontWeight: '800',
-    color: '#1E293B',
-    letterSpacing: 0.6
-  },
-  systemTag: {
-    backgroundColor: '#E0F7F4',
-    paddingHorizontal: 7,
-    paddingVertical: 2.5,
-    borderRadius: 4
-  },
-  systemTagText: {
-    fontSize: 9,
-    fontWeight: '800',
-    color: '#008E7B'
-  },
-  modeTabsRow: {
-    flexDirection: 'row',
-    backgroundColor: '#F1F5F9',
-    borderRadius: 8,
-    padding: 3,
-    marginBottom: 12
-  },
-  modeTab: {
-    flex: 1,
+  nearbyTitleGroup: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 8,
-    borderRadius: 6,
     gap: 6
   },
-  modeTabActive: {
+  nearbyTitle: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: '#1E293B'
+  },
+  carouselRow: {
+    gap: 10,
+    paddingBottom: 6
+  },
+  miniCard: {
+    width: 145,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 14,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#E8ECEF',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 6,
+    elevation: 2
+  },
+  miniCardImageWrap: {
+    width: '100%',
+    height: 90,
+    position: 'relative',
+    backgroundColor: '#F1F5F9'
+  },
+  miniCardImage: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover'
+  },
+  priceTagOver: {
+    position: 'absolute',
+    top: 6,
+    left: 6,
+    backgroundColor: 'rgba(239, 68, 68, 0.95)',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4
+  },
+  priceTagOverText: {
+    color: '#FFFFFF',
+    fontSize: 10,
+    fontWeight: '800'
+  },
+  miniRatingTag: {
+    position: 'absolute',
+    bottom: 6,
+    left: 6,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(15, 23, 42, 0.75)',
+    paddingHorizontal: 5,
+    paddingVertical: 2,
+    borderRadius: 4,
+    gap: 3
+  },
+  miniRatingText: {
+    color: '#FFFFFF',
+    fontSize: 10,
+    fontWeight: '700'
+  },
+  miniCardContent: {
+    padding: 8
+  },
+  verifiedRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4
+  },
+  miniVehName: {
+    fontSize: 12,
+    fontWeight: '800',
+    color: '#1E293B',
+    flex: 1
+  },
+  miniDistText: {
+    fontSize: 10,
+    color: '#64748B',
+    marginTop: 2
+  },
+  filterPillsRow: {
+    flexDirection: 'row',
+    gap: 8,
+    marginTop: 10
+  },
+  filterPill: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#CBD5E1',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.06,
-    shadowRadius: 2,
-    elevation: 1
+    borderColor: '#E2E8F0'
   },
-  modeTabText: {
+  filterPillActive: {
+    backgroundColor: '#00BFA5',
+    borderColor: '#00BFA5'
+  },
+  filterPillText: {
     fontSize: 11,
     fontWeight: '600',
     color: '#64748B'
   },
-  modeTabTextActive: {
-    color: '#00BFA5',
-    fontWeight: '800'
+  filterPillTextActive: {
+    color: '#FFFFFF',
+    fontWeight: '700'
   },
-  fieldRow: {
+  bigHeroCardsRow: {
     flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 4
+    paddingHorizontal: 16,
+    marginTop: 14,
+    gap: 10
   },
-  fieldIconBox: {
-    width: 34,
-    height: 34,
-    borderRadius: 8,
-    backgroundColor: '#E0F7F4',
+  heroActionCardLeft: {
+    flex: 1,
+    height: 96,
+    borderRadius: 16,
+    backgroundColor: '#E6F8F6',
+    borderWidth: 1,
+    borderColor: '#C7F1EC',
+    padding: 12,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
+    overflow: 'hidden'
+  },
+  heroActionCardRight: {
+    flex: 1,
+    height: 96,
+    borderRadius: 16,
+    backgroundColor: '#FFF7EB',
+    borderWidth: 1,
+    borderColor: '#FEEFD6',
+    padding: 12,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    overflow: 'hidden'
+  },
+  heroTextCol: {
     justifyContent: 'center',
-    marginRight: 10
+    zIndex: 2
   },
-  fieldContent: {
-    flex: 1
+  heroCardTitle: {
+    fontSize: 14,
+    fontWeight: '800',
+    color: '#0F172A'
   },
-  fieldLabel: {
-    fontSize: 9,
-    fontWeight: '700',
+  heroCardSub: {
+    fontSize: 10,
     color: '#64748B',
-    letterSpacing: 0.5
-  },
-  fieldValue: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#1E293B',
     marginTop: 2
   },
-  policyTag: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#E0F7F4',
-    paddingHorizontal: 7,
-    paddingVertical: 3,
+  heroTagPill: {
+    backgroundColor: '#C7F1EC',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
     borderRadius: 4,
-    gap: 3
+    alignSelf: 'flex-start',
+    marginTop: 6
   },
-  policyTagText: {
+  heroTagText: {
     fontSize: 9,
     fontWeight: '800',
-    color: '#008E7B',
-    letterSpacing: 0.4
+    color: '#008E7B'
   },
-  fieldSeparator: {
-    height: 1,
-    backgroundColor: '#F1F5F9',
-    marginVertical: 8
+  heroCarImage: {
+    width: 68,
+    height: 52,
+    borderRadius: 6
   },
-  actionButton: {
+  servicesSection: {
+    paddingHorizontal: 16,
+    marginTop: 18
+  },
+  servicesHeaderRow: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12
+  },
+  servicesSectionTitle: {
+    fontSize: 14,
+    fontWeight: '800',
+    color: '#1E293B'
+  },
+  seeAllText: {
+    fontSize: 12,
+    color: '#64748B',
+    fontWeight: '600'
+  },
+  servicesGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    rowGap: 14
+  },
+  serviceItem: {
+    width: '22%',
+    alignItems: 'center',
+    position: 'relative'
+  },
+  serviceIconWrap: {
+    width: 54,
+    height: 54,
+    borderRadius: 18,
+    backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#00BFA5',
-    paddingVertical: 12,
-    borderRadius: 8,
-    marginTop: 10,
-    gap: 8,
-    shadowColor: '#00BFA5',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.25,
+    borderWidth: 1,
+    borderColor: '#E8ECEF',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
     shadowRadius: 5,
-    elevation: 3
+    elevation: 2
   },
-  actionButtonText: {
-    color: '#FFFFFF',
-    fontSize: 12,
+  serviceLabel: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#475569',
+    marginTop: 6,
+    textAlign: 'center'
+  },
+  badgeTopCorner: {
+    position: 'absolute',
+    top: -4,
+    right: 0,
+    backgroundColor: '#FEE2E2',
+    paddingHorizontal: 5,
+    paddingVertical: 1.5,
+    borderRadius: 4,
+    zIndex: 5
+  },
+  badgeTopCornerText: {
+    fontSize: 8,
     fontWeight: '800',
-    letterSpacing: 0.6
+    color: '#DC2626'
   },
   corridorBanner: {
     backgroundColor: '#0F172A',
-    borderRadius: 12,
+    borderRadius: 16,
     marginHorizontal: 16,
-    marginTop: 12,
-    padding: 12,
-    borderWidth: 1,
-    borderColor: '#1E293B'
+    marginTop: 18,
+    padding: 14,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
   },
-  corridorHeader: {
+  corridorLeft: {
+    flex: 1
+  },
+  corridorTagRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    marginBottom: 6
+    marginBottom: 4
   },
-  statusIndicator: {
+  pulseDot: {
     width: 6,
     height: 6,
     borderRadius: 3,
     backgroundColor: '#00BFA5'
   },
-  corridorTitle: {
+  corridorTagTitle: {
     fontSize: 9,
     fontWeight: '800',
     color: '#5EEAD4',
     letterSpacing: 0.5
   },
-  corridorBody: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between'
-  },
-  corridorRoute: {
+  corridorName: {
     color: '#FFFFFF',
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '800'
   },
   corridorDetail: {
@@ -547,100 +796,69 @@ const styles = StyleSheet.create({
     fontSize: 10,
     marginTop: 2
   },
-  gaugeBox: {
-    paddingHorizontal: 10,
-    paddingVertical: 4,
+  gaugePill: {
+    width: 48,
+    height: 48,
+    borderRadius: 14,
     backgroundColor: '#1E293B',
-    borderRadius: 6,
     alignItems: 'center',
-    borderWidth: 1,
+    justifyContent: 'center',
+    borderWidth: 1.5,
     borderColor: '#00BFA5'
   },
-  gaugeValue: {
+  gaugeNumber: {
     color: '#FFFFFF',
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '800'
   },
-  gaugeUnit: {
+  gaugeLabel: {
     color: '#5EEAD4',
     fontSize: 8,
-    fontWeight: '700'
+    fontWeight: '700',
+    marginTop: -2
   },
-  categoryRow: {
-    flexDirection: 'row',
-    paddingHorizontal: 16,
-    marginTop: 12,
-    gap: 6
-  },
-  categoryTab: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    paddingHorizontal: 12,
-    paddingVertical: 7,
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    gap: 5
-  },
-  categoryTabActive: {
-    backgroundColor: '#00BFA5',
-    borderColor: '#00BFA5'
-  },
-  categoryTabText: {
-    fontSize: 11,
-    fontWeight: '600',
-    color: '#64748B'
-  },
-  categoryTabTextActive: {
-    color: '#FFFFFF',
-    fontWeight: '700'
-  },
-  sectionHeader: {
+  catalogHeaderRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 16,
-    marginTop: 16,
+    marginTop: 18,
     marginBottom: 8
   },
-  sectionTitle: {
-    fontSize: 12,
+  catalogTitle: {
+    fontSize: 14,
     fontWeight: '800',
-    color: '#1E293B',
-    letterSpacing: 0.5
+    color: '#1E293B'
   },
-  filterButton: {
+  filterBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4
   },
-  filterButtonText: {
-    fontSize: 11,
+  filterBtnText: {
+    fontSize: 12,
     color: '#00BFA5',
     fontWeight: '700'
   },
-  loadingContainer: {
+  loadingBox: {
     paddingVertical: 30,
     alignItems: 'center'
   },
   loadingText: {
-    marginTop: 8,
-    fontSize: 11,
-    color: '#4A6B74'
+    fontSize: 12,
+    color: '#64748B',
+    marginTop: 6
   },
   modalBackdrop: {
     flex: 1,
-    backgroundColor: 'rgba(10, 37, 51, 0.75)',
+    backgroundColor: 'rgba(15, 23, 42, 0.7)',
     justifyContent: 'center',
     padding: 16
   },
   modalContainer: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: '#D5EBE7',
+    borderRadius: 20,
+    padding: 18,
     maxHeight: '90%'
   },
   modalHeaderStrip: {
@@ -648,117 +866,116 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     borderBottomWidth: 1,
-    borderBottomColor: '#EDF6F5',
+    borderBottomColor: '#F1F5F9',
     paddingBottom: 10,
     marginBottom: 12
   },
   modalContractTitle: {
-    fontSize: 9,
+    fontSize: 10,
     fontWeight: '800',
-    color: '#00A896',
-    letterSpacing: 0.8
+    color: '#00BFA5',
+    letterSpacing: 0.6
   },
   modalVehicleName: {
     fontSize: 16,
     fontWeight: '800',
-    color: '#0A2533',
+    color: '#1E293B',
     marginTop: 2
   },
   modalPlateText: {
     fontSize: 11,
-    color: '#00897B',
-    fontWeight: '700'
+    color: '#64748B',
+    fontWeight: '600'
   },
   modalCloseIcon: {
     padding: 4
   },
   modalSectionLabel: {
-    fontSize: 10,
-    fontWeight: '800',
-    color: '#4A6B74',
-    marginBottom: 6,
-    letterSpacing: 0.5
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#475569',
+    marginBottom: 8
   },
   durationRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 6,
-    marginBottom: 10
+    marginBottom: 12
   },
   durationChip: {
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 6,
-    backgroundColor: '#F4F9F8',
+    borderRadius: 8,
+    backgroundColor: '#F8FAFC',
     borderWidth: 1,
-    borderColor: '#D5EBE7'
+    borderColor: '#E2E8F0'
   },
   durationChipActive: {
-    backgroundColor: '#00A896',
-    borderColor: '#00A896'
+    backgroundColor: '#00BFA5',
+    borderColor: '#00BFA5'
   },
   durationText: {
     fontSize: 11,
     fontWeight: '600',
-    color: '#4A6B74'
+    color: '#64748B'
   },
   durationTextActive: {
     color: '#FFFFFF',
-    fontWeight: '800'
+    fontWeight: '700'
   },
   priceSheet: {
-    backgroundColor: '#F4F9F8',
-    borderRadius: 8,
-    padding: 10,
+    backgroundColor: '#F8FAFC',
+    borderRadius: 10,
+    padding: 12,
     marginVertical: 10,
     borderWidth: 1,
-    borderColor: '#D5EBE7'
+    borderColor: '#E2E8F0'
   },
   priceSheetRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 4
+    marginBottom: 6
   },
   sheetLabel: {
     fontSize: 11,
-    color: '#4A6B74'
+    color: '#64748B'
   },
   sheetValue: {
     fontSize: 11,
-    color: '#0A2533',
+    color: '#1E293B',
     fontWeight: '700'
   },
   totalPriceRow: {
     borderTopWidth: 1,
-    borderTopColor: '#D5EBE7',
-    paddingTop: 6,
+    borderTopColor: '#E2E8F0',
+    paddingTop: 8,
     marginTop: 4,
     marginBottom: 0
   },
   totalPriceLabel: {
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: '800',
-    color: '#0A2533'
+    color: '#1E293B'
   },
   totalPriceValue: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '800',
-    color: '#00A896'
+    color: '#00BFA5'
   },
   modalSubmitButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#00A896',
-    paddingVertical: 12,
-    borderRadius: 6,
+    backgroundColor: '#00BFA5',
+    paddingVertical: 13,
+    borderRadius: 12,
     gap: 8,
-    marginTop: 6
+    marginTop: 8
   },
   modalSubmitText: {
     color: '#FFFFFF',
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '800',
-    letterSpacing: 0.8
+    letterSpacing: 0.5
   }
 });
