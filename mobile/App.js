@@ -5,7 +5,8 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  StatusBar
+  StatusBar,
+  Platform
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS, RADIUS } from './src/styles/theme';
@@ -36,97 +37,138 @@ export default function App() {
     }
   };
 
+  const isWeb = Platform.OS === 'web';
+
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle={currentTab === 'KEY' ? 'light-content' : 'dark-content'} />
+    <View style={isWeb ? styles.webBackdrop : styles.mobileFull}>
+      {/* Centered Mobile Device Frame (Prevents wide-screen distortion) */}
+      <SafeAreaView
+        style={[
+          styles.deviceCanvas,
+          isWeb && styles.deviceCanvasWeb,
+          currentTab === 'KEY' && styles.deviceCanvasDark
+        ]}
+      >
+        <StatusBar barStyle={currentTab === 'KEY' ? 'light-content' : 'dark-content'} />
 
-      {/* Screen Body */}
-      <View style={styles.body}>{renderContent()}</View>
+        {/* Screen Content Body */}
+        <View style={styles.body}>{renderContent()}</View>
 
-      {/* Bottom Navigation Bar */}
-      <View style={[styles.bottomNav, currentTab === 'KEY' && styles.bottomNavDark]}>
-        <TouchableOpacity
-          style={styles.navItem}
-          onPress={() => setCurrentTab('HOME')}
-          activeOpacity={0.8}
-        >
-          <Ionicons
-            name={currentTab === 'HOME' ? 'compass' : 'compass-outline'}
-            size={22}
-            color={currentTab === 'HOME' ? COLORS.primary : COLORS.textMuted}
-          />
-          <Text style={[styles.navLabel, currentTab === 'HOME' && styles.navLabelActive]}>
-            Khám phá
-          </Text>
-        </TouchableOpacity>
+        {/* Fixed Bottom Navigation (Strictly contained inside mobile frame) */}
+        <View style={[styles.bottomNav, currentTab === 'KEY' && styles.bottomNavDark]}>
+          <TouchableOpacity
+            style={styles.navItem}
+            onPress={() => setCurrentTab('HOME')}
+            activeOpacity={0.8}
+          >
+            <Ionicons
+              name={currentTab === 'HOME' ? 'compass' : 'compass-outline'}
+              size={22}
+              color={currentTab === 'HOME' ? '#4F46E5' : '#94A3B8'}
+            />
+            <Text style={[styles.navLabel, currentTab === 'HOME' && styles.navLabelActive]}>
+              Khám phá
+            </Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.navItem}
-          onPress={() => setCurrentTab('MAP')}
-          activeOpacity={0.8}
-        >
-          <Ionicons
-            name={currentTab === 'MAP' ? 'map' : 'map-outline'}
-            size={22}
-            color={currentTab === 'MAP' ? COLORS.primary : COLORS.textMuted}
-          />
-          <Text style={[styles.navLabel, currentTab === 'MAP' && styles.navLabelActive]}>
-            Bản đồ Hub
-          </Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.navItem}
+            onPress={() => setCurrentTab('MAP')}
+            activeOpacity={0.8}
+          >
+            <Ionicons
+              name={currentTab === 'MAP' ? 'map' : 'map-outline'}
+              size={22}
+              color={currentTab === 'MAP' ? '#4F46E5' : '#94A3B8'}
+            />
+            <Text style={[styles.navLabel, currentTab === 'MAP' && styles.navLabelActive]}>
+              Bản đồ Hub
+            </Text>
+          </TouchableOpacity>
 
-        {/* Floating Center Digital Key Tab (BonbonCar / Smart Key style) */}
-        <TouchableOpacity
-          style={styles.centerKeyItem}
-          onPress={() => setCurrentTab('KEY')}
-          activeOpacity={0.85}
-        >
-          <View style={[styles.centerKeyCircle, currentTab === 'KEY' && styles.centerKeyCircleActive]}>
-            <Ionicons name="key" size={24} color="#FFFFFF" />
-          </View>
-          <Text style={[styles.navLabel, currentTab === 'KEY' && styles.navLabelKeyActive]}>
-            Điều khiển
-          </Text>
-        </TouchableOpacity>
+          {/* Floating Center Digital Key Tab (BonbonCar / Smart Key style) */}
+          <TouchableOpacity
+            style={styles.centerKeyItem}
+            onPress={() => setCurrentTab('KEY')}
+            activeOpacity={0.85}
+          >
+            <View style={[styles.centerKeyCircle, currentTab === 'KEY' && styles.centerKeyCircleActive]}>
+              <Ionicons name="key" size={22} color="#FFFFFF" />
+            </View>
+            <Text style={[styles.navLabel, currentTab === 'KEY' && styles.navLabelKeyActive]}>
+              Điều khiển
+            </Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.navItem}
-          onPress={() => setCurrentTab('TRIPS')}
-          activeOpacity={0.8}
-        >
-          <Ionicons
-            name={currentTab === 'TRIPS' ? 'receipt' : 'receipt-outline'}
-            size={22}
-            color={currentTab === 'TRIPS' ? COLORS.primary : COLORS.textMuted}
-          />
-          <Text style={[styles.navLabel, currentTab === 'TRIPS' && styles.navLabelActive]}>
-            Chuyến đi
-          </Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.navItem}
+            onPress={() => setCurrentTab('TRIPS')}
+            activeOpacity={0.8}
+          >
+            <Ionicons
+              name={currentTab === 'TRIPS' ? 'receipt' : 'receipt-outline'}
+              size={22}
+              color={currentTab === 'TRIPS' ? '#4F46E5' : '#94A3B8'}
+            />
+            <Text style={[styles.navLabel, currentTab === 'TRIPS' && styles.navLabelActive]}>
+              Chuyến đi
+            </Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.navItem}
-          onPress={() => setCurrentTab('PROFILE')}
-          activeOpacity={0.8}
-        >
-          <Ionicons
-            name={currentTab === 'PROFILE' ? 'person' : 'person-outline'}
-            size={22}
-            color={currentTab === 'PROFILE' ? COLORS.primary : COLORS.textMuted}
-          />
-          <Text style={[styles.navLabel, currentTab === 'PROFILE' && styles.navLabelActive]}>
-            Tài khoản
-          </Text>
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
+          <TouchableOpacity
+            style={styles.navItem}
+            onPress={() => setCurrentTab('PROFILE')}
+            activeOpacity={0.8}
+          >
+            <Ionicons
+              name={currentTab === 'PROFILE' ? 'person' : 'person-outline'}
+              size={22}
+              color={currentTab === 'PROFILE' ? '#4F46E5' : '#94A3B8'}
+            />
+            <Text style={[styles.navLabel, currentTab === 'PROFILE' && styles.navLabelActive]}>
+              Tài khoản
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  webBackdrop: {
     flex: 1,
-    backgroundColor: COLORS.background
+    backgroundColor: '#0F172A', // Dark luxurious PC canvas
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    minHeight: '100vh'
+  },
+  mobileFull: {
+    flex: 1,
+    backgroundColor: '#F8FAFC'
+  },
+  deviceCanvas: {
+    flex: 1,
+    width: '100%',
+    backgroundColor: '#F8FAFC',
+    position: 'relative'
+  },
+  deviceCanvasWeb: {
+    maxWidth: 440, // Strict smartphone width (iPhone 16 Pro Max ratio)
+    height: '100vh',
+    maxHeight: 932,
+    borderRadius: 24,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 16 },
+    shadowOpacity: 0.45,
+    shadowRadius: 32,
+    borderWidth: 1,
+    borderColor: '#334155'
+  },
+  deviceCanvasDark: {
+    backgroundColor: '#0B0F19'
   },
   body: {
     flex: 1
@@ -137,17 +179,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
     borderTopWidth: 1,
-    borderTopColor: COLORS.border,
-    paddingVertical: 8,
+    borderTopColor: '#E2E8F0',
+    paddingVertical: 6,
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-    height: 65,
+    height: 62,
+    zIndex: 100,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: -3 },
+    shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.05,
-    shadowRadius: 5,
+    shadowRadius: 6,
     elevation: 8
   },
   bottomNavDark: {
@@ -162,38 +205,38 @@ const styles = StyleSheet.create({
   navLabel: {
     fontSize: 10,
     fontWeight: '600',
-    color: COLORS.textMuted,
+    color: '#94A3B8',
     marginTop: 2
   },
   navLabelActive: {
-    color: COLORS.primary,
-    fontWeight: '700'
+    color: '#4F46E5',
+    fontWeight: '800'
   },
   centerKeyItem: {
     alignItems: 'center',
     justifyContent: 'center',
     flex: 1,
-    marginTop: -20
+    marginTop: -22
   },
   centerKeyCircle: {
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: COLORS.primary,
+    backgroundColor: '#4F46E5',
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: COLORS.primary,
+    shadowColor: '#4F46E5',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.35,
-    shadowRadius: 6,
+    shadowRadius: 8,
     elevation: 6
   },
   centerKeyCircleActive: {
-    backgroundColor: COLORS.secondaryDark,
-    shadowColor: COLORS.secondaryDark
+    backgroundColor: '#10B981',
+    shadowColor: '#10B981'
   },
   navLabelKeyActive: {
-    color: COLORS.secondaryLight,
+    color: '#34D399',
     fontWeight: '800'
   }
 });

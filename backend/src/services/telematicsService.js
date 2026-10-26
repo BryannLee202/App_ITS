@@ -170,7 +170,7 @@ class TelematicsService {
       distanceCoveredKm += 0.05;
 
       if (vehicle.powerType === 'ELECTRIC') {
-        vehicle.telematics.batteryLevelPct = Math.max(5, vehicle.telematics.batteryLevelPct - 0.02);
+        vehicle.telematics.batteryLevelPct = Math.max(5, Math.round((vehicle.telematics.batteryLevelPct - 0.02) * 10) / 10);
       }
 
       vehicle.telematics.lastPing = new Date().toISOString();

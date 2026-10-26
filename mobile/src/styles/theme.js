@@ -1,40 +1,40 @@
 export const COLORS = {
-  primary: '#5E35B1',       // Moovtek Royal Purple
-  primaryLight: '#7E57C2',
-  primaryDark: '#4527A0',
-  primaryMuted: '#EDE7F6',
+  primary: '#6366F1',       // Modern Indigo Purple (Moovtek premium)
+  primaryLight: '#818CF8',
+  primaryDark: '#4F46E5',
+  primaryMuted: '#EEF2FF',
 
-  secondary: '#00BFA5',     // Green SM Eco Emerald
-  secondaryLight: '#1DE9B6',
-  secondaryDark: '#00897B',
-  secondaryMuted: '#E0F2F1',
+  secondary: '#10B981',     // Modern Emerald Green (Green SM Eco)
+  secondaryLight: '#34D399',
+  secondaryDark: '#059669',
+  secondaryMuted: '#ECFDF5',
 
-  accent: '#FFB300',        // Amber Gold for Stars & Rewards
-  accentLight: '#FFF8E1',
+  accent: '#F59E0B',        // Amber Gold for Stars & Rewards
+  accentLight: '#FEF3C7',
 
-  success: '#10B981',       // Green light / Success
-  warning: '#F59E0B',       // Amber warning
-  danger: '#EF4444',        // Red light / Alert
+  success: '#10B981',
+  warning: '#F59E0B',
+  danger: '#EF4444',
   info: '#3B82F6',
 
   // Neutrals
-  background: '#F8FAFC',    // Light grey-blue backdrop
+  background: '#F8FAFC',
   surface: '#FFFFFF',
   surfaceVariant: '#F1F5F9',
   border: '#E2E8F0',
   borderDark: '#CBD5E1',
 
   // Typography
-  textPrimary: '#0F172A',   // Slate 900
-  textSecondary: '#64748B', // Slate 500
-  textMuted: '#94A3B8',     // Slate 400
+  textPrimary: '#0F172A',
+  textSecondary: '#64748B',
+  textMuted: '#94A3B8',
   textInverse: '#FFFFFF',
 
-  // Dark Cockpit (BonbonCar Digital Key style)
+  // Dark Cockpit
   cockpitBg: '#0B0F19',
   cockpitCard: '#151C2C',
   cockpitBorder: '#1E293B',
-  cockpitGlow: 'rgba(94, 53, 177, 0.3)'
+  cockpitGlow: 'rgba(99, 102, 241, 0.25)'
 };
 
 export const SPACING = {

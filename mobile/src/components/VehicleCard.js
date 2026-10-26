@@ -7,38 +7,44 @@ export default function VehicleCard({ vehicle, onSelect, onBook }) {
   const isElectric = vehicle.powerType === 'ELECTRIC';
   const formattedHourlyPrice = vehicle.hourlyPrice.toLocaleString('vi-VN');
   const formattedDailyPrice = vehicle.dailyPrice.toLocaleString('vi-VN');
+  const batteryPct = Math.round(vehicle.telematics.batteryLevelPct || 85);
 
   return (
     <TouchableOpacity
       style={styles.card}
-      activeOpacity={0.9}
+      activeOpacity={0.92}
       onPress={() => onSelect(vehicle)}
     >
+      {/* 16:10 Golden Ratio Car Photo with Badges */}
       <View style={styles.imageContainer}>
         <Image
           source={{ uri: vehicle.thumbnail }}
           style={styles.image}
           resizeMode="cover"
         />
+
+        {/* Top Badges */}
         <View style={styles.badgeTopLeft}>
           <View style={[styles.pill, isElectric ? styles.electricPill : styles.hybridPill]}>
             <Ionicons
               name={isElectric ? "flash" : "leaf"}
-              size={12}
+              size={11}
               color="#FFFFFF"
             />
             <Text style={styles.pillText}>
-              {isElectric ? 'Xe thuần điện EV' : 'Xe Hybrid Xanh'}
+              {isElectric ? 'Thuần điện EV' : 'Hybrid Eco'}
             </Text>
           </View>
         </View>
 
         {vehicle.noDeposit && (
           <View style={styles.badgeTopRight}>
+            <Ionicons name="shield-checkmark" size={11} color="#FBBF24" />
             <Text style={styles.noDepositText}>Miễn thế chấp</Text>
           </View>
         )}
 
+        {/* Bottom Image Overlay */}
         <View style={styles.bottomOverlay}>
           <View style={styles.ratingBox}>
             <Ionicons name="star" size={12} color={COLORS.accent} />
@@ -48,39 +54,46 @@ export default function VehicleCard({ vehicle, onSelect, onBook }) {
           <View style={styles.batteryPill}>
             <Ionicons
               name={isElectric ? "battery-charging" : "speedometer"}
-              size={13}
+              size={12}
               color={COLORS.secondaryLight}
             />
             <Text style={styles.batteryText}>
-              {isElectric ? `${vehicle.telematics.batteryLevelPct}% Pin` : `${vehicle.telematics.fuelLevelPct}% Xăng`}
+              {isElectric ? `${batteryPct}% Pin` : `${vehicle.telematics.fuelLevelPct}% Xăng`}
             </Text>
           </View>
         </View>
       </View>
 
+      {/* Vehicle Info Content */}
       <View style={styles.infoContent}>
         <View style={styles.titleRow}>
-          <Text style={styles.vehicleName}>{vehicle.name}</Text>
-          <Text style={styles.plateNumber}>{vehicle.plateNumber}</Text>
+          <Text style={styles.vehicleName} numberOfLines={1}>{vehicle.name}</Text>
+          <View style={styles.plateTag}>
+            <Text style={styles.plateNumber}>{vehicle.plateNumber}</Text>
+          </View>
         </View>
 
+        {/* Spec Chips Row */}
         <View style={styles.specsRow}>
-          <View style={styles.specItem}>
-            <Ionicons name="people-outline" size={13} color={COLORS.textSecondary} />
+          <View style={styles.specBadge}>
+            <Ionicons name="people-outline" size={12} color={COLORS.textSecondary} />
             <Text style={styles.specText}>{vehicle.seats} chỗ</Text>
           </View>
-          <View style={styles.specDot} />
-          <View style={styles.specItem}>
-            <Ionicons name="cog-outline" size={13} color={COLORS.textSecondary} />
-            <Text style={styles.specText}>Số tự động</Text>
+          <View style={styles.specBadge}>
+            <Ionicons name="hardware-chip-outline" size={12} color={COLORS.textSecondary} />
+            <Text style={styles.specText}>Tự động</Text>
           </View>
-          <View style={styles.specDot} />
-          <View style={styles.specItem}>
-            <Ionicons name="navigate-outline" size={13} color={COLORS.textSecondary} />
-            <Text style={styles.specText}>{vehicle.rangeKm} km/lần sạc</Text>
+          <View style={styles.specBadge}>
+            <Ionicons name="navigate-circle-outline" size={12} color={COLORS.textSecondary} />
+            <Text style={styles.specText}>{vehicle.rangeKm} km/sạc</Text>
+          </View>
+          <View style={styles.specBadge}>
+            <Ionicons name="key-outline" size={12} color={COLORS.primary} />
+            <Text style={[styles.specText, { color: COLORS.primary, fontWeight: '700' }]}>Digital Key</Text>
           </View>
         </View>
 
+        {/* Price & Action Row */}
         <View style={styles.footerRow}>
           <View style={styles.priceContainer}>
             <View style={styles.hourlyRow}>
@@ -96,7 +109,7 @@ export default function VehicleCard({ vehicle, onSelect, onBook }) {
             onPress={() => onBook(vehicle)}
           >
             <Text style={styles.bookButtonText}>Thuê ngay</Text>
-            <Ionicons name="arrow-forward" size={14} color="#FFFFFF" />
+            <Ionicons name="arrow-forward" size={13} color="#FFFFFF" />
           </TouchableOpacity>
         </View>
       </View>
@@ -106,24 +119,24 @@ export default function VehicleCard({ vehicle, onSelect, onBook }) {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: COLORS.surface,
-    borderRadius: RADIUS.lg,
-    marginHorizontal: SPACING.lg,
-    marginBottom: SPACING.lg,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    marginHorizontal: 16,
+    marginBottom: 16,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: '#E2E8F0',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.06,
+    shadowRadius: 10,
     elevation: 3
   },
   imageContainer: {
-    height: 175,
     width: '100%',
+    aspectRatio: 16 / 10,
     position: 'relative',
-    backgroundColor: '#E2E8F0'
+    backgroundColor: '#0F172A'
   },
   image: {
     width: '100%',
@@ -132,21 +145,22 @@ const styles = StyleSheet.create({
   badgeTopLeft: {
     position: 'absolute',
     top: 10,
-    left: 10
+    left: 10,
+    zIndex: 2
   },
   pill: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: RADIUS.full,
+    borderRadius: 999,
     gap: 4
   },
   electricPill: {
-    backgroundColor: 'rgba(0, 191, 165, 0.92)'
+    backgroundColor: 'rgba(16, 185, 129, 0.95)'
   },
   hybridPill: {
-    backgroundColor: 'rgba(59, 130, 246, 0.92)'
+    backgroundColor: 'rgba(59, 130, 246, 0.95)'
   },
   pillText: {
     color: '#FFFFFF',
@@ -157,13 +171,17 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 10,
     right: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: 'rgba(15, 23, 42, 0.85)',
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: RADIUS.full
+    borderRadius: 999,
+    gap: 4,
+    zIndex: 2
   },
   noDepositText: {
-    color: '#FCD34D',
+    color: '#FBBF24',
     fontSize: 10,
     fontWeight: '700'
   },
@@ -177,7 +195,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 12,
     paddingVertical: 6,
-    backgroundColor: 'rgba(15, 23, 42, 0.65)'
+    backgroundColor: 'rgba(15, 23, 42, 0.72)'
   },
   ratingBox: {
     flexDirection: 'row',
@@ -201,62 +219,64 @@ const styles = StyleSheet.create({
   batteryText: {
     color: '#FFFFFF',
     fontSize: 11,
-    fontWeight: '600'
+    fontWeight: '700'
   },
   infoContent: {
-    padding: SPACING.md
+    padding: 14
   },
   titleRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 4
+    marginBottom: 8
   },
   vehicleName: {
     fontSize: 16,
-    fontWeight: '700',
-    color: COLORS.textPrimary,
-    flex: 1
+    fontWeight: '800',
+    color: '#0F172A',
+    flex: 1,
+    marginRight: 8
+  },
+  plateTag: {
+    backgroundColor: '#EEF2FF',
+    paddingHorizontal: 7,
+    paddingVertical: 3,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#C7D2FE'
   },
   plateNumber: {
     fontSize: 11,
-    fontWeight: '600',
-    color: COLORS.primary,
-    backgroundColor: COLORS.primaryMuted,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 4
+    fontWeight: '700',
+    color: '#4F46E5'
   },
   specsRow: {
     flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 4
+    flexWrap: 'wrap',
+    gap: 6,
+    marginBottom: 12
   },
-  specItem: {
+  specBadge: {
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: '#F1F5F9',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
     gap: 4
-  },
-  specDot: {
-    width: 3,
-    height: 3,
-    borderRadius: 1.5,
-    backgroundColor: COLORS.borderDark,
-    marginHorizontal: 8
   },
   specText: {
     fontSize: 11,
-    color: COLORS.textSecondary,
+    color: '#475569',
     fontWeight: '500'
   },
   footerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: SPACING.md,
     borderTopWidth: 1,
-    borderTopColor: COLORS.border,
-    paddingTop: SPACING.sm
+    borderTopColor: '#F1F5F9',
+    paddingTop: 10
   },
   priceContainer: {
     justifyContent: 'center'
@@ -268,26 +288,31 @@ const styles = StyleSheet.create({
   priceAmount: {
     fontSize: 17,
     fontWeight: '800',
-    color: COLORS.primaryDark
+    color: '#4F46E5'
   },
   priceUnit: {
     fontSize: 11,
-    color: COLORS.textSecondary,
+    color: '#64748B',
     fontWeight: '600',
     marginLeft: 2
   },
   dailySub: {
     fontSize: 10,
-    color: COLORS.textMuted
+    color: '#94A3B8'
   },
   bookButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: COLORS.primary,
-    paddingHorizontal: SPACING.lg,
-    paddingVertical: 10,
-    borderRadius: RADIUS.md,
-    gap: 6
+    backgroundColor: '#4F46E5',
+    paddingHorizontal: 16,
+    paddingVertical: 9,
+    borderRadius: 10,
+    gap: 6,
+    shadowColor: '#4F46E5',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 3
   },
   bookButtonText: {
     color: '#FFFFFF',
