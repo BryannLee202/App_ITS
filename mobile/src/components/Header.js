@@ -1,29 +1,29 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { COLORS, SPACING, RADIUS } from '../styles/theme';
+import { COLORS } from '../styles/theme';
 
 export default function Header({ user, onNotificationPress }) {
   return (
     <View style={styles.container}>
       <View style={styles.leftRow}>
         <View style={styles.avatarCircle}>
-          <Ionicons name="person" size={18} color="#4F46E5" />
+          <Ionicons name="person" size={17} color={COLORS.primary} />
         </View>
         <View style={styles.userInfo}>
+          <Text style={styles.subGreeting}>HỆ THỐNG ĐIỀU HÀNH THUÊ XE THÔNG MINH</Text>
           <View style={styles.nameRow}>
             <Text style={styles.userName}>{user?.fullName || 'Nguyễn Văn An'}</Text>
             {user?.isEkycVerified && (
               <View style={styles.ekycBadge}>
                 <Ionicons name="shield-checkmark" size={10} color="#FFFFFF" />
-                <Text style={styles.ekycText}>eKYC</Text>
+                <Text style={styles.ekycText}>HỒ SƠ ĐÃ XÁC THỰC</Text>
               </View>
             )}
           </View>
           <View style={styles.locationRow}>
-            <Ionicons name="location-sharp" size={11} color="#4F46E5" />
-            <Text style={styles.locationText}>Bình Thạnh, TP.HCM</Text>
-            <Ionicons name="chevron-down" size={11} color="#94A3B8" />
+            <Ionicons name="location-outline" size={12} color={COLORS.textSecondary} />
+            <Text style={styles.locationText}>Khu vực: TP. Hồ Chí Minh • Trục UTH Bình Thạnh</Text>
           </View>
         </View>
       </View>
@@ -33,7 +33,7 @@ export default function Header({ user, onNotificationPress }) {
         onPress={onNotificationPress}
         activeOpacity={0.8}
       >
-        <Ionicons name="notifications-outline" size={20} color="#0F172A" />
+        <Ionicons name="notifications-outline" size={19} color={COLORS.primary} />
         <View style={styles.notifDot} />
       </TouchableOpacity>
     </View>
@@ -47,84 +47,95 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingTop: 12,
-    paddingBottom: 10,
+    paddingBottom: 12,
     backgroundColor: '#FFFFFF',
     borderBottomWidth: 1,
-    borderBottomColor: '#F1F5F9'
+    borderBottomColor: '#E2E8F0'
   },
   leftRow: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
+    flex: 1
   },
   avatarCircle: {
     width: 38,
     height: 38,
-    borderRadius: 19,
-    backgroundColor: '#EEF2FF',
+    borderRadius: 8,
+    backgroundColor: '#F1F5F9',
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 10,
-    borderWidth: 1.5,
-    borderColor: '#C7D2FE'
+    borderWidth: 1,
+    borderColor: '#CBD5E1'
   },
   userInfo: {
-    justifyContent: 'center'
+    justifyContent: 'center',
+    flex: 1
+  },
+  subGreeting: {
+    fontSize: 9,
+    fontWeight: '700',
+    color: '#64748B',
+    letterSpacing: 0.8,
+    textTransform: 'uppercase'
   },
   nameRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6
+    gap: 6,
+    marginTop: 1
   },
   userName: {
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: '800',
-    color: '#0F172A'
+    color: '#0F172A',
+    letterSpacing: -0.2
   },
   ekycBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#10B981',
+    backgroundColor: '#047857',
     paddingHorizontal: 5,
     paddingVertical: 1.5,
-    borderRadius: 999,
-    gap: 2
+    borderRadius: 4,
+    gap: 3
   },
   ekycText: {
-    fontSize: 9,
+    fontSize: 8,
     color: '#FFFFFF',
-    fontWeight: '800'
+    fontWeight: '800',
+    letterSpacing: 0.4
   },
   locationRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 3,
+    gap: 4,
     marginTop: 2
   },
   locationText: {
-    fontSize: 11,
-    color: '#64748B',
-    fontWeight: '600'
+    fontSize: 10,
+    color: '#475569',
+    fontWeight: '500'
   },
   notifButton: {
     width: 36,
     height: 36,
-    borderRadius: 18,
+    borderRadius: 8,
     backgroundColor: '#F8FAFC',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
     borderColor: '#E2E8F0',
-    position: 'relative'
+    position: 'relative',
+    marginLeft: 8
   },
   notifDot: {
     position: 'absolute',
     top: 7,
     right: 8,
-    width: 7,
-    height: 7,
-    borderRadius: 3.5,
-    backgroundColor: '#EF4444',
-    borderWidth: 1.5,
-    borderColor: '#FFFFFF'
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#B91C1C'
   }
 });

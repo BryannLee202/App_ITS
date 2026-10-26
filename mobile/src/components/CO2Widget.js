@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { COLORS, SPACING, RADIUS } from '../styles/theme';
+import { COLORS } from '../styles/theme';
 
 export default function CO2Widget({ eco }) {
   if (!eco) return null;
@@ -10,36 +10,35 @@ export default function CO2Widget({ eco }) {
     <View style={styles.container}>
       <View style={styles.topRow}>
         <View style={styles.titleGroup}>
-          <Ionicons name="leaf" size={18} color={COLORS.secondary} />
-          <Text style={styles.title}>CHỈ SỐ GIAO THÔNG XANH (GREEN MOBILITY)</Text>
+          <Ionicons name="leaf-outline" size={14} color="#047857" />
+          <Text style={styles.title}>CHỈ SỐ TIẾT GIẢM PHÁT THẢI (GREEN MOBILITY INDEX)</Text>
         </View>
         <View style={styles.ptsPill}>
-          <Ionicons name="sparkles" size={12} color={COLORS.accent} />
-          <Text style={styles.ptsText}>+{eco.ecoPointsEarned} Eco Points</Text>
+          <Text style={styles.ptsText}>+{eco.ecoPointsEarned} ECO POINTS</Text>
         </View>
       </View>
 
       <View style={styles.metricsRow}>
         <View style={styles.metricItem}>
-          <Text style={styles.metricLabel}>CO₂ Tiết giảm</Text>
-          <Text style={styles.metricValue}>{eco.co2SavedKg} <Text style={styles.metricUnit}>kg</Text></Text>
-          <Text style={styles.metricSub}>so với xe xăng</Text>
+          <Text style={styles.metricLabel}>CO₂ TIẾT GIẢM</Text>
+          <Text style={styles.metricValue}>{eco.co2SavedKg} <Text style={styles.metricUnit}>KG</Text></Text>
+          <Text style={styles.metricSub}>So với xe xăng</Text>
         </View>
 
         <View style={styles.divider} />
 
         <View style={styles.metricItem}>
-          <Text style={styles.metricLabel}>Quãng đường</Text>
-          <Text style={styles.metricValue}>{eco.distanceKm} <Text style={styles.metricUnit}>km</Text></Text>
-          <Text style={styles.metricSub}>thuần điện EV</Text>
+          <Text style={styles.metricLabel}>QUÃNG ĐƯỜNG</Text>
+          <Text style={styles.metricValue}>{eco.distanceKm} <Text style={styles.metricUnit}>KM</Text></Text>
+          <Text style={styles.metricSub}>Vận hành thuần điện</Text>
         </View>
 
         <View style={styles.divider} />
 
         <View style={styles.metricItem}>
-          <Text style={styles.metricLabel}>Quy đổi cây xanh</Text>
-          <Text style={styles.metricValue}>{eco.treesEquivalent} <Text style={styles.metricUnit}>🌳</Text></Text>
-          <Text style={styles.metricSub}>bảo vệ đô thị</Text>
+          <Text style={styles.metricLabel}>QUY ĐỔI MÔI TRƯỜNG</Text>
+          <Text style={styles.metricValue}>{eco.treesEquivalent} <Text style={styles.metricUnit}>CÂY</Text></Text>
+          <Text style={styles.metricSub}>Hấp thụ tương đương</Text>
         </View>
       </View>
     </View>
@@ -48,52 +47,54 @@ export default function CO2Widget({ eco }) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: COLORS.secondaryMuted,
-    borderRadius: RADIUS.lg,
-    padding: SPACING.md,
+    backgroundColor: '#F0FDF4',
+    borderRadius: 8,
+    padding: 10,
     borderWidth: 1,
-    borderColor: COLORS.secondaryLight,
-    marginVertical: SPACING.sm
+    borderColor: '#BBF7D0',
+    marginVertical: 8
   },
   topRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: SPACING.sm
+    marginBottom: 8
   },
   titleGroup: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6
+    gap: 5
   },
   title: {
-    fontSize: 10,
+    fontSize: 9,
     fontWeight: '800',
-    color: COLORS.secondaryDark,
-    letterSpacing: 0.5
+    color: '#064E3B',
+    letterSpacing: 0.6
   },
   ptsPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    paddingHorizontal: 8,
+    paddingHorizontal: 6,
     paddingVertical: 2,
-    borderRadius: RADIUS.full,
-    gap: 4
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: '#86EFAC'
   },
   ptsText: {
-    fontSize: 10,
-    fontWeight: '700',
-    color: '#B45309'
+    fontSize: 8,
+    fontWeight: '800',
+    color: '#047857',
+    letterSpacing: 0.4
   },
   metricsRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    borderRadius: RADIUS.md,
-    paddingVertical: SPACING.sm,
-    paddingHorizontal: SPACING.sm
+    borderRadius: 6,
+    paddingVertical: 8,
+    paddingHorizontal: 8,
+    borderWidth: 1,
+    borderColor: '#DCFCE7'
   },
   metricItem: {
     flex: 1,
@@ -101,27 +102,29 @@ const styles = StyleSheet.create({
   },
   divider: {
     width: 1,
-    height: 30,
-    backgroundColor: COLORS.border
+    height: 28,
+    backgroundColor: '#E2E8F0'
   },
   metricLabel: {
-    fontSize: 9,
-    color: COLORS.textSecondary,
-    fontWeight: '600'
+    fontSize: 8,
+    color: '#64748B',
+    fontWeight: '700',
+    letterSpacing: 0.4
   },
   metricValue: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '800',
-    color: COLORS.textPrimary,
+    color: '#0F172A',
     marginTop: 2
   },
   metricUnit: {
-    fontSize: 11,
-    fontWeight: '600',
-    color: COLORS.secondaryDark
+    fontSize: 9,
+    fontWeight: '700',
+    color: '#047857'
   },
   metricSub: {
     fontSize: 8,
-    color: COLORS.textMuted
+    color: '#94A3B8',
+    marginTop: 1
   }
 });

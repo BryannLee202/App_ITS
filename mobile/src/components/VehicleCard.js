@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { COLORS, SPACING, RADIUS } from '../styles/theme';
+import { COLORS } from '../styles/theme';
 
 export default function VehicleCard({ vehicle, onSelect, onBook }) {
   const isElectric = vehicle.powerType === 'ELECTRIC';
@@ -15,7 +15,7 @@ export default function VehicleCard({ vehicle, onSelect, onBook }) {
       activeOpacity={0.92}
       onPress={() => onSelect(vehicle)}
     >
-      {/* 16:10 Golden Ratio Car Photo with Badges */}
+      {/* 16:10 Ratio Car Photo */}
       <View style={styles.imageContainer}>
         <Image
           source={{ uri: vehicle.thumbnail }}
@@ -23,48 +23,48 @@ export default function VehicleCard({ vehicle, onSelect, onBook }) {
           resizeMode="cover"
         />
 
-        {/* Top Badges */}
+        {/* Top Identification Badges */}
         <View style={styles.badgeTopLeft}>
           <View style={[styles.pill, isElectric ? styles.electricPill : styles.hybridPill]}>
             <Ionicons
               name={isElectric ? "flash" : "leaf"}
-              size={11}
+              size={10}
               color="#FFFFFF"
             />
             <Text style={styles.pillText}>
-              {isElectric ? 'Thuần điện EV' : 'Hybrid Eco'}
+              {isElectric ? 'THUẦN ĐIỆN EV' : 'HYBRID TIẾT KIỆM'}
             </Text>
           </View>
         </View>
 
         {vehicle.noDeposit && (
           <View style={styles.badgeTopRight}>
-            <Ionicons name="shield-checkmark" size={11} color="#FBBF24" />
-            <Text style={styles.noDepositText}>Miễn thế chấp</Text>
+            <Ionicons name="shield-checkmark-outline" size={10} color="#059669" />
+            <Text style={styles.noDepositText}>BẢO CHỨNG eKYC (MIỄN CỌC)</Text>
           </View>
         )}
 
-        {/* Bottom Image Overlay */}
+        {/* Bottom Instrument Overlay */}
         <View style={styles.bottomOverlay}>
           <View style={styles.ratingBox}>
-            <Ionicons name="star" size={12} color={COLORS.accent} />
+            <Ionicons name="star" size={11} color="#F59E0B" />
             <Text style={styles.ratingText}>{vehicle.rating}</Text>
-            <Text style={styles.tripsText}>({vehicle.totalTrips} chuyến)</Text>
+            <Text style={styles.tripsText}>• {vehicle.totalTrips} lượt phục vụ</Text>
           </View>
           <View style={styles.batteryPill}>
             <Ionicons
-              name={isElectric ? "battery-charging" : "speedometer"}
+              name={isElectric ? "battery-charging" : "speedometer-outline"}
               size={12}
-              color={COLORS.secondaryLight}
+              color="#34D399"
             />
             <Text style={styles.batteryText}>
-              {isElectric ? `${batteryPct}% Pin` : `${vehicle.telematics.fuelLevelPct}% Xăng`}
+              {isElectric ? `PIN: ${batteryPct}%` : `XĂNG: ${vehicle.telematics.fuelLevelPct}%`}
             </Text>
           </View>
         </View>
       </View>
 
-      {/* Vehicle Info Content */}
+      {/* Vehicle Specification Sheet */}
       <View style={styles.infoContent}>
         <View style={styles.titleRow}>
           <Text style={styles.vehicleName} numberOfLines={1}>{vehicle.name}</Text>
@@ -73,43 +73,39 @@ export default function VehicleCard({ vehicle, onSelect, onBook }) {
           </View>
         </View>
 
-        {/* Spec Chips Row */}
+        {/* Technical Specification Chips */}
         <View style={styles.specsRow}>
           <View style={styles.specBadge}>
-            <Ionicons name="people-outline" size={12} color={COLORS.textSecondary} />
-            <Text style={styles.specText}>{vehicle.seats} chỗ</Text>
+            <Text style={styles.specText}>{vehicle.seats} CHỖ NGỒI</Text>
           </View>
           <View style={styles.specBadge}>
-            <Ionicons name="hardware-chip-outline" size={12} color={COLORS.textSecondary} />
-            <Text style={styles.specText}>Tự động</Text>
+            <Text style={styles.specText}>SỐ TỰ ĐỘNG</Text>
           </View>
           <View style={styles.specBadge}>
-            <Ionicons name="navigate-circle-outline" size={12} color={COLORS.textSecondary} />
-            <Text style={styles.specText}>{vehicle.rangeKm} km/sạc</Text>
+            <Text style={styles.specText}>TẦM HOẠT ĐỘNG {vehicle.rangeKm} KM</Text>
           </View>
-          <View style={styles.specBadge}>
-            <Ionicons name="key-outline" size={12} color={COLORS.primary} />
-            <Text style={[styles.specText, { color: COLORS.primary, fontWeight: '700' }]}>Digital Key</Text>
+          <View style={[styles.specBadge, styles.bleBadge]}>
+            <Text style={styles.bleText}>BLE 5.2 KEYLESS</Text>
           </View>
         </View>
 
-        {/* Price & Action Row */}
+        {/* Commercial Pricing & Booking */}
         <View style={styles.footerRow}>
           <View style={styles.priceContainer}>
             <View style={styles.hourlyRow}>
-              <Text style={styles.priceAmount}>{formattedHourlyPrice} đ</Text>
-              <Text style={styles.priceUnit}>/giờ</Text>
+              <Text style={styles.priceAmount}>{formattedHourlyPrice} VNĐ</Text>
+              <Text style={styles.priceUnit}>/ giờ</Text>
             </View>
-            <Text style={styles.dailySub}>hoặc {formattedDailyPrice} đ/ngày</Text>
+            <Text style={styles.dailySub}>Đơn giá trọn ngày: {formattedDailyPrice} VNĐ</Text>
           </View>
 
           <TouchableOpacity
             style={styles.bookButton}
-            activeOpacity={0.85}
+            activeOpacity={0.88}
             onPress={() => onBook(vehicle)}
           >
-            <Text style={styles.bookButtonText}>Thuê ngay</Text>
-            <Ionicons name="arrow-forward" size={13} color="#FFFFFF" />
+            <Text style={styles.bookButtonText}>ĐẶT THUÊ</Text>
+            <Ionicons name="chevron-forward" size={12} color="#FFFFFF" />
           </TouchableOpacity>
         </View>
       </View>
@@ -120,17 +116,17 @@ export default function VehicleCard({ vehicle, onSelect, onBook }) {
 const styles = StyleSheet.create({
   card: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 16,
+    borderRadius: 8,
     marginHorizontal: 16,
-    marginBottom: 16,
+    marginBottom: 14,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: '#CBD5E1',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.06,
-    shadowRadius: 10,
-    elevation: 3
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 6,
+    elevation: 2
   },
   imageContainer: {
     width: '100%',
@@ -144,46 +140,50 @@ const styles = StyleSheet.create({
   },
   badgeTopLeft: {
     position: 'absolute',
-    top: 10,
-    left: 10,
+    top: 8,
+    left: 8,
     zIndex: 2
   },
   pill: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 999,
+    paddingHorizontal: 7,
+    paddingVertical: 3,
+    borderRadius: 4,
     gap: 4
   },
   electricPill: {
-    backgroundColor: 'rgba(16, 185, 129, 0.95)'
+    backgroundColor: 'rgba(4, 120, 87, 0.95)'
   },
   hybridPill: {
-    backgroundColor: 'rgba(59, 130, 246, 0.95)'
+    backgroundColor: 'rgba(30, 58, 138, 0.95)'
   },
   pillText: {
     color: '#FFFFFF',
-    fontSize: 10,
-    fontWeight: '700'
+    fontSize: 9,
+    fontWeight: '800',
+    letterSpacing: 0.6
   },
   badgeTopRight: {
     position: 'absolute',
-    top: 10,
-    right: 10,
+    top: 8,
+    right: 8,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(15, 23, 42, 0.85)',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 999,
-    gap: 4,
-    zIndex: 2
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    paddingHorizontal: 7,
+    paddingVertical: 3,
+    borderRadius: 4,
+    gap: 3,
+    zIndex: 2,
+    borderWidth: 1,
+    borderColor: '#E2E8F0'
   },
   noDepositText: {
-    color: '#FBBF24',
-    fontSize: 10,
-    fontWeight: '700'
+    color: '#047857',
+    fontSize: 8,
+    fontWeight: '800',
+    letterSpacing: 0.5
   },
   bottomOverlay: {
     position: 'absolute',
@@ -193,9 +193,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    backgroundColor: 'rgba(15, 23, 42, 0.72)'
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    backgroundColor: 'rgba(11, 19, 43, 0.85)'
   },
   ratingBox: {
     flexDirection: 'row',
@@ -204,12 +204,12 @@ const styles = StyleSheet.create({
   },
   ratingText: {
     color: '#FFFFFF',
-    fontSize: 12,
-    fontWeight: '700'
+    fontSize: 11,
+    fontWeight: '800'
   },
   tripsText: {
     color: '#94A3B8',
-    fontSize: 10
+    fontSize: 9
   },
   batteryPill: {
     flexDirection: 'row',
@@ -218,11 +218,12 @@ const styles = StyleSheet.create({
   },
   batteryText: {
     color: '#FFFFFF',
-    fontSize: 11,
-    fontWeight: '700'
+    fontSize: 10,
+    fontWeight: '800',
+    letterSpacing: 0.4
   },
   infoContent: {
-    padding: 14
+    padding: 12
   },
   titleRow: {
     flexDirection: 'row',
@@ -231,44 +232,56 @@ const styles = StyleSheet.create({
     marginBottom: 8
   },
   vehicleName: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '800',
     color: '#0F172A',
     flex: 1,
-    marginRight: 8
+    marginRight: 6,
+    letterSpacing: -0.2
   },
   plateTag: {
-    backgroundColor: '#EEF2FF',
-    paddingHorizontal: 7,
-    paddingVertical: 3,
-    borderRadius: 6,
+    backgroundColor: '#F1F5F9',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
     borderWidth: 1,
-    borderColor: '#C7D2FE'
+    borderColor: '#CBD5E1'
   },
   plateNumber: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#4F46E5'
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#0F2942',
+    letterSpacing: 0.5
   },
   specsRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 6,
-    marginBottom: 12
+    gap: 4,
+    marginBottom: 10
   },
   specBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F1F5F9',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
-    gap: 4
+    backgroundColor: '#F8FAFC',
+    paddingHorizontal: 6,
+    paddingVertical: 3,
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: '#E2E8F0'
+  },
+  bleBadge: {
+    backgroundColor: '#EFF6FF',
+    borderColor: '#BFDBFE'
   },
   specText: {
-    fontSize: 11,
+    fontSize: 9,
     color: '#475569',
-    fontWeight: '500'
+    fontWeight: '700',
+    letterSpacing: 0.3
+  },
+  bleText: {
+    fontSize: 9,
+    color: '#1E3A8A',
+    fontWeight: '800',
+    letterSpacing: 0.3
   },
   footerRow: {
     flexDirection: 'row',
@@ -276,7 +289,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderTopWidth: 1,
     borderTopColor: '#F1F5F9',
-    paddingTop: 10
+    paddingTop: 8
   },
   priceContainer: {
     justifyContent: 'center'
@@ -286,37 +299,33 @@ const styles = StyleSheet.create({
     alignItems: 'baseline'
   },
   priceAmount: {
-    fontSize: 17,
+    fontSize: 16,
     fontWeight: '800',
-    color: '#4F46E5'
+    color: '#0F2942'
   },
   priceUnit: {
-    fontSize: 11,
+    fontSize: 10,
     color: '#64748B',
     fontWeight: '600',
     marginLeft: 2
   },
   dailySub: {
-    fontSize: 10,
+    fontSize: 9,
     color: '#94A3B8'
   },
   bookButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#4F46E5',
-    paddingHorizontal: 16,
-    paddingVertical: 9,
-    borderRadius: 10,
-    gap: 6,
-    shadowColor: '#4F46E5',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 3
+    backgroundColor: '#0F2942',
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 6,
+    gap: 4
   },
   bookButtonText: {
     color: '#FFFFFF',
-    fontSize: 13,
-    fontWeight: '700'
+    fontSize: 11,
+    fontWeight: '800',
+    letterSpacing: 0.6
   }
 });

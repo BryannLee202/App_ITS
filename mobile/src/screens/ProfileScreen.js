@@ -93,18 +93,18 @@ export default function ProfileScreen() {
         </View>
       </View>
 
-      {/* Survey & Feedback Banner (Linking to user's Google Form!) */}
-      <TouchableOpacity style={styles.surveyCard} onPress={handleOpenSurvey} activeOpacity={0.85}>
+      {/* Survey & Feedback Banner (Linking to user's Google Form) */}
+      <TouchableOpacity style={styles.surveyCard} onPress={handleOpenSurvey} activeOpacity={0.88}>
         <View style={styles.surveyIconCircle}>
-          <Ionicons name="clipboard-outline" size={24} color="#FFFFFF" />
+          <Ionicons name="document-text-outline" size={20} color="#FFFFFF" />
         </View>
         <View style={styles.surveyContent}>
-          <Text style={styles.surveyTitle}>Khảo sát Ý kiến Người dùng ITS</Text>
+          <Text style={styles.surveyTitle}>PHIẾU KHẢO SÁT CHẤT LƯỢNG DỊCH VỤ ITS</Text>
           <Text style={styles.surveySub}>
-            Đóng góp ý kiến để nhận ngay voucher giảm 50.000đ cho chuyến đi tiếp theo!
+            Đóng góp ý kiến nâng cấp hạ tầng giao thông thông minh kết nối Metro Tuyến 1
           </Text>
         </View>
-        <Ionicons name="chevron-forward" size={18} color="#94A3B8" />
+        <Ionicons name="chevron-forward" size={16} color="#CBD5E1" />
       </TouchableOpacity>
 
       {/* Menu Options */}
@@ -296,31 +296,34 @@ const styles = StyleSheet.create({
   surveyCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#7C3AED',
-    borderRadius: RADIUS.lg,
-    padding: SPACING.md,
-    marginBottom: SPACING.md
+    backgroundColor: '#0F2942',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#1E3A8A'
   },
   surveyIconCircle: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    width: 36,
+    height: 36,
+    borderRadius: 6,
+    backgroundColor: 'rgba(255, 255, 255, 0.12)',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: SPACING.md
+    marginRight: 10
   },
   surveyContent: {
     flex: 1
   },
   surveyTitle: {
-    fontSize: 13,
+    fontSize: 11,
     fontWeight: '800',
-    color: '#FFFFFF'
+    color: '#FFFFFF',
+    letterSpacing: 0.5
   },
   surveySub: {
-    fontSize: 10,
-    color: '#EDE9FE',
+    fontSize: 9,
+    color: '#94A3B8',
     marginTop: 2
   },
   menuSection: {

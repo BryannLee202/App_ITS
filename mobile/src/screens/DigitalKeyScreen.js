@@ -174,15 +174,15 @@ export default function DigitalKeyScreen() {
       {/* Cockpit Header */}
       <View style={styles.cockpitHeader}>
         <View>
-          <Text style={styles.cockpitSubtitle}>TRUNG TÂM ĐIỀU KHIỂN SỐ (DIGITAL KEY)</Text>
+          <Text style={styles.cockpitSubtitle}>TRUNG TÂM ĐIỀU HÀNH PHƯƠNG TIỆN SỐ (BLE 5.2 ENCRYPTED)</Text>
           <Text style={styles.cockpitTitle}>{vehicle.name}</Text>
           <View style={styles.plateTag}>
-            <Text style={styles.plateText}>{vehicle.plateNumber}</Text>
+            <Text style={styles.plateText}>BIỂN KIỂM SOÁT: {vehicle.plateNumber}</Text>
           </View>
         </View>
         <View style={styles.bleIndicator}>
-          <Ionicons name="bluetooth" size={16} color={COLORS.secondary} />
-          <Text style={styles.bleText}>BLE Đã kết nối</Text>
+          <Ionicons name="bluetooth" size={14} color="#34D399" />
+          <Text style={styles.bleText}>KẾT NỐI MÃ HÓA</Text>
         </View>
       </View>
 
@@ -190,38 +190,38 @@ export default function DigitalKeyScreen() {
       <View style={styles.statusCard}>
         <View style={styles.statusRow}>
           <View style={styles.statusCol}>
-            <Text style={styles.statusLabel}>Trạng thái khóa</Text>
+            <Text style={styles.statusLabel}>KHÓA CỬA AN TOÀN</Text>
             <View style={styles.statusValRow}>
               <Ionicons
                 name={telematics.isLocked ? "lock-closed" : "lock-open"}
-                size={16}
-                color={telematics.isLocked ? COLORS.warning : COLORS.success}
+                size={14}
+                color={telematics.isLocked ? '#F59E0B' : '#10B981'}
               />
-              <Text style={[styles.statusValText, { color: telematics.isLocked ? COLORS.warning : COLORS.success }]}>
-                {telematics.isLocked ? 'ĐÃ KHÓA' : 'ĐÃ MỞ KHÓA'}
+              <Text style={[styles.statusValText, { color: telematics.isLocked ? '#F59E0B' : '#10B981' }]}>
+                {telematics.isLocked ? 'ĐANG KHÓA' : 'ĐÃ MỞ KHÓA'}
               </Text>
             </View>
           </View>
 
           <View style={styles.statusCol}>
-            <Text style={styles.statusLabel}>Động cơ</Text>
+            <Text style={styles.statusLabel}>HỆ THỐNG ĐỘNG CƠ</Text>
             <View style={styles.statusValRow}>
               <Ionicons
                 name="power"
-                size={16}
-                color={telematics.isEngineOn ? COLORS.success : COLORS.textMuted}
+                size={14}
+                color={telematics.isEngineOn ? '#10B981' : '#64748B'}
               />
-              <Text style={[styles.statusValText, { color: telematics.isEngineOn ? COLORS.success : COLORS.textMuted }]}>
-                {telematics.isEngineOn ? 'ĐANG CHẠY' : 'ĐÃ TẮT'}
+              <Text style={[styles.statusValText, { color: telematics.isEngineOn ? '#10B981' : '#64748B' }]}>
+                {telematics.isEngineOn ? 'HOẠT ĐỘNG' : 'TẮT NGUỒN'}
               </Text>
             </View>
           </View>
 
           <View style={styles.statusCol}>
-            <Text style={styles.statusLabel}>Mức Pin EV</Text>
+            <Text style={styles.statusLabel}>PIN KHẢ DỤNG</Text>
             <View style={styles.statusValRow}>
-              <Ionicons name="battery-charging" size={16} color={COLORS.secondary} />
-              <Text style={[styles.statusValText, { color: COLORS.secondary }]}>
+              <Ionicons name="battery-charging" size={14} color="#34D399" />
+              <Text style={[styles.statusValText, { color: '#34D399' }]}>
                 {Math.round(telematics.batteryLevelPct)}%
               </Text>
             </View>
@@ -230,13 +230,13 @@ export default function DigitalKeyScreen() {
 
         {/* Status Notification Banner */}
         <View style={styles.alertBanner}>
-          <Ionicons name="information-circle-outline" size={16} color={COLORS.primaryLight} />
+          <Ionicons name="shield-checkmark-outline" size={14} color="#60A5FA" />
           <Text style={styles.alertBannerText}>{statusMessage}</Text>
         </View>
       </View>
 
-      {/* 4 Big Circular Remote Controls (BonbonCar style) */}
-      <Text style={styles.sectionHeader}>THAO TÁC TỪ XA QUA IOT / BLE</Text>
+      {/* 4 Big Circular Remote Controls */}
+      <Text style={styles.sectionHeader}>BẢNG ĐIỀU KHIỂN TỪ XA CHUẨN IOT / BLE</Text>
       <View style={styles.controlsGrid}>
         {/* Unlock Button */}
         <TouchableOpacity
@@ -245,7 +245,7 @@ export default function DigitalKeyScreen() {
           onPress={() => handleControlCommand('UNLOCK')}
           disabled={actionLoading}
         >
-          <Ionicons name="lock-open-outline" size={28} color="#FFFFFF" />
+          <Ionicons name="lock-open-outline" size={24} color="#FFFFFF" />
           <Text style={styles.controlBtnLabel}>MỞ KHÓA</Text>
         </TouchableOpacity>
 
@@ -256,7 +256,7 @@ export default function DigitalKeyScreen() {
           onPress={() => handleControlCommand('LOCK')}
           disabled={actionLoading}
         >
-          <Ionicons name="lock-closed-outline" size={28} color="#FFFFFF" />
+          <Ionicons name="lock-closed-outline" size={24} color="#FFFFFF" />
           <Text style={styles.controlBtnLabel}>KHÓA CỬA</Text>
         </TouchableOpacity>
 
@@ -267,8 +267,8 @@ export default function DigitalKeyScreen() {
           onPress={() => handleControlCommand('HORN')}
           disabled={actionLoading}
         >
-          <Ionicons name="volume-high-outline" size={28} color="#FFFFFF" />
-          <Text style={styles.controlBtnLabel}>CÒI / NHÁY ĐÈN</Text>
+          <Ionicons name="volume-high-outline" size={24} color="#FFFFFF" />
+          <Text style={styles.controlBtnLabel}>TÌM XE (CÒI)</Text>
         </TouchableOpacity>
 
         {/* Engine Start/Stop Button */}
@@ -278,9 +278,9 @@ export default function DigitalKeyScreen() {
           onPress={() => handleControlCommand(telematics.isEngineOn ? 'ENGINE_STOP' : 'ENGINE_START')}
           disabled={actionLoading}
         >
-          <Ionicons name="power-outline" size={28} color="#FFFFFF" />
+          <Ionicons name="power-outline" size={24} color="#FFFFFF" />
           <Text style={styles.controlBtnLabel}>
-            {telematics.isEngineOn ? 'TẮT MÁY' : 'KHỞI ĐỘNG'}
+            {telematics.isEngineOn ? 'TẮT MÁY' : 'ĐỀ NỔ'}
           </Text>
         </TouchableOpacity>
       </View>
@@ -298,8 +298,8 @@ export default function DigitalKeyScreen() {
         onPress={handleReturnVehicle}
         disabled={actionLoading}
       >
-        <Ionicons name="checkmark-done-circle" size={20} color="#FFFFFF" />
-        <Text style={styles.returnBtnText}>KẾT THÚC CHUYẾN & TRẢ XE TẠI TRẠM</Text>
+        <Ionicons name="checkmark-done-circle" size={18} color="#FFFFFF" />
+        <Text style={styles.returnBtnText}>XÁC THỰC GEOFENCE VÀ KẾT THÚC HỢP ĐỒNG</Text>
       </TouchableOpacity>
     </ScrollView>
   );

@@ -63,8 +63,8 @@ export default function App() {
           >
             <Ionicons
               name={currentTab === 'HOME' ? 'compass' : 'compass-outline'}
-              size={22}
-              color={currentTab === 'HOME' ? '#4F46E5' : '#94A3B8'}
+              size={20}
+              color={currentTab === 'HOME' ? '#0F2942' : '#94A3B8'}
             />
             <Text style={[styles.navLabel, currentTab === 'HOME' && styles.navLabelActive]}>
               Khám phá
@@ -78,22 +78,22 @@ export default function App() {
           >
             <Ionicons
               name={currentTab === 'MAP' ? 'map' : 'map-outline'}
-              size={22}
-              color={currentTab === 'MAP' ? '#4F46E5' : '#94A3B8'}
+              size={20}
+              color={currentTab === 'MAP' ? '#0F2942' : '#94A3B8'}
             />
             <Text style={[styles.navLabel, currentTab === 'MAP' && styles.navLabelActive]}>
-              Bản đồ Hub
+              Trạm Hub
             </Text>
           </TouchableOpacity>
 
-          {/* Floating Center Digital Key Tab (BonbonCar / Smart Key style) */}
+          {/* Center Digital Key Cockpit Tab */}
           <TouchableOpacity
             style={styles.centerKeyItem}
             onPress={() => setCurrentTab('KEY')}
             activeOpacity={0.85}
           >
             <View style={[styles.centerKeyCircle, currentTab === 'KEY' && styles.centerKeyCircleActive]}>
-              <Ionicons name="key" size={22} color="#FFFFFF" />
+              <Ionicons name="key" size={20} color="#FFFFFF" />
             </View>
             <Text style={[styles.navLabel, currentTab === 'KEY' && styles.navLabelKeyActive]}>
               Điều khiển
@@ -106,12 +106,12 @@ export default function App() {
             activeOpacity={0.8}
           >
             <Ionicons
-              name={currentTab === 'TRIPS' ? 'receipt' : 'receipt-outline'}
-              size={22}
-              color={currentTab === 'TRIPS' ? '#4F46E5' : '#94A3B8'}
+              name={currentTab === 'TRIPS' ? 'document-text' : 'document-text-outline'}
+              size={20}
+              color={currentTab === 'TRIPS' ? '#0F2942' : '#94A3B8'}
             />
             <Text style={[styles.navLabel, currentTab === 'TRIPS' && styles.navLabelActive]}>
-              Chuyến đi
+              Hợp đồng
             </Text>
           </TouchableOpacity>
 
@@ -122,11 +122,11 @@ export default function App() {
           >
             <Ionicons
               name={currentTab === 'PROFILE' ? 'person' : 'person-outline'}
-              size={22}
-              color={currentTab === 'PROFILE' ? '#4F46E5' : '#94A3B8'}
+              size={20}
+              color={currentTab === 'PROFILE' ? '#0F2942' : '#94A3B8'}
             />
             <Text style={[styles.navLabel, currentTab === 'PROFILE' && styles.navLabelActive]}>
-              Tài khoản
+              Hồ sơ
             </Text>
           </TouchableOpacity>
         </View>
@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
     marginTop: 2
   },
   navLabelActive: {
-    color: '#4F46E5',
+    color: '#0F2942',
     fontWeight: '800'
   },
   centerKeyItem: {
@@ -219,24 +219,24 @@ const styles = StyleSheet.create({
     marginTop: -22
   },
   centerKeyCircle: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: '#4F46E5',
+    width: 46,
+    height: 46,
+    borderRadius: 8,
+    backgroundColor: '#0F2942',
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#4F46E5',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.35,
-    shadowRadius: 8,
-    elevation: 6
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.25,
+    shadowRadius: 6,
+    elevation: 5
   },
   centerKeyCircleActive: {
-    backgroundColor: '#10B981',
-    shadowColor: '#10B981'
+    backgroundColor: '#047857',
+    shadowColor: '#047857'
   },
   navLabelKeyActive: {
-    color: '#34D399',
+    color: '#047857',
     fontWeight: '800'
   }
 });
