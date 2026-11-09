@@ -161,12 +161,12 @@ const styles = StyleSheet.create({
     marginTop: 2
   },
   ecoSummaryCard: {
-    backgroundColor: '#0A3641',
-    borderRadius: RADIUS.md,
+    backgroundColor: COLORS.secondaryMuted,
+    borderRadius: RADIUS.xl,
     padding: SPACING.md,
     marginBottom: SPACING.lg,
     borderWidth: 1,
-    borderColor: '#144E5E'
+    borderColor: '#C5DCF0'
   },
   ecoRow: {
     flexDirection: 'row',
@@ -180,27 +180,28 @@ const styles = StyleSheet.create({
   ecoDivider: {
     width: 1,
     height: 35,
-    backgroundColor: '#1E5866'
+    backgroundColor: '#C5DCF0'
   },
   ecoNum: {
     fontSize: 18,
-    fontWeight: '800',
-    color: '#26C6DA'
+    fontWeight: '900',
+    color: COLORS.secondaryDark
   },
   ecoUnit: {
     fontSize: 10,
-    color: '#80DEEA',
-    fontWeight: '600'
+    color: COLORS.secondary,
+    fontWeight: '700'
   },
   ecoLabel: {
     fontSize: 9,
-    color: '#B2DFDB',
-    marginTop: 2
+    color: COLORS.textSecondary,
+    marginTop: 2,
+    fontWeight: '600'
   },
   listSection: {},
   listTitle: {
     fontSize: 14,
-    fontWeight: '700',
+    fontWeight: '800',
     color: COLORS.textPrimary,
     marginBottom: SPACING.sm
   },
@@ -211,13 +212,13 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.md,
     borderWidth: 1,
     borderColor: COLORS.border,
-    shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
+    shadowColor: '#8B7364',
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
     elevation: 2
   },
   activeTripCard: {
-    borderColor: COLORS.primaryLight,
+    borderColor: COLORS.primary,
     borderWidth: 1.5
   },
   tripCardTop: {
@@ -236,16 +237,16 @@ const styles = StyleSheet.create({
   },
   contractText: {
     fontSize: 11,
-    fontWeight: '700',
+    fontWeight: '800',
     color: COLORS.primary
   },
   statusTag: {
     paddingHorizontal: 8,
-    paddingVertical: 2,
+    paddingVertical: 3,
     borderRadius: RADIUS.full
   },
   statusActive: {
-    backgroundColor: 'rgba(94, 53, 177, 0.15)'
+    backgroundColor: COLORS.primaryMuted
   },
   statusCompleted: {
     backgroundColor: COLORS.secondaryMuted

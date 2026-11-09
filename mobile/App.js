@@ -29,17 +29,31 @@ export default function App() {
   const renderContent = () => {
     switch (currentTab) {
       case 'HOME':
-        return <HomeScreen onNavigateToKey={() => setCurrentTab('KEY')} />;
+        return (
+          <HomeScreen
+            onNavigateToKey={() => setCurrentTab('KEY')}
+            onNavigateToMap={() => setCurrentTab('MAP')}
+            onNavigateToTrips={() => setCurrentTab('TRIPS')}
+            onOpenRewards={() => setShowRewardsModal(true)}
+          />
+        );
       case 'MAP':
         return <MapScreen onSelectVehicle={() => setCurrentTab('HOME')} />;
       case 'KEY':
-        return <DigitalKeyScreen />;
+        return <DigitalKeyScreen onNavigateHome={() => setCurrentTab('HOME')} />;
       case 'TRIPS':
         return <TripsHistoryScreen onNavigateToKey={() => setCurrentTab('KEY')} />;
       case 'PROFILE':
         return <ProfileScreen />;
       default:
-        return <HomeScreen onNavigateToKey={() => setCurrentTab('KEY')} />;
+        return (
+          <HomeScreen
+            onNavigateToKey={() => setCurrentTab('KEY')}
+            onNavigateToMap={() => setCurrentTab('MAP')}
+            onNavigateToTrips={() => setCurrentTab('TRIPS')}
+            onOpenRewards={() => setShowRewardsModal(true)}
+          />
+        );
     }
   };
 
@@ -50,9 +64,9 @@ export default function App() {
         <View style={styles.desktopSwitcherBar}>
           <View style={styles.brandBadge}>
             <View style={styles.brandIconMini}>
-              <View style={styles.brandInnerDot} />
+              <Ionicons name="car-sport" size={14} color="#DF8268" />
             </View>
-            <Text style={styles.brandTitleText}>SOOT • ITS TACTILE MOBILITY</Text>
+            <Text style={styles.brandTitleText}>UTH SMART MOBILITY • HỆ THỐNG ĐẶT THUÊ XE XANH</Text>
           </View>
 
           <View style={styles.switchButtonContainer}>
@@ -66,7 +80,7 @@ export default function App() {
                 color={viewMode === 'MOBILE' ? '#DF8268' : '#7A6A63'}
               />
               <Text style={[styles.switchBtnText, viewMode === 'MOBILE' && styles.switchBtnTextActive]}>
-                Khung Điện thoại (3D Soft UI)
+                Tỉ lệ Điện thoại (Chuẩn App)
               </Text>
             </TouchableOpacity>
 
@@ -80,7 +94,7 @@ export default function App() {
                 color={viewMode === 'EXPANDED' ? '#DF8268' : '#7A6A63'}
               />
               <Text style={[styles.switchBtnText, viewMode === 'EXPANDED' && styles.switchBtnTextActive]}>
-                Giao diện Rộng (Desktop)
+                Giao diện Web Mở rộng
               </Text>
             </TouchableOpacity>
           </View>
@@ -103,128 +117,128 @@ export default function App() {
             {renderContent()}
           </View>
 
-          {/* Tactile Soft Neumorphic Bottom Capsule Navigation Bar */}
-          <View style={styles.bottomNavWrapper}>
+          {/* Clear, Labeled Bottom Navigation Bar (Never overlaps content) */}
+          <View style={styles.bottomNavContainer}>
             <View style={styles.capsuleNav}>
-              {/* Home Tab */}
+              {/* 1. Trang chủ */}
               <TouchableOpacity
                 style={styles.navTabItem}
                 onPress={() => setCurrentTab('HOME')}
                 activeOpacity={0.85}
               >
-                {currentTab === 'HOME' ? (
-                  <View style={styles.activeTactileKnob}>
-                    <View style={styles.activeKnobCore}>
-                      <Ionicons name="home" size={16} color="#DF8268" />
-                    </View>
-                  </View>
-                ) : (
-                  <Ionicons name="home-outline" size={20} color="#8C7A70" />
-                )}
+                <View style={[styles.iconPill, currentTab === 'HOME' && styles.iconPillActive]}>
+                  <Ionicons
+                    name={currentTab === 'HOME' ? 'compass' : 'compass-outline'}
+                    size={20}
+                    color={currentTab === 'HOME' ? '#DF8268' : '#8C7A70'}
+                  />
+                </View>
+                <Text style={[styles.navLabel, currentTab === 'HOME' && styles.navLabelActive]}>
+                  Trang chủ
+                </Text>
               </TouchableOpacity>
 
-              {/* Map Hub Tab */}
+              {/* 2. Bản đồ Hub */}
               <TouchableOpacity
                 style={styles.navTabItem}
                 onPress={() => setCurrentTab('MAP')}
                 activeOpacity={0.85}
               >
-                {currentTab === 'MAP' ? (
-                  <View style={styles.activeTactileKnob}>
-                    <View style={styles.activeKnobCore}>
-                      <Ionicons name="map" size={16} color="#6E92B5" />
-                    </View>
-                  </View>
-                ) : (
-                  <Ionicons name="map-outline" size={20} color="#8C7A70" />
-                )}
+                <View style={[styles.iconPill, currentTab === 'MAP' && styles.iconPillActiveBlue]}>
+                  <Ionicons
+                    name={currentTab === 'MAP' ? 'location' : 'location-outline'}
+                    size={20}
+                    color={currentTab === 'MAP' ? '#6E92B5' : '#8C7A70'}
+                  />
+                </View>
+                <Text style={[styles.navLabel, currentTab === 'MAP' && styles.navLabelActiveBlue]}>
+                  Trạm Hub
+                </Text>
               </TouchableOpacity>
 
-              {/* Center 3D Extruded Digital Key Dial */}
+              {/* 3. Chìa khóa số (Center Prominent Action) */}
               <TouchableOpacity
                 style={styles.centerKeyTabItem}
                 onPress={() => setCurrentTab('KEY')}
-                activeOpacity={0.88}
+                activeOpacity={0.9}
               >
-                <View style={[styles.centerKeyOuterPlate, currentTab === 'KEY' && styles.centerKeyActivePlate]}>
-                  <View style={styles.centerKeyInnerSphere}>
-                    <Ionicons name="key" size={18} color="#FFFFFF" />
-                  </View>
+                <View style={[styles.centerKeyOuter, currentTab === 'KEY' && styles.centerKeyOuterActive]}>
+                  <Ionicons name="key" size={20} color="#FFFFFF" />
                 </View>
+                <Text style={[styles.navLabelCenter, currentTab === 'KEY' && styles.navLabelActive]}>
+                  Khóa số
+                </Text>
               </TouchableOpacity>
 
-              {/* Trips History Tab */}
+              {/* 4. Chuyến đi */}
               <TouchableOpacity
                 style={styles.navTabItem}
                 onPress={() => setCurrentTab('TRIPS')}
                 activeOpacity={0.85}
               >
-                {currentTab === 'TRIPS' ? (
-                  <View style={styles.activeTactileKnob}>
-                    <View style={styles.activeKnobCore}>
-                      <Ionicons name="time" size={16} color="#DF8268" />
-                    </View>
-                  </View>
-                ) : (
-                  <Ionicons name="time-outline" size={20} color="#8C7A70" />
-                )}
+                <View style={[styles.iconPill, currentTab === 'TRIPS' && styles.iconPillActive]}>
+                  <Ionicons
+                    name={currentTab === 'TRIPS' ? 'document-text' : 'document-text-outline'}
+                    size={20}
+                    color={currentTab === 'TRIPS' ? '#DF8268' : '#8C7A70'}
+                  />
+                </View>
+                <Text style={[styles.navLabel, currentTab === 'TRIPS' && styles.navLabelActive]}>
+                  Chuyến đi
+                </Text>
               </TouchableOpacity>
 
-              {/* Profile Account Tab */}
+              {/* 5. Tài khoản */}
               <TouchableOpacity
                 style={styles.navTabItem}
                 onPress={() => setCurrentTab('PROFILE')}
                 activeOpacity={0.85}
               >
-                {currentTab === 'PROFILE' ? (
-                  <View style={styles.activeTactileKnob}>
-                    <View style={styles.activeKnobCore}>
-                      <Ionicons name="person" size={16} color="#6E92B5" />
-                    </View>
-                  </View>
-                ) : (
-                  <Ionicons name="person-outline" size={20} color="#8C7A70" />
-                )}
+                <View style={[styles.iconPill, currentTab === 'PROFILE' && styles.iconPillActiveBlue]}>
+                  <Ionicons
+                    name={currentTab === 'PROFILE' ? 'person' : 'person-outline'}
+                    size={20}
+                    color={currentTab === 'PROFILE' ? '#6E92B5' : '#8C7A70'}
+                  />
+                </View>
+                <Text style={[styles.navLabel, currentTab === 'PROFILE' && styles.navLabelActiveBlue]}>
+                  Tài khoản
+                </Text>
               </TouchableOpacity>
             </View>
-
-            {/* Right Floating 3D Petal Dial Button (Matches middle-right circle in reference image) */}
-            <TouchableOpacity
-              style={styles.floatingPetalWheelBtn}
-              activeOpacity={0.88}
-              onPress={() => setShowRewardsModal(true)}
-            >
-              <View style={styles.petalInnerPlate}>
-                <View style={styles.petalBlueSlice} />
-                <View style={styles.petalPeachSlice} />
-                <View style={styles.petalCenterDot} />
-              </View>
-            </TouchableOpacity>
           </View>
         </SafeAreaView>
       </View>
 
-      {/* Tactile Soft UI Eco-Rewards Modal */}
+      {/* Rewards & Voucher Modal */}
       <Modal visible={showRewardsModal} transparent animationType="fade">
         <View style={styles.modalOverlay}>
           <View style={styles.rewardsModalBox}>
-            <View style={styles.modalPetalBadge}>
-              <View style={styles.petalBlueSlice} />
-              <View style={styles.petalPeachSlice} />
-              <View style={styles.petalCenterDot} />
+            <View style={styles.rewardsIconBadge}>
+              <Ionicons name="gift" size={28} color="#DF8268" />
             </View>
-            <Text style={styles.rewardsTitle}>HỘI VIÊN XANH • SOOT ELITE</Text>
+            <Text style={styles.rewardsTitle}>HỘI VIÊN XANH • ƯU ĐÃI ĐẶT XE</Text>
             <Text style={styles.rewardsSub}>
-              Tích lũy 120 điểm Eco • Tiết kiệm 18.5 kg CO₂ trong tháng
+              Bạn đang có 120 điểm Eco • Đã tiết kiệm 18.5 kg CO₂ trong tháng này
             </Text>
 
             <View style={styles.rewardsCardPill}>
-              <View>
-                <Text style={styles.pillLabel}>Ưu đãi khả dụng</Text>
-                <Text style={styles.pillVal}>Giảm 20% phí thuê xe điện</Text>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.pillLabel}>Mã giảm giá tự động</Text>
+                <Text style={styles.pillVal}>Giảm 20% thuê xe điện theo giờ</Text>
               </View>
               <View style={styles.applyTag}>
-                <Text style={styles.applyTagText}>Đang bật</Text>
+                <Text style={styles.applyTagText}>Đã áp dụng</Text>
+              </View>
+            </View>
+
+            <View style={styles.rewardsCardPill}>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.pillLabel}>Đặc quyền sinh viên & giảng viên UTH</Text>
+                <Text style={[styles.pillVal, { color: '#6E92B5' }]}>Miễn 100% tiền cọc thế chấp</Text>
+              </View>
+              <View style={styles.applyTag}>
+                <Text style={styles.applyTagText}>Đã kích hoạt</Text>
               </View>
             </View>
 
@@ -232,7 +246,7 @@ export default function App() {
               style={styles.closeRewardsBtn}
               onPress={() => setShowRewardsModal(false)}
             >
-              <Text style={styles.closeRewardsBtnText}>Đóng bảng</Text>
+              <Text style={styles.closeRewardsBtnText}>Đóng</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -247,7 +261,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#E5D8CE',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 14
+    paddingVertical: 12
   },
   mobileRoot: {
     flex: 1,
@@ -258,8 +272,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     width: '100%',
-    maxWidth: 900,
-    marginBottom: 12,
+    maxWidth: 1080,
+    marginBottom: 10,
     paddingHorizontal: 16
   },
   brandBadge: {
@@ -268,28 +282,22 @@ const styles = StyleSheet.create({
     gap: 8
   },
   brandIconMini: {
-    width: 26,
-    height: 26,
-    borderRadius: 13,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
     backgroundColor: '#FDFBF7',
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#7A5C49',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.18,
-    shadowRadius: 5
-  },
-  brandInnerDot: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    backgroundColor: '#DF8268'
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4
   },
   brandTitleText: {
     fontSize: 12,
     fontWeight: '800',
     color: '#2C221E',
-    letterSpacing: 1
+    letterSpacing: 0.5
   },
   switchButtonContainer: {
     flexDirection: 'row',
@@ -329,30 +337,29 @@ const styles = StyleSheet.create({
     backgroundColor: '#EFE5DC'
   },
   phoneDeviceFrame: {
-    width: 425,
+    width: 430,
     height: '92vh',
-    maxHeight: 890,
-    borderRadius: 44,
+    maxHeight: 900,
+    borderRadius: 40,
     overflow: 'hidden',
-    borderWidth: 8,
+    borderWidth: 7,
     borderColor: '#FDFBF7',
     shadowColor: '#6E503E',
-    shadowOffset: { width: 0, height: 20 },
-    shadowOpacity: 0.25,
-    shadowRadius: 32,
-    elevation: 18,
-    position: 'relative'
+    shadowOffset: { width: 0, height: 18 },
+    shadowOpacity: 0.22,
+    shadowRadius: 30,
+    elevation: 16
   },
   expandedDeviceFrame: {
-    maxWidth: 1100,
-    borderRadius: 28,
+    maxWidth: 1080,
+    borderRadius: 24,
     overflow: 'hidden',
-    borderWidth: 4,
+    borderWidth: 3,
     borderColor: '#FDFBF7',
     shadowColor: '#6E503E',
-    shadowOffset: { width: 0, height: 12 },
-    shadowOpacity: 0.18,
-    shadowRadius: 24,
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.16,
+    shadowRadius: 22,
     elevation: 10
   },
   safeArea: {
@@ -363,150 +370,90 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%'
   },
-  bottomNavWrapper: {
-    position: 'absolute',
-    bottom: 14,
-    left: 16,
-    right: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    zIndex: 200
+  bottomNavContainer: {
+    backgroundColor: '#FDFBF7',
+    borderTopWidth: 1,
+    borderTopColor: '#E6D9CE',
+    paddingTop: 6,
+    paddingBottom: 8,
+    paddingHorizontal: 8,
+    shadowColor: '#5C4438',
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 10
   },
   capsuleNav: {
-    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around',
-    backgroundColor: '#FDFBF7',
-    height: 62,
-    borderRadius: 31,
-    paddingHorizontal: 8,
-    marginRight: 10,
-    borderWidth: 1.5,
-    borderColor: '#FFFFFF',
-    shadowColor: '#7A5C49',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.18,
-    shadowRadius: 18,
-    elevation: 10
+    maxWidth: 600,
+    alignSelf: 'center',
+    width: '100%'
   },
   navTabItem: {
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    width: 46,
-    height: 46
+    paddingVertical: 2
   },
-  activeTactileKnob: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: '#F5C2AF',
+  iconPill: {
+    width: 40,
+    height: 30,
+    borderRadius: 15,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#DF8268',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
-    elevation: 4
+    marginBottom: 2
   },
-  activeKnobCore: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: '#FDFBF7',
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.12,
-    shadowRadius: 3
+  iconPillActive: {
+    backgroundColor: '#FCEEE9'
+  },
+  iconPillActiveBlue: {
+    backgroundColor: '#EBF2F8'
+  },
+  navLabel: {
+    fontSize: 10,
+    fontWeight: '600',
+    color: '#8C7A70'
+  },
+  navLabelActive: {
+    color: '#DF8268',
+    fontWeight: '800'
+  },
+  navLabelActiveBlue: {
+    color: '#6E92B5',
+    fontWeight: '800'
   },
   centerKeyTabItem: {
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: -16
   },
-  centerKeyOuterPlate: {
-    width: 54,
-    height: 54,
-    borderRadius: 27,
-    backgroundColor: '#FDFBF7',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 2,
-    borderColor: '#FFFFFF',
-    shadowColor: '#7A5C49',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.22,
-    shadowRadius: 10,
-    elevation: 6
-  },
-  centerKeyActivePlate: {
-    backgroundColor: '#F5C2AF'
-  },
-  centerKeyInnerSphere: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+  centerKeyOuter: {
+    width: 46,
+    height: 46,
+    borderRadius: 23,
     backgroundColor: '#DF8268',
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 3,
+    borderColor: '#FDFBF7',
     shadowColor: '#DF8268',
-    shadowOffset: { width: 0, height: 3 },
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.35,
-    shadowRadius: 5
+    shadowRadius: 8,
+    elevation: 6,
+    marginBottom: 2
   },
-  floatingPetalWheelBtn: {
-    width: 58,
-    height: 58,
-    borderRadius: 29,
-    backgroundColor: '#FDFBF7',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1.5,
-    borderColor: '#FFFFFF',
-    shadowColor: '#7A5C49',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.18,
-    shadowRadius: 16,
-    elevation: 8
+  centerKeyOuterActive: {
+    backgroundColor: '#6E92B5',
+    shadowColor: '#6E92B5'
   },
-  petalInnerPlate: {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
-    backgroundColor: '#F5EFE8',
-    overflow: 'hidden',
-    position: 'relative',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  petalBlueSlice: {
-    position: 'absolute',
-    left: 0,
-    top: 0,
-    bottom: 0,
-    width: '52%',
-    backgroundColor: '#6E92B5'
-  },
-  petalPeachSlice: {
-    position: 'absolute',
-    right: 0,
-    top: 0,
-    bottom: 0,
-    width: '52%',
-    backgroundColor: '#F5BFA9'
-  },
-  petalCenterDot: {
-    width: 16,
-    height: 16,
-    borderRadius: 8,
-    backgroundColor: '#FDFBF7',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.18,
-    shadowRadius: 3
+  navLabelCenter: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#5C4B43'
   },
   modalOverlay: {
     flex: 1,
@@ -517,10 +464,10 @@ const styles = StyleSheet.create({
   },
   rewardsModalBox: {
     width: '100%',
-    maxWidth: 360,
+    maxWidth: 380,
     backgroundColor: '#FDFBF7',
-    borderRadius: 28,
-    padding: 24,
+    borderRadius: 26,
+    padding: 22,
     alignItems: 'center',
     borderWidth: 2,
     borderColor: '#FFFFFF',
@@ -530,12 +477,11 @@ const styles = StyleSheet.create({
     shadowRadius: 22,
     elevation: 12
   },
-  modalPetalBadge: {
+  rewardsIconBadge: {
     width: 56,
     height: 56,
     borderRadius: 28,
-    overflow: 'hidden',
-    position: 'relative',
+    backgroundColor: '#FCEEE9',
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 12
@@ -545,7 +491,7 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     color: '#2C221E',
     marginBottom: 6,
-    letterSpacing: 0.6
+    letterSpacing: 0.4
   },
   rewardsSub: {
     fontSize: 12,
@@ -558,14 +504,14 @@ const styles = StyleSheet.create({
   rewardsCardPill: {
     width: '100%',
     backgroundColor: '#F6F0E8',
-    borderRadius: 18,
-    padding: 14,
+    borderRadius: 16,
+    padding: 12,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     borderWidth: 1,
     borderColor: '#FFFFFF',
-    marginBottom: 18
+    marginBottom: 10
   },
   pillLabel: {
     fontSize: 11,
@@ -593,8 +539,9 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: '#DF8268',
     paddingVertical: 12,
-    borderRadius: 20,
-    alignItems: 'center'
+    borderRadius: 18,
+    alignItems: 'center',
+    marginTop: 6
   },
   closeRewardsBtnText: {
     color: '#FFFFFF',

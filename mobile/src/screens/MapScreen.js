@@ -194,11 +194,11 @@ export default function MapScreen({ navigation, onSelectVehicle }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#E5E7EB'
+    backgroundColor: COLORS.background
   },
   topOverlay: {
     position: 'absolute',
-    top: 10,
+    top: 12,
     left: 0,
     right: 0,
     zIndex: 10,
@@ -207,21 +207,23 @@ const styles = StyleSheet.create({
   mapSearchBox: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    borderRadius: RADIUS.lg,
+    backgroundColor: COLORS.surface,
+    borderRadius: RADIUS.full,
     paddingHorizontal: SPACING.md,
-    height: 44,
+    height: 46,
     gap: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.12,
-    shadowRadius: 6,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    shadowColor: '#8B7364',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.14,
+    shadowRadius: 8,
     elevation: 4
   },
   mapSearchText: {
     fontSize: 13,
     color: COLORS.textPrimary,
-    fontWeight: '600'
+    fontWeight: '700'
   },
   stationPillsRow: {
     paddingTop: SPACING.sm,
@@ -230,22 +232,25 @@ const styles = StyleSheet.create({
   stationPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+    backgroundColor: COLORS.surface,
+    paddingHorizontal: 14,
+    paddingVertical: 7,
     borderRadius: RADIUS.full,
-    gap: 4,
-    shadowColor: '#000',
+    gap: 5,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    shadowColor: '#8B7364',
     shadowOpacity: 0.08,
-    shadowRadius: 3,
+    shadowRadius: 4,
     elevation: 2
   },
   stationPillActive: {
-    backgroundColor: COLORS.primary
+    backgroundColor: COLORS.primary,
+    borderColor: COLORS.primary
   },
   stationPillText: {
     fontSize: 11,
-    fontWeight: '600',
+    fontWeight: '700',
     color: COLORS.textPrimary
   },
   stationPillTextActive: {
@@ -253,12 +258,12 @@ const styles = StyleSheet.create({
   },
   mapCanvas: {
     flex: 1,
-    backgroundColor: '#CBD5E1',
+    backgroundColor: '#E5DBD1',
     position: 'relative'
   },
   mapBackground: {
     flex: 1,
-    backgroundColor: '#E2E8F0',
+    backgroundColor: '#E8DED4',
     position: 'relative'
   },
   corridorPath: {
@@ -267,7 +272,7 @@ const styles = StyleSheet.create({
     left: '20%',
     width: '60%',
     height: 6,
-    backgroundColor: COLORS.secondaryLight,
+    backgroundColor: COLORS.secondary,
     borderRadius: 3,
     transform: [{ rotate: '25deg' }]
   },
@@ -283,23 +288,23 @@ const styles = StyleSheet.create({
   mapPinBubble: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: COLORS.primary,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
+    backgroundColor: COLORS.secondaryDark,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
     borderRadius: RADIUS.full,
     gap: 4,
-    shadowColor: '#000',
+    shadowColor: '#2C221E',
     shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 4
   },
   bubbleActive: {
-    backgroundColor: '#DC2626'
+    backgroundColor: COLORS.primary
   },
   pinBubbleText: {
     color: '#FFFFFF',
     fontSize: 10,
-    fontWeight: '700'
+    fontWeight: '800'
   },
   pinPointer: {
     width: 0,
@@ -312,42 +317,47 @@ const styles = StyleSheet.create({
     borderTopWidth: 6,
     borderLeftColor: 'transparent',
     borderRightColor: 'transparent',
-    borderTopColor: COLORS.primary
+    borderTopColor: COLORS.secondaryDark
   },
   pointerActive: {
-    borderTopColor: '#DC2626'
+    borderTopColor: COLORS.primary
   },
   corridorTag: {
     position: 'absolute',
-    top: 100,
+    top: 108,
     alignSelf: 'center',
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(15, 23, 42, 0.85)',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+    backgroundColor: COLORS.secondaryDark,
+    paddingHorizontal: 14,
+    paddingVertical: 7,
     borderRadius: RADIUS.full,
-    gap: 6
+    gap: 6,
+    shadowColor: '#2C221E',
+    shadowOpacity: 0.15,
+    shadowRadius: 6
   },
   corridorTagText: {
     color: '#FFFFFF',
     fontSize: 11,
-    fontWeight: '600'
+    fontWeight: '700'
   },
   bottomSheet: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.surface,
     borderTopLeftRadius: RADIUS.xl,
     borderTopRightRadius: RADIUS.xl,
     padding: SPACING.lg,
-    paddingBottom: 85,
-    shadowColor: '#000',
+    paddingBottom: 20,
+    borderTopWidth: 1,
+    borderColor: COLORS.border,
+    shadowColor: '#8B7364',
     shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
+    shadowOpacity: 0.12,
+    shadowRadius: 10,
     elevation: 10
   },
   sheetHandle: {
-    width: 36,
+    width: 40,
     height: 4,
     backgroundColor: COLORS.borderDark,
     borderRadius: 2,
@@ -361,7 +371,7 @@ const styles = StyleSheet.create({
   },
   sheetStationName: {
     fontSize: 15,
-    fontWeight: '800',
+    fontWeight: '900',
     color: COLORS.textPrimary
   },
   sheetStationAddress: {
@@ -371,20 +381,22 @@ const styles = StyleSheet.create({
   },
   capacityBadge: {
     backgroundColor: COLORS.secondaryMuted,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
+    paddingHorizontal: 12,
+    paddingVertical: 5,
     borderRadius: RADIUS.md,
-    alignItems: 'center'
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#D4E4F2'
   },
   capacityNum: {
     fontSize: 16,
-    fontWeight: '800',
+    fontWeight: '900',
     color: COLORS.secondaryDark
   },
   capacitySub: {
     fontSize: 9,
     color: COLORS.secondaryDark,
-    fontWeight: '600'
+    fontWeight: '700'
   },
   transitRow: {
     flexDirection: 'row',
@@ -395,11 +407,11 @@ const styles = StyleSheet.create({
   transitText: {
     fontSize: 11,
     color: COLORS.secondaryDark,
-    fontWeight: '500'
+    fontWeight: '600'
   },
   vehiclesListTitle: {
     fontSize: 12,
-    fontWeight: '700',
+    fontWeight: '800',
     color: COLORS.textPrimary,
     marginTop: SPACING.md,
     marginBottom: SPACING.xs
@@ -408,40 +420,40 @@ const styles = StyleSheet.create({
     gap: SPACING.md
   },
   miniVehCard: {
-    width: 140,
+    width: 146,
     backgroundColor: COLORS.surfaceVariant,
-    borderRadius: RADIUS.md,
+    borderRadius: RADIUS.lg,
     overflow: 'hidden',
     borderWidth: 1,
     borderColor: COLORS.border
   },
   miniImage: {
     width: '100%',
-    height: 75
+    height: 82
   },
   miniInfo: {
-    padding: 6
+    padding: 8
   },
   miniTitle: {
     fontSize: 11,
-    fontWeight: '700',
+    fontWeight: '800',
     color: COLORS.textPrimary
   },
   miniPrice: {
-    fontSize: 11,
-    fontWeight: '800',
+    fontSize: 12,
+    fontWeight: '900',
     color: COLORS.primaryDark,
     marginTop: 2
   },
   miniBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 2,
-    gap: 2
+    marginTop: 3,
+    gap: 3
   },
   miniBattery: {
     fontSize: 9,
     color: COLORS.secondaryDark,
-    fontWeight: '600'
+    fontWeight: '700'
   }
 });

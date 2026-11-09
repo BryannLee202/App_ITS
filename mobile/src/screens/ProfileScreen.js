@@ -200,17 +200,19 @@ const styles = StyleSheet.create({
     fontWeight: '700'
   },
   ekycCard: {
-    backgroundColor: '#0F172A',
+    backgroundColor: COLORS.secondaryMuted,
     borderRadius: RADIUS.lg,
     padding: SPACING.md,
-    marginBottom: SPACING.md
+    marginBottom: SPACING.md,
+    borderWidth: 1,
+    borderColor: '#C5DCF0'
   },
   ekycHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     borderBottomWidth: 1,
-    borderBottomColor: '#1E293B',
+    borderBottomColor: '#D4E4F2',
     paddingBottom: SPACING.xs,
     marginBottom: SPACING.sm
   },
@@ -220,12 +222,12 @@ const styles = StyleSheet.create({
     gap: 6
   },
   ekycTitle: {
-    color: COLORS.secondaryLight,
+    color: COLORS.secondaryDark,
     fontSize: 11,
     fontWeight: '800'
   },
   verifiedTag: {
-    backgroundColor: COLORS.secondary,
+    backgroundColor: COLORS.secondaryDark,
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: RADIUS.full
@@ -245,16 +247,18 @@ const styles = StyleSheet.create({
   },
   ekycLabel: {
     fontSize: 11,
-    color: '#94A3B8'
+    color: COLORS.textSecondary,
+    fontWeight: '600'
   },
   ekycValue: {
     fontSize: 11,
-    fontWeight: '700',
-    color: '#FFFFFF'
+    fontWeight: '800',
+    color: COLORS.textPrimary
   },
   ekycNote: {
     fontSize: 10,
-    color: '#34D399',
+    color: COLORS.secondaryDark,
+    fontWeight: '700',
     marginTop: 4
   },
   walletRow: {
@@ -283,10 +287,10 @@ const styles = StyleSheet.create({
   },
   rechargeBtn: {
     backgroundColor: COLORS.primary,
-    paddingVertical: 5,
-    borderRadius: RADIUS.sm,
+    paddingVertical: 6,
+    borderRadius: RADIUS.full,
     alignItems: 'center',
-    marginTop: 2
+    marginTop: 4
   },
   rechargeText: {
     color: '#FFFFFF',
@@ -296,18 +300,18 @@ const styles = StyleSheet.create({
   surveyCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#0F2942',
-    borderRadius: 8,
-    padding: 12,
+    backgroundColor: COLORS.primaryMuted,
+    borderRadius: RADIUS.lg,
+    padding: 14,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: '#1E3A8A'
+    borderColor: COLORS.primaryLight
   },
   surveyIconCircle: {
-    width: 36,
-    height: 36,
-    borderRadius: 6,
-    backgroundColor: 'rgba(255, 255, 255, 0.12)',
+    width: 38,
+    height: 38,
+    borderRadius: 12,
+    backgroundColor: COLORS.primary,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 10
@@ -317,14 +321,15 @@ const styles = StyleSheet.create({
   },
   surveyTitle: {
     fontSize: 11,
-    fontWeight: '800',
-    color: '#FFFFFF',
-    letterSpacing: 0.5
+    fontWeight: '900',
+    color: COLORS.primaryDark,
+    letterSpacing: 0.4
   },
   surveySub: {
-    fontSize: 9,
-    color: '#94A3B8',
-    marginTop: 2
+    fontSize: 10,
+    color: COLORS.textSecondary,
+    marginTop: 2,
+    fontWeight: '600'
   },
   menuSection: {
     backgroundColor: COLORS.surface,

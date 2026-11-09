@@ -5,6 +5,7 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  Image,
   ActivityIndicator,
   Alert
 } from 'react-native';
@@ -14,11 +15,13 @@ import CO2Widget from '../components/CO2Widget';
 import ApiService from '../services/api';
 import { initSocket } from '../services/socket';
 
-export default function DigitalKeyScreen() {
+export default function DigitalKeyScreen({ onNavigateHome }) {
   const [activeTrip, setActiveTrip] = useState(null);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
-  const [statusMessage, setStatusMessage] = useState('Chìa khóa số kết nối BLE 5.2 & Cloud an toàn.');
+  const [statusMessage, setStatusMessage] = useState(
+    'Đã kết nối Bluetooth BLE 5.2 & Cloud Telematics với xe.'
+  );
 
   const [telematics, setTelematics] = useState({
     batteryLevelPct: 92,
@@ -33,7 +36,7 @@ export default function DigitalKeyScreen() {
     currentSpeedKmh: 42,
     recommendedSpeedKmh: 45,
     advisoryStatus: 'MAINTAIN',
-    advisoryMessage: 'Duy trì 45 km/h đón làn sóng xanh GLOSA',
+    advisoryMessage: 'Duy trì 45 km/h để qua ngã tư đèn xanh không cần dừng',
     signalState: 'GREEN',
     secondsToSignalChange: 24,
     fuelSavedEstimatePct: 18.5
@@ -101,7 +104,7 @@ export default function DigitalKeyScreen() {
         setTelematics((prev) => ({ ...prev, ...res.telematics }));
       }
     } catch (err) {
-      Alert.alert('Lỗi lệnh điều khiển', err.message);
+      Alert.alert('Lỗi điều khiển', err.message);
     } finally {
       setActionLoading(false);
     }
@@ -111,8 +114,8 @@ export default function DigitalKeyScreen() {
     if (!activeTrip) return;
 
     Alert.alert(
-      'Xác Nhận Trả Xe Tại Trạm',
-      'Hệ thống ITS sẽ kiểm tra Geofencing (bán kính <= 150m từ trạm) và khóa xe tự động.',
+      'Xác Nhận Trả Xe Tại Trạm Hub',
+      'Hệ thống ITS sẽ kiểm tra vị trí đỗ Geofencing (bán kính <= 150m từ trạm) và khóa xe tự động.',
       [
         { text: 'Hủy', style: 'cancel' },
         {
@@ -121,7 +124,10 @@ export default function DigitalKeyScreen() {
           onPress: async () => {
             try {
               setActionLoading(true);
-              const res = await ApiService.completeTrip(activeTrip.id, activeTrip.returnStationId);
+              const res = await ApiService.completeTrip(
+                activeTrip.id,
+                activeTrip.returnStationId
+              );
               Alert.alert('Trả Xe Thành Công', res.message);
               setActiveTrip(null);
             } catch (err) {
@@ -139,7 +145,7 @@ export default function DigitalKeyScreen() {
     return (
       <View style={styles.centerContainer}>
         <ActivityIndicator size="large" color={COLORS.primary} />
-        <Text style={styles.loadingText}>Đang đồng bộ khóa số 3D Digital Key...</Text>
+        <Text style={styles.loadingText}>Đang kết nối Chìa khóa số Digital Key...</Text>
       </View>
     );
   }
@@ -150,250 +156,253 @@ export default function DigitalKeyScreen() {
         <View style={styles.noTripCircle}>
           <Ionicons name="key" size={40} color="#DF8268" />
         </View>
-        <Text style={styles.noTripTitle}>Chưa có phương tiện đang mở khóa</Text>
+        <Text style={styles.noTripTitle}>Chưa có xe đang thuê</Text>
         <Text style={styles.noTripSub}>
-          Chọn một chiếc xe từ trang Khám phá để kích hoạt bảng điều khiển xúc giác 3D Digital Key.
+          Hãy chọn một chiếc ô tô hoặc xe máy điện tại Trang chủ để kích hoạt Chìa khóa số thông minh (Digital Key).
         </Text>
-        <TouchableOpacity style={styles.reloadBtn} onPress={loadActiveTrip}>
-          <Ionicons name="refresh" size={16} color="#FFFFFF" />
-          <Text style={styles.reloadBtnText}>Kiểm tra lại hợp đồng</Text>
+        <TouchableOpacity
+          style={styles.reloadBtn}
+          onPress={onNavigateHome || loadActiveTrip}
+        >
+          <Ionicons name="car-sport" size={16} color="#FFFFFF" />
+          <Text style={styles.reloadBtnText}>Chọn xe ngay</Text>
         </TouchableOpacity>
       </View>
     );
   }
 
   const veh = activeTrip.vehicle || {};
+  const batteryPct = Math.round(telematics.batteryLevelPct || 92);
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
       {/* =========================================================
-          1. TOP VEHICLE STATUS CARD (SOFT IVORY & SLATE WAVE)
+          1. THÔNG TIN XE & TRẠNG THÁI KẾT NỐI TRỰC QUAN
       ========================================================= */}
-      <View style={styles.topHeaderCard}>
-        <View style={styles.headerWaveAccent} />
-        <View style={styles.topRow}>
-          <View>
-            <View style={styles.bleRow}>
-              <View style={styles.amberDot} />
-              <Text style={styles.bleTagText}>DIGITAL KEY 3D • {activeTrip.contractNumber}</Text>
+      <View style={styles.vehicleOverviewCard}>
+        <View style={styles.vehicleHeaderRow}>
+          <View style={{ flex: 1, paddingRight: 10 }}>
+            <View style={styles.contractBadge}>
+              <Ionicons name="bluetooth" size={12} color="#527394" />
+              <Text style={styles.contractBadgeText}>
+                BLE 5.2 ĐÃ KẾT NỐI • {activeTrip.contractNumber}
+              </Text>
             </View>
-            <Text style={styles.vehTitle}>{veh.name || 'VinFast VF 8 Plus'}</Text>
-            <Text style={styles.plateSub}>Biển số: {veh.plateNumber || '51K-882.91'}</Text>
+            <Text style={styles.vehicleName}>{veh.name || 'VinFast VF 8 Plus'}</Text>
+            <Text style={styles.plateText}>Biển số: {veh.plateNumber || '51K-882.91'}</Text>
           </View>
-          <View style={styles.lockStatePill}>
-            <View
-              style={[
-                styles.stateDot,
-                { backgroundColor: telematics.isLocked ? '#DF8268' : '#6E92B5' }
-              ]}
+
+          <View
+            style={[
+              styles.lockStatusBadge,
+              telematics.isLocked ? styles.lockedBadge : styles.unlockedBadge
+            ]}
+          >
+            <Ionicons
+              name={telematics.isLocked ? 'lock-closed' : 'lock-open'}
+              size={14}
+              color={telematics.isLocked ? '#C4684F' : '#527394'}
             />
-            <Text style={styles.lockStateText}>
-              {telematics.isLocked ? 'ĐÃ KHÓA' : 'ĐANG MỞ'}
+            <Text
+              style={[
+                styles.lockStatusText,
+                { color: telematics.isLocked ? '#C4684F' : '#527394' }
+              ]}
+            >
+              {telematics.isLocked ? 'ĐÃ KHÓA CỬA' : 'CỬA ĐANG MỞ'}
             </Text>
           </View>
         </View>
 
-        <View style={styles.statusToastPill}>
-          <Ionicons name="radio-outline" size={14} color="#6E92B5" />
-          <Text style={styles.statusToastText} numberOfLines={1}>
+        {/* Hình ảnh xe thực tế & 3 chỉ số nhanh */}
+        <View style={styles.vehicleVisualRow}>
+          <Image
+            source={{
+              uri:
+                veh.thumbnail ||
+                'https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&w=600&q=80'
+            }}
+            style={styles.vehicleBannerImage}
+            resizeMode="cover"
+          />
+          <View style={styles.quickMetricsCol}>
+            <View style={styles.quickMetricBox}>
+              <Text style={styles.qmLabel}>Mức Pin hiện tại</Text>
+              <Text style={[styles.qmVal, { color: '#527394' }]}>{batteryPct}% Pin</Text>
+            </View>
+            <View style={styles.quickMetricBox}>
+              <Text style={styles.qmLabel}>Quãng đường còn lại</Text>
+              <Text style={styles.qmVal}>{Math.round(batteryPct * 4.2)} km</Text>
+            </View>
+            <View style={styles.quickMetricBox}>
+              <Text style={styles.qmLabel}>Trạng thái máy</Text>
+              <Text style={[styles.qmVal, { color: telematics.isEngineOn ? '#4C8C64' : '#7A6A63' }]}>
+                {telematics.isEngineOn ? 'Đang nổ máy' : 'Đã tắt máy'}
+              </Text>
+            </View>
+          </View>
+        </View>
+
+        <View style={styles.feedbackBar}>
+          <Ionicons name="checkmark-circle" size={15} color="#DF8268" />
+          <Text style={styles.feedbackText} numberOfLines={1}>
             {statusMessage}
           </Text>
         </View>
       </View>
 
       {/* =========================================================
-          2. DUAL VERTICAL TACTILE REMOTE STRIPS + GLOSA CONSOLE
-             (MATCHES MIDDLE-LEFT VERTICAL REMOTES IN REF IMAGE)
+          2. BẢNG ĐIỀU KHIỂN CHÌA KHÓA SỐ (RÕ RÀNG, DỄ BẤM)
       ========================================================= */}
-      <View style={styles.tactileCockpitGrid}>
-        {/* Left Vertical Remote Strip (Warm Peach with 3D Rotary Knob) */}
-        <View style={styles.verticalRemotePeach}>
-          <View style={styles.remoteTopDots}>
-            <View style={styles.amberSphereSmall} />
-            <View style={styles.whiteMiniDot} />
-          </View>
+      <View style={styles.remoteCard}>
+        <Text style={styles.sectionTitle}>Điều khiển xe từ xa (Chạm để thao tác)</Text>
 
-          {/* Large 3D Rippled Tactile Rotary Knob (Engine Start/Stop) */}
+        {/* Nút Khởi động / Tắt máy lớn ở trung tâm */}
+        <TouchableOpacity
+          style={[
+            styles.enginePowerBtn,
+            telematics.isEngineOn && styles.enginePowerBtnActive
+          ]}
+          activeOpacity={0.88}
+          disabled={actionLoading}
+          onPress={() =>
+            handleControlCommand(telematics.isEngineOn ? 'STOP_ENGINE' : 'START_ENGINE')
+          }
+        >
+          <View style={styles.powerIconCircle}>
+            <Ionicons
+              name="power"
+              size={24}
+              color={telematics.isEngineOn ? '#527394' : '#DF8268'}
+            />
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.engineBtnTitle}>
+              {telematics.isEngineOn ? 'ĐỘNG CƠ ĐANG BẬT (READY)' : 'BẤM ĐỂ KHỞI ĐỘNG XE'}
+            </Text>
+            <Text style={styles.engineBtnSub}>
+              {telematics.isEngineOn
+                ? 'Điều hòa 22°C đang hoạt động • Chạm để tắt máy'
+                : 'Khởi động từ xa & làm mát khoang lái trước khi lên xe'}
+            </Text>
+          </View>
+        </TouchableOpacity>
+
+        {/* 4 Nút Chức Năng Vật Lý Trực Quan (2x2 Grid) */}
+        <View style={styles.fourButtonsGrid}>
+          {/* Nút 1: Mở khóa cửa */}
           <TouchableOpacity
-            style={styles.rotaryDialOuter}
+            style={[
+              styles.controlTile,
+              !telematics.isLocked && styles.controlTileActiveBlue
+            ]}
             activeOpacity={0.85}
             disabled={actionLoading}
-            onPress={() =>
-              handleControlCommand(telematics.isEngineOn ? 'STOP_ENGINE' : 'START_ENGINE')
-            }
+            onPress={() => handleControlCommand('UNLOCK')}
           >
-            <View style={styles.rotaryDialMiddle}>
-              <View style={styles.rotaryDialInner}>
-                <Ionicons
-                  name="power"
-                  size={22}
-                  color={telematics.isEngineOn ? '#6E92B5' : '#FFFFFF'}
-                />
-              </View>
+            <View style={[styles.tileIconCircle, { backgroundColor: '#EBF2F8' }]}>
+              <Ionicons name="lock-open" size={22} color="#527394" />
             </View>
+            <Text style={styles.tileTitle}>Mở khóa cửa</Text>
+            <Text style={styles.tileSub}>Mở chốt 4 cửa xe</Text>
           </TouchableOpacity>
-          <Text style={styles.rotaryLabel}>
-            {telematics.isEngineOn ? 'ĐANG NỔ MÁY' : 'KHỞI ĐỘNG'}
-          </Text>
 
-          {/* 4 Soft Raised Tactile Micro Buttons at Bottom */}
-          <View style={styles.fourMicroGrid}>
-            <TouchableOpacity
-              style={styles.microTactileSquare}
-              onPress={() => handleControlCommand('LOCK')}
-            >
-              <Ionicons name="lock-closed" size={15} color="#7A5448" />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.microTactileSquare}
-              onPress={() => handleControlCommand('UNLOCK')}
-            >
-              <Ionicons name="lock-open" size={15} color="#6E92B5" />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.microTactileSquare}
-              onPress={() => handleControlCommand('HORN')}
-            >
-              <Ionicons name="volume-high" size={15} color="#DF8268" />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.microTactileSquare}
-              onPress={() => handleControlCommand('TRUNK')}
-            >
-              <Ionicons name="car" size={15} color="#7A5448" />
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* Middle Slim Vertical Tactile Strip (Crescent Switches & Sphere Knob) */}
-        <View style={styles.verticalRemoteSlim}>
-          <View style={styles.slimTopSection}>
-            <View style={styles.crescentSwitch}>
-              <Ionicons name="snow-outline" size={13} color="#6E92B5" />
+          {/* Nút 2: Khóa xe */}
+          <TouchableOpacity
+            style={[
+              styles.controlTile,
+              telematics.isLocked && styles.controlTileActiveCoral
+            ]}
+            activeOpacity={0.85}
+            disabled={actionLoading}
+            onPress={() => handleControlCommand('LOCK')}
+          >
+            <View style={[styles.tileIconCircle, { backgroundColor: '#FCEEE9' }]}>
+              <Ionicons name="lock-closed" size={22} color="#DF8268" />
             </View>
-            <View style={styles.crescentSwitch}>
-              <Ionicons name="sunny-outline" size={13} color="#DF8268" />
+            <Text style={styles.tileTitle}>Khóa toàn bộ xe</Text>
+            <Text style={styles.tileSub}>Gập gương & lên kính</Text>
+          </TouchableOpacity>
+
+          {/* Nút 3: Bấm còi & Nháy đèn */}
+          <TouchableOpacity
+            style={styles.controlTile}
+            activeOpacity={0.85}
+            disabled={actionLoading}
+            onPress={() => handleControlCommand('HORN')}
+          >
+            <View style={[styles.tileIconCircle, { backgroundColor: '#FDF6E4' }]}>
+              <Ionicons name="volume-high" size={22} color="#D49B35" />
             </View>
-          </View>
+            <Text style={styles.tileTitle}>Tìm xe trong bãi</Text>
+            <Text style={styles.tileSub}>Bấm còi & nháy đèn</Text>
+          </TouchableOpacity>
 
-          <View style={styles.slimWaveDivider} />
-
-          <View style={styles.slimBottomTerracotta}>
-            <Text style={styles.slimTempText}>22°C</Text>
-            <TouchableOpacity
-              style={styles.slimBottomWhiteSphere}
-              onPress={() => handleControlCommand('UNLOCK')}
-            >
-              <Ionicons name="bluetooth" size={14} color="#DF8268" />
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* Right Telemetry & GLOSA Bento Card (Matches Bottom-Right Soft Card) */}
-        <View style={styles.rightGlosaCard}>
-          <View style={styles.glosaTopRow}>
-            <View style={styles.amberDot} />
-            <Text style={styles.glosaHeaderTitle}>GLOSA GREEN WAVE</Text>
-          </View>
-
-          {/* Speed Comparison Dials */}
-          <View style={styles.speedDialsRow}>
-            <View style={styles.speedPillBox}>
-              <Text style={styles.speedNum}>{Math.round(telematics.speedKmh || 42)}</Text>
-              <Text style={styles.speedUnit}>km/h hiện tại</Text>
+          {/* Nút 4: Mở cốp sau */}
+          <TouchableOpacity
+            style={styles.controlTile}
+            activeOpacity={0.85}
+            disabled={actionLoading}
+            onPress={() => handleControlCommand('TRUNK')}
+          >
+            <View style={[styles.tileIconCircle, { backgroundColor: '#E8F4EC' }]}>
+              <Ionicons name="briefcase" size={22} color="#4C8C64" />
             </View>
-            <View style={[styles.speedPillBox, styles.speedPillRecommended]}>
-              <Text style={[styles.speedNum, { color: '#6E92B5' }]}>
-                {glosa.recommendedSpeedKmh || 45}
-              </Text>
-              <Text style={styles.speedUnit}>km/h xanh</Text>
-            </View>
-          </View>
-
-          <Text style={styles.glosaAdviceText}>{glosa.advisoryMessage}</Text>
-
-          {/* 4 Tactile Command Capsules */}
-          <View style={styles.fourCommandCapsules}>
-            <TouchableOpacity
-              style={[
-                styles.cmdCapsule,
-                !telematics.isLocked && styles.cmdCapsuleActiveBlue
-              ]}
-              onPress={() => handleControlCommand('UNLOCK')}
-            >
-              <Ionicons
-                name="lock-open-outline"
-                size={15}
-                color={!telematics.isLocked ? '#FFFFFF' : '#2C221E'}
-              />
-              <Text
-                style={[
-                  styles.cmdCapsuleText,
-                  !telematics.isLocked && { color: '#FFFFFF' }
-                ]}
-              >
-                Mở khóa
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[
-                styles.cmdCapsule,
-                telematics.isLocked && styles.cmdCapsuleActiveCoral
-              ]}
-              onPress={() => handleControlCommand('LOCK')}
-            >
-              <Ionicons
-                name="lock-closed-outline"
-                size={15}
-                color={telematics.isLocked ? '#FFFFFF' : '#2C221E'}
-              />
-              <Text
-                style={[
-                  styles.cmdCapsuleText,
-                  telematics.isLocked && { color: '#FFFFFF' }
-                ]}
-              >
-                Khóa xe
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.cmdCapsule}
-              onPress={() => handleControlCommand('HORN')}
-            >
-              <Ionicons name="notifications-outline" size={15} color="#DF8268" />
-              <Text style={styles.cmdCapsuleText}>Tìm xe</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.cmdCapsule}
-              onPress={() => handleControlCommand('TRUNK')}
-            >
-              <Ionicons name="briefcase-outline" size={15} color="#6E92B5" />
-              <Text style={styles.cmdCapsuleText}>Mở cốp</Text>
-            </TouchableOpacity>
-          </View>
+            <Text style={styles.tileTitle}>Mở cốp điện</Text>
+            <Text style={styles.tileSub}>Nâng cốp sau tự động</Text>
+          </TouchableOpacity>
         </View>
       </View>
 
       {/* =========================================================
-          3. ECO IMPACT & GEOFENCED RETURN BUTTON
+          3. HỖ TRỢ LÁI XE LÀN SÓNG XANH (GLOSA HUD TRỰC QUAN)
       ========================================================= */}
-      <View style={styles.bottomSection}>
-        <CO2Widget eco={eco} />
+      <View style={styles.glosaCard}>
+        <View style={styles.glosaHeader}>
+          <View style={styles.trafficLightDot} />
+          <Text style={styles.glosaTitle}>HỆ THỐNG DẪN ĐƯỜNG LÀN SÓNG XANH (GLOSA)</Text>
+        </View>
 
-        <TouchableOpacity
-          style={styles.returnVehicleBtn}
-          activeOpacity={0.88}
-          onPress={handleReturnVehicle}
-        >
-          <Text style={styles.returnVehicleText}>KẾT THÚC CHUYẾN & TRẢ XE TẠI HUB</Text>
-          <View style={styles.returnKnobWhite}>
-            <Ionicons name="checkmark" size={16} color="#DF8268" />
+        <View style={styles.speedComparisonRow}>
+          <View style={styles.speedBox}>
+            <Text style={styles.speedBoxLabel}>Tốc độ xe hiện tại</Text>
+            <Text style={styles.speedBoxValue}>
+              {Math.round(telematics.speedKmh || 42)} <Text style={styles.speedUnit}>km/h</Text>
+            </Text>
           </View>
-        </TouchableOpacity>
+
+          <Ionicons name="arrow-forward-circle" size={24} color="#6E92B5" />
+
+          <View style={[styles.speedBox, styles.speedBoxGreenWave]}>
+            <Text style={[styles.speedBoxLabel, { color: '#527394' }]}>
+              Vận tốc khuyến nghị
+            </Text>
+            <Text style={[styles.speedBoxValue, { color: '#527394' }]}>
+              {glosa.recommendedSpeedKmh || 45} <Text style={styles.speedUnit}>km/h</Text>
+            </Text>
+          </View>
+        </View>
+
+        <Text style={styles.glosaMessageText}>
+          🚦 {glosa.advisoryMessage} (Đèn xanh ngã tư kế tiếp còn {glosa.secondsToSignalChange}s)
+        </Text>
       </View>
+
+      {/* =========================================================
+          4. THỐNG KÊ MÔI TRƯỜNG & NÚT TRẢ XE TẠI TRẠM
+      ========================================================= */}
+      <CO2Widget eco={eco} />
+
+      <TouchableOpacity
+        style={styles.returnVehicleBtn}
+        activeOpacity={0.88}
+        onPress={handleReturnVehicle}
+      >
+        <Text style={styles.returnVehicleText}>KẾT THÚC CHUYẾN & TRẢ XE TẠI TRẠM HUB</Text>
+        <View style={styles.returnKnobWhite}>
+          <Ionicons name="checkmark" size={16} color="#DF8268" />
+        </View>
+      </TouchableOpacity>
     </ScrollView>
   );
 }
@@ -405,7 +414,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: 16,
-    paddingBottom: 110
+    paddingBottom: 40
   },
   centerContainer: {
     flex: 1,
@@ -427,9 +436,9 @@ const styles = StyleSheet.create({
     padding: 28
   },
   noTripCircle: {
-    width: 88,
-    height: 88,
-    borderRadius: 44,
+    width: 84,
+    height: 84,
+    borderRadius: 42,
     backgroundColor: '#FDFBF7',
     alignItems: 'center',
     justifyContent: 'center',
@@ -437,10 +446,10 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#FFFFFF',
     shadowColor: '#7A5C49',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.16,
-    shadowRadius: 18,
-    elevation: 6
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.14,
+    shadowRadius: 16,
+    elevation: 5
   },
   noTripTitle: {
     fontSize: 17,
@@ -449,10 +458,10 @@ const styles = StyleSheet.create({
     marginBottom: 8
   },
   noTripSub: {
-    fontSize: 12,
+    fontSize: 13,
     color: '#7A6A63',
     textAlign: 'center',
-    lineHeight: 18,
+    lineHeight: 19,
     marginBottom: 20,
     fontWeight: '600'
   },
@@ -460,380 +469,312 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#DF8268',
-    paddingHorizontal: 18,
-    paddingVertical: 11,
+    paddingHorizontal: 20,
+    paddingVertical: 12,
     borderRadius: 20,
     gap: 8
   },
   reloadBtnText: {
     color: '#FFFFFF',
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '800'
   },
 
-  /* 1. Top Header Card */
-  topHeaderCard: {
+  /* 1. Vehicle Overview Card */
+  vehicleOverviewCard: {
     backgroundColor: '#FDFBF7',
-    borderRadius: 26,
-    padding: 18,
-    position: 'relative',
-    overflow: 'hidden',
+    borderRadius: 24,
+    padding: 16,
     borderWidth: 1.5,
     borderColor: '#FFFFFF',
     shadowColor: '#8C6D5B',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.14,
-    shadowRadius: 18,
-    elevation: 5,
-    marginBottom: 16
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.12,
+    shadowRadius: 16,
+    elevation: 4,
+    marginBottom: 14
   },
-  headerWaveAccent: {
-    position: 'absolute',
-    right: -30,
-    bottom: -35,
-    width: 150,
-    height: 90,
-    borderRadius: 60,
-    backgroundColor: '#EBF2F8'
-  },
-  topRow: {
+  vehicleHeaderRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-start'
+    alignItems: 'flex-start',
+    marginBottom: 12
   },
-  bleRow: {
+  contractBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: 4,
     marginBottom: 4
   },
-  amberDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#F2C97D'
-  },
-  bleTagText: {
+  contractBadgeText: {
     fontSize: 10,
     fontWeight: '800',
-    color: '#7A6A63',
-    letterSpacing: 0.6
+    color: '#527394'
   },
-  vehTitle: {
+  vehicleName: {
     fontSize: 18,
     fontWeight: '900',
     color: '#2C221E'
   },
-  plateSub: {
-    fontSize: 11,
-    color: '#8C7A70',
+  plateText: {
+    fontSize: 12,
+    color: '#7A6A63',
     fontWeight: '700',
     marginTop: 2
   },
-  lockStatePill: {
+  lockStatusBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F6F0E8',
-    paddingHorizontal: 12,
+    paddingHorizontal: 10,
     paddingVertical: 6,
+    borderRadius: 12,
+    gap: 5
+  },
+  lockedBadge: {
+    backgroundColor: '#FCEEE9'
+  },
+  unlockedBadge: {
+    backgroundColor: '#EBF2F8'
+  },
+  lockStatusText: {
+    fontSize: 10,
+    fontWeight: '900'
+  },
+  vehicleVisualRow: {
+    flexDirection: 'row',
+    gap: 12,
+    alignItems: 'center',
+    marginBottom: 12
+  },
+  vehicleBannerImage: {
+    width: '54%',
+    height: 118,
     borderRadius: 16,
-    gap: 6,
+    backgroundColor: '#F3EAE0'
+  },
+  quickMetricsCol: {
+    flex: 1,
+    gap: 6
+  },
+  quickMetricBox: {
+    backgroundColor: '#F6F0E8',
+    borderRadius: 12,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
     borderWidth: 1,
     borderColor: '#FFFFFF'
   },
-  stateDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4
+  qmLabel: {
+    fontSize: 9,
+    color: '#8C7A70',
+    fontWeight: '700'
   },
-  lockStateText: {
-    fontSize: 10,
-    fontWeight: '800',
-    color: '#2C221E'
+  qmVal: {
+    fontSize: 12,
+    fontWeight: '900',
+    color: '#2C221E',
+    marginTop: 1
   },
-  statusToastPill: {
+  feedbackBar: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#F6F0E8',
     paddingHorizontal: 12,
     paddingVertical: 8,
-    borderRadius: 14,
-    marginTop: 14,
-    gap: 8
+    borderRadius: 12,
+    gap: 6
   },
-  statusToastText: {
+  feedbackText: {
     fontSize: 11,
     fontWeight: '700',
     color: '#5C4B43',
     flex: 1
   },
 
-  /* 2. Tactile Cockpit Grid (Vertical Remotes + Right Card) */
-  tactileCockpitGrid: {
-    flexDirection: 'row',
-    gap: 10,
-    marginBottom: 16
-  },
-  verticalRemotePeach: {
-    width: 104,
-    backgroundColor: '#F7D3C2',
+  /* 2. Remote Control Card */
+  remoteCard: {
+    backgroundColor: '#FDFBF7',
     borderRadius: 24,
-    padding: 12,
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    padding: 16,
     borderWidth: 1.5,
-    borderColor: '#FDFBF7',
+    borderColor: '#FFFFFF',
     shadowColor: '#8C6D5B',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.16,
-    shadowRadius: 16,
-    elevation: 5
-  },
-  remoteTopDots: {
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center'
-  },
-  amberSphereSmall: {
-    width: 14,
-    height: 14,
-    borderRadius: 7,
-    backgroundColor: '#F2C97D'
-  },
-  whiteMiniDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: '#FDFBF7'
-  },
-  rotaryDialOuter: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
-    backgroundColor: '#E89D82',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginVertical: 10,
-    shadowColor: '#7A422E',
     shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.28,
-    shadowRadius: 10,
-    elevation: 6
+    shadowOpacity: 0.12,
+    shadowRadius: 16,
+    elevation: 4,
+    marginBottom: 14
   },
-  rotaryDialMiddle: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: '#DF8268',
+  sectionTitle: {
+    fontSize: 14,
+    fontWeight: '900',
+    color: '#2C221E',
+    marginBottom: 12
+  },
+  enginePowerBtn: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1.5,
-    borderColor: '#F7D3C2'
-  },
-  rotaryDialInner: {
-    width: 40,
-    height: 40,
+    backgroundColor: '#FCEEE9',
     borderRadius: 20,
+    padding: 14,
+    gap: 12,
+    borderWidth: 1.5,
+    borderColor: '#F5C2AF',
+    marginBottom: 14
+  },
+  enginePowerBtnActive: {
+    backgroundColor: '#EBF2F8',
+    borderColor: '#94B4D1'
+  },
+  powerIconCircle: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     backgroundColor: '#FDFBF7',
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.18,
-    shadowRadius: 4
+    shadowOpacity: 0.12,
+    shadowRadius: 5,
+    elevation: 3
   },
-  rotaryLabel: {
-    fontSize: 9,
+  engineBtnTitle: {
+    fontSize: 13,
     fontWeight: '900',
-    color: '#5C3A2E',
-    marginBottom: 8,
-    textAlign: 'center'
+    color: '#2C221E'
   },
-  fourMicroGrid: {
+  engineBtnSub: {
+    fontSize: 11,
+    color: '#7A6A63',
+    fontWeight: '600',
+    marginTop: 2
+  },
+  fourButtonsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    rowGap: 6,
-    width: '100%'
+    rowGap: 10
   },
-  microTactileSquare: {
-    width: 36,
-    height: 32,
-    borderRadius: 10,
-    backgroundColor: '#FDFBF7',
+  controlTile: {
+    width: '48.5%',
+    backgroundColor: '#F6F0E8',
+    borderRadius: 18,
+    padding: 14,
     alignItems: 'center',
-    justifyContent: 'center',
+    borderWidth: 1.5,
+    borderColor: '#FFFFFF',
     shadowColor: '#7A5C49',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.14,
-    shadowRadius: 5,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
     elevation: 2
   },
+  controlTileActiveBlue: {
+    borderColor: '#6E92B5',
+    backgroundColor: '#F2F7FB'
+  },
+  controlTileActiveCoral: {
+    borderColor: '#DF8268',
+    backgroundColor: '#FDF4F1'
+  },
+  tileIconCircle: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 8
+  },
+  tileTitle: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: '#2C221E'
+  },
+  tileSub: {
+    fontSize: 10,
+    color: '#8C7A70',
+    fontWeight: '600',
+    marginTop: 2
+  },
 
-  /* Middle Slim Strip */
-  verticalRemoteSlim: {
-    width: 54,
+  /* 3. GLOSA Card */
+  glosaCard: {
     backgroundColor: '#FDFBF7',
     borderRadius: 24,
-    overflow: 'hidden',
-    justifyContent: 'space-between',
+    padding: 16,
     borderWidth: 1.5,
     borderColor: '#FFFFFF',
     shadowColor: '#8C6D5B',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.14,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.12,
     shadowRadius: 16,
-    elevation: 5
+    elevation: 4,
+    marginBottom: 10
   },
-  slimTopSection: {
-    paddingVertical: 12,
-    alignItems: 'center',
-    gap: 10
-  },
-  crescentSwitch: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    backgroundColor: '#F6F0E8',
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#7A5C49',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.14,
-    shadowRadius: 4
-  },
-  slimWaveDivider: {
-    height: 22,
-    backgroundColor: '#D6E2EE',
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24
-  },
-  slimBottomTerracotta: {
-    flex: 1,
-    backgroundColor: '#E59B82',
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    paddingVertical: 10
-  },
-  slimTempText: {
-    fontSize: 10,
-    fontWeight: '900',
-    color: '#FDFBF7'
-  },
-  slimBottomWhiteSphere: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: '#FDFBF7',
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4
-  },
-
-  /* Right GLOSA & Command Card */
-  rightGlosaCard: {
-    flex: 1,
-    backgroundColor: '#FDFBF7',
-    borderRadius: 24,
-    padding: 14,
-    justifyContent: 'space-between',
-    borderWidth: 1.5,
-    borderColor: '#FFFFFF',
-    shadowColor: '#8C6D5B',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.14,
-    shadowRadius: 16,
-    elevation: 5
-  },
-  glosaTopRow: {
+  glosaHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6
-  },
-  glosaHeaderTitle: {
-    fontSize: 10,
-    fontWeight: '900',
-    color: '#7A6A63',
-    letterSpacing: 0.5
-  },
-  speedDialsRow: {
-    flexDirection: 'row',
     gap: 8,
-    marginVertical: 8
+    marginBottom: 12
   },
-  speedPillBox: {
+  trafficLightDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: '#4C8C64'
+  },
+  glosaTitle: {
+    fontSize: 11,
+    fontWeight: '900',
+    color: '#2C221E',
+    letterSpacing: 0.4
+  },
+  speedComparisonRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 10,
+    marginBottom: 10
+  },
+  speedBox: {
     flex: 1,
     backgroundColor: '#F6F0E8',
     borderRadius: 16,
-    padding: 10,
+    padding: 12,
     alignItems: 'center',
     borderWidth: 1,
     borderColor: '#FFFFFF'
   },
-  speedPillRecommended: {
-    backgroundColor: '#EBF2F8'
-  },
-  speedNum: {
-    fontSize: 20,
-    fontWeight: '900',
-    color: '#2C221E'
-  },
-  speedUnit: {
-    fontSize: 9,
-    fontWeight: '700',
-    color: '#7A6A63',
-    marginTop: 2
-  },
-  glosaAdviceText: {
-    fontSize: 11,
-    color: '#5C4B43',
-    fontWeight: '700',
-    lineHeight: 15,
-    marginBottom: 10
-  },
-  fourCommandCapsules: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    rowGap: 8
-  },
-  cmdCapsule: {
-    width: '48%',
-    backgroundColor: '#F6F0E8',
-    paddingVertical: 10,
-    borderRadius: 14,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 4,
-    borderWidth: 1,
-    borderColor: '#FFFFFF',
-    shadowColor: '#7A5C49',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5
-  },
-  cmdCapsuleActiveBlue: {
-    backgroundColor: '#6E92B5',
+  speedBoxGreenWave: {
+    backgroundColor: '#EBF2F8',
     borderColor: '#94B4D1'
   },
-  cmdCapsuleActiveCoral: {
-    backgroundColor: '#DF8268',
-    borderColor: '#F5BFA9'
-  },
-  cmdCapsuleText: {
+  speedBoxLabel: {
     fontSize: 10,
-    fontWeight: '800',
-    color: '#2C221E'
+    fontWeight: '700',
+    color: '#7A6A63'
+  },
+  speedBoxValue: {
+    fontSize: 20,
+    fontWeight: '900',
+    color: '#2C221E',
+    marginTop: 2
+  },
+  speedUnit: {
+    fontSize: 11,
+    fontWeight: '700'
+  },
+  glosaMessageText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#527394',
+    backgroundColor: '#EBF2F8',
+    padding: 10,
+    borderRadius: 12
   },
 
-  /* 3. Bottom Section */
-  bottomSection: {
-    marginTop: 4
-  },
+  /* 4. Return Button */
   returnVehicleBtn: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -843,10 +784,10 @@ const styles = StyleSheet.create({
     paddingRight: 8,
     paddingVertical: 8,
     borderRadius: 26,
-    marginTop: 14,
+    marginTop: 10,
     shadowColor: '#DF8268',
     shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.32,
+    shadowOpacity: 0.3,
     shadowRadius: 14,
     elevation: 6
   },
