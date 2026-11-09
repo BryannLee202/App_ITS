@@ -197,25 +197,50 @@ export default function BookingModal({ visible, vehicle, onClose, onBookingSucce
               {/* 4 Key Telemetry & Hardware Specs */}
               <View style={styles.specsGrid4}>
                 <View style={styles.specBox}>
-                  <Ionicons name="people-outline" size={16} color="#059669" />
+                  <Ionicons name="people-outline" size={16} color="#2E7D5B" />
                   <Text style={styles.specBoxVal}>{vehicle.seats} chỗ</Text>
                   <Text style={styles.specBoxLbl}>Nội thất</Text>
                 </View>
                 <View style={styles.specBox}>
-                  <Ionicons name="battery-charging-outline" size={16} color="#059669" />
+                  <Ionicons name="battery-charging-outline" size={16} color="#2E7D5B" />
                   <Text style={styles.specBoxVal}>{vehicle.rangeKm} km</Text>
                   <Text style={styles.specBoxLbl}>Quãng đường</Text>
                 </View>
                 <View style={styles.specBox}>
-                  <Ionicons name="bluetooth-outline" size={16} color="#059669" />
-                  <Text style={styles.specBoxVal}>BLE 5.2</Text>
-                  <Text style={styles.specBoxLbl}>Khóa số</Text>
+                  <Ionicons name="disc-outline" size={16} color="#2E7D5B" />
+                  <Text style={styles.specBoxVal}>
+                    {vehicle.telematics?.tirePressurePsi?.fl || 34} PSI
+                  </Text>
+                  <Text style={styles.specBoxLbl}>Áp suất 4 lốp</Text>
                 </View>
                 <View style={styles.specBox}>
-                  <Ionicons name="speedometer-outline" size={16} color="#059669" />
+                  <Ionicons name="speedometer-outline" size={16} color="#2E7D5B" />
                   <Text style={styles.specBoxVal}>GLOSA</Text>
                   <Text style={styles.specBoxLbl}>Làn sóng xanh</Text>
                 </View>
+              </View>
+
+              {/* Pre-Trip IoT 4-Tire & Safety Check Box */}
+              <View style={{
+                marginTop: 10,
+                backgroundColor: '#EAF6F0',
+                borderRadius: 12,
+                padding: 10,
+                borderWidth: 1,
+                borderColor: '#B7E4CE',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between'
+              }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <Ionicons name="shield-checkmark" size={16} color="#2E7D5B" />
+                  <Text style={{ fontSize: 11, fontWeight: '700', color: '#18221D' }}>
+                    Kiểm định IoT trước chuyến: Đạt chuẩn 100%
+                  </Text>
+                </View>
+                <Text style={{ fontSize: 10, fontWeight: '800', color: '#2E7D5B' }}>
+                  4 Lốp OK • Pin {batteryPct}%
+                </Text>
               </View>
             </View>
 

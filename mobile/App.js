@@ -13,7 +13,6 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { FONTS } from './src/styles/theme';
-import GreenSM3DIcon from './src/components/GreenSM3DIcons';
 
 import HomeScreen from './src/screens/HomeScreen';
 import MapScreen from './src/screens/MapScreen';
@@ -21,58 +20,59 @@ import DigitalKeyScreen from './src/screens/DigitalKeyScreen';
 import TripsHistoryScreen from './src/screens/TripsHistoryScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
 
-// Authentic 4 Pill Icons matching Green SM v5.12.0(437)
-const PILL_TABS = [
-  { id: 'HOME', icon: 'home', label: 'Trang chủ' },
-  { id: 'TRIPS', icon: 'time', label: 'Hoạt động' },
-  { id: 'KEY', icon: 'notifications', label: 'Khóa & TB' },
-  { id: 'PROFILE', icon: 'person', label: 'Tài khoản' }
+// Unified 5-Tab Dock for EcoGo Smart (Center Elevated BLE Smart Key)
+const DOCK_TABS = [
+  { id: 'HOME', icon: 'compass-outline', activeIcon: 'compass', label: 'Khám phá' },
+  { id: 'MAP', icon: 'map-outline', activeIcon: 'map', label: 'Bản đồ Hub' },
+  { id: 'KEY', icon: 'key', activeIcon: 'key', label: 'Khóa BLE', isCenterKey: true },
+  { id: 'TRIPS', icon: 'receipt-outline', activeIcon: 'receipt', label: 'Hành trình' },
+  { id: 'PROFILE', icon: 'person-outline', activeIcon: 'person', label: 'Tài khoản' }
 ];
 
-const GREEN_RACE_BADGES = [
+const ECOGO_RACE_BADGES = [
   {
     id: 'badge_10_trips',
     title: 'Chứng nhận\n10 Chuyến Xanh',
-    outerColor: '#B0BEC5',
-    innerBg: '#ECEFF1',
-    icon: 'bicycle',
-    iconColor: '#00897B',
+    outerColor: '#86EFAC',
+    innerBg: '#EAF6F0',
+    icon: 'car-sport',
+    iconColor: '#2E7D5B',
     progress: '3/10 chuyến'
   },
   {
     id: 'badge_plastic',
-    title: 'Chứng nhận\nHạn Chế Rác Nhựa',
-    outerColor: '#FFB74D',
-    innerBg: '#FFF8E1',
+    title: 'Chứng nhận\nGiảm Phát Thải CO₂',
+    outerColor: '#FCD34D',
+    innerBg: '#FFFBEB',
     icon: 'leaf',
-    iconColor: '#43A047',
-    progress: '1.2 kg CO₂'
+    iconColor: '#2E7D5B',
+    progress: '42.8 kg CO₂'
   },
   {
     id: 'badge_ocean',
-    title: 'Chứng nhận\nBảo Vệ Đại Dương',
-    outerColor: '#4DD0E1',
-    innerBg: '#E0F7FA',
-    icon: 'water',
-    iconColor: '#00ACC1',
-    progress: '50 km xanh'
+    title: 'Chứng nhận\nLàn Sóng Xanh ITS',
+    outerColor: '#6EE7B7',
+    innerBg: '#ECFDF5',
+    icon: 'speedometer',
+    iconColor: '#047857',
+    progress: '50 km GLOSA'
   },
   {
     id: 'badge_forest',
     title: 'Chứng nhận\nBảo Tồn Rừng Xanh',
-    outerColor: '#81C784',
-    innerBg: '#E8F5E9',
+    outerColor: '#4ADE80',
+    innerBg: '#F0FDF4',
     icon: 'earth',
-    iconColor: '#2E7D32',
+    iconColor: '#15803D',
     progress: '150 km xanh'
   },
   {
     id: 'badge_polar',
-    title: 'Chứng nhận\nGiải Cứu Gấu Bắc Cực',
-    outerColor: '#FFD54F',
-    innerBg: '#FFFDE7',
-    icon: 'snow',
-    iconColor: '#0288D1',
+    title: 'Chứng nhận\nĐại Sứ Net-Zero UTH',
+    outerColor: '#FBBF24',
+    innerBg: '#FEF3C7',
+    icon: 'ribbon',
+    iconColor: '#B45309',
     progress: '500 km xanh'
   }
 ];
@@ -137,14 +137,14 @@ export default function App() {
 
   return (
     <View style={styles.outerViewport}>
-      <StatusBar barStyle="dark-content" backgroundColor="#E0F7FA" />
+      <StatusBar barStyle="dark-content" backgroundColor="#EAF6F0" />
 
       {/* Top Mode Switcher on Desktop Browser */}
       {isDesktopBrowser && (
         <View style={styles.desktopToolbar}>
           <View style={styles.toolbarBrand}>
             <View style={styles.statusDot} />
-            <Text style={styles.toolbarTitle}>ECOGO SMART · Thuê xe tự động 24/7</Text>
+            <Text style={styles.toolbarTitle}>ECOGO SMART · Thuê xe tự động 24/7 (UTH)</Text>
           </View>
 
           <View style={styles.modeToggleGroup}>
@@ -155,7 +155,7 @@ export default function App() {
               <Ionicons
                 name="phone-portrait-outline"
                 size={13}
-                color={viewMode === 'PHONE' ? '#00838F' : '#64748B'}
+                color={viewMode === 'PHONE' ? '#2E7D5B' : '#64748B'}
               />
               <Text style={[styles.modeBtnText, viewMode === 'PHONE' && styles.modeBtnTextActive]}>
                 Điện thoại
@@ -169,24 +169,10 @@ export default function App() {
               <Ionicons
                 name="expand-outline"
                 size={13}
-                color={viewMode === 'WIDE' ? '#00838F' : '#64748B'}
+                color={viewMode === 'WIDE' ? '#2E7D5B' : '#64748B'}
               />
               <Text style={[styles.modeBtnText, viewMode === 'WIDE' && styles.modeBtnTextActive]}>
                 Mở rộng
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[styles.modeBtn, activeTab === 'MAP' && styles.modeBtnActive]}
-              onPress={() => setActiveTab(activeTab === 'MAP' ? 'HOME' : 'MAP')}
-            >
-              <Ionicons
-                name="map-outline"
-                size={13}
-                color={activeTab === 'MAP' ? '#00838F' : '#64748B'}
-              />
-              <Text style={[styles.modeBtnText, activeTab === 'MAP' && styles.modeBtnTextActive]}>
-                Bản đồ Hub
               </Text>
             </TouchableOpacity>
           </View>
@@ -204,50 +190,80 @@ export default function App() {
         <SafeAreaView style={styles.safeArea}>
           <View style={styles.mainContentArea}>{renderContent()}</View>
 
-          {/* Authentic Green SM Floating Frosted Glass Pill Bar + Detached 3D Trophy Button */}
+          {/* =========================================================================
+              ORIGINAL ECOGO SMART UNIFIED FLOATING DOCK (5 TABS + CENTER SMART KEY)
+             ========================================================================= */}
           <View style={styles.floatingBottomDock} pointerEvents="box-none">
-            {/* Left Frosted Glass Pill (4 Icons with Radial Cyan Glow on Active) */}
-            <View style={styles.frostedPillBar}>
-              {PILL_TABS.map((tab) => {
-                const isActive =
-                  activeTab === tab.id || (tab.id === 'HOME' && activeTab === 'MAP');
+            <View style={styles.unifiedGlassDock}>
+              {DOCK_TABS.map((tab) => {
+                const isActive = activeTab === tab.id;
+
+                if (tab.isCenterKey) {
+                  return (
+                    <TouchableOpacity
+                      key={tab.id}
+                      style={styles.centerKeySlot}
+                      activeOpacity={0.88}
+                      onPress={() => setActiveTab('KEY')}
+                    >
+                      <View
+                        style={[
+                          styles.centerKeyCircle,
+                          isActive && styles.centerKeyCircleActive
+                        ]}
+                      >
+                        <Ionicons name="key" size={22} color="#FFFFFF" />
+                      </View>
+                      <Text
+                        style={[
+                          styles.dockTabLabel,
+                          { marginTop: 3 },
+                          isActive && styles.dockTabLabelActive
+                        ]}
+                      >
+                        {tab.label}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                }
+
                 return (
                   <TouchableOpacity
                     key={tab.id}
-                    style={styles.pillTabBtn}
+                    style={styles.dockTabBtn}
                     activeOpacity={0.8}
                     onPress={() => setActiveTab(tab.id)}
                   >
-                    {isActive ? (
-                      <View style={styles.activeCyanGlowOuter}>
-                        <View style={styles.activeCyanGlowInner}>
-                          <Ionicons name={tab.icon} size={22} color="#2E7D5B" />
-                        </View>
-                      </View>
-                    ) : (
-                      <View style={styles.inactiveTabWrap}>
-                        <Ionicons name={tab.icon} size={22} color="#636E72" />
-                      </View>
-                    )}
+                    <View
+                      style={[
+                        styles.dockIconPill,
+                        isActive && styles.dockIconPillActive
+                      ]}
+                    >
+                      <Ionicons
+                        name={isActive ? tab.activeIcon : tab.icon}
+                        size={20}
+                        color={isActive ? '#2E7D5B' : '#64748B'}
+                      />
+                    </View>
+                    <Text
+                      style={[
+                        styles.dockTabLabel,
+                        isActive && styles.dockTabLabelActive
+                      ]}
+                    >
+                      {tab.label}
+                    </Text>
                   </TouchableOpacity>
                 );
               })}
             </View>
-
-            {/* Right Detached Frosted Circle with 3D Gold Trophy (Opens GREEN RACE) */}
-            <TouchableOpacity
-              style={styles.detachedTrophyCircle}
-              activeOpacity={0.85}
-              onPress={() => setShowGreenRaceModal(true)}
-            >
-              <GreenSM3DIcon type="TROPHY_3D" size={44} />
-            </TouchableOpacity>
           </View>
         </SafeAreaView>
       </View>
 
       {/* =========================================================================
-          MODAL 1: AUTHENTIC GREEN RACE GAMIFICATION SCREEN (v5.12.0)
+          MODAL 1: ECOGO RACE ESG GAMIFICATION MODAL
          ========================================================================= */}
       <Modal
         visible={showGreenRaceModal}
@@ -257,7 +273,6 @@ export default function App() {
       >
         <View style={styles.greenRaceOverlay}>
           <View style={styles.greenRaceScreen}>
-            {/* Top Bar: Back, Leaf Title, and More (...) */}
             <View style={styles.grHeader}>
               <TouchableOpacity
                 style={styles.grBackBtn}
@@ -266,20 +281,20 @@ export default function App() {
                   setShowGreenRaceModal(false);
                 }}
               >
-                <Ionicons name="arrow-back" size={24} color="#263238" />
+                <Ionicons name="arrow-back" size={24} color="#18221D" />
               </TouchableOpacity>
 
               <View style={styles.grTitleWrap}>
-                <Ionicons name="leaf" size={18} color="#66BB6A" style={{ transform: [{ scaleX: -1 }] }} />
+                <Ionicons name="leaf" size={18} color="#2E7D5B" style={{ transform: [{ scaleX: -1 }] }} />
                 <Text style={styles.grTitleText}>ECOGO RACE</Text>
-                <Ionicons name="leaf" size={18} color="#66BB6A" />
+                <Ionicons name="leaf" size={18} color="#2E7D5B" />
               </View>
 
               <TouchableOpacity
                 style={styles.grMoreBtn}
                 onPress={() => setShowGreenRaceTerms(true)}
               >
-                <Ionicons name="ellipsis-horizontal" size={22} color="#263238" />
+                <Ionicons name="ellipsis-horizontal" size={22} color="#18221D" />
               </TouchableOpacity>
             </View>
 
@@ -290,9 +305,8 @@ export default function App() {
             >
               {!showLeaderboard ? (
                 <>
-                  {/* 5 Laurel-Wreath Shield Emblems Grid (3 Top, 2 Bottom) */}
                   <View style={styles.badgesGrid}>
-                    {GREEN_RACE_BADGES.map((badge) => (
+                    {ECOGO_RACE_BADGES.map((badge) => (
                       <TouchableOpacity
                         key={badge.id}
                         style={styles.badgeItem}
@@ -303,21 +317,19 @@ export default function App() {
                         }}
                       >
                         <View style={styles.laurelShieldWrap}>
-                          {/* Left & Right Gold Laurel Wreath Accent */}
                           <Ionicons
                             name="leaf-outline"
                             size={24}
-                            color="#FFB300"
+                            color="#D97706"
                             style={styles.laurelLeft}
                           />
                           <Ionicons
                             name="leaf-outline"
                             size={24}
-                            color="#FFB300"
+                            color="#D97706"
                             style={styles.laurelRight}
                           />
 
-                          {/* Shield Outer Ring */}
                           <View
                             style={[
                               styles.shieldOuter,
@@ -325,13 +337,12 @@ export default function App() {
                             ]}
                           >
                             <View style={styles.shieldInner}>
-                              <Ionicons name={badge.icon} size={28} color={badge.iconColor} />
+                              <Ionicons name={badge.icon} size={26} color={badge.iconColor} />
                             </View>
                           </View>
 
-                          {/* Bottom Gold Star Ribbon */}
                           <View style={styles.shieldRibbon}>
-                            <Ionicons name="star" size={10} color="#FFF" />
+                            <Text style={styles.shieldRibbonText}>{badge.progress}</Text>
                           </View>
                         </View>
 
@@ -340,29 +351,27 @@ export default function App() {
                     ))}
                   </View>
 
-                  {/* User Current Progress Summary Box */}
                   <View style={styles.grProgressBanner}>
                     <View style={styles.grSeedlingTag}>
                       <Ionicons name="leaf" size={14} color="#FFF" />
-                      <Text style={styles.grSeedlingTagText}>Hạng hiện tại: Người Ươm Mầm</Text>
+                      <Text style={styles.grSeedlingTagText}>Hạng hiện tại: Người Ươm Mầm (340 EcoPts)</Text>
                     </View>
                     <Text style={styles.grProgressSub}>
-                      Hoàn thành các chuyến thuê xe xanh tại hệ thống trạm EcoGo Smart để mở khóa
-                      trọn bộ huy hiệu bảo vệ môi trường và đóng góp vào Quỹ Vì Tương Lai Xanh.
+                      Hoàn thành các chuyến thuê xe tự lái tại hệ thống trạm EcoGo Smart (UTH) để mở khóa
+                      trọn bộ chứng nhận ESG và nhận ưu đãi giảm giá trực tiếp.
                     </Text>
                   </View>
                 </>
               ) : (
-                /* Monthly Leaderboard View */
                 <View style={styles.leaderboardBox}>
-                  <Text style={styles.lbHeaderTitle}>Bảng Xếp Hạng Tháng 11/2026</Text>
-                  <Text style={styles.lbHeaderSub}>Top Đại Sứ Xanh giảm phát thải CO₂ nhiều nhất</Text>
+                  <Text style={styles.lbHeaderTitle}>Bảng Xếp Hạng EcoGo Tháng 11/2026</Text>
+                  <Text style={styles.lbHeaderSub}>Top thành viên giảm phát thải CO₂ nhiều nhất</Text>
 
                   {[
                     { rank: 1, name: 'Nguyễn Hoàng Nam', km: '1,420 km', trees: '68 cây', badge: '🏆' },
                     { rank: 2, name: 'Trần Minh Anh', km: '1,180 km', trees: '54 cây', badge: '🥈' },
                     { rank: 3, name: 'Lê Quốc Bảo', km: '940 km', trees: '42 cây', badge: '🥉' },
-                    { rank: 18, name: 'Minh Tài (Bạn)', km: '125 km', trees: '6 cây', badge: '🌱', isMe: true }
+                    { rank: 18, name: 'Minh Tài (Bạn)', km: '142 km', trees: '6 cây', badge: '🌱', isMe: true }
                   ].map((row) => (
                     <View
                       key={row.rank}
@@ -370,7 +379,7 @@ export default function App() {
                     >
                       <Text style={styles.lbRank}>{row.badge} #{row.rank}</Text>
                       <View style={{ flex: 1, marginLeft: 10 }}>
-                        <Text style={[styles.lbName, row.isMe && { color: '#00838F', fontWeight: '800' }]}>
+                        <Text style={[styles.lbName, row.isMe && { color: '#2E7D5B', fontWeight: '800' }]}>
                           {row.name}
                         </Text>
                         <Text style={styles.lbMeta}>Tích lũy: {row.km}</Text>
@@ -384,7 +393,6 @@ export default function App() {
               )}
             </ScrollView>
 
-            {/* Bottom Dual CTAs matching screenshot 1793016386204 */}
             <View style={styles.grFooterCtas}>
               <TouchableOpacity
                 style={styles.grTurquoiseBtn}
@@ -404,7 +412,6 @@ export default function App() {
                 activeOpacity={0.85}
                 onPress={() => setShowLeaderboard(!showLeaderboard)}
               >
-                {/* Top-Left 3D Crown Badge */}
                 <View style={styles.grCrownFloating}>
                   <Text style={{ fontSize: 16 }}>👑</Text>
                 </View>
@@ -414,7 +421,6 @@ export default function App() {
               </TouchableOpacity>
             </View>
 
-            {/* Terms & Conditions Bottom Sheet inside Green Race (matching 1793016386188) */}
             {showGreenRaceTerms && (
               <TouchableOpacity
                 style={styles.grTermsBackdrop}
@@ -427,9 +433,9 @@ export default function App() {
                     style={styles.grTermsRow}
                     onPress={() => setShowGreenRaceTerms(false)}
                   >
-                    <Ionicons name="document-text-outline" size={22} color="#37474F" />
-                    <Text style={styles.grTermsRowText}>Xem Điều khoản và Điều kiện</Text>
-                    <Ionicons name="chevron-forward" size={20} color="#78909C" />
+                    <Ionicons name="document-text-outline" size={22} color="#18221D" />
+                    <Text style={styles.grTermsRowText}>Xem Thể lệ Chương trình EcoGo Race</Text>
+                    <Ionicons name="chevron-forward" size={20} color="#64748B" />
                   </TouchableOpacity>
                 </View>
               </TouchableOpacity>
@@ -451,14 +457,14 @@ export default function App() {
           <View style={styles.rewardsModalCard}>
             <View style={styles.rewardsHeader}>
               <View>
-                <Text style={styles.rewardsTitle}>Ưu đãi EcoGo Smart hiện có</Text>
-                <Text style={styles.rewardsSub}>Áp dụng cho Đặt xe, Thuê xe tự lái & Liên tỉnh</Text>
+                <Text style={styles.rewardsTitle}>Ví Ưu Đãi EcoGo Smart</Text>
+                <Text style={styles.rewardsSub}>Áp dụng cho Thuê theo giờ, Thuê theo ngày & Liên tỉnh</Text>
               </View>
               <TouchableOpacity
                 style={styles.closeModalBtn}
                 onPress={() => setShowRewardsModal(false)}
               >
-                <Ionicons name="close" size={18} color="#1C2526" />
+                <Ionicons name="close" size={18} color="#18221D" />
               </TouchableOpacity>
             </View>
 
@@ -476,7 +482,7 @@ export default function App() {
               {
                 code: 'FREEDELIVERY',
                 title: 'Miễn phí giao nhận xe tận nơi',
-                desc: 'Miễn 100% phí giao xe trong bán kính 5km quanh trạm Hub'
+                desc: 'Miễn 100% phí giao xe trong bán kính 5km quanh trạm EcoGo Hub'
               }
             ].map((item) => (
               <View key={item.code} style={styles.voucherCard}>
@@ -536,11 +542,11 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.family,
     fontSize: 13,
     fontWeight: '700',
-    color: '#1C2526'
+    color: '#18221D'
   },
   modeToggleGroup: {
     flexDirection: 'row',
-    backgroundColor: '#F0F6F7',
+    backgroundColor: '#F0F5F2',
     padding: 3,
     borderRadius: 10,
     gap: 4
@@ -595,7 +601,7 @@ const styles = StyleSheet.create({
   },
   safeArea: {
     flex: 1,
-    backgroundColor: '#F5F7F9',
+    backgroundColor: '#F4F7F5',
     position: 'relative'
   },
   mainContentArea: {
@@ -603,86 +609,86 @@ const styles = StyleSheet.create({
   },
 
   /* =========================================================================
-     AUTHENTIC GREEN SM FLOATING FROSTED GLASS DOCK + DETACHED TROPHY CIRCLE
+     UNIFIED FLOATING GLASS DOCK (5 TABS + CENTER SMART KEY)
      ========================================================================= */
   floatingBottomDock: {
     position: 'absolute',
-    bottom: 14,
+    bottom: 12,
     left: 14,
     right: 14,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: 10,
     zIndex: 50
   },
-  frostedPillBar: {
-    flex: 1,
-    height: 62,
-    borderRadius: 31,
-    backgroundColor: 'rgba(232, 239, 235, 0.94)',
+  unifiedGlassDock: {
+    height: 66,
+    borderRadius: 26,
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
     borderWidth: 1.5,
-    borderColor: 'rgba(255, 255, 255, 0.95)',
+    borderColor: '#E2ECE7',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around',
     paddingHorizontal: 6,
     shadowColor: '#143326',
     shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.12,
+    shadowOpacity: 0.1,
     shadowRadius: 18,
     elevation: 8
   },
-  pillTabBtn: {
+  dockTabBtn: {
     flex: 1,
     height: '100%',
     alignItems: 'center',
     justifyContent: 'center'
   },
-  activeCyanGlowOuter: {
-    width: 66,
-    height: 52,
-    borderRadius: 26,
-    backgroundColor: 'rgba(110, 231, 183, 0.38)',
+  dockIconPill: {
+    width: 42,
+    height: 30,
+    borderRadius: 15,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  dockIconPillActive: {
+    backgroundColor: '#EAF6F0'
+  },
+  dockTabLabel: {
+    fontFamily: FONTS.family,
+    fontSize: 10,
+    fontWeight: '600',
+    color: '#64748B',
+    marginTop: 2
+  },
+  dockTabLabelActive: {
+    color: '#2E7D5B',
+    fontWeight: '800'
+  },
+  centerKeySlot: {
+    flex: 1.1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: -18
+  },
+  centerKeyCircle: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: '#2E7D5B',
+    borderWidth: 3,
+    borderColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#2E7D5B',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.45,
-    shadowRadius: 12
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.35,
+    shadowRadius: 10,
+    elevation: 6
   },
-  activeCyanGlowInner: {
-    width: 46,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: 'rgba(234, 246, 240, 0.95)',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  inactiveTabWrap: {
-    width: 46,
-    height: 40,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  detachedTrophyCircle: {
-    width: 62,
-    height: 62,
-    borderRadius: 31,
-    backgroundColor: 'rgba(232, 239, 235, 0.94)',
-    borderWidth: 1.5,
-    borderColor: 'rgba(255, 255, 255, 0.95)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#143326',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.14,
-    shadowRadius: 18,
-    elevation: 8
+  centerKeyCircleActive: {
+    backgroundColor: '#1E563F',
+    borderColor: '#A7F3D0'
   },
 
   /* =========================================================================
-     GREEN RACE MODAL STYLES (Exact match to 1793016386204)
+     ECOGO RACE MODAL STYLES
      ========================================================================= */
   greenRaceOverlay: {
     flex: 1,
@@ -694,7 +700,7 @@ const styles = StyleSheet.create({
     width: '100%',
     maxWidth: 414,
     height: '100%',
-    backgroundColor: '#ECF9F2',
+    backgroundColor: '#F2F9F5',
     justifyContent: 'space-between',
     position: 'relative'
   },
@@ -705,7 +711,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 18,
     paddingBottom: 14,
-    backgroundColor: '#DCF3E6'
+    backgroundColor: '#E3F3EA'
   },
   grBackBtn: {
     width: 36,
@@ -722,7 +728,7 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.family,
     fontSize: 19,
     fontWeight: '800',
-    color: '#2E5A36',
+    color: '#1E563F',
     letterSpacing: 0.5
   },
   grMoreBtn: {
@@ -776,7 +782,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.08,
     shadowRadius: 6,
     elevation: 3
   },
@@ -790,19 +796,24 @@ const styles = StyleSheet.create({
   },
   shieldRibbon: {
     position: 'absolute',
-    bottom: 2,
-    backgroundColor: '#FFB300',
-    paddingHorizontal: 10,
+    bottom: -2,
+    backgroundColor: '#2E7D5B',
+    paddingHorizontal: 7,
     paddingVertical: 2,
     borderRadius: 8,
     borderWidth: 1,
     borderColor: '#FFFFFF'
   },
+  shieldRibbonText: {
+    color: '#FFFFFF',
+    fontSize: 8,
+    fontWeight: '800'
+  },
   badgeTitleText: {
     fontFamily: FONTS.family,
     fontSize: 12,
     fontWeight: '600',
-    color: '#263238',
+    color: '#18221D',
     textAlign: 'center',
     lineHeight: 16
   },
@@ -812,13 +823,13 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#C8E6C9',
+    borderColor: '#C6EBD8',
     alignItems: 'center'
   },
   grSeedlingTag: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#558B2F',
+    backgroundColor: '#2E7D5B',
     paddingHorizontal: 14,
     paddingVertical: 6,
     borderRadius: 99,
@@ -834,7 +845,7 @@ const styles = StyleSheet.create({
   grProgressSub: {
     fontFamily: FONTS.family,
     fontSize: 12,
-    color: '#546E7A',
+    color: '#5C6B63',
     textAlign: 'center',
     lineHeight: 18
   },
@@ -843,19 +854,19 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#C8E6C9'
+    borderColor: '#C6EBD8'
   },
   lbHeaderTitle: {
     fontFamily: FONTS.family,
     fontSize: 16,
     fontWeight: '800',
-    color: '#1C2526',
+    color: '#18221D',
     textAlign: 'center'
   },
   lbHeaderSub: {
     fontFamily: FONTS.family,
     fontSize: 12,
-    color: '#636E72',
+    color: '#5C6B63',
     textAlign: 'center',
     marginTop: 2,
     marginBottom: 14
@@ -866,35 +877,35 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 12,
     borderRadius: 12,
-    backgroundColor: '#F5F7F9',
+    backgroundColor: '#F4F7F5',
     marginBottom: 8
   },
   lbRowMe: {
-    backgroundColor: '#E0F7FA',
+    backgroundColor: '#EAF6F0',
     borderWidth: 1,
-    borderColor: '#26C6DA'
+    borderColor: '#2E7D5B'
   },
   lbRank: {
     fontFamily: FONTS.family,
     fontSize: 14,
     fontWeight: '800',
-    color: '#263238',
+    color: '#18221D',
     width: 48
   },
   lbName: {
     fontFamily: FONTS.family,
     fontSize: 14,
     fontWeight: '700',
-    color: '#1C2526'
+    color: '#18221D'
   },
   lbMeta: {
     fontFamily: FONTS.family,
     fontSize: 11,
-    color: '#636E72',
+    color: '#5C6B63',
     marginTop: 2
   },
   lbTreesPill: {
-    backgroundColor: '#558B2F',
+    backgroundColor: '#2E7D5B',
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 99
@@ -909,7 +920,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 12,
     paddingBottom: 24,
-    backgroundColor: '#FFFDF7',
+    backgroundColor: '#FDF6EC',
     gap: 12
   },
   grTurquoiseBtn: {
@@ -927,7 +938,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.3
   },
   grGoldBtn: {
-    backgroundColor: '#FBC02D',
+    backgroundColor: '#D97706',
     paddingVertical: 15,
     borderRadius: 12,
     alignItems: 'center',
@@ -968,7 +979,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 4,
     borderRadius: 2,
-    backgroundColor: '#CFD8DC',
+    backgroundColor: '#CBD5E1',
     alignSelf: 'center',
     marginBottom: 16
   },
@@ -983,7 +994,7 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.family,
     fontSize: 15,
     fontWeight: '600',
-    color: '#263238'
+    color: '#18221D'
   },
 
   /* =========================================================================
@@ -1013,19 +1024,19 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.family,
     fontSize: 18,
     fontWeight: '800',
-    color: '#1C2526'
+    color: '#18221D'
   },
   rewardsSub: {
     fontFamily: FONTS.family,
     fontSize: 12,
-    color: '#636E72',
+    color: '#5C6B63',
     marginTop: 2
   },
   closeModalBtn: {
     width: 30,
     height: 30,
     borderRadius: 15,
-    backgroundColor: '#F0F4F7',
+    backgroundColor: '#F0F5F2',
     alignItems: 'center',
     justifyContent: 'center'
   },
@@ -1050,12 +1061,12 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.family,
     fontSize: 13,
     fontWeight: '700',
-    color: '#1C2526'
+    color: '#18221D'
   },
   voucherItemDesc: {
     fontFamily: FONTS.family,
     fontSize: 11,
-    color: '#636E72',
+    color: '#5C6B63',
     marginTop: 2
   },
   copyVoucherBtn: {

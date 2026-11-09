@@ -19,7 +19,7 @@ import GreenSM3DIcons from '../components/GreenSM3DIcons';
 import ApiService from '../services/api';
 
 const CATEGORIES = [
-  { id: 'ALL', label: 'Tất cả xe' },
+  { id: 'ALL', label: 'Tất cả đội xe' },
   { id: 'CAR', label: 'Ô tô tự lái' },
   { id: 'MOTORBIKE', label: 'Xe máy điện' }
 ];
@@ -27,38 +27,38 @@ const CATEGORIES = [
 const SAVED_PLACES = [
   {
     id: 'place-1',
-    name: 'Ga Quốc Nội (Ga T3) - Sân Bay Quốc Tế Tân Sơn Nhất',
-    address: 'Phường Tân Sơn, Thành phố Hồ Chí Minh, VNM',
-    distance: '13,6 km',
-    icon: 'airplane-outline'
-  },
-  {
-    id: 'place-2',
     name: 'EcoGo Mobility Hub - ĐH Giao Thông Vận Tải (UTH)',
     address: 'Số 2 Võ Oanh, Phường 25, Quận Bình Thạnh, TP.HCM',
-    distance: '0,6 km',
+    distance: '0,4 km',
     icon: 'school-outline'
   },
   {
-    id: 'place-3',
-    name: 'Ga Trung Tâm Metro Bến Thành',
-    address: 'Đường Trần Hưng Đạo, Phường Bến Thành, Quận 1, TP.HCM',
-    distance: '8,8 km',
+    id: 'place-2',
+    name: 'EcoGo Multimodal Station - Ga Trung Tâm Bến Thành',
+    address: 'Quảng trường Quách Thị Trang, Phường Bến Thành, Quận 1, TP.HCM',
+    distance: '6,8 km',
     icon: 'train-outline'
   },
   {
+    id: 'place-3',
+    name: 'EcoGo Smart Station - Khu Đô Thị Tân Cảng & Landmark 81',
+    address: '720A Điện Biên Phủ, Phường 22, Quận Bình Thạnh, TP.HCM',
+    distance: '1,4 km',
+    icon: 'business-outline'
+  },
+  {
     id: 'place-4',
-    name: 'Saigon Centre & Takashimaya',
-    address: '65 Lê Lợi, Phường Bến Nghé, Quận 1, TP.HCM',
-    distance: '8,2 km',
-    icon: 'time-outline'
+    name: 'EcoGo Airport Hub - Sân Bay Quốc Tế Tân Sơn Nhất',
+    address: 'Đường Trường Sơn, Phường 2, Quận Tân Bình, TP.HCM',
+    distance: '8,5 km',
+    icon: 'airplane-outline'
   },
   {
     id: 'place-5',
-    name: 'Khu Đô Thị Tân Cảng & Landmark 81',
-    address: '720A Điện Biên Phủ, Phường 22, Quận Bình Thạnh, TP.HCM',
-    distance: '1,4 km',
-    icon: 'time-outline'
+    name: 'EcoGo Eco Station - Khu Đô Thị Mới Thủ Thiêm',
+    address: 'Đại lộ Mai Chí Thọ, Phường An Khánh, TP. Thủ Đức, TP.HCM',
+    distance: '4,2 km',
+    icon: 'leaf-outline'
   }
 ];
 
@@ -74,6 +74,7 @@ export default function HomeScreen({
   const [vehicles, setVehicles] = useState([]);
   const [stations, setStations] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('ALL');
+  const [rentalPackageTab, setRentalPackageTab] = useState('HOURLY'); // 'HOURLY' | 'DAILY' | 'INTERCITY'
   const [glosaAdvisory, setGlosaAdvisory] = useState(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -81,7 +82,7 @@ export default function HomeScreen({
   // Modals
   const [showDestinationModal, setShowDestinationModal] = useState(false);
   const [destinationQuery, setDestinationQuery] = useState('');
-  const [selectedPlace, setSelectedPlace] = useState(SAVED_PLACES[1]);
+  const [selectedPlace, setSelectedPlace] = useState(SAVED_PLACES[0]);
   const [bookingVehicle, setBookingVehicle] = useState(null);
   const [showBookingModal, setShowBookingModal] = useState(false);
   const [bookingToast, setBookingToast] = useState(null);
@@ -118,7 +119,7 @@ export default function HomeScreen({
     setShowBookingModal(false);
     setBookingToast({
       title: 'Đặt thuê xe thành công!',
-      message: `Xe ${bookingVehicle?.name} (${bookingVehicle?.plateNumber}) đã mở khóa Digital Key.`
+      message: `Xe ${bookingVehicle?.name} (${bookingVehicle?.plateNumber}) đã kích hoạt khóa số BLE 5.2.`
     });
     loadInitialData();
     setTimeout(() => {
@@ -126,6 +127,16 @@ export default function HomeScreen({
       if (onNavigateToKey) onNavigateToKey();
     }, 1400);
   };
+
+  const filteredVehicles = vehicles.filter((v) => {
+    if (!destinationQuery.trim()) return true;
+    const q = destinationQuery.toLowerCase();
+    return (
+      v.name.toLowerCase().includes(q) ||
+      v.brand.toLowerCase().includes(q) ||
+      v.plateNumber.toLowerCase().includes(q)
+    );
+  });
 
   return (
     <View style={styles.container}>
@@ -139,31 +150,136 @@ export default function HomeScreen({
               setRefreshing(true);
               loadInitialData();
             }}
-            tintColor="#18B6B4"
+            tintColor="#2E7D5B"
           />
         }
       >
         {/* ============================================================
-            1. TOP 3D MAP BACKDROP & FLOATING SEARCH PILL (GREEN SM 18:56)
+            1. ORIGINAL ECOGO SMART HEADER (USER GREETING + ECOPTS TROPHY PILL)
            ============================================================ */}
-        <View style={styles.topMapBackdrop}>
-          {/* Subtle 3D Urban Road Grid Pattern */}
-          <View style={styles.roadLineDiagonal1} />
-          <View style={styles.roadLineDiagonal2} />
-          <View style={styles.buildingBlock1} />
-          <View style={styles.buildingBlock2} />
+        <View style={styles.topHeaderSection}>
+          <View style={styles.headerTopRow}>
+            <TouchableOpacity
+              style={styles.userGreetingLeft}
+              activeOpacity={0.85}
+              onPress={onNavigateToProfile}
+            >
+              <View style={styles.avatarJadeCircle}>
+                <Text style={styles.avatarInitials}>MT</Text>
+                <View style={styles.onlineStatusDot} />
+              </View>
+              <View>
+                <View style={styles.greetingNameRow}>
+                  <Text style={styles.greetingTitle}>Chào Minh Tài</Text>
+                  <View style={styles.ekycBadge}>
+                    <Ionicons name="shield-checkmark" size={11} color="#2E7D5B" />
+                    <Text style={styles.ekycBadgeText}>GPLX B2 • 0đ Cọc</Text>
+                  </View>
+                </View>
+                <Text style={styles.greetingSub}>EcoGo Smart Mobility • ĐH GTVT (UTH)</Text>
+              </View>
+            </TouchableOpacity>
 
-          {/* Floating White Pill Search Bar */}
-          <TouchableOpacity
-            style={styles.floatingSearchPill}
-            activeOpacity={0.92}
-            onPress={() => setShowDestinationModal(true)}
-          >
-            <Ionicons name="search-outline" size={22} color="#1A1D1F" />
-            <Text style={styles.searchPlaceholderText} numberOfLines={1}>
-              {destinationQuery ? destinationQuery : 'Bạn muốn đi đâu, thuê xe gì?'}
-            </Text>
-          </TouchableOpacity>
+            {/* Right Header Actions: EcoGo Race Trophy Pill + Voucher Button */}
+            <View style={styles.headerRightActions}>
+              <TouchableOpacity
+                style={styles.ecoPtsHeaderPill}
+                activeOpacity={0.85}
+                onPress={onOpenGreenRace}
+              >
+                <Ionicons name="trophy" size={14} color="#D97706" />
+                <Text style={styles.ecoPtsHeaderText}>340 EcoPts</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.headerIconBtn}
+                activeOpacity={0.85}
+                onPress={onOpenRewards}
+              >
+                <Ionicons name="gift-outline" size={18} color="#2E7D5B" />
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* ============================================================
+              2. SMART STATION & DURATION BOOKING CARD
+             ============================================================ */}
+          <View style={styles.smartBookingCard}>
+            {/* Package Mode Tabs */}
+            <View style={styles.packageTabsRow}>
+              {[
+                { id: 'HOURLY', label: 'Theo giờ (Từ 22k/h)', icon: 'flash' },
+                { id: 'DAILY', label: 'Trọn ngày (24h)', icon: 'calendar' },
+                { id: 'INTERCITY', label: 'Liên tỉnh (-20%)', icon: 'navigate' }
+              ].map((tab) => {
+                const active = rentalPackageTab === tab.id;
+                return (
+                  <TouchableOpacity
+                    key={tab.id}
+                    style={[styles.pkgTabBtn, active && styles.pkgTabBtnActive]}
+                    onPress={() => setRentalPackageTab(tab.id)}
+                  >
+                    <Ionicons
+                      name={tab.icon}
+                      size={12}
+                      color={active ? '#FFFFFF' : '#5C6B63'}
+                    />
+                    <Text style={[styles.pkgTabText, active && styles.pkgTabTextActive]}>
+                      {tab.label}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+
+            {/* Pickup Hub Selector Row */}
+            <TouchableOpacity
+              style={styles.stationSelectorRow}
+              activeOpacity={0.88}
+              onPress={() => setShowDestinationModal(true)}
+            >
+              <View style={styles.stationPinCircle}>
+                <Ionicons name="location" size={18} color="#2E7D5B" />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.stationLabelOverline}>TRẠM NHẬN & TRẢ XE TỰ ĐỘNG 24/7</Text>
+                <Text style={styles.stationSelectedName} numberOfLines={1}>
+                  {selectedPlace ? selectedPlace.name : 'EcoGo Hub - ĐH GTVT (UTH)'}
+                </Text>
+              </View>
+              <View style={styles.changeHubPill}>
+                <Text style={styles.changeHubPillText}>Đổi trạm</Text>
+                <Ionicons name="chevron-forward" size={12} color="#2E7D5B" />
+              </View>
+            </TouchableOpacity>
+
+            {/* Time Window + Search Input Row */}
+            <View style={styles.timeAndSearchRow}>
+              <TouchableOpacity
+                style={styles.timeSlotChip}
+                onPress={() => vehicles[0] && handleOpenBooking(vehicles[0])}
+              >
+                <Ionicons name="time-outline" size={15} color="#2E7D5B" />
+                <View>
+                  <Text style={styles.timeSlotLabel}>Thời gian nhận</Text>
+                  <Text style={styles.timeSlotVal}>
+                    {rentalPackageTab === 'DAILY' ? 'Hôm nay • 24 giờ' : 'Hôm nay • 4 giờ'}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+
+              <View style={styles.quickSearchBox}>
+                <Ionicons name="search-outline" size={16} color="#5C6B63" />
+                <TextInput
+                  style={styles.quickSearchInput}
+                  value={destinationQuery}
+                  onChangeText={setDestinationQuery}
+                  placeholder="Tìm Ioniq 5, CX-5, Cross..."
+                  placeholderTextColor="#8C9B93"
+                />
+              </View>
+            </View>
+          </View>
         </View>
 
         {/* Booking Toast */}
@@ -178,244 +294,258 @@ export default function HomeScreen({
         )}
 
         {/* ============================================================
-            2. SPARKLE RECOMMENDATION CAROUSEL (EXACT GREEN SM CARD STYLE)
+            3. ASYMMETRIC 3-BLOCK BENTO GRID (APPLE / RIVIAN STYLE)
            ============================================================ */}
-        <View style={styles.sparkleSection}>
-          <View style={styles.sparkleHeaderRow}>
-            <Text style={styles.sparkleHeadline}>
-              ✦ Cần xe ngay? Đội xe điện gần đây đang chờ bạn.
+        <View style={styles.bentoSection}>
+          <View style={styles.bentoRow}>
+            {/* Left Tall Bento Card: Self-Drive Cars */}
+            <TouchableOpacity
+              style={styles.bentoTallCard}
+              activeOpacity={0.9}
+              onPress={() => setSelectedCategory('CAR')}
+            >
+              <View style={styles.bentoTallGlow} />
+              <View style={styles.bentoTopChipJade}>
+                <Text style={styles.bentoTopChipText}>MỞ KHÓA BLE 24/7</Text>
+              </View>
+              <Text style={styles.bentoTallTitle}>Ô Tô Tự Lái</Text>
+              <Text style={styles.bentoTallSub}>
+                Hyundai Ioniq 5, Mazda CX-5, Toyota Cross HEV
+              </Text>
+              <Text style={styles.bentoTallPrice}>Từ 85.000đ/giờ</Text>
+
+              <View style={styles.bentoTallIllustration}>
+                <GreenSM3DIcons type="CAR_CYAN_3D" />
+              </View>
+            </TouchableOpacity>
+
+            {/* Right Stacked Column: 2 Horizontal Bento Cards */}
+            <View style={styles.bentoRightCol}>
+              {/* Top Right: Electric Motorbikes */}
+              <TouchableOpacity
+                style={styles.bentoSmallCardSand}
+                activeOpacity={0.9}
+                onPress={() => setSelectedCategory('MOTORBIKE')}
+              >
+                <View style={{ flex: 1, paddingRight: 6 }}>
+                  <View style={styles.bentoTopChipSand}>
+                    <Text style={styles.bentoTopChipSandText}>ĐỔI PIN 0Đ</Text>
+                  </View>
+                  <Text style={styles.bentoSmallTitle}>Xe Máy Điện</Text>
+                  <Text style={styles.bentoSmallSub}>Yamaha & Honda e:</Text>
+                  <Text style={styles.bentoSmallPriceSand}>22.000đ/giờ</Text>
+                </View>
+                <GreenSM3DIcons type="SCOOTER_3D" />
+              </TouchableOpacity>
+
+              {/* Bottom Right: Doorstep Delivery */}
+              <TouchableOpacity
+                style={styles.bentoSmallCardMint}
+                activeOpacity={0.9}
+                onPress={() => vehicles[0] && handleOpenBooking(vehicles[0])}
+              >
+                <View style={{ flex: 1, paddingRight: 6 }}>
+                  <View style={styles.bentoTopChipWhite}>
+                    <Text style={styles.bentoTopChipWhiteText}>BÁN KÍNH 5KM</Text>
+                  </View>
+                  <Text style={styles.bentoSmallTitle}>Giao Xe Tận Nơi</Text>
+                  <Text style={styles.bentoSmallSub}>Nhận xe sau 15 phút</Text>
+                  <Text style={styles.bentoSmallPriceJade}>Miễn phí giao</Text>
+                </View>
+                <GreenSM3DIcons type="DELIVERY_BOX_3D" />
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* Streamlined 4-Pill Quick Utility Bar */}
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.utilityPillsRow}
+          >
+            <TouchableOpacity style={styles.utilityPill} onPress={onNavigateToKey}>
+              <View style={[styles.utilityIconCircle, { backgroundColor: '#EAF6F0' }]}>
+                <Ionicons name="key" size={14} color="#2E7D5B" />
+              </View>
+              <Text style={styles.utilityPillText}>Khóa thông minh BLE</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.utilityPill} onPress={onNavigateToMap}>
+              <View style={[styles.utilityIconCircle, { backgroundColor: '#FEF3C7' }]}>
+                <Ionicons name="flash" size={14} color="#D97706" />
+              </View>
+              <Text style={styles.utilityPillText}>6 Trạm sạc & Hub</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.utilityPill} onPress={onOpenGreenRace}>
+              <View style={[styles.utilityIconCircle, { backgroundColor: '#DCFCE7' }]}>
+                <Ionicons name="leaf" size={14} color="#15803D" />
+              </View>
+              <Text style={styles.utilityPillText}>Chứng nhận ESG</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.utilityPill} onPress={onOpenRewards}>
+              <View style={[styles.utilityIconCircle, { backgroundColor: '#FCE7F3' }]}>
+                <Ionicons name="pricetag" size={14} color="#DB2777" />
+              </View>
+              <Text style={styles.utilityPillText}>Voucher giảm 20%</Text>
+            </TouchableOpacity>
+          </ScrollView>
+        </View>
+
+        {/* ============================================================
+            4. LIVE ITS GREEN WAVE RADAR (GLOSA CORRIDOR WIDGET)
+           ============================================================ */}
+        <TouchableOpacity
+          style={styles.glosaRadarCard}
+          activeOpacity={0.92}
+          onPress={onNavigateToMap}
+        >
+          <View style={styles.glosaRadarLeft}>
+            <View style={styles.glosaLiveBadgeRow}>
+              <View style={styles.glosaPulseDot} />
+              <Text style={styles.glosaLiveTag}>RADAR LÀN SÓNG XANH ITS (GLOSA)</Text>
+            </View>
+            <Text style={styles.glosaCorridorTitle}>
+              Trục ĐH GTVT (UTH) ➔ Điện Biên Phủ ➔ Mai Chí Thọ
             </Text>
+            <Text style={styles.glosaCorridorSub}>
+              {glosaAdvisory?.advisoryMessage ||
+                'Duy trì 45 km/h để qua 4 nút giao liên tiếp không phải dừng đèn đỏ'}
+            </Text>
+          </View>
+
+          <View style={styles.glosaSpeedCircle}>
+            <Text style={styles.glosaSpeedNum}>
+              {glosaAdvisory ? glosaAdvisory.recommendedSpeedKmh : 45}
+            </Text>
+            <Text style={styles.glosaSpeedUnit}>km/h</Text>
+            <View style={styles.glosaGreenTimerPill}>
+              <Text style={styles.glosaGreenTimerText}>
+                Xanh {glosaAdvisory ? glosaAdvisory.secondsToSignalChange : 28}s
+              </Text>
+            </View>
+          </View>
+        </TouchableOpacity>
+
+        {/* ============================================================
+            5. WIDE SHOWROOM TELEMETRY CAROUSEL ("Đội xe gần bạn tại Hub")
+           ============================================================ */}
+        <View style={styles.showroomCarouselSection}>
+          <View style={styles.sectionHeaderRow}>
+            <View>
+              <Text style={styles.sectionMainTitle}>Xe sẵn sàng gần bạn</Text>
+              <Text style={styles.sectionSubTitle}>
+                Đã kiểm định áp suất lốp 34 PSI & dung lượng pin trước chuyến đi
+              </Text>
+            </View>
             <TouchableOpacity onPress={onNavigateToMap}>
-              <Ionicons name="ellipsis-horizontal" size={18} color="#6F767E" />
+              <Text style={styles.seeMapLink}>Bản đồ Hub &gt;</Text>
             </TouchableOpacity>
           </View>
 
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.promoCardsRow}
+            contentContainerStyle={styles.wideShowroomRow}
           >
-            {vehicles.map((veh, idx) => {
-              const priceK = `${Math.round(veh.hourlyPrice / 1000)}K`;
-              const oldPriceK = `${Math.round((veh.hourlyPrice * 1.25) / 1000)}K`;
-              const distKm = (0.4 + idx * 0.3).toFixed(1);
+            {filteredVehicles.map((veh, idx) => {
+              const batteryPct = Math.round(veh.telematics?.batteryLevelPct || 92);
+              const distMeters = 250 + idx * 180;
+              const tirePsi = veh.telematics?.tirePressurePsi?.fl || 34;
+
               return (
                 <TouchableOpacity
                   key={veh.id}
-                  style={styles.promoSquareWrap}
-                  activeOpacity={0.9}
+                  style={styles.wideShowroomCard}
+                  activeOpacity={0.92}
                   onPress={() => handleOpenBooking(veh)}
                 >
-                  <View style={[styles.promoImageSquare, idx === 0 && styles.promoImageRedBorder]}>
-                    <Image source={{ uri: veh.thumbnail }} style={styles.promoImg} resizeMode="cover" />
+                  {/* 16:10 Showroom Image */}
+                  <View style={styles.wideImgWrap}>
+                    <Image source={{ uri: veh.thumbnail }} style={styles.wideImg} resizeMode="cover" />
 
-                    {/* Top Left Promo Price Tag */}
-                    <View style={styles.promoPriceOverlay}>
-                      <Text style={styles.promoBigPrice}>{priceK}</Text>
-                      <Text style={styles.promoOldPrice}>{oldPriceK}</Text>
+                    {/* Top Left Telemetry Pill */}
+                    <View style={styles.wideTelemetryPill}>
+                      <Ionicons name="flash" size={11} color="#2E7D5B" />
+                      <Text style={styles.wideTelemetryText}>
+                        Pin {batteryPct}% • {veh.rangeKm} km
+                      </Text>
                     </View>
 
-                    {/* Bottom Left Frosted Star Rating Pill */}
-                    <View style={styles.starOverlayPill}>
-                      <Ionicons name="star" size={13} color="#F59E0B" />
-                      <Text style={styles.starOverlayText}>{veh.rating}</Text>
+                    {/* Top Right Distance Pill */}
+                    <View style={styles.wideDistPill}>
+                      <Ionicons name="location" size={10} color="#FFFFFF" />
+                      <Text style={styles.wideDistText}>Cách {distMeters}m</Text>
+                    </View>
+
+                    {/* Bottom Left Plate & Rating */}
+                    <View style={styles.wideBottomOverlay}>
+                      <View style={styles.widePlateBadge}>
+                        <Text style={styles.widePlateText}>{veh.plateNumber}</Text>
+                      </View>
+                      <View style={styles.wideRatingPill}>
+                        <Ionicons name="star" size={11} color="#F59E0B" />
+                        <Text style={styles.wideRatingText}>{veh.rating}</Text>
+                      </View>
                     </View>
                   </View>
 
-                  {/* Verified Checkmark + Title + Distance */}
-                  <View style={styles.promoTitleLine}>
-                    <Ionicons name="checkmark-circle" size={14} color="#2E7D5B" style={{ marginTop: 2 }} />
-                    <Text style={styles.promoItemTitle} numberOfLines={2}>
-                      {veh.name} - {veh.plateNumber}
+                  {/* Card Details & IoT Pre-Check */}
+                  <View style={styles.wideCardBody}>
+                    <Text style={styles.wideVehName} numberOfLines={1}>
+                      {veh.name}
                     </Text>
-                  </View>
-                  <View style={styles.promoDistLine}>
-                    <Ionicons name="navigate-outline" size={11} color="#6F767E" />
-                    <Text style={styles.promoDistText}>{distKm} km • Pin {Math.round(veh.telematics?.batteryLevelPct || 90)}%</Text>
+
+                    <View style={styles.iotPrecheckRow}>
+                      <View style={styles.iotCheckChip}>
+                        <Ionicons name="checkmark-circle" size={12} color="#2E7D5B" />
+                        <Text style={styles.iotCheckText}>Lốp {tirePsi} PSI</Text>
+                      </View>
+                      <View style={styles.iotCheckChip}>
+                        <Ionicons name="bluetooth" size={11} color="#2E7D5B" />
+                        <Text style={styles.iotCheckText}>BLE 5.2</Text>
+                      </View>
+                      <View style={styles.iotCheckChip}>
+                        <Ionicons name="people-outline" size={12} color="#5C6B63" />
+                        <Text style={styles.iotCheckText}>{veh.seats} chỗ</Text>
+                      </View>
+                    </View>
+
+                    <View style={styles.wideCardFooter}>
+                      <View>
+                        <Text style={styles.widePriceMain}>
+                          {veh.hourlyPrice.toLocaleString('vi-VN')}đ<Text style={styles.widePriceUnit}>/giờ</Text>
+                        </Text>
+                        <Text style={styles.widePriceDay}>
+                          {veh.dailyPrice.toLocaleString('vi-VN')}đ/ngày
+                        </Text>
+                      </View>
+
+                      <TouchableOpacity
+                        style={styles.wideBookBtn}
+                        onPress={() => handleOpenBooking(veh)}
+                      >
+                        <Text style={styles.wideBookBtnText}>Đặt thuê</Text>
+                      </TouchableOpacity>
+                    </View>
                   </View>
                 </TouchableOpacity>
               );
             })}
           </ScrollView>
-
-          {/* 2 White Pill Action Buttons ("Đặt thuê ngay" | "Xem ưu đãi") */}
-          <View style={styles.dualActionPillsRow}>
-            <TouchableOpacity
-              style={styles.whiteActionPill}
-              onPress={() => vehicles[0] && handleOpenBooking(vehicles[0])}
-            >
-              <Text style={styles.whiteActionPillText}>Đặt thuê ngay</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.whiteActionPill}
-              onPress={onOpenRewards}
-            >
-              <Text style={styles.whiteActionPillText}>Xem ưu đãi</Text>
-            </TouchableOpacity>
-          </View>
         </View>
 
         {/* ============================================================
-            3. TWO BIG SOFT-GRADIENT HERO CARDS ("Đặt xe" & "Thuê tự lái")
+            6. FULL FLEET CATALOG WITH CATEGORY FILTER
            ============================================================ */}
-        <View style={styles.bigHeroRow}>
-          {/* Left Hero: Soft Cyan-Aqua Tint + 3D Cyan EV Car */}
-          <TouchableOpacity
-            style={[styles.bigHeroCard, styles.bigHeroAqua]}
-            activeOpacity={0.9}
-            onPress={() => setSelectedCategory('CAR')}
-          >
-            <View style={styles.aquaInnerGlow} />
-            <Text style={styles.bigHeroTitle}>Đặt xe tự lái</Text>
-            <Text style={styles.bigHeroSub}>Mở khóa BLE 24/7</Text>
-            <View style={styles.bigHeroIllustrationRight}>
-              <GreenSM3DIcons type="CAR_CYAN_3D" />
-            </View>
-          </TouchableOpacity>
-
-          {/* Right Hero: Soft Warm Cream Tint + 3D Scooter & Key */}
-          <TouchableOpacity
-            style={[styles.bigHeroCard, styles.bigHeroCream]}
-            activeOpacity={0.9}
-            onPress={() => setSelectedCategory('MOTORBIKE')}
-          >
-            <View style={styles.creamInnerGlow} />
-            <Text style={styles.bigHeroTitle}>Thuê theo giờ</Text>
-            <Text style={styles.bigHeroSub}>Chỉ từ 22.000đ/h</Text>
-            <View style={styles.bigHeroIllustrationRight}>
-              <View style={styles.comboRightIcons}>
-                <GreenSM3DIcons type="SCOOTER_3D" />
-                <View style={{ marginLeft: -10, marginTop: 10 }}>
-                  <GreenSM3DIcons type="SMARTKEY_3D" />
-                </View>
-              </View>
-            </View>
-          </TouchableOpacity>
-        </View>
-
-        {/* ============================================================
-            4. "DỊCH VỤ KHÁC" - 8 WHITE SQUIRCLES WITH 3D ISOMETRIC ICONS
-           ============================================================ */}
-        <View style={styles.otherServicesSection}>
-          <View style={styles.otherServicesHeader}>
-            <Text style={styles.otherServicesTitle}>Dịch vụ khác</Text>
-            <TouchableOpacity onPress={onNavigateToMap}>
-              <Text style={styles.seeAllText}>Xem tất cả</Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.grid8Container}>
-            {/* Row 1 */}
-            <TouchableOpacity
-              style={styles.gridTileCard}
-              activeOpacity={0.85}
-              onPress={() => setSelectedCategory('MOTORBIKE')}
-            >
-              <GreenSM3DIcons type="SCOOTER_3D" />
-              <Text style={styles.gridTileLabel}>Xe máy</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.gridTileCard}
-              activeOpacity={0.85}
-              onPress={onNavigateToMap}
-            >
-              <View style={styles.badgeYellowFloating}>
-                <Text style={styles.badgeYellowText}>-20%</Text>
-              </View>
-              <GreenSM3DIcons type="INTERCITY_MAP_3D" />
-              <Text style={styles.gridTileLabel}>Liên tỉnh</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.gridTileCard}
-              activeOpacity={0.85}
-              onPress={() => vehicles[0] && handleOpenBooking(vehicles[0])}
-            >
-              <GreenSM3DIcons type="DELIVERY_BOX_3D" />
-              <Text style={styles.gridTileLabel}>Giao xe tận nơi</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.gridTileCard}
-              activeOpacity={0.85}
-              onPress={onOpenGreenRace}
-            >
-              <View style={styles.badgeYellowFloating}>
-                <Text style={styles.badgeYellowText}>MỚI</Text>
-              </View>
-              <GreenSM3DIcons type="MEMBER_DIAMOND_3D" />
-              <Text style={styles.gridTileLabel}>Hội viên</Text>
-            </TouchableOpacity>
-
-            {/* Row 2 */}
-            <TouchableOpacity
-              style={styles.gridTileCard}
-              activeOpacity={0.85}
-              onPress={onNavigateToKey}
-            >
-              <GreenSM3DIcons type="SMARTKEY_3D" />
-              <Text style={styles.gridTileLabel}>Thuê xe tự lái</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.gridTileCard}
-              activeOpacity={0.85}
-              onPress={onNavigateToMap}
-            >
-              <GreenSM3DIcons type="VINBUS_3D" />
-              <Text style={styles.gridTileLabel}>Buýt & Metro</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.gridTileCard}
-              activeOpacity={0.85}
-              onPress={() => setSelectedCategory('CAR')}
-            >
-              <GreenSM3DIcons type="SHOWROOM_3D" />
-              <Text style={styles.gridTileLabel}>Thuê xe{'\n'}dài hạn</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.gridTileCard}
-              activeOpacity={0.85}
-              onPress={onOpenRewards}
-            >
-              <GreenSM3DIcons type="GIFTCARD_3D" />
-              <Text style={styles.gridTileLabel}>Thẻ quà tặng</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* ============================================================
-            5. ECOGO SMART FLEET PROMOTIONAL BANNER + FULL FLEET CATALOG
-           ============================================================ */}
-        <TouchableOpacity
-          style={styles.vf8BannerCard}
-          activeOpacity={0.92}
-          onPress={() => vehicles[0] && handleOpenBooking(vehicles[0])}
-        >
-          <View style={{ flex: 1 }}>
-            <Text style={styles.vf8BannerTag}>ECOGO SMART • ĐỘI XE ĐỜI MỚI</Text>
-            <Text style={styles.vf8BannerTitle}>HYUNDAI IONIQ 5 & TOYOTA HEV</Text>
-            <Text style={styles.vf8BannerSub}>
-              Làn sóng xanh GLOSA {glosaAdvisory ? `${glosaAdvisory.recommendedSpeedKmh} km/h` : '45 km/h'} • Mở khóa BLE
-            </Text>
-          </View>
-          <Image
-            source={{ uri: 'https://images.unsplash.com/photo-1619767886558-efdc259cde1a?auto=format&fit=crop&w=600&q=80' }}
-            style={styles.vf8BannerImg}
-            resizeMode="cover"
-          />
-        </TouchableOpacity>
-
-        {/* Category Filter & Full Vehicle List */}
         <View style={styles.catalogSection}>
           <View style={styles.catalogHeaderRow}>
-            <Text style={styles.otherServicesTitle}>Đội xe tự lái sẵn sàng ({vehicles.length})</Text>
+            <Text style={styles.sectionMainTitle}>
+              Danh mục phương tiện tại trạm ({filteredVehicles.length})
+            </Text>
             <View style={styles.catFilterRow}>
-              {CATEGORIES.map(cat => {
+              {CATEGORIES.map((cat) => {
                 const active = selectedCategory === cat.id;
                 return (
                   <TouchableOpacity
@@ -435,7 +565,7 @@ export default function HomeScreen({
           {loading ? (
             <ActivityIndicator size="large" color="#2E7D5B" style={{ marginVertical: 28 }} />
           ) : (
-            vehicles.map(vehicle => (
+            filteredVehicles.map((vehicle) => (
               <VehicleCard
                 key={vehicle.id}
                 vehicle={vehicle}
@@ -450,7 +580,7 @@ export default function HomeScreen({
       </ScrollView>
 
       {/* ============================================================
-          MODAL 1: EXACT GREEN SM DESTINATION SEARCH ("Bạn muốn đi đâu?")
+          MODAL 1: STATION & DESTINATION SELECTOR
          ============================================================ */}
       <Modal
         visible={showDestinationModal}
@@ -458,97 +588,65 @@ export default function HomeScreen({
         onRequestClose={() => setShowDestinationModal(false)}
       >
         <View style={styles.destModalContainer}>
-          {/* Top Current Location Row */}
           <View style={styles.destHeaderBar}>
             <TouchableOpacity
               style={styles.destBackBtn}
               onPress={() => setShowDestinationModal(false)}
             >
-              <Ionicons name="arrow-back" size={22} color="#1A1D1F" />
+              <Ionicons name="arrow-back" size={22} color="#18221D" />
             </TouchableOpacity>
 
             <View style={styles.currentLocDotOuter}>
               <View style={styles.currentLocDotInner} />
             </View>
             <Text style={styles.currentLocTitle} numberOfLines={1}>
-              {selectedPlace ? selectedPlace.name : 'Sử dụng vị trí hiện tại'}
+              Chọn Trạm EcoGo Hub Nhận & Trả Xe
             </Text>
-
-            <View style={styles.vnFlagBox}>
-              <View style={styles.vnFlagRed}>
-                <Ionicons name="star" size={9} color="#FACC15" />
-              </View>
-              <Text style={styles.vnCitySub}>Hồ Chí...</Text>
-            </View>
           </View>
 
-          {/* Cyan-Bordered Destination Input + Plus Button */}
           <View style={styles.destInputRow}>
             <View style={styles.destInputWrap}>
-              <View style={styles.yellowSquareStop}>
-                <View style={styles.yellowSquareInner} />
-              </View>
+              <Ionicons name="location" size={18} color="#2E7D5B" />
               <TextInput
                 style={styles.destTextInput}
                 value={destinationQuery}
                 onChangeText={setDestinationQuery}
-                placeholder="Bạn muốn đi đâu?"
-                placeholderTextColor="#6F767E"
-                autoFocus
+                placeholder="Tìm trạm Hub hoặc địa điểm..."
+                placeholderTextColor="#5C6B63"
               />
             </View>
-            <TouchableOpacity style={styles.cyanPlusBtn}>
-              <Ionicons name="add" size={22} color="#FFFFFF" />
-            </TouchableOpacity>
           </View>
 
-          {/* Saved & Suggested Places List */}
           <ScrollView style={styles.placesScroll}>
-            {SAVED_PLACES.filter(
-              p =>
-                !destinationQuery.trim() ||
-                p.name.toLowerCase().includes(destinationQuery.toLowerCase()) ||
-                p.address.toLowerCase().includes(destinationQuery.toLowerCase())
-            ).map(place => (
+            {SAVED_PLACES.map((place) => (
               <TouchableOpacity
                 key={place.id}
                 style={styles.placeItemRow}
                 onPress={() => {
                   setSelectedPlace(place);
-                  setDestinationQuery(place.name);
                   setShowDestinationModal(false);
                 }}
               >
                 <View style={styles.placeLeftCol}>
                   <View style={styles.placeIconCircle}>
-                    <Ionicons name={place.icon} size={16} color="#6F767E" />
+                    <Ionicons name={place.icon} size={16} color="#2E7D5B" />
                   </View>
                   <Text style={styles.placeDistText}>{place.distance}</Text>
                 </View>
 
                 <View style={styles.placeCenterCol}>
                   <Text style={styles.placeNameText}>{place.name}</Text>
-                  <Text style={styles.placeAddrText} numberOfLines={2}>{place.address}</Text>
+                  <Text style={styles.placeAddrText} numberOfLines={2}>
+                    {place.address}
+                  </Text>
                 </View>
 
-                <View style={styles.placeRightCol}>
-                  <Ionicons name="heart-outline" size={18} color="#6F767E" />
-                  <Ionicons name="ellipsis-vertical" size={16} color="#9A9FA5" />
-                </View>
+                <Ionicons name="chevron-forward" size={18} color="#8C9B93" />
               </TouchableOpacity>
             ))}
           </ScrollView>
 
-          {/* Bottom Floating Pills ("❤️ Địa chỉ đã lưu" | "🗺️ Tìm trên bản đồ") */}
           <View style={styles.destBottomPillsBar}>
-            <TouchableOpacity
-              style={styles.destBottomPill}
-              onPress={() => setShowDestinationModal(false)}
-            >
-              <Ionicons name="heart" size={16} color="#EF4444" />
-              <Text style={styles.destBottomPillText}>Địa chỉ đã lưu</Text>
-            </TouchableOpacity>
-
             <TouchableOpacity
               style={styles.destBottomPill}
               onPress={() => {
@@ -556,8 +654,8 @@ export default function HomeScreen({
                 if (onNavigateToMap) onNavigateToMap();
               }}
             >
-              <Ionicons name="map-outline" size={16} color="#1A1D1F" />
-              <Text style={styles.destBottomPillText}>Tìm trên bản đồ</Text>
+              <Ionicons name="map-outline" size={16} color="#2E7D5B" />
+              <Text style={styles.destBottomPillText}>Xem toàn bộ 6 Trạm trên Bản đồ</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -582,77 +680,255 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingBottom: 30
   },
-  topMapBackdrop: {
-    backgroundColor: '#DDE7E1',
-    paddingTop: 18,
-    paddingBottom: 18,
+
+  /* ============================================================
+     1. TOP PERSONALIZED HEADER & SMART BOOKING CARD
+     ============================================================ */
+  topHeaderSection: {
+    backgroundColor: '#E5F0EA',
+    paddingTop: 14,
+    paddingBottom: 16,
     paddingHorizontal: 16,
-    position: 'relative',
-    overflow: 'hidden'
+    borderBottomLeftRadius: 26,
+    borderBottomRightRadius: 26
   },
-  roadLineDiagonal1: {
-    position: 'absolute',
-    top: -20,
-    left: 40,
-    width: 14,
-    height: 180,
-    backgroundColor: '#EFF4F1',
-    transform: [{ rotate: '35deg' }],
-    opacity: 0.75
+  headerTopRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 14
   },
-  roadLineDiagonal2: {
+  userGreetingLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    flex: 1
+  },
+  avatarJadeCircle: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    backgroundColor: '#2E7D5B',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
+    position: 'relative'
+  },
+  avatarInitials: {
+    fontFamily: FONTS.family,
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '800'
+  },
+  onlineStatusDot: {
     position: 'absolute',
-    top: -10,
-    right: 60,
+    bottom: 0,
+    right: 0,
     width: 10,
-    height: 180,
-    backgroundColor: '#EFF4F1',
-    transform: [{ rotate: '-28deg' }],
-    opacity: 0.75
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: '#34D399',
+    borderWidth: 1.5,
+    borderColor: '#FFFFFF'
   },
-  buildingBlock1: {
-    position: 'absolute',
-    top: 8,
-    left: 110,
-    width: 65,
-    height: 36,
-    borderRadius: 6,
-    backgroundColor: '#C8D6CE',
-    opacity: 0.5,
-    transform: [{ rotate: '15deg' }]
+  greetingNameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    flexWrap: 'wrap'
   },
-  buildingBlock2: {
-    position: 'absolute',
-    top: 12,
-    right: 24,
-    width: 80,
-    height: 40,
-    borderRadius: 6,
-    backgroundColor: '#C8D6CE',
-    opacity: 0.5,
-    transform: [{ rotate: '-12deg' }]
+  greetingTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 16,
+    fontWeight: '800',
+    color: '#18221D'
   },
-  floatingSearchPill: {
+  ekycBadge: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    height: 52,
+    paddingHorizontal: 7,
+    paddingVertical: 2,
     borderRadius: 99,
-    paddingHorizontal: 18,
-    gap: 10,
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
-    elevation: 4
+    gap: 3
   },
-  searchPlaceholderText: {
+  ekycBadgeText: {
     fontFamily: FONTS.family,
-    fontSize: 15,
-    color: '#5C6B63',
-    fontWeight: '500',
-    flex: 1
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#2E7D5B'
   },
+  greetingSub: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    color: '#5C6B63',
+    marginTop: 2
+  },
+  headerRightActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8
+  },
+  ecoPtsHeaderPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FDF6EC',
+    paddingHorizontal: 10,
+    paddingVertical: 7,
+    borderRadius: 99,
+    borderWidth: 1,
+    borderColor: '#FDE68A',
+    gap: 5
+  },
+  ecoPtsHeaderText: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    fontWeight: '800',
+    color: '#B45309'
+  },
+  headerIconBtn: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+
+  /* SMART BOOKING WIDGET */
+  smartBookingCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    padding: 12,
+    shadowColor: '#143326',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.06,
+    shadowRadius: 14,
+    elevation: 3
+  },
+  packageTabsRow: {
+    flexDirection: 'row',
+    backgroundColor: '#F2F6F4',
+    padding: 3,
+    borderRadius: 12,
+    marginBottom: 10,
+    gap: 3
+  },
+  pkgTabBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 7,
+    borderRadius: 9,
+    gap: 4
+  },
+  pkgTabBtnActive: {
+    backgroundColor: '#2E7D5B'
+  },
+  pkgTabText: {
+    fontFamily: FONTS.family,
+    fontSize: 10,
+    fontWeight: '600',
+    color: '#5C6B63'
+  },
+  pkgTabTextActive: {
+    color: '#FFFFFF',
+    fontWeight: '700'
+  },
+  stationSelectorRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F8FAF9',
+    padding: 10,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#E4EDE8',
+    gap: 10,
+    marginBottom: 8
+  },
+  stationPinCircle: {
+    width: 34,
+    height: 34,
+    borderRadius: 12,
+    backgroundColor: '#EAF6F0',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  stationLabelOverline: {
+    fontFamily: FONTS.family,
+    fontSize: 9,
+    fontWeight: '800',
+    color: '#5C6B63',
+    letterSpacing: 0.3
+  },
+  stationSelectedName: {
+    fontFamily: FONTS.family,
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#18221D',
+    marginTop: 1
+  },
+  changeHubPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#EAF6F0',
+    paddingHorizontal: 9,
+    paddingVertical: 5,
+    borderRadius: 99,
+    gap: 2
+  },
+  changeHubPillText: {
+    fontFamily: FONTS.family,
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#2E7D5B'
+  },
+  timeAndSearchRow: {
+    flexDirection: 'row',
+    gap: 8
+  },
+  timeSlotChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FDF6EC',
+    paddingHorizontal: 10,
+    paddingVertical: 7,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#FDE68A',
+    gap: 6
+  },
+  timeSlotLabel: {
+    fontFamily: FONTS.family,
+    fontSize: 9,
+    color: '#92400E',
+    fontWeight: '600'
+  },
+  timeSlotVal: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    fontWeight: '800',
+    color: '#78350F'
+  },
+  quickSearchBox: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F4F7F5',
+    paddingHorizontal: 10,
+    borderRadius: 12,
+    gap: 6
+  },
+  quickSearchInput: {
+    flex: 1,
+    fontFamily: FONTS.family,
+    fontSize: 12,
+    color: '#18221D',
+    paddingVertical: 6
+  },
+
   toastBanner: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -675,317 +951,491 @@ const styles = StyleSheet.create({
     fontSize: 11,
     marginTop: 1
   },
-  sparkleSection: {
-    backgroundColor: '#EAEFE9',
-    paddingTop: 14,
-    paddingBottom: 16
+
+  /* ============================================================
+     3. ASYMMETRIC BENTO GRID (1 TALL LEFT + 2 STACKED RIGHT)
+     ============================================================ */
+  bentoSection: {
+    paddingHorizontal: 16,
+    marginTop: 14
   },
-  sparkleHeaderRow: {
+  bentoRow: {
+    flexDirection: 'row',
+    gap: 10
+  },
+  bentoTallCard: {
+    flex: 1.05,
+    height: 196,
+    backgroundColor: '#EAF6F0',
+    borderRadius: 22,
+    padding: 14,
+    borderWidth: 1.5,
+    borderColor: '#FFFFFF',
+    position: 'relative',
+    overflow: 'hidden',
+    shadowColor: '#143326',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    elevation: 2
+  },
+  bentoTallGlow: {
+    position: 'absolute',
+    bottom: -24,
+    right: -20,
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: '#A7F3D0',
+    opacity: 0.5
+  },
+  bentoTopChipJade: {
+    alignSelf: 'flex-start',
+    backgroundColor: '#2E7D5B',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 99,
+    marginBottom: 8
+  },
+  bentoTopChipText: {
+    fontFamily: FONTS.family,
+    color: '#FFFFFF',
+    fontSize: 9,
+    fontWeight: '800'
+  },
+  bentoTallTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 18,
+    fontWeight: '800',
+    color: '#18221D'
+  },
+  bentoTallSub: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    color: '#5C6B63',
+    marginTop: 3,
+    lineHeight: 15
+  },
+  bentoTallPrice: {
+    fontFamily: FONTS.family,
+    fontSize: 14,
+    fontWeight: '800',
+    color: '#2E7D5B',
+    marginTop: 6
+  },
+  bentoTallIllustration: {
+    position: 'absolute',
+    bottom: 2,
+    right: 6
+  },
+  bentoRightCol: {
+    flex: 1,
+    justifyContent: 'space-between',
+    gap: 10
+  },
+  bentoSmallCardSand: {
+    flex: 1,
+    backgroundColor: '#FDF6EC',
+    borderRadius: 20,
+    padding: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1.5,
+    borderColor: '#FFFFFF',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
+    elevation: 2
+  },
+  bentoSmallCardMint: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    padding: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#E4EDE8',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
+    elevation: 2
+  },
+  bentoTopChipSand: {
+    alignSelf: 'flex-start',
+    backgroundColor: '#FDE68A',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 6,
+    marginBottom: 4
+  },
+  bentoTopChipSandText: {
+    fontFamily: FONTS.family,
+    fontSize: 8,
+    fontWeight: '800',
+    color: '#92400E'
+  },
+  bentoTopChipWhite: {
+    alignSelf: 'flex-start',
+    backgroundColor: '#EAF6F0',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 6,
+    marginBottom: 4
+  },
+  bentoTopChipWhiteText: {
+    fontFamily: FONTS.family,
+    fontSize: 8,
+    fontWeight: '800',
+    color: '#2E7D5B'
+  },
+  bentoSmallTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 14,
+    fontWeight: '800',
+    color: '#18221D'
+  },
+  bentoSmallSub: {
+    fontFamily: FONTS.family,
+    fontSize: 10,
+    color: '#5C6B63',
+    marginTop: 1
+  },
+  bentoSmallPriceSand: {
+    fontFamily: FONTS.family,
+    fontSize: 12,
+    fontWeight: '800',
+    color: '#B45309',
+    marginTop: 3
+  },
+  bentoSmallPriceJade: {
+    fontFamily: FONTS.family,
+    fontSize: 12,
+    fontWeight: '800',
+    color: '#2E7D5B',
+    marginTop: 3
+  },
+
+  /* STREAMLINED 4-PILL UTILITY ROW */
+  utilityPillsRow: {
+    paddingTop: 12,
+    gap: 8
+  },
+  utilityPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 99,
+    borderWidth: 1,
+    borderColor: '#E4EDE8',
+    gap: 6
+  },
+  utilityIconCircle: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  utilityPillText: {
+    fontFamily: FONTS.family,
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#18221D'
+  },
+
+  /* ============================================================
+     4. LIVE ITS GREEN WAVE RADAR CARD
+     ============================================================ */
+  glosaRadarCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#1E3A2F',
+    marginHorizontal: 16,
+    marginTop: 14,
+    borderRadius: 20,
+    padding: 14,
+    gap: 12
+  },
+  glosaRadarLeft: {
+    flex: 1
+  },
+  glosaLiveBadgeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: 4
+  },
+  glosaPulseDot: {
+    width: 7,
+    height: 7,
+    borderRadius: 4,
+    backgroundColor: '#34D399'
+  },
+  glosaLiveTag: {
+    fontFamily: FONTS.family,
+    fontSize: 9,
+    fontWeight: '800',
+    color: '#6EE7B7',
+    letterSpacing: 0.4
+  },
+  glosaCorridorTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 13,
+    fontWeight: '800',
+    color: '#FFFFFF'
+  },
+  glosaCorridorSub: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    color: '#D1FAE5',
+    marginTop: 3,
+    lineHeight: 15
+  },
+  glosaSpeedCircle: {
+    width: 68,
+    height: 68,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderWidth: 1.5,
+    borderColor: '#34D399',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  glosaSpeedNum: {
+    fontFamily: FONTS.family,
+    fontSize: 20,
+    fontWeight: '800',
+    color: '#FFFFFF',
+    lineHeight: 22
+  },
+  glosaSpeedUnit: {
+    fontFamily: FONTS.family,
+    fontSize: 9,
+    color: '#A7F3D0',
+    fontWeight: '600'
+  },
+  glosaGreenTimerPill: {
+    backgroundColor: '#2E7D5B',
+    paddingHorizontal: 6,
+    paddingVertical: 1,
+    borderRadius: 6,
+    marginTop: 2
+  },
+  glosaGreenTimerText: {
+    color: '#FFFFFF',
+    fontSize: 8,
+    fontWeight: '700'
+  },
+
+  /* ============================================================
+     5. WIDE SHOWROOM TELEMETRY CAROUSEL
+     ============================================================ */
+  showroomCarouselSection: {
+    marginTop: 18
+  },
+  sectionHeaderRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    alignItems: 'flex-end',
     paddingHorizontal: 16,
     marginBottom: 12
   },
-  sparkleHeadline: {
+  sectionMainTitle: {
     fontFamily: FONTS.family,
-    fontSize: 16,
+    fontSize: 17,
+    fontWeight: '800',
+    color: '#18221D'
+  },
+  sectionSubTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    color: '#5C6B63',
+    marginTop: 2
+  },
+  seeMapLink: {
+    fontFamily: FONTS.family,
+    fontSize: 12,
     fontWeight: '700',
-    color: '#1A1D1F',
-    flex: 1,
-    marginRight: 10,
-    lineHeight: 22
+    color: '#2E7D5B'
   },
-  promoCardsRow: {
+  wideShowroomRow: {
     paddingHorizontal: 16,
-    gap: 12
+    gap: 14
   },
-  promoSquareWrap: {
-    width: 128
-  },
-  promoImageSquare: {
-    width: 128,
-    height: 128,
-    borderRadius: 16,
-    overflow: 'hidden',
+  wideShowroomCard: {
+    width: 266,
     backgroundColor: '#FFFFFF',
-    position: 'relative',
-    marginBottom: 8
+    borderRadius: 20,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#E4EDE8',
+    shadowColor: '#143326',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    elevation: 2
   },
-  promoImageRedBorder: {
-    borderWidth: 2,
-    borderColor: '#EF4444'
+  wideImgWrap: {
+    width: '100%',
+    height: 144,
+    backgroundColor: '#EAF6F0',
+    position: 'relative'
   },
-  promoImg: {
+  wideImg: {
     width: '100%',
     height: '100%'
   },
-  promoPriceOverlay: {
+  wideTelemetryPill: {
     position: 'absolute',
-    top: 6,
-    left: 6,
-    backgroundColor: 'rgba(239, 68, 68, 0.92)',
-    paddingHorizontal: 7,
-    paddingVertical: 2,
-    borderRadius: 6,
-    flexDirection: 'row',
-    alignItems: 'baseline',
-    gap: 3
-  },
-  promoBigPrice: {
-    fontFamily: FONTS.family,
-    color: '#FFFFFF',
-    fontSize: 13,
-    fontWeight: '800'
-  },
-  promoOldPrice: {
-    fontFamily: FONTS.family,
-    color: '#FEE2E2',
-    fontSize: 9,
-    textDecorationLine: 'line-through'
-  },
-  starOverlayPill: {
-    position: 'absolute',
-    bottom: 6,
-    left: 6,
+    top: 10,
+    left: 10,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(26, 29, 31, 0.68)',
+    backgroundColor: 'rgba(255, 255, 255, 0.94)',
+    paddingHorizontal: 9,
+    paddingVertical: 4,
+    borderRadius: 99,
+    gap: 4
+  },
+  wideTelemetryText: {
+    fontFamily: FONTS.family,
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#18221D'
+  },
+  wideDistPill: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(24, 34, 29, 0.75)',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 99,
+    gap: 3
+  },
+  wideDistText: {
+    fontFamily: FONTS.family,
+    fontSize: 10,
+    fontWeight: '600',
+    color: '#FFFFFF'
+  },
+  wideBottomOverlay: {
+    position: 'absolute',
+    bottom: 8,
+    left: 10,
+    right: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  widePlateBadge: {
+    backgroundColor: 'rgba(255, 255, 255, 0.92)',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6
+  },
+  widePlateText: {
+    fontFamily: FONTS.family,
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#18221D'
+  },
+  wideRatingPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(24, 34, 29, 0.78)',
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 99,
     gap: 3
   },
-  starOverlayText: {
-    fontFamily: FONTS.family,
-    color: '#FFFFFF',
-    fontSize: 11,
-    fontWeight: '700'
-  },
-  promoTitleLine: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: 4
-  },
-  promoItemTitle: {
-    fontFamily: FONTS.family,
-    fontSize: 13,
-    fontWeight: '600',
-    color: '#1A1D1F',
-    flex: 1,
-    lineHeight: 17
-  },
-  promoDistLine: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    marginTop: 4
-  },
-  promoDistText: {
-    fontFamily: FONTS.family,
-    fontSize: 12,
-    color: '#6F767E'
-  },
-  dualActionPillsRow: {
-    flexDirection: 'row',
-    paddingHorizontal: 16,
-    marginTop: 14,
-    gap: 10
-  },
-  whiteActionPill: {
-    backgroundColor: '#FFFFFF',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 99,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 4,
-    elevation: 2
-  },
-  whiteActionPillText: {
-    fontFamily: FONTS.family,
-    fontSize: 13,
-    fontWeight: '600',
-    color: '#1A1D1F'
-  },
-  bigHeroRow: {
-    flexDirection: 'row',
-    paddingHorizontal: 16,
-    marginTop: 14,
-    gap: 12
-  },
-  bigHeroCard: {
-    flex: 1,
-    height: 116,
-    borderRadius: 20,
-    padding: 14,
-    position: 'relative',
-    overflow: 'hidden',
-    borderWidth: 1.5,
-    borderColor: '#FFFFFF',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.04,
-    shadowRadius: 10,
-    elevation: 2
-  },
-  bigHeroAqua: {
-    backgroundColor: '#EAF6F0'
-  },
-  bigHeroCream: {
-    backgroundColor: '#FDF6EC'
-  },
-  aquaInnerGlow: {
-    position: 'absolute',
-    bottom: -20,
-    right: -20,
-    width: 110,
-    height: 110,
-    borderRadius: 55,
-    backgroundColor: '#A7F3D0',
-    opacity: 0.45
-  },
-  creamInnerGlow: {
-    position: 'absolute',
-    bottom: -20,
-    right: -20,
-    width: 110,
-    height: 110,
-    borderRadius: 55,
-    backgroundColor: '#FDE68A',
-    opacity: 0.4
-  },
-  bigHeroTitle: {
-    fontFamily: FONTS.family,
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#1A1D1F'
-  },
-  bigHeroSub: {
-    fontFamily: FONTS.family,
-    fontSize: 11,
-    color: '#52606D',
-    marginTop: 2,
-    fontWeight: '500'
-  },
-  bigHeroIllustrationRight: {
-    position: 'absolute',
-    bottom: 2,
-    right: 4
-  },
-  comboRightIcons: {
-    flexDirection: 'row',
-    alignItems: 'center'
-  },
-  otherServicesSection: {
-    paddingHorizontal: 16,
-    marginTop: 20
-  },
-  otherServicesHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 12
-  },
-  otherServicesTitle: {
-    fontFamily: FONTS.family,
-    fontSize: 17,
-    fontWeight: '700',
-    color: '#1A1D1F'
-  },
-  seeAllText: {
-    fontFamily: FONTS.family,
-    fontSize: 13,
-    fontWeight: '600',
-    color: '#1A1D1F'
-  },
-  grid8Container: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    rowGap: 12
-  },
-  gridTileCard: {
-    width: '23%',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 18,
-    paddingVertical: 12,
-    paddingHorizontal: 4,
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'relative',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.03,
-    shadowRadius: 6,
-    elevation: 1
-  },
-  badgeYellowFloating: {
-    position: 'absolute',
-    top: -6,
-    right: 2,
-    backgroundColor: '#FEF08A',
-    paddingHorizontal: 7,
-    paddingVertical: 2,
-    borderRadius: 8,
-    zIndex: 5,
-    borderWidth: 1,
-    borderColor: '#FFFFFF'
-  },
-  badgeYellowText: {
+  wideRatingText: {
     fontFamily: FONTS.family,
     fontSize: 10,
     fontWeight: '700',
-    color: '#1A1D1F'
+    color: '#FFFFFF'
   },
-  gridTileLabel: {
+  wideCardBody: {
+    padding: 12
+  },
+  wideVehName: {
     fontFamily: FONTS.family,
-    fontSize: 11,
-    fontWeight: '500',
-    color: '#1A1D1F',
-    textAlign: 'center',
+    fontSize: 15,
+    fontWeight: '800',
+    color: '#18221D'
+  },
+  iotPrecheckRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
     marginTop: 6,
-    lineHeight: 14
+    marginBottom: 10
   },
-  vf8BannerCard: {
+  iotCheckChip: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#EAF6F0',
-    marginHorizontal: 16,
-    marginTop: 18,
-    borderRadius: 20,
-    padding: 14,
-    borderWidth: 1,
-    borderColor: '#B7E4CE'
+    backgroundColor: '#F4F7F5',
+    paddingHorizontal: 7,
+    paddingVertical: 3,
+    borderRadius: 6,
+    gap: 3
   },
-  vf8BannerTag: {
+  iotCheckText: {
     fontFamily: FONTS.family,
     fontSize: 10,
-    fontWeight: '700',
+    fontWeight: '600',
+    color: '#5C6B63'
+  },
+  wideCardFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderTopWidth: 1,
+    borderTopColor: '#F0F5F2',
+    paddingTop: 10
+  },
+  widePriceMain: {
+    fontFamily: FONTS.family,
+    fontSize: 15,
+    fontWeight: '800',
     color: '#2E7D5B'
   },
-  vf8BannerTitle: {
-    fontFamily: FONTS.family,
-    fontSize: 16,
-    fontWeight: '800',
-    color: '#14532D',
-    marginTop: 2
-  },
-  vf8BannerSub: {
-    fontFamily: FONTS.family,
+  widePriceUnit: {
     fontSize: 11,
-    color: '#1E563F',
-    marginTop: 2
+    fontWeight: '500',
+    color: '#5C6B63'
   },
-  vf8BannerImg: {
-    width: 110,
-    height: 64,
-    borderRadius: 12,
-    marginLeft: 10
+  widePriceDay: {
+    fontFamily: FONTS.family,
+    fontSize: 10,
+    color: '#8C9B93',
+    marginTop: 1
   },
+  wideBookBtn: {
+    backgroundColor: '#2E7D5B',
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 10
+  },
+  wideBookBtnText: {
+    fontFamily: FONTS.family,
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#FFFFFF'
+  },
+
+  /* ============================================================
+     6. FULL FLEET CATALOG
+     ============================================================ */
   catalogSection: {
-    marginTop: 20
+    marginTop: 22
   },
   catalogHeaderRow: {
     paddingHorizontal: 16,
@@ -1002,7 +1452,7 @@ const styles = StyleSheet.create({
     paddingVertical: 7,
     borderRadius: 99,
     borderWidth: 1,
-    borderColor: '#E2E8F0'
+    borderColor: '#E4EDE8'
   },
   catPillActive: {
     backgroundColor: '#2E7D5B',
@@ -1012,11 +1462,16 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.family,
     fontSize: 12,
     fontWeight: '600',
-    color: '#475569'
+    color: '#5C6B63'
   },
   catPillTextActive: {
-    color: '#FFFFFF'
+    color: '#FFFFFF',
+    fontWeight: '700'
   },
+
+  /* ============================================================
+     STATION SELECTOR MODAL
+     ============================================================ */
   destModalContainer: {
     flex: 1,
     backgroundColor: '#FFFFFF',
@@ -1036,7 +1491,7 @@ const styles = StyleSheet.create({
     width: 18,
     height: 18,
     borderRadius: 9,
-    backgroundColor: '#1A1D1F',
+    backgroundColor: '#2E7D5B',
     alignItems: 'center',
     justifyContent: 'center'
   },
@@ -1049,31 +1504,14 @@ const styles = StyleSheet.create({
   currentLocTitle: {
     fontFamily: FONTS.family,
     flex: 1,
-    fontSize: 15,
-    fontWeight: '600',
-    color: '#1A1D1F'
-  },
-  vnFlagBox: {
-    alignItems: 'center'
-  },
-  vnFlagRed: {
-    width: 26,
-    height: 18,
-    borderRadius: 3,
-    backgroundColor: '#DA251D',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  vnCitySub: {
-    fontSize: 9,
-    color: '#6F767E',
-    marginTop: 2
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#18221D'
   },
   destInputRow: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
-    gap: 10,
     marginBottom: 14
   },
   destInputWrap: {
@@ -1086,34 +1524,13 @@ const styles = StyleSheet.create({
     borderColor: '#2E7D5B',
     paddingHorizontal: 12,
     gap: 10,
-    backgroundColor: '#FFFFFF'
-  },
-  yellowSquareStop: {
-    width: 18,
-    height: 18,
-    borderRadius: 5,
-    backgroundColor: '#F59E0B',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  yellowSquareInner: {
-    width: 6,
-    height: 6,
-    backgroundColor: '#FFFFFF'
+    backgroundColor: '#F8FAF9'
   },
   destTextInput: {
     flex: 1,
     fontFamily: FONTS.family,
     fontSize: 14,
-    color: '#1A1D1F'
-  },
-  cyanPlusBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 10,
-    backgroundColor: '#2E7D5B',
-    alignItems: 'center',
-    justifyContent: 'center'
+    color: '#18221D'
   },
   placesScroll: {
     flex: 1,
@@ -1121,7 +1538,7 @@ const styles = StyleSheet.create({
   },
   placeItemRow: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     paddingVertical: 14,
     borderBottomWidth: 1,
     borderBottomColor: '#F1F5F9',
@@ -1129,70 +1546,59 @@ const styles = StyleSheet.create({
   },
   placeLeftCol: {
     alignItems: 'center',
-    width: 46
+    width: 48
   },
   placeIconCircle: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: '#F1F5F9',
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: '#EAF6F0',
     alignItems: 'center',
     justifyContent: 'center'
   },
   placeDistText: {
     fontFamily: FONTS.family,
     fontSize: 11,
-    color: '#1A1D1F',
+    color: '#2E7D5B',
     marginTop: 4,
-    fontWeight: '500'
+    fontWeight: '700'
   },
   placeCenterCol: {
     flex: 1
   },
   placeNameText: {
     fontFamily: FONTS.family,
-    fontSize: 15,
-    fontWeight: '600',
-    color: '#1A1D1F',
-    lineHeight: 20
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#18221D',
+    lineHeight: 19
   },
   placeAddrText: {
     fontFamily: FONTS.family,
-    fontSize: 13,
-    color: '#6F767E',
-    marginTop: 3,
-    lineHeight: 18
-  },
-  placeRightCol: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    paddingTop: 4
+    fontSize: 12,
+    color: '#5C6B63',
+    marginTop: 2
   },
   destBottomPillsBar: {
-    flexDirection: 'row',
     paddingHorizontal: 16,
     paddingVertical: 14,
-    gap: 10,
     borderTopWidth: 1,
-    borderTopColor: '#F1F5F9',
+    borderTopColor: '#E4EDE8',
     backgroundColor: '#FFFFFF'
   },
   destBottomPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F8FAFC',
-    paddingHorizontal: 14,
-    paddingVertical: 9,
-    borderRadius: 99,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    gap: 6
+    justifyContent: 'center',
+    backgroundColor: '#EAF6F0',
+    paddingVertical: 12,
+    borderRadius: 14,
+    gap: 8
   },
   destBottomPillText: {
     fontFamily: FONTS.family,
     fontSize: 13,
-    fontWeight: '600',
-    color: '#1A1D1F'
+    fontWeight: '700',
+    color: '#2E7D5B'
   }
 });

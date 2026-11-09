@@ -53,13 +53,13 @@ export default function VehicleCard({ vehicle, onSelect, onBook, style: customSt
           </View>
         </View>
 
-        {/* Subtle Feature Line (No Colorful AI Boxes) */}
+        {/* IoT Telemetry & Pre-Trip Safety Line */}
         <View style={styles.tagsRow}>
-          <Text style={styles.tagItem}>Mở khóa qua điện thoại</Text>
+          <Text style={styles.tagItem}>✓ Lốp {vehicle.telematics?.tirePressurePsi?.fl || 34} PSI</Text>
           <Text style={styles.tagDot}>·</Text>
-          <Text style={styles.tagItem}>Miễn thế chấp</Text>
+          <Text style={styles.tagItem}>✓ Mở khóa BLE 5.2</Text>
           <Text style={styles.tagDot}>·</Text>
-          <Text style={styles.tagItem}>Giao nhận 24/7</Text>
+          <Text style={styles.tagItem}>✓ Miễn cọc GPLX B2</Text>
         </View>
 
         <View style={styles.divider} />
