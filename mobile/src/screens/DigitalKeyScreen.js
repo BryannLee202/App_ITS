@@ -276,7 +276,7 @@ export default function DigitalKeyScreen({ onNavigateHome }) {
         <Text style={styles.returnBtnText}>Kết thúc chuyến & Trả xe tại trạm</Text>
       </TouchableOpacity>
 
-      <View style={{ height: 24 }} />
+      <View style={{ height: 96 }} />
     </ScrollView>
   );
 }
@@ -335,10 +335,10 @@ const styles = StyleSheet.create({
     lineHeight: 19
   },
   goHomeBtn: {
-    backgroundColor: '#111111',
+    backgroundColor: '#18B6B4',
     paddingHorizontal: 22,
     paddingVertical: 12,
-    borderRadius: 10,
+    borderRadius: 12,
     marginTop: 20
   },
   goHomeBtnText: {
@@ -482,10 +482,10 @@ const styles = StyleSheet.create({
     gap: 8
   },
   primaryActionBtnActive: {
-    backgroundColor: '#111111'
+    backgroundColor: '#00838F'
   },
   primaryActionBtnMint: {
-    backgroundColor: '#0D9488'
+    backgroundColor: '#18B6B4'
   },
   primaryActionText: {
     fontFamily: FONTS.family,
@@ -591,8 +591,8 @@ const styles = StyleSheet.create({
     color: '#0D9488'
   },
   returnBtn: {
-    backgroundColor: '#111111',
-    paddingVertical: 14,
+    backgroundColor: '#18B6B4',
+    paddingVertical: 15,
     borderRadius: 12,
     alignItems: 'center',
     marginTop: 8

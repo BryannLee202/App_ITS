@@ -33,7 +33,7 @@ export default function VehicleCard({ vehicle, onSelect, onBook, style: customSt
           </View>
 
           <View style={styles.ratingFrosted}>
-            <Ionicons name="star" size={11} color="#111111" />
+            <Ionicons name="star" size={11} color="#F59E0B" />
             <Text style={styles.ratingText}>{vehicle.rating}</Text>
             <Text style={styles.tripsCount}>({vehicle.totalTrips})</Text>
           </View>
@@ -233,15 +233,15 @@ const styles = StyleSheet.create({
     marginTop: 2
   },
   ctaButton: {
-    backgroundColor: '#111111',
+    backgroundColor: '#18B6B4',
     paddingHorizontal: 20,
     paddingVertical: 10,
-    borderRadius: 10
+    borderRadius: 12
   },
   ctaButtonText: {
     fontFamily: FONTS.family,
     color: '#FFFFFF',
     fontSize: 13,
-    fontWeight: '600'
+    fontWeight: '700'
   }
 });

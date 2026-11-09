@@ -1,40 +1,39 @@
-// Apple Editorial Monochrome & Subtle Mint/Champagne Design System (Anti-AI Human Product Design)
+// Authentic Green SM v5.12.0 Super-App Design System (Soft Cyan-Aqua & Warm Cream Gradients + 3D Isometric UI)
 export const COLORS = {
-  // Primary Action: Editorial Ink Black & Subtle Emerald Accent
-  primary: '#111111',         // Apple / Uber Primary Ink Black
-  primaryLight: '#333333',
-  primaryDark: '#000000',
-  primaryMuted: '#F5F5F7',
+  // Official Green SM Brand Cyan / Turquoise
+  primary: '#18B6B4',         // Official Green SM Turquoise Button (#18B6B4 / #22BDC6)
+  primaryLight: '#5CE1E6',    // Bright Cyan Glow
+  primaryDark: '#00796B',     // Deep Forest Teal (Green Race Text)
+  primaryMuted: '#E0F7FA',    // Soft Aqua Card Tint
 
-  // Single Brand Accent (Used strictly for active price/online dot/EV indicator)
-  mint: '#0D9488',            // Refined Deep Teal-Mint (never neon)
-  mintLight: '#F0FDFA',       // Ultra-subtle 3% tint
-  mintBorder: '#CCFBF1',
+  // Secondary Warm Cream & Gold Accents (Green Race & Badges)
+  secondary: '#F59E0B',       // Trophy Gold / Star Amber
+  secondaryLight: '#FEF08A',  // Promo Badge Yellow (-20%, MỚI)
+  secondaryDark: '#558B2F',   // "Người Ươm Mầm" Olive Green Pill
+  secondaryMuted: '#FFF9E6',  // Soft Warm Cream Card Tint
 
-  // Subtle Warm Champagne (Strictly for Showroom Photo Backdrops)
-  beige: '#F6F5F2',           // Editorial Stone/Alabaster
-  beigeDark: '#EBE8E0',
-  beigeText: '#57534E',
+  // Backgrounds & Card Surfaces
+  background: '#F4F7F8',      // Soft Cool-Mint Alabaster Canvas
+  surface: '#FFFFFF',         // Pure White Card
+  surfaceVariant: '#F8FAFB',  // Subtle Inset
+  aquaCard: '#E6F8F9',        // "Đặt xe" Soft Aqua Card
+  creamCard: '#FDF8EC',       // "Đặt đồ ăn / Gia đình" Soft Cream Card
+  greenRaceBg: '#DCF7F4',     // Green Race Card Base
+  border: '#E8EEF2',          // Soft Divider
+  borderDark: '#D1DCE2',
 
-  // Surfaces (90% Pure White & iOS Alabaster Gray)
-  background: '#F7F7F9',      // iOS 18 Grouping Canvas
-  surface: '#FFFFFF',         // Pure Crisp White Card
-  surfaceVariant: '#F5F5F7',  // Subtle Input/Chip Fill
-  border: '#EBEBED',          // 1px Hairline Divider
-  borderDark: '#DCDCE0',
-
-  // Typography (Natural Hierarchy - No Heavy 900 All-Caps)
-  textPrimary: '#111111',     // Primary Ink
-  textSecondary: '#6E6E73',   // Apple Secondary Label
-  textMuted: '#8E8E93',       // Apple Tertiary Label
+  // Typography
+  textPrimary: '#1A1D1F',     // Deep Charcoal
+  textSecondary: '#6F767E',   // Muted Slate
+  textMuted: '#9A9FA5',       // Subtle Gray
   textInverse: '#FFFFFF',
 
-  danger: '#E11D48',
-  accent: '#F59E0B'
+  danger: '#EF4444',
+  accent: '#FBBF24'
 };
 
 export const FONTS = {
-  family: '"Plus Jakarta Sans", "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif'
+  family: '"Plus Jakarta Sans", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
 };
 
 export const SPACING = {
@@ -47,10 +46,10 @@ export const SPACING = {
 };
 
 export const RADIUS = {
-  sm: 8,
-  md: 12,
-  lg: 16,
-  xl: 20,
-  xxl: 24,
+  sm: 10,
+  md: 14,
+  lg: 18,
+  xl: 22,
+  xxl: 28,
   full: 999
 };

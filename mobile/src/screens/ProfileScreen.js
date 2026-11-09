@@ -6,31 +6,25 @@ import {
   ScrollView,
   TouchableOpacity,
   Linking,
-  Alert
+  Alert,
+  Modal
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { COLORS, SPACING, RADIUS } from '../styles/theme';
+import { FONTS } from '../styles/theme';
 
-export default function ProfileScreen() {
-  const [user, setUser] = useState({
-    fullName: 'Nguyễn Văn An',
-    phone: '0901234567',
-    email: 'an.nguyen@uth.edu.vn',
-    licenseNumber: 'GPLX Hạng B2 - 790123456789',
-    cccdNumber: '079201008899',
-    isEkycVerified: true,
-    walletBalance: 1500000,
-    ecoPoints: 340,
-    memberTier: 'HỘI VIÊN DIAMOND GREEN'
+export default function ProfileScreen({ onOpenGreenRace }) {
+  const [user] = useState({
+    fullName: 'Minh Tài',
+    phone: '+84386726647',
+    email: 'minhtai@uth.edu.vn',
+    licenseNumber: 'GPLX B2 - 790123456789',
+    co2TreesPerDay: 2,
+    greenFundContribution: '125.000 VNĐ',
+    totalKm: 142,
+    year2026Km: 142
   });
 
-  const [toastMessage, setToastMessage] = useState(null);
-
-  const handleTopUp = () => {
-    setUser(prev => ({ ...prev, walletBalance: prev.walletBalance + 500000 }));
-    setToastMessage('Đã nạp +500.000đ vào Ví ITS GreenPay thành công!');
-    setTimeout(() => setToastMessage(null), 2500);
-  };
+  const [showGSMContractModal, setShowGSMContractModal] = useState(false);
 
   const handleOpenSurvey = () => {
     const surveyUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSfq1tFb8DmWn5QNuS5tkb6U5QXKND7s4JFDFg3F_8oXnberlA/viewform';
@@ -40,436 +34,981 @@ export default function ProfileScreen() {
   };
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-      {/* Profile Header Card */}
-      <View style={styles.profileCard}>
-        <View style={styles.avatarBig}>
-          <Ionicons name="person" size={34} color="#059669" />
-          <View style={styles.verifiedCheckDot}>
-            <Ionicons name="checkmark" size={10} color="#FFFFFF" />
+    <View style={styles.container}>
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* ============================================================
+            1. TOP PROFILE HEADER ("Minh Tài >" + "+84386726647")
+           ============================================================ */}
+        <View style={styles.topUserRow}>
+          <View style={styles.avatarCyanCircle}>
+            <Ionicons name="person" size={30} color="#FFFFFF" />
+            <View style={styles.avatarWarnBadge}>
+              <Text style={styles.avatarWarnText}>!</Text>
+            </View>
           </View>
-        </View>
-        <Text style={styles.profileName}>{user.fullName}</Text>
-        <Text style={styles.profilePhone}>{user.phone} • {user.email}</Text>
 
-        <View style={styles.tierPill}>
-          <Ionicons name="diamond" size={11} color="#FFFFFF" />
-          <Text style={styles.tierText}>{user.memberTier}</Text>
-        </View>
-      </View>
-
-      {toastMessage && (
-        <View style={styles.toastBox}>
-          <Ionicons name="checkmark-circle" size={16} color="#FFFFFF" />
-          <Text style={styles.toastText}>{toastMessage}</Text>
-        </View>
-      )}
-
-      {/* eKYC Verification Card */}
-      <View style={styles.ekycCard}>
-        <View style={styles.ekycHeader}>
-          <View style={styles.ekycTitleRow}>
-            <Ionicons name="shield-checkmark" size={17} color="#059669" />
-            <Text style={styles.ekycTitle}>HỒ SƠ ĐỊNH DANH SỐ eKYC AI</Text>
-          </View>
-          <View style={styles.verifiedTag}>
-            <Text style={styles.verifiedTagText}>ĐÃ XÁC THỰC</Text>
+          <View style={styles.userInfoCol}>
+            <View style={styles.userNameRow}>
+              <Text style={styles.userNameText}>{user.fullName}</Text>
+              <Ionicons name="chevron-forward" size={18} color="#6F767E" />
+            </View>
+            <Text style={styles.userPhoneText}>{user.phone}</Text>
           </View>
         </View>
 
-        <View style={styles.ekycBody}>
-          <View style={styles.ekycItem}>
-            <Text style={styles.ekycLabel}>Giấy phép lái xe quốc gia</Text>
-            <Text style={styles.ekycValue}>{user.licenseNumber}</Text>
+        {/* ============================================================
+            2. EMAIL / eKYC VERIFICATION BANNER CARD
+           ============================================================ */}
+        <View style={styles.emailVerifyCard}>
+          <View style={styles.envelope3DBox}>
+            <Ionicons name="mail-open" size={26} color="#90CAF9" />
+            <View style={styles.shieldCyanBadge}>
+              <Ionicons name="shield-checkmark" size={14} color="#00BCD4" />
+            </View>
           </View>
-          <View style={styles.ekycItem}>
-            <Text style={styles.ekycLabel}>CCCD gắn chip (VNeID)</Text>
-            <Text style={styles.ekycValue}>{user.cccdNumber}</Text>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.emailVerifyTitle}>Xác thực Email & GPLX B2</Text>
+            <Text style={styles.emailVerifyDesc}>
+              Xác thực email để nhận hóa đơn, hợp đồng thuê xe tự lái và khôi phục tài khoản khi cần thiết
+            </Text>
           </View>
         </View>
-        <View style={styles.ekycPrivilegeBox}>
-          <Ionicons name="key-outline" size={13} color="#059669" />
-          <Text style={styles.ekycNote}>
-            Đặc quyền: Nhận xe tự động 24/7 và miễn 100% tiền đặt cọc thế chấp.
-          </Text>
-        </View>
-      </View>
 
-      {/* Wallet & Eco Points (Mint & Champagne Beige) */}
-      <View style={styles.walletRow}>
-        <View style={styles.walletBox}>
-          <View style={styles.walletTopIconRow}>
-            <Text style={styles.walletLabel}>Ví ITS GreenPay</Text>
-            <Ionicons name="wallet-outline" size={15} color="#059669" />
+        {/* Carousel Pagination Dots */}
+        <View style={styles.carouselDotsRow}>
+          <View style={styles.dotInactive} />
+          <View style={styles.dotActiveCyan} />
+          <View style={styles.dotInactive} />
+        </View>
+
+        {/* ============================================================
+            3. GREEN RACE HERO CARD (EXACT REPLICA OF 18:57 SCREENSHOT)
+           ============================================================ */}
+        <TouchableOpacity
+          style={styles.greenRaceCard}
+          activeOpacity={0.93}
+          onPress={onOpenGreenRace}
+        >
+          {/* Top Ribbon "GREEN RACE" & "Xem tiến trình >" */}
+          <View style={styles.greenRaceTopBar}>
+            <View style={styles.greenRaceRibbon}>
+              <Text style={styles.greenRaceRibbonText}>GREEN RACE</Text>
+            </View>
+
+            <TouchableOpacity style={styles.progressBtnPill} onPress={onOpenGreenRace}>
+              <Text style={styles.progressBtnText}>Xem tiến trình</Text>
+              <Ionicons name="chevron-forward" size={13} color="#00796B" />
+            </TouchableOpacity>
           </View>
-          <Text style={styles.walletVal}>{user.walletBalance.toLocaleString('vi-VN')}đ</Text>
-          <TouchableOpacity style={styles.rechargeBtn} onPress={handleTopUp}>
-            <Text style={styles.rechargeText}>+ Nạp nhanh 500k</Text>
+
+          {/* Center Body: Left Hexagon Leaf Emblem | Right CO2 Counter */}
+          <View style={styles.greenRaceBodyRow}>
+            <View style={styles.emblemCol}>
+              <View style={styles.hexOuterBronze}>
+                <View style={styles.hexInnerWhite}>
+                  <Ionicons name="leaf" size={28} color="#689F38" />
+                </View>
+              </View>
+              <View style={styles.seedlingPill}>
+                <Text style={styles.seedlingPillText}>Người Ươm Mầm</Text>
+              </View>
+            </View>
+
+            <View style={styles.co2CounterCol}>
+              <Text style={styles.co2HeaderLabel}>Đã giảm lượng CO₂ tương đương</Text>
+              <View style={styles.amberCounterPill}>
+                <Text style={styles.amberCounterNumber}>{user.co2TreesPerDay}</Text>
+              </View>
+              <Text style={styles.co2SubLabel}>cây xanh quang hợp/ngày</Text>
+            </View>
+          </View>
+
+          {/* Bottom 3-Column Metrics Box */}
+          <View style={styles.greenRaceMetricsBox}>
+            <View style={styles.grMetricCol}>
+              <Text style={styles.grMetricLabel}>
+                Đã đóng góp quỹ Vì Tương{'\n'}Lai Xanh
+              </Text>
+              <Text style={styles.grMetricVal}>{user.greenFundContribution}</Text>
+            </View>
+
+            <View style={styles.grMetricCol}>
+              <Text style={styles.grMetricLabel}>Tổng KM{'\n'}đã đi</Text>
+              <Text style={styles.grMetricVal}>{user.totalKm}</Text>
+            </View>
+
+            <View style={styles.grMetricCol}>
+              <Text style={styles.grMetricLabel}>KM tích luỹ{'\n'}năm 2026</Text>
+              <Text style={styles.grMetricVal}>{user.year2026Km}</Text>
+            </View>
+          </View>
+        </TouchableOpacity>
+
+        {/* ============================================================
+            4. "GIA ĐÌNH" & "DOANH NGHIỆP" 3D CARDS
+           ============================================================ */}
+        <View style={styles.dualAccountCardsRow}>
+          <TouchableOpacity style={[styles.accountTypeCard, styles.familyCardCream]} activeOpacity={0.9}>
+            <Text style={styles.accountTypeTitle}>Gia đình</Text>
+            <View style={styles.house3DIllustration}>
+              <View style={styles.heartBubbleRed}>
+                <Ionicons name="heart" size={10} color="#FFFFFF" />
+              </View>
+              <Ionicons name="home" size={38} color="#26C6DA" />
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={[styles.accountTypeCard, styles.businessCardAqua]} activeOpacity={0.9}>
+            <Text style={styles.accountTypeTitle}>Doanh nghiệp</Text>
+            <View style={styles.briefcase3DIllustration}>
+              <Ionicons name="briefcase" size={38} color="#1E3A8A" />
+              <View style={styles.claspLeftGold} />
+              <View style={styles.claspRightGold} />
+            </View>
           </TouchableOpacity>
         </View>
 
-        <View style={[styles.walletBox, styles.walletBoxBeige]}>
-          <View style={styles.walletTopIconRow}>
-            <Text style={styles.walletLabelBeige}>Điểm Thưởng Xanh</Text>
-            <Ionicons name="leaf-outline" size={15} color="#786B59" />
-          </View>
-          <Text style={[styles.walletVal, { color: '#059669' }]}>{user.ecoPoints} Eco Pts</Text>
-          <TouchableOpacity style={styles.rechargeBtnBeige}>
-            <Text style={styles.rechargeText}>Đổi ưu đãi -20%</Text>
+        {/* ============================================================
+            5. "TÁC VỤ" (2x2 GRID)
+           ============================================================ */}
+        <Text style={styles.sectionTitle}>Tác vụ</Text>
+        <View style={styles.grid2x2}>
+          <TouchableOpacity style={styles.taskCardItem}>
+            <View style={[styles.taskIcon3D, { backgroundColor: '#E0F7FA' }]}>
+              <Ionicons name="card" size={20} color="#00BCD4" />
+            </View>
+            <Text style={styles.taskCardLabel}>Thanh toán</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.taskCardItem}>
+            <View style={[styles.taskIcon3D, { backgroundColor: '#E1F5FE' }]}>
+              <Ionicons name="ticket" size={20} color="#0288D1" />
+            </View>
+            <Text style={styles.taskCardLabel}>Mã khuyến mại</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.taskCardItem} onPress={handleOpenSurvey}>
+            <View style={[styles.taskIcon3D, { backgroundColor: '#FFF8E1' }]}>
+              <Ionicons name="headset" size={20} color="#F59E0B" />
+            </View>
+            <Text style={styles.taskCardLabel}>Trung tâm hỗ trợ</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.taskCardItem}>
+            <View style={[styles.taskIcon3D, { backgroundColor: '#E0F2F1' }]}>
+              <Ionicons name="shield-checkmark" size={20} color="#009688" />
+            </View>
+            <Text style={styles.taskCardLabel}>Trung tâm an toàn</Text>
           </TouchableOpacity>
         </View>
-      </View>
 
-      {/* Survey & Feedback Banner (Linking to user's Google Form) */}
-      <TouchableOpacity style={styles.surveyCard} onPress={handleOpenSurvey} activeOpacity={0.88}>
-        <View style={styles.surveyIconCircle}>
-          <Ionicons name="clipboard-outline" size={20} color="#FFFFFF" />
+        {/* ============================================================
+            6. "TIỆN ÍCH & ƯU ĐÃI" (2x2 GRID + GIFT BANNER)
+           ============================================================ */}
+        <Text style={styles.sectionTitle}>Tiện ích & Ưu đãi</Text>
+        <View style={styles.grid2x2}>
+          <TouchableOpacity style={styles.taskCardItem} onPress={onOpenGreenRace}>
+            <View style={styles.greenCircleIcon}>
+              <Ionicons name="ribbon" size={18} color="#00C853" />
+            </View>
+            <Text style={styles.taskCardLabel}>Hạng thành viên</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.taskCardItem}>
+            <View style={styles.greenCircleIcon}>
+              <Ionicons name="shield" size={18} color="#00C853" />
+            </View>
+            <Text style={styles.taskCardLabel}>Hội viên</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.taskCardItem}>
+            <View style={styles.greenCircleIcon}>
+              <Ionicons name="gift" size={18} color="#00C853" />
+            </View>
+            <Text style={styles.taskCardLabel}>Thẻ quà tặng</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.taskCardItem}>
+            <View style={styles.greenCircleIcon}>
+              <Ionicons name="person-add" size={18} color="#00C853" />
+            </View>
+            <Text style={styles.taskCardLabel}>Giới thiệu bạn bè</Text>
+          </TouchableOpacity>
         </View>
-        <View style={styles.surveyContent}>
-          <Text style={styles.surveyTitle}>KHẢO SÁT CHẤT LƯỢNG HẠ TẦNG ITS</Text>
-          <Text style={styles.surveySub}>
-            Đóng góp ý kiến nghiên cứu kết nối giao thông xanh ĐH GTVT TP.HCM (UTH)
-          </Text>
+
+        {/* Gift Promo Banner */}
+        <TouchableOpacity style={styles.giftPromoBanner} activeOpacity={0.9}>
+          <View style={styles.giftBannerIconBox}>
+            <Text style={styles.giftBannerPercent}>%</Text>
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.giftBannerTitle}>Quà tặng xịn tặng người thân</Text>
+            <Text style={styles.giftBannerSub}>Quà nho nhỏ, cho niềm vui to</Text>
+          </View>
+          <Ionicons name="chevron-forward" size={18} color="#1A1D1F" />
+        </TouchableOpacity>
+
+        {/* ============================================================
+            7. "HỖ TRỢ & HỢP TÁC" + "CÀI ĐẶT CHUNG"
+           ============================================================ */}
+        <Text style={styles.sectionTitle}>Hỗ trợ & Hợp tác</Text>
+        <View style={styles.menuListGroup}>
+          <TouchableOpacity style={styles.menuListRow} onPress={handleOpenSurvey}>
+            <Ionicons name="id-card-outline" size={20} color="#6F767E" />
+            <Text style={styles.menuListText}>Khảo sát chất lượng dịch vụ ITS (UTH)</Text>
+            <Ionicons name="chevron-forward" size={18} color="#9A9FA5" />
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.menuListRow}>
+            <Ionicons name="map-outline" size={20} color="#6F767E" />
+            <Text style={styles.menuListText}>Đóng góp bản đồ trạm ITS Hub</Text>
+            <Ionicons name="chevron-forward" size={18} color="#9A9FA5" />
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.menuListRow}>
+            <Ionicons name="information-circle-outline" size={20} color="#6F767E" />
+            <Text style={styles.menuListText}>Điều khoản & Chính sách</Text>
+            <Ionicons name="chevron-forward" size={18} color="#9A9FA5" />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.menuListRow}
+            onPress={() => setShowGSMContractModal(true)}
+          >
+            <Ionicons name="document-text-outline" size={20} color="#6F767E" />
+            <Text style={styles.menuListText}>Hợp đồng sử dụng dịch vụ</Text>
+            <Ionicons name="chevron-forward" size={18} color="#9A9FA5" />
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.menuListRow}>
+            <Ionicons name="shield-outline" size={20} color="#6F767E" />
+            <Text style={styles.menuListText}>Kiểm soát quyền riêng tư</Text>
+            <Ionicons name="chevron-forward" size={18} color="#9A9FA5" />
+          </TouchableOpacity>
         </View>
-        <Ionicons name="chevron-forward" size={16} color="#059669" />
-      </TouchableOpacity>
 
-      {/* Menu Options */}
-      <View style={styles.menuSection}>
-        <TouchableOpacity style={styles.menuItem}>
-          <View style={styles.menuLeft}>
-            <View style={styles.menuIconWrap}>
-              <Ionicons name="document-text-outline" size={18} color="#059669" />
-            </View>
-            <Text style={styles.menuText}>Hợp đồng thuê phương tiện điện tử</Text>
-          </View>
-          <Ionicons name="chevron-forward" size={16} color="#9CA3AF" />
-        </TouchableOpacity>
+        <Text style={styles.sectionTitle}>Cài đặt chung</Text>
+        <View style={styles.menuListGroup}>
+          <TouchableOpacity style={styles.menuListRow}>
+            <Ionicons name="earth-outline" size={20} color="#6F767E" />
+            <Text style={styles.menuListText}>Quốc gia (Việt Nam)</Text>
+            <Ionicons name="chevron-forward" size={18} color="#9A9FA5" />
+          </TouchableOpacity>
 
-        <TouchableOpacity style={styles.menuItem}>
-          <View style={styles.menuLeft}>
-            <View style={styles.menuIconWrap}>
-              <Ionicons name="leaf-outline" size={18} color="#059669" />
-            </View>
-            <Text style={styles.menuText}>Báo cáo tiết giảm phát thải CO₂ cá nhân</Text>
-          </View>
-          <Ionicons name="chevron-forward" size={16} color="#9CA3AF" />
-        </TouchableOpacity>
+          <TouchableOpacity style={styles.menuListRow}>
+            <Ionicons name="language-outline" size={20} color="#6F767E" />
+            <Text style={styles.menuListText}>Ngôn ngữ (Tiếng Việt)</Text>
+            <Ionicons name="chevron-forward" size={18} color="#9A9FA5" />
+          </TouchableOpacity>
 
-        <TouchableOpacity style={styles.menuItem}>
-          <View style={styles.menuLeft}>
-            <View style={styles.menuIconWrapBeige}>
-              <Ionicons name="school-outline" size={18} color="#786B59" />
-            </View>
-            <Text style={styles.menuText}>Chuyên đề ITS - ĐH GTVT TP.HCM (UTH)</Text>
-          </View>
-          <Ionicons name="chevron-forward" size={16} color="#9CA3AF" />
-        </TouchableOpacity>
+          <TouchableOpacity style={styles.menuListRow}>
+            <Ionicons name="receipt-outline" size={20} color="#6F767E" />
+            <Text style={styles.menuListText}>Hóa đơn điện tử</Text>
+            <Ionicons name="chevron-forward" size={18} color="#9A9FA5" />
+          </TouchableOpacity>
+        </View>
 
-        <TouchableOpacity style={[styles.menuItem, { borderBottomWidth: 0 }]}>
-          <View style={styles.menuLeft}>
-            <View style={styles.menuIconWrapBeige}>
-              <Ionicons name="call-outline" size={18} color="#786B59" />
+        {/* Logout & Version + Bộ Công Thương Badges */}
+        <View style={styles.footerVersionBlock}>
+          <TouchableOpacity style={styles.logoutRow}>
+            <Ionicons name="log-out-outline" size={20} color="#1A1D1F" />
+            <Text style={styles.logoutText}>Đăng xuất</Text>
+          </TouchableOpacity>
+          <Text style={styles.versionText}>Green SM - v5.12.0(437) • Chuyên đề ITS UTH</Text>
+
+          <View style={styles.bctBadgesRow}>
+            <View style={styles.bctBlueBadge}>
+              <Ionicons name="checkmark-circle" size={18} color="#FFFFFF" />
+              <Text style={styles.bctBadgeText}>ĐÃ THÔNG BÁO{'\n'}BỘ CÔNG THƯƠNG</Text>
             </View>
-            <Text style={styles.menuText}>Tổng đài cứu hộ & kỹ thuật 24/7</Text>
+            <View style={styles.bctRedBadge}>
+              <Ionicons name="checkmark-circle" size={18} color="#FFFFFF" />
+              <Text style={styles.bctBadgeText}>ĐÃ ĐĂNG KÝ{'\n'}BỘ CÔNG THƯƠNG</Text>
+            </View>
           </View>
-          <Text style={styles.hotlineText}>1900 8899</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+        </View>
+
+        <View style={{ height: 100 }} />
+      </ScrollView>
+
+      {/* ============================================================
+          MODAL: OFFICIAL GSM PLATFORM SERVICE CONTRACT (18:56 SCREENSHOT)
+         ============================================================ */}
+      <Modal
+        visible={showGSMContractModal}
+        animationType="slide"
+        onRequestClose={() => setShowGSMContractModal(false)}
+      >
+        <View style={styles.contractModalContainer}>
+          <View style={styles.contractTopHeader}>
+            <TouchableOpacity onPress={() => setShowGSMContractModal(false)}>
+              <Ionicons name="close" size={24} color="#1A1D1F" />
+            </TouchableOpacity>
+            <Text style={styles.contractTopTitle}>Hợp đồng dịch vụ sử dụng nền tảng</Text>
+          </View>
+
+          {/* Turquoise Banner */}
+          <View style={styles.gsmTurquoiseBanner}>
+            <View style={styles.gsmLogoBox}>
+              <Ionicons name="checkmark-done" size={22} color="#F59E0B" />
+              <Text style={styles.gsmLogoText}>GREEN SM</Text>
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.gsmCompanyTitle}>
+                CÔNG TY CỔ PHẦN DI CHUYỂN XANH VÀ THÔNG MINH GSM
+              </Text>
+              <Text style={styles.gsmCompanySub}>Hợp đồng dịch vụ sử dụng nền tảng</Text>
+            </View>
+          </View>
+
+          <ScrollView style={styles.contractScrollBody}>
+            <View style={styles.contractWhiteBox}>
+              <Text style={styles.contractBoxHeading}>Thông tin của GSM</Text>
+
+              <Text style={styles.contractFieldLabel}>Tên công ty</Text>
+              <Text style={styles.contractFieldValue}>
+                CÔNG TY CỔ PHẦN DI CHUYỂN XANH VÀ THÔNG MINH GSM
+              </Text>
+
+              <View style={styles.contractDivider} />
+
+              <Text style={styles.contractFieldLabel}>Địa chỉ</Text>
+              <Text style={styles.contractFieldValue}>
+                Tòa Văn phòng Symphony, đường Chu Huy Mân, khu đô thị Vinhomes Riverside, phường Phúc Lợi, thành phố Hà Nội
+              </Text>
+
+              <View style={styles.contractDivider} />
+
+              <Text style={styles.contractFieldLabel}>Giấy chứng nhận đăng ký doanh nghiệp số</Text>
+              <Text style={styles.contractFieldValue}>0110269067</Text>
+
+              <View style={styles.contractDivider} />
+
+              <Text style={styles.contractFieldLabel}>Số điện thoại</Text>
+              <Text style={styles.contractFieldValue}>1555 hoặc 19002088</Text>
+            </View>
+
+            <View style={styles.contractWhiteBox}>
+              <Text style={styles.contractBoxHeading}>Thông tin của người dùng</Text>
+
+              <Text style={styles.contractFieldLabel}>Họ tên</Text>
+              <Text style={styles.contractFieldValue}>{user.fullName}</Text>
+
+              <View style={styles.contractDivider} />
+
+              <Text style={styles.contractFieldLabel}>Số điện thoại</Text>
+              <Text style={styles.contractFieldValue}>{user.phone}</Text>
+
+              <View style={styles.contractDivider} />
+
+              <Text style={styles.contractFieldLabel}>Thời điểm xác lập và có hiệu lực của Hợp đồng</Text>
+              <Text style={styles.contractFieldValue}>26/10/2026</Text>
+            </View>
+          </ScrollView>
+
+          <View style={styles.contractBottomBar}>
+            <TouchableOpacity
+              style={styles.understandTurquoiseBtn}
+              onPress={() => setShowGSMContractModal(false)}
+            >
+              <Text style={styles.understandBtnText}>Tôi đã hiểu</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F7'
+    backgroundColor: '#F3FAF9'
   },
   scrollContent: {
-    padding: 16,
-    paddingBottom: 28
+    padding: 16
   },
-  profileCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 22,
-    padding: 20,
+  topUserRow: {
+    flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-    marginBottom: 12
+    marginBottom: 16,
+    gap: 12
   },
-  avatarBig: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
-    backgroundColor: '#ECFDF5',
+  avatarCyanCircle: {
+    width: 58,
+    height: 58,
+    borderRadius: 29,
+    backgroundColor: '#4DD0E1',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
-    borderColor: '#10B981',
-    marginBottom: 10,
+    borderColor: '#FFFFFF',
     position: 'relative'
   },
-  verifiedCheckDot: {
+  avatarWarnBadge: {
     position: 'absolute',
-    bottom: 0,
-    right: 0,
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    backgroundColor: '#10B981',
+    bottom: -2,
+    right: -2,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: '#F59E0B',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
     borderColor: '#FFFFFF'
   },
-  profileName: {
-    fontSize: 18,
-    fontWeight: '900',
-    color: '#111827'
-  },
-  profilePhone: {
-    fontSize: 12,
-    color: '#6B7280',
-    marginTop: 2
-  },
-  tierPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#10B981',
-    paddingHorizontal: 12,
-    paddingVertical: 5,
-    borderRadius: 99,
-    gap: 5,
-    marginTop: 10
-  },
-  tierText: {
+  avatarWarnText: {
     color: '#FFFFFF',
-    fontSize: 10,
-    fontWeight: '800'
-  },
-  toastBox: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#059669',
-    padding: 10,
-    borderRadius: 12,
-    marginBottom: 12,
-    gap: 8
-  },
-  toastText: {
-    color: '#FFFFFF',
-    fontSize: 12,
-    fontWeight: '700'
-  },
-  ekycCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    padding: 14,
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: '#E5E7EB'
-  },
-  ekycHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    borderBottomWidth: 1,
-    borderBottomColor: '#F3F4F6',
-    paddingBottom: 8,
-    marginBottom: 10
-  },
-  ekycTitleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6
-  },
-  ekycTitle: {
-    color: '#111827',
     fontSize: 11,
     fontWeight: '900'
   },
-  verifiedTag: {
-    backgroundColor: '#ECFDF5',
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 99,
-    borderWidth: 1,
-    borderColor: '#A7F3D0'
-  },
-  verifiedTagText: {
-    color: '#059669',
-    fontSize: 9,
-    fontWeight: '800'
-  },
-  ekycBody: {
-    marginBottom: 8
-  },
-  ekycItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginVertical: 4
-  },
-  ekycLabel: {
-    fontSize: 11,
-    color: '#6B7280',
-    fontWeight: '600'
-  },
-  ekycValue: {
-    fontSize: 11,
-    fontWeight: '800',
-    color: '#111827'
-  },
-  ekycPrivilegeBox: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#ECFDF5',
-    paddingHorizontal: 10,
-    paddingVertical: 7,
-    borderRadius: 10,
-    gap: 6
-  },
-  ekycNote: {
-    fontSize: 10,
-    color: '#059669',
-    fontWeight: '700',
+  userInfoCol: {
     flex: 1
   },
-  walletRow: {
+  userNameRow: {
     flexDirection: 'row',
-    gap: 10,
-    marginBottom: 12
+    alignItems: 'center',
+    gap: 4
   },
-  walletBox: {
-    flex: 1,
+  userNameText: {
+    fontFamily: FONTS.family,
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#1A1D1F'
+  },
+  userPhoneText: {
+    fontFamily: FONTS.family,
+    fontSize: 13,
+    color: '#6F767E',
+    marginTop: 2
+  },
+  emailVerifyCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: '#FFFFFF',
     borderRadius: 18,
     padding: 14,
-    borderWidth: 1,
-    borderColor: '#E5E7EB'
+    gap: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
+    elevation: 2
   },
-  walletBoxBeige: {
-    backgroundColor: '#F5F2EB',
-    borderColor: '#E5DEC9'
-  },
-  walletTopIconRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center'
-  },
-  walletLabel: {
-    fontSize: 11,
-    color: '#6B7280',
-    fontWeight: '700'
-  },
-  walletLabelBeige: {
-    fontSize: 11,
-    color: '#786B59',
-    fontWeight: '700'
-  },
-  walletVal: {
-    fontSize: 16,
-    fontWeight: '900',
-    color: '#111827',
-    marginVertical: 6
-  },
-  rechargeBtn: {
-    backgroundColor: '#10B981',
-    paddingVertical: 7,
+  envelope3DBox: {
+    width: 46,
+    height: 40,
     borderRadius: 10,
-    alignItems: 'center',
-    marginTop: 2
-  },
-  rechargeBtnBeige: {
-    backgroundColor: '#111827',
-    paddingVertical: 7,
-    borderRadius: 10,
-    alignItems: 'center',
-    marginTop: 2
-  },
-  rechargeText: {
-    color: '#FFFFFF',
-    fontSize: 11,
-    fontWeight: '800'
-  },
-  surveyCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#ECFDF5',
-    borderRadius: 18,
-    padding: 14,
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: '#A7F3D0'
-  },
-  surveyIconCircle: {
-    width: 38,
-    height: 38,
-    borderRadius: 12,
-    backgroundColor: '#10B981',
+    backgroundColor: '#E3F2FD',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 10
+    position: 'relative'
   },
-  surveyContent: {
-    flex: 1
-  },
-  surveyTitle: {
-    fontSize: 11,
-    fontWeight: '900',
-    color: '#059669'
-  },
-  surveySub: {
-    fontSize: 10,
-    color: '#4B5563',
-    marginTop: 2,
-    fontWeight: '600'
-  },
-  menuSection: {
+  shieldCyanBadge: {
+    position: 'absolute',
+    bottom: 2,
+    right: 4,
     backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-    overflow: 'hidden'
+    borderRadius: 8,
+    padding: 1
   },
-  menuItem: {
+  emailVerifyTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#1A1D1F'
+  },
+  emailVerifyDesc: {
+    fontFamily: FONTS.family,
+    fontSize: 12,
+    color: '#6F767E',
+    marginTop: 3,
+    lineHeight: 17
+  },
+  carouselDotsRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 6,
+    marginVertical: 12
+  },
+  dotInactive: {
+    width: 14,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: '#E2E8F0'
+  },
+  dotActiveCyan: {
+    width: 18,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: '#18B6B4'
+  },
+  greenRaceCard: {
+    backgroundColor: '#E8F8F5',
+    borderRadius: 20,
+    overflow: 'hidden',
+    borderWidth: 1.5,
+    borderColor: '#B2EBE0',
+    marginBottom: 16
+  },
+  greenRaceTopBar: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 14,
-    paddingVertical: 13,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F3F4F6'
+    paddingRight: 12
   },
-  menuLeft: {
+  greenRaceRibbon: {
+    backgroundColor: '#BCECE0',
+    paddingHorizontal: 16,
+    paddingVertical: 7,
+    borderBottomRightRadius: 18
+  },
+  greenRaceRibbonText: {
+    fontFamily: FONTS.family,
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#004D40'
+  },
+  progressBtnPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10
+    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 99,
+    marginTop: 6,
+    gap: 2
   },
-  menuIconWrap: {
-    width: 32,
-    height: 32,
-    borderRadius: 10,
-    backgroundColor: '#ECFDF5',
+  progressBtnText: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#00695C'
+  },
+  greenRaceBodyRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 14,
+    paddingVertical: 14
+  },
+  emblemCol: {
+    alignItems: 'center',
+    width: 124
+  },
+  hexOuterBronze: {
+    width: 72,
+    height: 72,
+    borderRadius: 22,
+    backgroundColor: '#D97706',
+    borderWidth: 3,
+    borderColor: '#F59E0B',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#B45309',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 6
+  },
+  hexInnerWhite: {
+    width: 54,
+    height: 54,
+    borderRadius: 16,
+    backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center'
   },
-  menuIconWrapBeige: {
-    width: 32,
-    height: 32,
-    borderRadius: 10,
-    backgroundColor: '#F5F2EB',
-    alignItems: 'center',
-    justifyContent: 'center'
+  seedlingPill: {
+    backgroundColor: '#558B2F',
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 99,
+    marginTop: 8
   },
-  menuText: {
-    fontSize: 13,
-    color: '#111827',
+  seedlingPillText: {
+    fontFamily: FONTS.family,
+    color: '#FFFFFF',
+    fontSize: 11,
     fontWeight: '700'
   },
-  hotlineText: {
+  co2CounterCol: {
+    flex: 1,
+    alignItems: 'flex-end'
+  },
+  co2HeaderLabel: {
+    fontFamily: FONTS.family,
     fontSize: 12,
+    fontWeight: '700',
+    color: '#004D40',
+    textAlign: 'right'
+  },
+  amberCounterPill: {
+    backgroundColor: '#FDE68A',
+    width: 110,
+    paddingVertical: 4,
+    borderRadius: 99,
+    alignItems: 'center',
+    marginVertical: 6,
+    borderWidth: 1,
+    borderColor: '#FCD34D'
+  },
+  amberCounterNumber: {
+    fontFamily: FONTS.family,
+    fontSize: 20,
+    fontWeight: '800',
+    color: '#B45309'
+  },
+  co2SubLabel: {
+    fontFamily: FONTS.family,
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#004D40'
+  },
+  greenRaceMetricsBox: {
+    flexDirection: 'row',
+    backgroundColor: 'rgba(178, 235, 242, 0.45)',
+    marginHorizontal: 10,
+    marginBottom: 10,
+    borderRadius: 14,
+    paddingVertical: 10,
+    paddingHorizontal: 6,
+    borderWidth: 1,
+    borderColor: '#FFFFFF'
+  },
+  grMetricCol: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'space-between'
+  },
+  grMetricLabel: {
+    fontFamily: FONTS.family,
+    fontSize: 10,
+    color: '#1A1D1F',
+    textAlign: 'center',
+    lineHeight: 13
+  },
+  grMetricVal: {
+    fontFamily: FONTS.family,
+    fontSize: 15,
+    fontWeight: '800',
+    color: '#00695C',
+    marginTop: 4
+  },
+  dualAccountCardsRow: {
+    flexDirection: 'row',
+    gap: 12,
+    marginBottom: 20
+  },
+  accountTypeCard: {
+    flex: 1,
+    height: 98,
+    borderRadius: 18,
+    padding: 14,
+    position: 'relative',
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#FFFFFF'
+  },
+  familyCardCream: {
+    backgroundColor: '#FDF7E7'
+  },
+  businessCardAqua: {
+    backgroundColor: '#E4F8F8'
+  },
+  accountTypeTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#1A1D1F'
+  },
+  house3DIllustration: {
+    position: 'absolute',
+    bottom: 6,
+    right: 10,
+    flexDirection: 'row',
+    alignItems: 'flex-start'
+  },
+  heartBubbleRed: {
+    backgroundColor: '#EF4444',
+    padding: 4,
+    borderRadius: 6,
+    marginRight: -6,
+    marginTop: 4,
+    zIndex: 2
+  },
+  briefcase3DIllustration: {
+    position: 'absolute',
+    bottom: 6,
+    right: 12
+  },
+  claspLeftGold: {
+    position: 'absolute',
+    top: 16,
+    left: 8,
+    width: 4,
+    height: 7,
+    borderRadius: 2,
+    backgroundColor: '#FACC15'
+  },
+  claspRightGold: {
+    position: 'absolute',
+    top: 16,
+    right: 8,
+    width: 4,
+    height: 7,
+    borderRadius: 2,
+    backgroundColor: '#FACC15'
+  },
+  sectionTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#1A1D1F',
+    marginBottom: 10,
+    marginTop: 4
+  },
+  grid2x2: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    rowGap: 10,
+    marginBottom: 16
+  },
+  taskCardItem: {
+    width: '48.5%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 12,
+    gap: 10
+  },
+  taskIcon3D: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  greenCircleIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#E8F5E9',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  taskCardLabel: {
+    fontFamily: FONTS.family,
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#1A1D1F',
+    flex: 1
+  },
+  giftPromoBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#D6F5F7',
+    borderRadius: 18,
+    padding: 14,
+    marginBottom: 20,
+    gap: 12
+  },
+  giftBannerIconBox: {
+    width: 42,
+    height: 42,
+    borderRadius: 12,
+    backgroundColor: '#FBC02D',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  giftBannerPercent: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: '900'
+  },
+  giftBannerTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#1A1D1F'
+  },
+  giftBannerSub: {
+    fontFamily: FONTS.family,
+    fontSize: 12,
+    color: '#475569',
+    marginTop: 2
+  },
+  menuListGroup: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 18,
+    paddingHorizontal: 14,
+    marginBottom: 18
+  },
+  menuListRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F1F5F9',
+    gap: 12
+  },
+  menuListText: {
+    fontFamily: FONTS.family,
+    flex: 1,
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#1A1D1F'
+  },
+  footerVersionBlock: {
+    alignItems: 'center',
+    marginTop: 10
+  },
+  logoutRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 8
+  },
+  logoutText: {
+    fontFamily: FONTS.family,
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#1A1D1F'
+  },
+  versionText: {
+    fontFamily: FONTS.family,
+    fontSize: 12,
+    color: '#6F767E',
+    marginBottom: 14
+  },
+  bctBadgesRow: {
+    flexDirection: 'row',
+    gap: 12
+  },
+  bctBlueBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#0284C7',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 8,
+    gap: 6
+  },
+  bctRedBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#DC2626',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 8,
+    gap: 6
+  },
+  bctBadgeText: {
+    color: '#FFFFFF',
+    fontSize: 8,
+    fontWeight: '800'
+  },
+  contractModalContainer: {
+    flex: 1,
+    backgroundColor: '#F4F7F8'
+  },
+  contractTopHeader: {
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    gap: 10
+  },
+  contractTopTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#1A1D1F'
+  },
+  gsmTurquoiseBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#18B6B4',
+    padding: 16,
+    gap: 14
+  },
+  gsmLogoBox: {
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  gsmLogoText: {
+    color: '#FFFFFF',
+    fontSize: 10,
     fontWeight: '900',
-    color: '#059669'
+    marginTop: 2
+  },
+  gsmCompanyTitle: {
+    fontFamily: FONTS.family,
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontWeight: '700',
+    lineHeight: 18
+  },
+  gsmCompanySub: {
+    fontFamily: FONTS.family,
+    color: '#E0F7FA',
+    fontSize: 12,
+    marginTop: 4
+  },
+  contractScrollBody: {
+    padding: 16
+  },
+  contractWhiteBox: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 14
+  },
+  contractBoxHeading: {
+    fontFamily: FONTS.family,
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#1A1D1F',
+    marginBottom: 12
+  },
+  contractFieldLabel: {
+    fontFamily: FONTS.family,
+    fontSize: 12,
+    color: '#6F767E'
+  },
+  contractFieldValue: {
+    fontFamily: FONTS.family,
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#1A1D1F',
+    marginTop: 3,
+    lineHeight: 20
+  },
+  contractDivider: {
+    height: 1,
+    backgroundColor: '#F1F5F9',
+    marginVertical: 10
+  },
+  contractBottomBar: {
+    backgroundColor: '#FFFFFF',
+    padding: 16,
+    borderTopWidth: 1,
+    borderTopColor: '#E2E8F0'
+  },
+  understandTurquoiseBtn: {
+    backgroundColor: '#18B6B4',
+    borderRadius: 12,
+    paddingVertical: 14,
+    alignItems: 'center'
+  },
+  understandBtnText: {
+    fontFamily: FONTS.family,
+    color: '#FFFFFF',
+    fontSize: 15,
+    fontWeight: '700'
   }
 });
