@@ -15,11 +15,10 @@ import { Ionicons } from '@expo/vector-icons';
 import { FONTS, THEME_PRESETS } from '../styles/theme';
 import VehicleCard from '../components/VehicleCard';
 import BookingModal from '../components/BookingModal';
-import GreenSM3DIcons from '../components/GreenSM3DIcons';
 import ApiService from '../services/api';
 
 const CATEGORIES = [
-  { id: 'ALL', label: 'Tất cả đội xe' },
+  { id: 'ALL', label: 'Tất cả xe' },
   { id: 'CAR', label: 'Ô tô tự lái' },
   { id: 'MOTORBIKE', label: 'Xe máy điện' }
 ];
@@ -27,43 +26,50 @@ const CATEGORIES = [
 const SAVED_PLACES = [
   {
     id: 'place-1',
-    name: 'EcoGo Mobility Hub - ĐH Giao Thông Vận Tải (UTH)',
+    name: 'ĐH Giao Thông Vận Tải (UTH) - Cơ sở chính',
     address: 'Số 2 Võ Oanh, Phường 25, Quận Bình Thạnh, TP.HCM',
     distance: '0,4 km',
-    icon: 'school-outline'
+    icon: 'location-outline'
   },
   {
     id: 'place-2',
-    name: 'EcoGo Multimodal Station - Ga Trung Tâm Bến Thành',
+    name: 'Ga Trung Tâm Bến Thành - Quận 1',
     address: 'Quảng trường Quách Thị Trang, Phường Bến Thành, Quận 1, TP.HCM',
     distance: '6,8 km',
     icon: 'train-outline'
   },
   {
     id: 'place-3',
-    name: 'EcoGo Smart Station - Khu Đô Thị Tân Cảng & Landmark 81',
+    name: 'Khu Đô Thị Tân Cảng & Landmark 81',
     address: '720A Điện Biên Phủ, Phường 22, Quận Bình Thạnh, TP.HCM',
     distance: '1,4 km',
     icon: 'business-outline'
   },
   {
     id: 'place-4',
-    name: 'EcoGo Airport Hub - Sân Bay Quốc Tế Tân Sơn Nhất',
+    name: 'Sân Bay Quốc Tế Tân Sơn Nhất (Ga Quốc Nội)',
     address: 'Đường Trường Sơn, Phường 2, Quận Tân Bình, TP.HCM',
     distance: '8,5 km',
     icon: 'airplane-outline'
   },
   {
     id: 'place-5',
-    name: 'EcoGo Eco Station - Khu Đô Thị Mới Thủ Thiêm',
+    name: 'Khu Đô Thị Mới Thủ Thiêm - Sala',
     address: 'Đại lộ Mai Chí Thọ, Phường An Khánh, TP. Thủ Đức, TP.HCM',
     distance: '4,2 km',
     icon: 'leaf-outline'
   }
 ];
 
+// Real studio photography for Bento service cards (0% vector cartoon look)
+const BENTO_PHOTOS = {
+  car: 'https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&w=700&q=80',
+  scooter: 'https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=600&q=80',
+  delivery: 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=600&q=80'
+};
+
 export default function HomeScreen({
-  theme = THEME_PRESETS.COBALT,
+  theme = THEME_PRESETS.MINT,
   onSelectVehicle,
   onNavigateToKey,
   onNavigateToMap,
@@ -75,7 +81,7 @@ export default function HomeScreen({
   const [vehicles, setVehicles] = useState([]);
   const [stations, setStations] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('ALL');
-  const [rentalPackageTab, setRentalPackageTab] = useState('HOURLY'); // 'HOURLY' | 'DAILY' | 'INTERCITY'
+  const [rentalPackageTab, setRentalPackageTab] = useState('HOURLY'); // 'HOURLY' | 'DAILY'
   const [glosaAdvisory, setGlosaAdvisory] = useState(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -119,8 +125,8 @@ export default function HomeScreen({
   const handleBookingSuccess = () => {
     setShowBookingModal(false);
     setBookingToast({
-      title: 'Đặt thuê xe thành công!',
-      message: `Xe ${bookingVehicle?.name} (${bookingVehicle?.plateNumber}) đã kích hoạt khóa số BLE 5.2.`
+      title: 'Đặt xe thành công',
+      message: `${bookingVehicle?.name} (${bookingVehicle?.plateNumber}) đã sẵn sàng mở khóa.`
     });
     loadInitialData();
     setTimeout(() => {
@@ -156,7 +162,7 @@ export default function HomeScreen({
         }
       >
         {/* ============================================================
-            1. CRISP SNOW WHITE HEADER + SMART BOOKING WIDGET
+            1. CLEAN APPLE WHITE EDITORIAL HEADER (NO CLUTTERED PILLS)
            ============================================================ */}
         <View style={styles.topHeaderSection}>
           <View style={styles.headerTopRow}>
@@ -165,71 +171,48 @@ export default function HomeScreen({
               activeOpacity={0.85}
               onPress={onNavigateToProfile}
             >
-              <View style={[styles.avatarJadeCircle, { backgroundColor: theme.primary }]}>
-                <Text style={styles.avatarInitials}>MT</Text>
-                <View style={styles.onlineStatusDot} />
-              </View>
               <View>
-                <View style={styles.greetingNameRow}>
-                  <Text style={styles.greetingTitle}>Chào Minh Tài</Text>
-                  <View style={[styles.ekycBadge, { backgroundColor: theme.primarySoft }]}>
-                    <Ionicons name="shield-checkmark" size={11} color={theme.primary} />
-                    <Text style={[styles.ekycBadgeText, { color: theme.primary }]}>
-                      GPLX B2 • 0đ Cọc
-                    </Text>
-                  </View>
-                </View>
-                <Text style={styles.greetingSub}>EcoGo Smart Mobility • ĐH GTVT (UTH)</Text>
+                <Text style={styles.greetingSub}>Chào Minh Tài · GPLX B2</Text>
+                <Text style={styles.greetingTitle}>Bạn cần thuê xe ở đâu?</Text>
               </View>
             </TouchableOpacity>
 
-            {/* Right Header Actions: EcoGo Race Trophy Pill + Voucher Button */}
             <View style={styles.headerRightActions}>
               <TouchableOpacity
-                style={styles.ecoPtsHeaderPill}
-                activeOpacity={0.85}
-                onPress={onOpenGreenRace}
-              >
-                <Ionicons name="trophy" size={14} color="#D97706" />
-                <Text style={styles.ecoPtsHeaderText}>340 Pts</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={[styles.headerIconBtn, { backgroundColor: theme.primarySoft }]}
+                style={styles.headerCircleBtn}
                 activeOpacity={0.85}
                 onPress={onOpenRewards}
               >
-                <Ionicons name="gift-outline" size={18} color={theme.primary} />
+                <Ionicons name="pricetag-outline" size={17} color="#1D1D1F" />
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.avatarCircle, { backgroundColor: '#1D1D1F' }]}
+                activeOpacity={0.85}
+                onPress={onNavigateToProfile}
+              >
+                <Text style={styles.avatarInitials}>MT</Text>
               </TouchableOpacity>
             </View>
           </View>
 
           {/* ============================================================
-              2. SMART STATION & DURATION BOOKING CARD
+              2. MINIMAL BOOKING & SEARCH CARD (APPLE / UBER STYLE)
              ============================================================ */}
           <View style={styles.smartBookingCard}>
-            {/* Package Mode Tabs */}
+            {/* Clean 2-Segment Switcher */}
             <View style={styles.packageTabsRow}>
               {[
-                { id: 'HOURLY', label: 'Theo giờ (Từ 22k/h)', icon: 'flash' },
-                { id: 'DAILY', label: 'Trọn ngày (24h)', icon: 'calendar' },
-                { id: 'INTERCITY', label: 'Liên tỉnh (-20%)', icon: 'navigate' }
+                { id: 'HOURLY', label: 'Thuê theo giờ' },
+                { id: 'DAILY', label: 'Thuê theo ngày (24h)' }
               ].map((tab) => {
                 const active = rentalPackageTab === tab.id;
                 return (
                   <TouchableOpacity
                     key={tab.id}
-                    style={[
-                      styles.pkgTabBtn,
-                      active && { backgroundColor: theme.primary }
-                    ]}
+                    style={[styles.pkgTabBtn, active && styles.pkgTabBtnActive]}
                     onPress={() => setRentalPackageTab(tab.id)}
                   >
-                    <Ionicons
-                      name={tab.icon}
-                      size={12}
-                      color={active ? '#FFFFFF' : '#475569'}
-                    />
                     <Text style={[styles.pkgTabText, active && styles.pkgTabTextActive]}>
                       {tab.label}
                     </Text>
@@ -238,60 +221,67 @@ export default function HomeScreen({
               })}
             </View>
 
-            {/* Pickup Hub Selector Row */}
+            {/* Pickup Location Row */}
             <TouchableOpacity
               style={styles.stationSelectorRow}
-              activeOpacity={0.88}
+              activeOpacity={0.85}
               onPress={() => setShowDestinationModal(true)}
             >
-              <View style={[styles.stationPinCircle, { backgroundColor: theme.primarySoft }]}>
-                <Ionicons name="location" size={18} color={theme.primary} />
+              <View style={[styles.mintDotOuter, { backgroundColor: theme.primarySoft }]}>
+                <View style={[styles.mintDotInner, { backgroundColor: theme.primary }]} />
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={styles.stationLabelOverline}>TRẠM NHẬN & TRẢ XE TỰ ĐỘNG 24/7</Text>
+                <Text style={styles.stationLabelSub}>Điểm nhận & trả xe</Text>
                 <Text style={styles.stationSelectedName} numberOfLines={1}>
-                  {selectedPlace ? selectedPlace.name : 'EcoGo Hub - ĐH GTVT (UTH)'}
+                  {selectedPlace ? selectedPlace.name : 'ĐH Giao Thông Vận Tải (UTH)'}
                 </Text>
               </View>
-              <View style={[styles.changeHubPill, { backgroundColor: theme.primarySoft }]}>
-                <Text style={[styles.changeHubPillText, { color: theme.primary }]}>Đổi trạm</Text>
-                <Ionicons name="chevron-forward" size={12} color={theme.primary} />
-              </View>
+              <Text style={[styles.changeHubLink, { color: theme.primary }]}>Bản đồ</Text>
             </TouchableOpacity>
 
-            {/* Time Window + Search Input Row */}
-            <View style={styles.timeAndSearchRow}>
+            <View style={styles.cardDivider} />
+
+            {/* Pickup & Return Time Columns */}
+            <View style={styles.timeColumnsRow}>
               <TouchableOpacity
-                style={styles.timeSlotChip}
+                style={styles.timeCol}
                 onPress={() => vehicles[0] && handleOpenBooking(vehicles[0])}
               >
-                <Ionicons name="time-outline" size={15} color="#D97706" />
-                <View>
-                  <Text style={styles.timeSlotLabel}>Thời gian nhận</Text>
-                  <Text style={styles.timeSlotVal}>
-                    {rentalPackageTab === 'DAILY' ? 'Hôm nay • 24 giờ' : 'Hôm nay • 4 giờ'}
-                  </Text>
-                </View>
+                <Text style={styles.timeColLabel}>Nhận xe</Text>
+                <Text style={styles.timeColValue}>Hôm nay, 15:30</Text>
               </TouchableOpacity>
 
-              <View style={styles.quickSearchBox}>
-                <Ionicons name="search-outline" size={16} color="#64748B" />
-                <TextInput
-                  style={styles.quickSearchInput}
-                  value={destinationQuery}
-                  onChangeText={setDestinationQuery}
-                  placeholder="Tìm Ioniq 5, CX-5, Cross..."
-                  placeholderTextColor="#94A3B8"
-                />
-              </View>
+              <View style={styles.verticalDivider} />
+
+              <TouchableOpacity
+                style={styles.timeCol}
+                onPress={() => vehicles[0] && handleOpenBooking(vehicles[0])}
+              >
+                <Text style={styles.timeColLabel}>Trả xe</Text>
+                <Text style={styles.timeColValue}>
+                  {rentalPackageTab === 'DAILY' ? 'Ngày mai, 15:30 (24h)' : 'Hôm nay, 19:30 (4h)'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Minimal Search Input */}
+            <View style={styles.quickSearchBox}>
+              <Ionicons name="search-outline" size={16} color="#8E8E93" />
+              <TextInput
+                style={styles.quickSearchInput}
+                value={destinationQuery}
+                onChangeText={setDestinationQuery}
+                placeholder="Tìm theo dòng xe (Ioniq 5, CX-5, Corolla Cross...)"
+                placeholderTextColor="#8E8E93"
+              />
             </View>
           </View>
         </View>
 
         {/* Booking Toast */}
         {bookingToast && (
-          <View style={[styles.toastBanner, { backgroundColor: theme.primary }]}>
-            <Ionicons name="checkmark-circle" size={20} color="#FFFFFF" />
+          <View style={[styles.toastBanner, { backgroundColor: '#1D1D1F' }]}>
+            <Ionicons name="checkmark-circle" size={20} color={theme.primaryLight} />
             <View style={{ flex: 1 }}>
               <Text style={styles.toastTitle}>{bookingToast.title}</Text>
               <Text style={styles.toastMsg}>{bookingToast.message}</Text>
@@ -300,159 +290,123 @@ export default function HomeScreen({
         )}
 
         {/* ============================================================
-            3. ASYMMETRIC 3-BLOCK BENTO GRID (ROYAL COBALT & WARM AMBER)
+            3. BENTO SERVICE GRID WITH 100% REAL STUDIO PHOTOS
+               (Soft Mint #EBFBF5 + Warm Oat Beige #F6F3EC + Pure White)
            ============================================================ */}
         <View style={styles.bentoSection}>
           <View style={styles.bentoRow}>
-            {/* Left Tall Bento Card: Self-Drive Cars */}
+            {/* Left Tall Card: Self-Drive Cars (Soft Pastel Mint + Real Studio Car Photo) */}
             <TouchableOpacity
-              style={[styles.bentoTallCard, { backgroundColor: theme.primarySoft }]}
-              activeOpacity={0.9}
+              style={[
+                styles.bentoTallCard,
+                { backgroundColor: theme.primarySoft, borderColor: theme.primaryBorder }
+              ]}
+              activeOpacity={0.92}
               onPress={() => setSelectedCategory('CAR')}
             >
-              <View style={[styles.bentoTallGlow, { backgroundColor: theme.glow }]} />
-              <View style={[styles.bentoTopChipJade, { backgroundColor: theme.primary }]}>
-                <Text style={styles.bentoTopChipText}>MỞ KHÓA BLE 24/7</Text>
+              <View>
+                <Text style={styles.bentoTallTitle}>Ô tô tự lái</Text>
+                <Text style={styles.bentoTallSub}>Hyundai, Mazda, Toyota</Text>
+                <Text style={[styles.bentoTallPrice, { color: theme.primary }]}>
+                  Từ 85.000đ/giờ
+                </Text>
               </View>
-              <Text style={styles.bentoTallTitle}>Ô Tô Tự Lái</Text>
-              <Text style={styles.bentoTallSub}>
-                Hyundai Ioniq 5, Mazda CX-5, Toyota Cross HEV
-              </Text>
-              <Text style={[styles.bentoTallPrice, { color: theme.primary }]}>
-                Từ 85.000đ/giờ
-              </Text>
 
-              <View style={styles.bentoTallIllustration}>
-                <GreenSM3DIcons type="CAR_CYAN_3D" accentColor={theme.primary} />
+              <View style={styles.bentoTallPhotoWrap}>
+                <Image
+                  source={{ uri: BENTO_PHOTOS.car }}
+                  style={styles.bentoPhotoImg}
+                  resizeMode="cover"
+                />
               </View>
             </TouchableOpacity>
 
-            {/* Right Stacked Column: 2 Horizontal Bento Cards */}
+            {/* Right Stacked Column: Warm Oat Beige + Crisp Apple White */}
             <View style={styles.bentoRightCol}>
-              {/* Top Right: Electric Motorbikes (Warm Amber Cream) */}
+              {/* Top Right: Electric Scooters (Warm Oat Beige + Real Scooter Photo) */}
               <TouchableOpacity
-                style={styles.bentoSmallCardSand}
-                activeOpacity={0.9}
+                style={[
+                  styles.bentoSmallCard,
+                  { backgroundColor: theme.beigeSoft, borderColor: theme.beigeBorder }
+                ]}
+                activeOpacity={0.92}
                 onPress={() => setSelectedCategory('MOTORBIKE')}
               >
-                <View style={{ flex: 1, paddingRight: 6 }}>
-                  <View style={styles.bentoTopChipSand}>
-                    <Text style={styles.bentoTopChipSandText}>ĐỔI PIN 0Đ</Text>
-                  </View>
-                  <Text style={styles.bentoSmallTitle}>Xe Máy Điện</Text>
-                  <Text style={styles.bentoSmallSub}>Yamaha & Honda e:</Text>
-                  <Text style={styles.bentoSmallPriceSand}>22.000đ/giờ</Text>
+                <View style={styles.bentoSmallTextCol}>
+                  <Text style={styles.bentoSmallTitle}>Xe máy điện</Text>
+                  <Text style={styles.bentoSmallSub}>Yamaha & Honda</Text>
+                  <Text style={styles.bentoSmallPriceBeige}>Từ 22.000đ/h</Text>
                 </View>
-                <GreenSM3DIcons type="SCOOTER_3D" accentColor={theme.primary} />
+                <Image
+                  source={{ uri: BENTO_PHOTOS.scooter }}
+                  style={styles.bentoSmallPhoto}
+                  resizeMode="cover"
+                />
               </TouchableOpacity>
 
-              {/* Bottom Right: Doorstep Delivery (Crisp White Card) */}
+              {/* Bottom Right: Doorstep Delivery (Pure White + Real Handover Photo) */}
               <TouchableOpacity
-                style={styles.bentoSmallCardMint}
-                activeOpacity={0.9}
+                style={styles.bentoSmallCardWhite}
+                activeOpacity={0.92}
                 onPress={() => vehicles[0] && handleOpenBooking(vehicles[0])}
               >
-                <View style={{ flex: 1, paddingRight: 6 }}>
-                  <View style={[styles.bentoTopChipWhite, { backgroundColor: theme.primarySoft }]}>
-                    <Text style={[styles.bentoTopChipWhiteText, { color: theme.primary }]}>
-                      BÁN KÍNH 5KM
-                    </Text>
-                  </View>
-                  <Text style={styles.bentoSmallTitle}>Giao Xe Tận Nơi</Text>
-                  <Text style={styles.bentoSmallSub}>Nhận xe sau 15 phút</Text>
-                  <Text style={[styles.bentoSmallPriceJade, { color: theme.primary }]}>
+                <View style={styles.bentoSmallTextCol}>
+                  <Text style={styles.bentoSmallTitle}>Giao xe tận nơi</Text>
+                  <Text style={styles.bentoSmallSub}>Bán kính 5km</Text>
+                  <Text style={[styles.bentoSmallPriceMint, { color: theme.primary }]}>
                     Miễn phí giao
                   </Text>
                 </View>
-                <GreenSM3DIcons type="DELIVERY_BOX_3D" accentColor={theme.primary} />
+                <Image
+                  source={{ uri: BENTO_PHOTOS.delivery }}
+                  style={styles.bentoSmallPhoto}
+                  resizeMode="cover"
+                />
               </TouchableOpacity>
             </View>
           </View>
-
-          {/* Streamlined 4-Pill Quick Utility Bar */}
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.utilityPillsRow}
-          >
-            <TouchableOpacity style={styles.utilityPill} onPress={onNavigateToKey}>
-              <View style={[styles.utilityIconCircle, { backgroundColor: theme.primarySoft }]}>
-                <Ionicons name="key" size={14} color={theme.primary} />
-              </View>
-              <Text style={styles.utilityPillText}>Khóa thông minh BLE</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.utilityPill} onPress={onNavigateToMap}>
-              <View style={[styles.utilityIconCircle, { backgroundColor: '#FEF3C7' }]}>
-                <Ionicons name="flash" size={14} color="#D97706" />
-              </View>
-              <Text style={styles.utilityPillText}>6 Trạm sạc & Hub</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.utilityPill} onPress={onOpenGreenRace}>
-              <View style={[styles.utilityIconCircle, { backgroundColor: '#E0F2FE' }]}>
-                <Ionicons name="trophy" size={14} color="#0284C7" />
-              </View>
-              <Text style={styles.utilityPillText}>Chứng nhận EcoGo</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.utilityPill} onPress={onOpenRewards}>
-              <View style={[styles.utilityIconCircle, { backgroundColor: '#FCE7F3' }]}>
-                <Ionicons name="pricetag" size={14} color="#DB2777" />
-              </View>
-              <Text style={styles.utilityPillText}>Voucher giảm 20%</Text>
-            </TouchableOpacity>
-          </ScrollView>
         </View>
 
         {/* ============================================================
-            4. DIGITAL COCKPIT GLOSA RADAR (MIDNIGHT NAVY & ELECTRIC BLUE)
+            4. CLEAN LIGHT GLOSA TRAFFIC BAR (NO DARK CYBER DASHBOARD)
            ============================================================ */}
         <TouchableOpacity
-          style={[styles.glosaRadarCard, { backgroundColor: theme.cockpitBg }]}
-          activeOpacity={0.92}
+          style={[
+            styles.glosaLightCard,
+            { backgroundColor: theme.primarySoft, borderColor: theme.primaryBorder }
+          ]}
+          activeOpacity={0.9}
           onPress={onNavigateToMap}
         >
-          <View style={styles.glosaRadarLeft}>
-            <View style={styles.glosaLiveBadgeRow}>
-              <View style={styles.glosaPulseDot} />
-              <Text style={styles.glosaLiveTag}>RADAR ĐIỀU ĐỘ GIAO THÔNG ITS (GLOSA)</Text>
+          <View style={styles.glosaLeftCol}>
+            <View style={styles.glosaTitleRow}>
+              <View style={[styles.liveDot, { backgroundColor: theme.primary }]} />
+              <Text style={styles.glosaLightTitle}>
+                Làn sóng xanh · Võ Oanh → Điện Biên Phủ
+              </Text>
             </View>
-            <Text style={styles.glosaCorridorTitle}>
-              Trục ĐH GTVT (UTH) ➔ Điện Biên Phủ ➔ Mai Chí Thọ
-            </Text>
-            <Text style={styles.glosaCorridorSub}>
+            <Text style={styles.glosaLightSub}>
               {glosaAdvisory?.advisoryMessage ||
-                'Duy trì 45 km/h để qua 4 nút giao liên tiếp không phải dừng đèn đỏ'}
+                'Đèn xanh còn 28s · Duy trì tốc độ ổn định để qua nút giao không dừng'}
             </Text>
           </View>
 
-          <View style={[styles.glosaSpeedCircle, { borderColor: theme.primaryLight }]}>
-            <Text style={styles.glosaSpeedNum}>
+          <View style={styles.glosaWhiteSpeedPill}>
+            <Text style={[styles.glosaSpeedValue, { color: theme.primary }]}>
               {glosaAdvisory ? glosaAdvisory.recommendedSpeedKmh : 45}
             </Text>
-            <Text style={styles.glosaSpeedUnit}>km/h</Text>
-            <View style={[styles.glosaGreenTimerPill, { backgroundColor: theme.primary }]}>
-              <Text style={styles.glosaGreenTimerText}>
-                Đèn {glosaAdvisory ? glosaAdvisory.secondsToSignalChange : 28}s
-              </Text>
-            </View>
+            <Text style={styles.glosaSpeedUnitText}>km/h</Text>
           </View>
         </TouchableOpacity>
 
         {/* ============================================================
-            5. WIDE SHOWROOM TELEMETRY CAROUSEL ("Xe sẵn sàng gần bạn")
+            5. HORIZONTAL NEARBY VEHICLES ("Xe gần bạn")
            ============================================================ */}
         <View style={styles.showroomCarouselSection}>
           <View style={styles.sectionHeaderRow}>
-            <View>
-              <Text style={styles.sectionMainTitle}>Xe sẵn sàng gần bạn</Text>
-              <Text style={styles.sectionSubTitle}>
-                Đã kiểm định áp suất lốp 34 PSI & dung lượng pin trước chuyến đi
-              </Text>
-            </View>
+            <Text style={styles.sectionMainTitle}>Xe gần bạn</Text>
             <TouchableOpacity onPress={onNavigateToMap}>
-              <Text style={[styles.seeMapLink, { color: theme.primary }]}>Bản đồ Hub &gt;</Text>
+              <Text style={[styles.seeMapLink, { color: theme.primary }]}>Xem trên bản đồ</Text>
             </TouchableOpacity>
           </View>
 
@@ -463,8 +417,7 @@ export default function HomeScreen({
           >
             {filteredVehicles.map((veh, idx) => {
               const batteryPct = Math.round(veh.telematics?.batteryLevelPct || 92);
-              const distMeters = 250 + idx * 180;
-              const tirePsi = veh.telematics?.tirePressurePsi?.fl || 34;
+              const distMeters = 120 + idx * 140;
 
               return (
                 <TouchableOpacity
@@ -473,74 +426,33 @@ export default function HomeScreen({
                   activeOpacity={0.92}
                   onPress={() => handleOpenBooking(veh)}
                 >
-                  {/* 16:10 Showroom Image */}
                   <View style={styles.wideImgWrap}>
                     <Image source={{ uri: veh.thumbnail }} style={styles.wideImg} resizeMode="cover" />
 
-                    {/* Top Left Telemetry Pill */}
-                    <View style={styles.wideTelemetryPill}>
-                      <Ionicons name="flash" size={11} color={theme.primary} />
-                      <Text style={styles.wideTelemetryText}>
-                        Pin {batteryPct}% • {veh.rangeKm} km
-                      </Text>
-                    </View>
-
-                    {/* Top Right Distance Pill */}
-                    <View style={styles.wideDistPill}>
-                      <Ionicons name="location" size={10} color="#FFFFFF" />
-                      <Text style={styles.wideDistText}>Cách {distMeters}m</Text>
-                    </View>
-
-                    {/* Bottom Left Plate & Rating */}
-                    <View style={styles.wideBottomOverlay}>
-                      <View style={styles.widePlateBadge}>
-                        <Text style={styles.widePlateText}>{veh.plateNumber}</Text>
-                      </View>
-                      <View style={styles.wideRatingPill}>
-                        <Ionicons name="star" size={11} color="#F59E0B" />
-                        <Text style={styles.wideRatingText}>{veh.rating}</Text>
-                      </View>
+                    {/* Single Clean Frosted Distance Pill */}
+                    <View style={styles.frostedDistPill}>
+                      <Text style={styles.frostedDistText}>Cách {distMeters}m</Text>
                     </View>
                   </View>
 
-                  {/* Card Details & IoT Pre-Check */}
                   <View style={styles.wideCardBody}>
                     <Text style={styles.wideVehName} numberOfLines={1}>
                       {veh.name}
                     </Text>
-
-                    <View style={styles.iotPrecheckRow}>
-                      <View style={styles.iotCheckChip}>
-                        <Ionicons name="checkmark-circle" size={12} color={theme.primary} />
-                        <Text style={styles.iotCheckText}>Lốp {tirePsi} PSI</Text>
-                      </View>
-                      <View style={styles.iotCheckChip}>
-                        <Ionicons name="bluetooth" size={11} color={theme.primary} />
-                        <Text style={styles.iotCheckText}>BLE 5.2</Text>
-                      </View>
-                      <View style={styles.iotCheckChip}>
-                        <Ionicons name="people-outline" size={12} color="#475569" />
-                        <Text style={styles.iotCheckText}>{veh.seats} chỗ</Text>
-                      </View>
-                    </View>
+                    <Text style={styles.wideVehMeta}>
+                      Pin {batteryPct}% · {veh.seats} chỗ · {veh.plateNumber}
+                    </Text>
 
                     <View style={styles.wideCardFooter}>
-                      <View>
-                        <Text style={[styles.widePriceMain, { color: theme.primary }]}>
-                          {veh.hourlyPrice.toLocaleString('vi-VN')}đ
-                          <Text style={styles.widePriceUnit}>/giờ</Text>
-                        </Text>
-                        <Text style={styles.widePriceDay}>
-                          {veh.dailyPrice.toLocaleString('vi-VN')}đ/ngày
-                        </Text>
-                      </View>
+                      <Text style={styles.widePriceMain}>
+                        {veh.hourlyPrice.toLocaleString('vi-VN')}đ
+                        <Text style={styles.widePriceUnit}> / giờ</Text>
+                      </Text>
 
-                      <TouchableOpacity
-                        style={[styles.wideBookBtn, { backgroundColor: theme.primary }]}
-                        onPress={() => handleOpenBooking(veh)}
-                      >
-                        <Text style={styles.wideBookBtnText}>Đặt thuê</Text>
-                      </TouchableOpacity>
+                      <View style={styles.ratingInline}>
+                        <Ionicons name="star" size={12} color="#F59E0B" />
+                        <Text style={styles.ratingInlineText}>{veh.rating}</Text>
+                      </View>
                     </View>
                   </View>
                 </TouchableOpacity>
@@ -550,13 +462,11 @@ export default function HomeScreen({
         </View>
 
         {/* ============================================================
-            6. FULL FLEET CATALOG WITH CATEGORY FILTER
+            6. FULL FLEET LIST WITH APPLE CHARCOAL FILTER PILLS
            ============================================================ */}
         <View style={styles.catalogSection}>
           <View style={styles.catalogHeaderRow}>
-            <Text style={styles.sectionMainTitle}>
-              Danh mục phương tiện tại trạm ({filteredVehicles.length})
-            </Text>
+            <Text style={styles.sectionMainTitle}>Danh mục xe sẵn sàng</Text>
             <View style={styles.catFilterRow}>
               {CATEGORIES.map((cat) => {
                 const active = selectedCategory === cat.id;
@@ -565,7 +475,7 @@ export default function HomeScreen({
                     key={cat.id}
                     style={[
                       styles.catPill,
-                      active && { backgroundColor: theme.primary, borderColor: theme.primary }
+                      active && { backgroundColor: '#1D1D1F', borderColor: '#1D1D1F' }
                     ]}
                     onPress={() => setSelectedCategory(cat.id)}
                   >
@@ -579,7 +489,7 @@ export default function HomeScreen({
           </View>
 
           {loading ? (
-            <ActivityIndicator size="large" color={theme.primary} style={{ marginVertical: 28 }} />
+            <ActivityIndicator size="large" color="#1D1D1F" style={{ marginVertical: 28 }} />
           ) : (
             filteredVehicles.map((vehicle) => (
               <VehicleCard
@@ -610,26 +520,22 @@ export default function HomeScreen({
               style={styles.destBackBtn}
               onPress={() => setShowDestinationModal(false)}
             >
-              <Ionicons name="arrow-back" size={22} color="#0F172A" />
+              <Ionicons name="arrow-back" size={22} color="#1D1D1F" />
             </TouchableOpacity>
-
-            <View style={[styles.currentLocDotOuter, { backgroundColor: theme.primary }]}>
-              <View style={styles.currentLocDotInner} />
-            </View>
             <Text style={styles.currentLocTitle} numberOfLines={1}>
-              Chọn Trạm EcoGo Hub Nhận & Trả Xe
+              Chọn điểm nhận & trả xe
             </Text>
           </View>
 
           <View style={styles.destInputRow}>
-            <View style={[styles.destInputWrap, { borderColor: theme.primary }]}>
-              <Ionicons name="location" size={18} color={theme.primary} />
+            <View style={styles.destInputWrap}>
+              <Ionicons name="search-outline" size={18} color="#8E8E93" />
               <TextInput
                 style={styles.destTextInput}
                 value={destinationQuery}
                 onChangeText={setDestinationQuery}
-                placeholder="Tìm trạm Hub hoặc địa điểm..."
-                placeholderTextColor="#64748B"
+                placeholder="Tìm trạm hoặc địa chỉ..."
+                placeholderTextColor="#8E8E93"
               />
             </View>
           </View>
@@ -648,9 +554,7 @@ export default function HomeScreen({
                   <View style={[styles.placeIconCircle, { backgroundColor: theme.primarySoft }]}>
                     <Ionicons name={place.icon} size={16} color={theme.primary} />
                   </View>
-                  <Text style={[styles.placeDistText, { color: theme.primary }]}>
-                    {place.distance}
-                  </Text>
+                  <Text style={styles.placeDistText}>{place.distance}</Text>
                 </View>
 
                 <View style={styles.placeCenterCol}>
@@ -660,25 +564,10 @@ export default function HomeScreen({
                   </Text>
                 </View>
 
-                <Ionicons name="chevron-forward" size={18} color="#94A3B8" />
+                <Ionicons name="chevron-forward" size={18} color="#C7C7CC" />
               </TouchableOpacity>
             ))}
           </ScrollView>
-
-          <View style={styles.destBottomPillsBar}>
-            <TouchableOpacity
-              style={[styles.destBottomPill, { backgroundColor: theme.primarySoft }]}
-              onPress={() => {
-                setShowDestinationModal(false);
-                if (onNavigateToMap) onNavigateToMap();
-              }}
-            >
-              <Ionicons name="map-outline" size={16} color={theme.primary} />
-              <Text style={[styles.destBottomPillText, { color: theme.primary }]}>
-                Xem toàn bộ 6 Trạm trên Bản đồ
-              </Text>
-            </TouchableOpacity>
-          </View>
         </View>
       </Modal>
 
@@ -696,261 +585,207 @@ export default function HomeScreen({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8FAFC'
+    backgroundColor: '#F7F7F5'
   },
   scrollContent: {
     paddingBottom: 30
   },
 
   /* ============================================================
-     1. CRISP SNOW WHITE HEADER & SMART BOOKING CARD
+     1. APPLE WHITE EDITORIAL HEADER
      ============================================================ */
   topHeaderSection: {
     backgroundColor: '#FFFFFF',
-    paddingTop: 14,
-    paddingBottom: 16,
+    paddingTop: 16,
+    paddingBottom: 18,
     paddingHorizontal: 16,
-    borderBottomLeftRadius: 28,
-    borderBottomRightRadius: 28,
     borderBottomWidth: 1,
-    borderBottomColor: '#E2E8F0',
-    shadowColor: '#0F172A',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.03,
-    shadowRadius: 12,
-    elevation: 2
+    borderBottomColor: '#EBECE8'
   },
   headerTopRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 14
+    marginBottom: 16
   },
   userGreetingLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
     flex: 1
-  },
-  avatarJadeCircle: {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 2,
-    borderColor: '#FFFFFF',
-    position: 'relative'
-  },
-  avatarInitials: {
-    fontFamily: FONTS.family,
-    color: '#FFFFFF',
-    fontSize: 14,
-    fontWeight: '800'
-  },
-  onlineStatusDot: {
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: '#10B981',
-    borderWidth: 1.5,
-    borderColor: '#FFFFFF'
-  },
-  greetingNameRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    flexWrap: 'wrap'
-  },
-  greetingTitle: {
-    fontFamily: FONTS.family,
-    fontSize: 16,
-    fontWeight: '800',
-    color: '#0F172A'
-  },
-  ekycBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 7,
-    paddingVertical: 2,
-    borderRadius: 99,
-    gap: 3
-  },
-  ekycBadgeText: {
-    fontFamily: FONTS.family,
-    fontSize: 10,
-    fontWeight: '700'
   },
   greetingSub: {
     fontFamily: FONTS.family,
-    fontSize: 11,
-    color: '#64748B',
+    fontSize: 13,
+    color: '#6E6E73',
+    fontWeight: '500'
+  },
+  greetingTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#1D1D1F',
+    letterSpacing: -0.4,
     marginTop: 2
   },
   headerRightActions: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8
+    gap: 10
   },
-  ecoPtsHeaderPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FFFBEB',
-    paddingHorizontal: 10,
-    paddingVertical: 7,
-    borderRadius: 99,
-    borderWidth: 1,
-    borderColor: '#FDE68A',
-    gap: 5
-  },
-  ecoPtsHeaderText: {
-    fontFamily: FONTS.family,
-    fontSize: 11,
-    fontWeight: '800',
-    color: '#B45309'
-  },
-  headerIconBtn: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
+  headerCircleBtn: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: '#F5F5F3',
     alignItems: 'center',
     justifyContent: 'center'
   },
+  avatarCircle: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  avatarInitials: {
+    fontFamily: FONTS.family,
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontWeight: '700'
+  },
 
-  /* SMART BOOKING WIDGET */
+  /* ============================================================
+     2. MINIMAL BOOKING & SEARCH CARD
+     ============================================================ */
   smartBookingCard: {
-    backgroundColor: '#F8FAFC',
+    backgroundColor: '#FFFFFF',
     borderRadius: 20,
-    padding: 12,
+    padding: 14,
     borderWidth: 1,
-    borderColor: '#E2E8F0'
+    borderColor: '#EBECE8',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.03,
+    shadowRadius: 12,
+    elevation: 2
   },
   packageTabsRow: {
     flexDirection: 'row',
-    backgroundColor: '#EDF2F7',
-    padding: 3,
+    backgroundColor: '#F3F3F1',
+    padding: 4,
     borderRadius: 12,
-    marginBottom: 10,
-    gap: 3
+    marginBottom: 14
   },
   pkgTabBtn: {
     flex: 1,
-    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 7,
-    borderRadius: 9,
-    gap: 4
+    paddingVertical: 8,
+    borderRadius: 9
+  },
+  pkgTabBtnActive: {
+    backgroundColor: '#FFFFFF',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.06,
+    shadowRadius: 3,
+    elevation: 1
   },
   pkgTabText: {
     fontFamily: FONTS.family,
-    fontSize: 10,
-    fontWeight: '600',
-    color: '#475569'
+    fontSize: 13,
+    fontWeight: '500',
+    color: '#6E6E73'
   },
   pkgTabTextActive: {
-    color: '#FFFFFF',
-    fontWeight: '700'
+    color: '#1D1D1F',
+    fontWeight: '600'
   },
   stationSelectorRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    padding: 10,
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    gap: 10,
-    marginBottom: 8
+    paddingVertical: 4,
+    gap: 10
   },
-  stationPinCircle: {
-    width: 34,
-    height: 34,
+  mintDotOuter: {
+    width: 24,
+    height: 24,
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center'
   },
-  stationLabelOverline: {
+  mintDotInner: {
+    width: 8,
+    height: 8,
+    borderRadius: 4
+  },
+  stationLabelSub: {
     fontFamily: FONTS.family,
-    fontSize: 9,
-    fontWeight: '800',
-    color: '#64748B',
-    letterSpacing: 0.3
+    fontSize: 11,
+    color: '#8E8E93'
   },
   stationSelectedName: {
     fontFamily: FONTS.family,
-    fontSize: 13,
-    fontWeight: '700',
-    color: '#0F172A',
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#1D1D1F',
     marginTop: 1
   },
-  changeHubPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 9,
-    paddingVertical: 5,
-    borderRadius: 99,
-    gap: 2
-  },
-  changeHubPillText: {
+  changeHubLink: {
     fontFamily: FONTS.family,
-    fontSize: 10,
-    fontWeight: '700'
-  },
-  timeAndSearchRow: {
-    flexDirection: 'row',
-    gap: 8
-  },
-  timeSlotChip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FFFBEB',
-    paddingHorizontal: 10,
-    paddingVertical: 7,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#FDE68A',
-    gap: 6
-  },
-  timeSlotLabel: {
-    fontFamily: FONTS.family,
-    fontSize: 9,
-    color: '#92400E',
+    fontSize: 13,
     fontWeight: '600'
   },
-  timeSlotVal: {
-    fontFamily: FONTS.family,
-    fontSize: 11,
-    fontWeight: '800',
-    color: '#78350F'
+  cardDivider: {
+    height: 1,
+    backgroundColor: '#F2F2F0',
+    marginVertical: 12
   },
-  quickSearchBox: {
-    flex: 1,
+  timeColumnsRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    paddingHorizontal: 10,
+    marginBottom: 12
+  },
+  timeCol: {
+    flex: 1
+  },
+  verticalDivider: {
+    width: 1,
+    height: 28,
+    backgroundColor: '#EBECE8',
+    marginHorizontal: 14
+  },
+  timeColLabel: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    color: '#8E8E93'
+  },
+  timeColValue: {
+    fontFamily: FONTS.family,
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#1D1D1F',
+    marginTop: 2
+  },
+  quickSearchBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F5F5F3',
+    paddingHorizontal: 12,
+    height: 40,
     borderRadius: 12,
-    gap: 6
+    gap: 8
   },
   quickSearchInput: {
     flex: 1,
     fontFamily: FONTS.family,
-    fontSize: 12,
-    color: '#0F172A',
-    paddingVertical: 6
+    fontSize: 13,
+    color: '#1D1D1F'
   },
 
   toastBanner: {
     flexDirection: 'row',
     alignItems: 'center',
     marginHorizontal: 16,
-    marginTop: 10,
+    marginTop: 12,
     padding: 12,
     borderRadius: 14,
     gap: 10
@@ -959,21 +794,21 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.family,
     color: '#FFFFFF',
     fontSize: 13,
-    fontWeight: '700'
+    fontWeight: '600'
   },
   toastMsg: {
     fontFamily: FONTS.family,
-    color: '#EFF6FF',
-    fontSize: 11,
+    color: '#D1D1D6',
+    fontSize: 12,
     marginTop: 1
   },
 
   /* ============================================================
-     3. ASYMMETRIC BENTO GRID
+     3. BENTO GRID WITH REAL STUDIO VEHICLE PHOTOGRAPHY
      ============================================================ */
   bentoSection: {
     paddingHorizontal: 16,
-    marginTop: 14
+    marginTop: 16
   },
   bentoRow: {
     flexDirection: 'row',
@@ -981,391 +816,228 @@ const styles = StyleSheet.create({
   },
   bentoTallCard: {
     flex: 1.05,
-    height: 196,
-    borderRadius: 22,
+    height: 204,
+    borderRadius: 20,
     padding: 14,
-    borderWidth: 1.5,
-    borderColor: '#FFFFFF',
-    position: 'relative',
-    overflow: 'hidden',
-    shadowColor: '#0F172A',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-    elevation: 2
-  },
-  bentoTallGlow: {
-    position: 'absolute',
-    bottom: -24,
-    right: -20,
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    opacity: 0.45
-  },
-  bentoTopChipJade: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 99,
-    marginBottom: 8
-  },
-  bentoTopChipText: {
-    fontFamily: FONTS.family,
-    color: '#FFFFFF',
-    fontSize: 9,
-    fontWeight: '800'
+    borderWidth: 1,
+    justifyContent: 'space-between',
+    overflow: 'hidden'
   },
   bentoTallTitle: {
     fontFamily: FONTS.family,
-    fontSize: 18,
-    fontWeight: '800',
-    color: '#0F172A'
+    fontSize: 17,
+    fontWeight: '700',
+    color: '#1D1D1F',
+    letterSpacing: -0.2
   },
   bentoTallSub: {
     fontFamily: FONTS.family,
-    fontSize: 11,
-    color: '#475569',
-    marginTop: 3,
-    lineHeight: 15
+    fontSize: 12,
+    color: '#6E6E73',
+    marginTop: 2
   },
   bentoTallPrice: {
     fontFamily: FONTS.family,
-    fontSize: 14,
-    fontWeight: '800',
-    marginTop: 6
+    fontSize: 13,
+    fontWeight: '700',
+    marginTop: 4
   },
-  bentoTallIllustration: {
-    position: 'absolute',
-    bottom: 2,
-    right: 6
+  bentoTallPhotoWrap: {
+    width: '100%',
+    height: 98,
+    borderRadius: 14,
+    overflow: 'hidden',
+    backgroundColor: '#FFFFFF'
+  },
+  bentoPhotoImg: {
+    width: '100%',
+    height: '100%'
   },
   bentoRightCol: {
     flex: 1,
     justifyContent: 'space-between',
     gap: 10
   },
-  bentoSmallCardSand: {
+  bentoSmallCard: {
     flex: 1,
-    backgroundColor: '#FFFBEB',
     borderRadius: 20,
     padding: 12,
     flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: 1.5,
-    borderColor: '#FFFFFF',
-    shadowColor: '#0F172A',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.04,
-    shadowRadius: 8,
-    elevation: 2
+    justifyContent: 'space-between',
+    borderWidth: 1,
+    overflow: 'hidden'
   },
-  bentoSmallCardMint: {
+  bentoSmallCardWhite: {
     flex: 1,
     backgroundColor: '#FFFFFF',
     borderRadius: 20,
     padding: 12,
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     borderWidth: 1,
-    borderColor: '#E2E8F0',
-    shadowColor: '#0F172A',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.04,
-    shadowRadius: 8,
-    elevation: 2
+    borderColor: '#EBECE8',
+    overflow: 'hidden'
   },
-  bentoTopChipSand: {
-    alignSelf: 'flex-start',
-    backgroundColor: '#FDE68A',
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 6,
-    marginBottom: 4
-  },
-  bentoTopChipSandText: {
-    fontFamily: FONTS.family,
-    fontSize: 8,
-    fontWeight: '800',
-    color: '#92400E'
-  },
-  bentoTopChipWhite: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 6,
-    marginBottom: 4
-  },
-  bentoTopChipWhiteText: {
-    fontFamily: FONTS.family,
-    fontSize: 8,
-    fontWeight: '800'
+  bentoSmallTextCol: {
+    flex: 1,
+    paddingRight: 8
   },
   bentoSmallTitle: {
     fontFamily: FONTS.family,
     fontSize: 14,
-    fontWeight: '800',
-    color: '#0F172A'
+    fontWeight: '700',
+    color: '#1D1D1F'
   },
   bentoSmallSub: {
     fontFamily: FONTS.family,
-    fontSize: 10,
-    color: '#475569',
-    marginTop: 1
+    fontSize: 11,
+    color: '#6E6E73',
+    marginTop: 2
   },
-  bentoSmallPriceSand: {
+  bentoSmallPriceBeige: {
     fontFamily: FONTS.family,
     fontSize: 12,
-    fontWeight: '800',
-    color: '#B45309',
-    marginTop: 3
+    fontWeight: '700',
+    color: '#8C6239',
+    marginTop: 4
   },
-  bentoSmallPriceJade: {
+  bentoSmallPriceMint: {
     fontFamily: FONTS.family,
     fontSize: 12,
-    fontWeight: '800',
-    marginTop: 3
+    fontWeight: '700',
+    marginTop: 4
   },
-
-  /* STREAMLINED 4-PILL UTILITY ROW */
-  utilityPillsRow: {
-    paddingTop: 12,
-    gap: 8
-  },
-  utilityPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 99,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    gap: 6
-  },
-  utilityIconCircle: {
-    width: 24,
-    height: 24,
+  bentoSmallPhoto: {
+    width: 68,
+    height: 68,
     borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  utilityPillText: {
-    fontFamily: FONTS.family,
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#0F172A'
+    backgroundColor: '#F2F2F0'
   },
 
   /* ============================================================
-     4. DIGITAL COCKPIT GLOSA RADAR CARD
+     4. CLEAN LIGHT GLOSA TRAFFIC BAR
      ============================================================ */
-  glosaRadarCard: {
+  glosaLightCard: {
     flexDirection: 'row',
     alignItems: 'center',
     marginHorizontal: 16,
     marginTop: 14,
-    borderRadius: 20,
+    borderRadius: 18,
     padding: 14,
+    borderWidth: 1,
     gap: 12
   },
-  glosaRadarLeft: {
+  glosaLeftCol: {
     flex: 1
   },
-  glosaLiveBadgeRow: {
+  glosaTitleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    marginBottom: 4
+    gap: 6
   },
-  glosaPulseDot: {
+  liveDot: {
     width: 7,
     height: 7,
-    borderRadius: 4,
-    backgroundColor: '#38BDF8'
+    borderRadius: 4
   },
-  glosaLiveTag: {
-    fontFamily: FONTS.family,
-    fontSize: 9,
-    fontWeight: '800',
-    color: '#7DD3FC',
-    letterSpacing: 0.4
-  },
-  glosaCorridorTitle: {
+  glosaLightTitle: {
     fontFamily: FONTS.family,
     fontSize: 13,
-    fontWeight: '800',
-    color: '#FFFFFF'
+    fontWeight: '700',
+    color: '#1D1D1F'
   },
-  glosaCorridorSub: {
+  glosaLightSub: {
     fontFamily: FONTS.family,
-    fontSize: 11,
-    color: '#CBD5E1',
+    fontSize: 12,
+    color: '#6E6E73',
     marginTop: 3,
-    lineHeight: 15
+    lineHeight: 16
   },
-  glosaSpeedCircle: {
-    width: 68,
-    height: 68,
-    borderRadius: 18,
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
-    borderWidth: 1.5,
+  glosaWhiteSpeedPill: {
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 14,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    minWidth: 62
   },
-  glosaSpeedNum: {
+  glosaSpeedValue: {
     fontFamily: FONTS.family,
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '800',
-    color: '#FFFFFF',
-    lineHeight: 22
+    lineHeight: 20
   },
-  glosaSpeedUnit: {
+  glosaSpeedUnitText: {
     fontFamily: FONTS.family,
-    fontSize: 9,
-    color: '#93C5FD',
-    fontWeight: '600'
-  },
-  glosaGreenTimerPill: {
-    paddingHorizontal: 6,
-    paddingVertical: 1,
-    borderRadius: 6,
-    marginTop: 2
-  },
-  glosaGreenTimerText: {
-    color: '#FFFFFF',
-    fontSize: 8,
-    fontWeight: '700'
+    fontSize: 10,
+    color: '#6E6E73',
+    fontWeight: '500'
   },
 
   /* ============================================================
-     5. WIDE SHOWROOM TELEMETRY CAROUSEL
+     5. HORIZONTAL NEARBY VEHICLES
      ============================================================ */
   showroomCarouselSection: {
-    marginTop: 18
+    marginTop: 22
   },
   sectionHeaderRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-end',
+    alignItems: 'center',
     paddingHorizontal: 16,
     marginBottom: 12
   },
   sectionMainTitle: {
     fontFamily: FONTS.family,
-    fontSize: 17,
-    fontWeight: '800',
-    color: '#0F172A'
-  },
-  sectionSubTitle: {
-    fontFamily: FONTS.family,
-    fontSize: 11,
-    color: '#64748B',
-    marginTop: 2
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#1D1D1F',
+    letterSpacing: -0.3
   },
   seeMapLink: {
     fontFamily: FONTS.family,
-    fontSize: 12,
-    fontWeight: '700'
+    fontSize: 13,
+    fontWeight: '600'
   },
   wideShowroomRow: {
     paddingHorizontal: 16,
-    gap: 14
+    gap: 12
   },
   wideShowroomCard: {
-    width: 266,
+    width: 248,
     backgroundColor: '#FFFFFF',
-    borderRadius: 20,
+    borderRadius: 18,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: '#E2E8F0',
-    shadowColor: '#0F172A',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-    elevation: 2
+    borderColor: '#EBECE8'
   },
   wideImgWrap: {
     width: '100%',
-    height: 144,
-    backgroundColor: '#F1F5F9',
+    height: 142,
+    backgroundColor: '#F2F2F0',
     position: 'relative'
   },
   wideImg: {
     width: '100%',
     height: '100%'
   },
-  wideTelemetryPill: {
+  frostedDistPill: {
     position: 'absolute',
     top: 10,
     left: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.94)',
-    paddingHorizontal: 9,
+    backgroundColor: 'rgba(255, 255, 255, 0.92)',
+    paddingHorizontal: 10,
     paddingVertical: 4,
-    borderRadius: 99,
-    gap: 4
+    borderRadius: 99
   },
-  wideTelemetryText: {
+  frostedDistText: {
     fontFamily: FONTS.family,
-    fontSize: 10,
-    fontWeight: '700',
-    color: '#0F172A'
-  },
-  wideDistPill: {
-    position: 'absolute',
-    top: 10,
-    right: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(15, 23, 42, 0.78)',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 99,
-    gap: 3
-  },
-  wideDistText: {
-    fontFamily: FONTS.family,
-    fontSize: 10,
+    fontSize: 11,
     fontWeight: '600',
-    color: '#FFFFFF'
-  },
-  wideBottomOverlay: {
-    position: 'absolute',
-    bottom: 8,
-    left: 10,
-    right: 10,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center'
-  },
-  widePlateBadge: {
-    backgroundColor: 'rgba(255, 255, 255, 0.94)',
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 6
-  },
-  widePlateText: {
-    fontFamily: FONTS.family,
-    fontSize: 10,
-    fontWeight: '800',
-    color: '#0F172A'
-  },
-  wideRatingPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(15, 23, 42, 0.8)',
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 99,
-    gap: 3
-  },
-  wideRatingText: {
-    fontFamily: FONTS.family,
-    fontSize: 10,
-    fontWeight: '700',
-    color: '#FFFFFF'
+    color: '#1D1D1F'
   },
   wideCardBody: {
     padding: 12
@@ -1373,163 +1045,127 @@ const styles = StyleSheet.create({
   wideVehName: {
     fontFamily: FONTS.family,
     fontSize: 15,
-    fontWeight: '800',
-    color: '#0F172A'
+    fontWeight: '700',
+    color: '#1D1D1F'
   },
-  iotPrecheckRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    marginTop: 6,
-    marginBottom: 10
-  },
-  iotCheckChip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F8FAFC',
-    paddingHorizontal: 7,
-    paddingVertical: 3,
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    gap: 3
-  },
-  iotCheckText: {
+  wideVehMeta: {
     fontFamily: FONTS.family,
-    fontSize: 10,
-    fontWeight: '600',
-    color: '#475569'
+    fontSize: 12,
+    color: '#6E6E73',
+    marginTop: 3
   },
   wideCardFooter: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginTop: 10,
+    paddingTop: 10,
     borderTopWidth: 1,
-    borderTopColor: '#F1F5F9',
-    paddingTop: 10
+    borderTopColor: '#F2F2F0'
   },
   widePriceMain: {
     fontFamily: FONTS.family,
     fontSize: 15,
-    fontWeight: '800'
+    fontWeight: '700',
+    color: '#1D1D1F'
   },
   widePriceUnit: {
-    fontSize: 11,
-    fontWeight: '500',
-    color: '#64748B'
+    fontSize: 12,
+    fontWeight: '400',
+    color: '#6E6E73'
   },
-  widePriceDay: {
-    fontFamily: FONTS.family,
-    fontSize: 10,
-    color: '#94A3B8',
-    marginTop: 1
+  ratingInline: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3
   },
-  wideBookBtn: {
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 10
-  },
-  wideBookBtnText: {
+  ratingInlineText: {
     fontFamily: FONTS.family,
     fontSize: 12,
-    fontWeight: '700',
-    color: '#FFFFFF'
+    fontWeight: '600',
+    color: '#1D1D1F'
   },
 
   /* ============================================================
      6. FULL FLEET CATALOG
      ============================================================ */
   catalogSection: {
-    marginTop: 22
+    marginTop: 24
   },
   catalogHeaderRow: {
     paddingHorizontal: 16,
-    marginBottom: 12
+    marginBottom: 12,
+    gap: 10
   },
   catFilterRow: {
     flexDirection: 'row',
     gap: 8,
-    marginTop: 10
+    marginTop: 8
   },
   catPill: {
-    backgroundColor: '#FFFFFF',
     paddingHorizontal: 14,
     paddingVertical: 7,
     borderRadius: 99,
+    backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#E2E8F0'
+    borderColor: '#EBECE8'
   },
   catPillText: {
     fontFamily: FONTS.family,
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#475569'
+    fontSize: 13,
+    fontWeight: '500',
+    color: '#6E6E73'
   },
   catPillTextActive: {
     color: '#FFFFFF',
-    fontWeight: '700'
+    fontWeight: '600'
   },
 
   /* ============================================================
-     STATION SELECTOR MODAL
+     MODAL STYLES
      ============================================================ */
   destModalContainer: {
     flex: 1,
     backgroundColor: '#FFFFFF',
-    paddingTop: 16
+    paddingTop: 14
   },
   destHeaderBar: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
-    marginBottom: 14,
+    paddingBottom: 12,
     gap: 10
   },
   destBackBtn: {
     padding: 4
   },
-  currentLocDotOuter: {
-    width: 18,
-    height: 18,
-    borderRadius: 9,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  currentLocDotInner: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: '#FFFFFF'
-  },
   currentLocTitle: {
-    fontFamily: FONTS.family,
     flex: 1,
+    fontFamily: FONTS.family,
     fontSize: 16,
     fontWeight: '700',
-    color: '#0F172A'
+    color: '#1D1D1F'
   },
   destInputRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
     paddingHorizontal: 16,
-    marginBottom: 14
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#EBECE8'
   },
   destInputWrap: {
-    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    height: 46,
+    backgroundColor: '#F5F5F3',
     borderRadius: 12,
-    borderWidth: 1.5,
     paddingHorizontal: 12,
-    gap: 10,
-    backgroundColor: '#F8FAFC'
+    height: 44,
+    gap: 8
   },
   destTextInput: {
     flex: 1,
     fontFamily: FONTS.family,
     fontSize: 14,
-    color: '#0F172A'
+    color: '#1D1D1F'
   },
   placesScroll: {
     flex: 1,
@@ -1540,7 +1176,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: '#F1F5F9',
+    borderBottomColor: '#F2F2F0',
     gap: 12
   },
   placeLeftCol: {
@@ -1548,17 +1184,18 @@ const styles = StyleSheet.create({
     width: 48
   },
   placeIconCircle: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
+    width: 34,
+    height: 34,
+    borderRadius: 17,
     alignItems: 'center',
     justifyContent: 'center'
   },
   placeDistText: {
     fontFamily: FONTS.family,
-    fontSize: 11,
+    fontSize: 10,
+    color: '#6E6E73',
     marginTop: 4,
-    fontWeight: '700'
+    fontWeight: '600'
   },
   placeCenterCol: {
     flex: 1
@@ -1566,34 +1203,13 @@ const styles = StyleSheet.create({
   placeNameText: {
     fontFamily: FONTS.family,
     fontSize: 14,
-    fontWeight: '700',
-    color: '#0F172A',
-    lineHeight: 19
+    fontWeight: '600',
+    color: '#1D1D1F'
   },
   placeAddrText: {
     fontFamily: FONTS.family,
     fontSize: 12,
-    color: '#64748B',
+    color: '#6E6E73',
     marginTop: 2
-  },
-  destBottomPillsBar: {
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    borderTopWidth: 1,
-    borderTopColor: '#E2E8F0',
-    backgroundColor: '#FFFFFF'
-  },
-  destBottomPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 12,
-    borderRadius: 14,
-    gap: 8
-  },
-  destBottomPillText: {
-    fontFamily: FONTS.family,
-    fontSize: 13,
-    fontWeight: '700'
   }
 });

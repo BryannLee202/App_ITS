@@ -21,10 +21,10 @@ import TripsHistoryScreen from './src/screens/TripsHistoryScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
 
 const DOCK_TABS = [
-  { id: 'HOME', icon: 'compass-outline', activeIcon: 'compass', label: 'Khám phá' },
-  { id: 'MAP', icon: 'map-outline', activeIcon: 'map', label: 'Bản đồ Hub' },
-  { id: 'KEY', icon: 'key', activeIcon: 'key', label: 'Khóa BLE', isCenterKey: true },
-  { id: 'TRIPS', icon: 'receipt-outline', activeIcon: 'receipt', label: 'Hành trình' },
+  { id: 'HOME', icon: 'search-outline', activeIcon: 'search', label: 'Khám phá' },
+  { id: 'MAP', icon: 'map-outline', activeIcon: 'map', label: 'Bản đồ' },
+  { id: 'KEY', icon: 'key-outline', activeIcon: 'key', label: 'Khóa xe', isCenterKey: true },
+  { id: 'TRIPS', icon: 'calendar-outline', activeIcon: 'calendar', label: 'Chuyến đi' },
   { id: 'PROFILE', icon: 'person-outline', activeIcon: 'person', label: 'Tài khoản' }
 ];
 
@@ -78,7 +78,7 @@ const ECOGO_RACE_BADGES = [
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('HOME');
-  const [themeKey, setThemeKey] = useState('COBALT'); // 'COBALT' | 'TITANIUM' | 'INDIGO' | 'CORAL'
+  const [themeKey, setThemeKey] = useState('MINT'); // 'MINT' | 'MONOCHROME' | 'TERRACOTTA' | 'SKY'
   const [showRewardsModal, setShowRewardsModal] = useState(false);
   const [showGreenRaceModal, setShowGreenRaceModal] = useState(false);
   const [showGreenRaceTerms, setShowGreenRaceTerms] = useState(false);
@@ -86,7 +86,7 @@ export default function App() {
   const [copiedCode, setCopiedCode] = useState(null);
   const [viewMode, setViewMode] = useState('PHONE'); // 'PHONE' | 'WIDE'
 
-  const theme = THEME_PRESETS[themeKey] || THEME_PRESETS.COBALT;
+  const theme = THEME_PRESETS[themeKey] || THEME_PRESETS.MINT;
 
   const { width: windowWidth } = useWindowDimensions();
   const isDesktopBrowser = Platform.OS === 'web' && windowWidth >= 768;
@@ -254,17 +254,17 @@ export default function App() {
                       <View
                         style={[
                           styles.centerKeyCircle,
-                          { backgroundColor: theme.primary, shadowColor: theme.primary },
-                          isActive && { backgroundColor: theme.primaryDark, borderColor: theme.glow }
+                          { backgroundColor: '#1D1D1F', shadowColor: '#000000' },
+                          isActive && { backgroundColor: theme.primary, borderColor: '#FFFFFF' }
                         ]}
                       >
-                        <Ionicons name="key" size={22} color="#FFFFFF" />
+                        <Ionicons name="key" size={20} color="#FFFFFF" />
                       </View>
                       <Text
                         style={[
                           styles.dockTabLabel,
                           { marginTop: 3 },
-                          isActive && { color: theme.primary, fontWeight: '800' }
+                          isActive && { color: '#1D1D1F', fontWeight: '700' }
                         ]}
                       >
                         {tab.label}
@@ -576,7 +576,7 @@ export default function App() {
 const styles = StyleSheet.create({
   outerViewport: {
     flex: 1,
-    backgroundColor: '#EDF2F7',
+    backgroundColor: '#EFEEEA',
     alignItems: 'center',
     justifyContent: 'flex-start'
   },
@@ -672,7 +672,7 @@ const styles = StyleSheet.create({
   appShell: {
     flex: 1,
     width: '100%',
-    backgroundColor: '#F8FAFC'
+    backgroundColor: '#F7F7F5'
   },
   phoneSimulatorShell: {
     width: 414,
@@ -682,11 +682,11 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     borderColor: '#FFFFFF',
     overflow: 'hidden',
-    shadowColor: '#0F172A',
-    shadowOffset: { width: 0, height: 14 },
-    shadowOpacity: 0.12,
-    shadowRadius: 30,
-    elevation: 12
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.08,
+    shadowRadius: 28,
+    elevation: 10
   },
   wideWebShell: {
     maxWidth: 1024,
@@ -694,7 +694,7 @@ const styles = StyleSheet.create({
   },
   safeArea: {
     flex: 1,
-    backgroundColor: '#F8FAFC',
+    backgroundColor: '#F7F7F5',
     position: 'relative'
   },
   mainContentArea: {

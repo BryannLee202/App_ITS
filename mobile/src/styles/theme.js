@@ -1,82 +1,86 @@
-// EcoGo Smart Signature Design System — Royal Cobalt & Snow White (BMW i / Polestar Aesthetic)
+// EcoGo Smart Design System — Apple White, Fresh Mint & Warm Oat Beige (Human-Crafted iOS Aesthetic)
 export const THEME_PRESETS = {
-  COBALT: {
-    id: 'COBALT',
-    name: 'Xanh Cobalt',
-    primary: '#2563EB',
-    primaryDark: '#1D4ED8',
-    primaryLight: '#60A5FA',
-    primarySoft: '#EFF6FF',
-    primaryBorder: '#BFDBFE',
-    glow: '#93C5FD',
-    cockpitBg: '#0F172A'
+  MINT: {
+    id: 'MINT',
+    name: 'Xanh Mint & Kem Be',
+    primary: '#0CA678',       // Fresh Youthful Mint (Not dark old green, not neon cyan)
+    primaryDark: '#099268',
+    primaryLight: '#38D9A9',
+    primarySoft: '#EBFBF5',   // Airy Ice Mint tint
+    primaryBorder: '#C3FAE8',
+    beigeSoft: '#F6F3EC',     // Warm Oat Beige
+    beigeBorder: '#EAE4D7',
+    buttonBg: '#1D1D1F',      // Apple Charcoal for primary CTA buttons (non-AI look)
+    glow: '#96F2D7'
   },
-  TITANIUM: {
-    id: 'TITANIUM',
-    name: 'Đen Titan',
-    primary: '#1E293B',
-    primaryDark: '#0F172A',
-    primaryLight: '#64748B',
-    primarySoft: '#F1F5F9',
-    primaryBorder: '#CBD5E1',
-    glow: '#CBD5E1',
-    cockpitBg: '#18181B'
+  MONOCHROME: {
+    id: 'MONOCHROME',
+    name: 'Trắng Apple & Đen',
+    primary: '#1D1D1F',
+    primaryDark: '#000000',
+    primaryLight: '#6E6E73',
+    primarySoft: '#F4F4F2',
+    primaryBorder: '#E5E5EA',
+    beigeSoft: '#F6F3EC',
+    beigeBorder: '#EAE4D7',
+    buttonBg: '#1D1D1F',
+    glow: '#E5E5EA'
   },
-  INDIGO: {
-    id: 'INDIGO',
-    name: 'Tím Indigo',
-    primary: '#4F46E5',
-    primaryDark: '#3730A3',
-    primaryLight: '#818CF8',
-    primarySoft: '#EEF2FF',
-    primaryBorder: '#C7D2FE',
-    glow: '#A5B4FC',
-    cockpitBg: '#1E1B4B'
+  TERRACOTTA: {
+    id: 'TERRACOTTA',
+    name: 'Cam Đào & Kem Sữa',
+    primary: '#E05A47',
+    primaryDark: '#C84B31',
+    primaryLight: '#F48FB1',
+    primarySoft: '#FFF4F1',
+    primaryBorder: '#FCD5CE',
+    beigeSoft: '#F8F4EC',
+    beigeBorder: '#EDE6D6',
+    buttonBg: '#1D1D1F',
+    glow: '#FEC89A'
   },
-  CORAL: {
-    id: 'CORAL',
-    name: 'Đỏ Coral',
-    primary: '#E11D48',
-    primaryDark: '#BE123C',
-    primaryLight: '#FB7185',
-    primarySoft: '#FFF1F2',
-    primaryBorder: '#FECDD3',
-    glow: '#FDA4AF',
-    cockpitBg: '#1E293B'
+  SKY: {
+    id: 'SKY',
+    name: 'Xanh Băng Pastel',
+    primary: '#0EA5E9',
+    primaryDark: '#0284C7',
+    primaryLight: '#7DD3FC',
+    primarySoft: '#F0F9FF',
+    primaryBorder: '#BAE6FD',
+    beigeSoft: '#F6F3EC',
+    beigeBorder: '#EAE4D7',
+    buttonBg: '#1D1D1F',
+    glow: '#BAE6FD'
   }
 };
 
 export const COLORS = {
-  // Primary Royal Cobalt (#2563EB)
-  primary: '#2563EB',
-  primaryLight: '#60A5FA',
-  primaryDark: '#1D4ED8',
-  primaryMuted: '#EFF6FF',
+  primary: '#0CA678',
+  primaryLight: '#38D9A9',
+  primaryDark: '#099268',
+  primaryMuted: '#EBFBF5',
 
-  // Secondary Warm Amber & Sky Accents
-  secondary: '#F59E0B',
+  secondary: '#D97706',
   secondaryLight: '#FEF3C7',
   secondaryDark: '#B45309',
-  secondaryMuted: '#FFFBEB',
+  secondaryMuted: '#F6F3EC',
 
-  // Crisp Snow White & Alabaster Surfaces
-  background: '#F8FAFC',
+  background: '#F7F7F5',
   surface: '#FFFFFF',
-  surfaceVariant: '#F1F5F9',
-  aquaCard: '#EFF6FF',
-  creamCard: '#FFFBEB',
-  greenRaceBg: '#EFF6FF',
-  border: '#E2E8F0',
-  borderDark: '#CBD5E1',
+  surfaceVariant: '#F2F2F0',
+  aquaCard: '#EBFBF5',
+  creamCard: '#F6F3EC',
+  greenRaceBg: '#EBFBF5',
+  border: '#EBECE8',
+  borderDark: '#DCDCD8',
 
-  // Typography
-  textPrimary: '#0F172A',
-  textSecondary: '#475569',
-  textMuted: '#94A3B8',
+  textPrimary: '#1D1D1F',
+  textSecondary: '#6E6E73',
+  textMuted: '#8E8E93',
   textInverse: '#FFFFFF',
 
   danger: '#EF4444',
-  accent: '#F59E0B'
+  accent: '#0CA678'
 };
 
 export const FONTS = {

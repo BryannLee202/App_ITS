@@ -961,15 +961,11 @@ const styles = StyleSheet.create({
   confirmBookBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#2563EB',
+    backgroundColor: '#1D1D1F',
     paddingHorizontal: 18,
     paddingVertical: 12,
     borderRadius: 14,
-    gap: 8,
-    shadowColor: '#2563EB',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8
+    gap: 8
   },
   confirmBookBtnText: {
     color: '#FFFFFF',

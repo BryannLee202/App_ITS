@@ -12,7 +12,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { FONTS, THEME_PRESETS } from '../styles/theme';
 
-export default function ProfileScreen({ onOpenGreenRace, theme = THEME_PRESETS.COBALT }) {
+export default function ProfileScreen({ onOpenGreenRace, theme = THEME_PRESETS.MINT }) {
   const [user] = useState({
     fullName: 'Minh Tài',
     phone: '+84386726647',
@@ -426,7 +426,7 @@ export default function ProfileScreen({ onOpenGreenRace, theme = THEME_PRESETS.C
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8FAFC'
+    backgroundColor: '#F7F7F5'
   },
   scrollContent: {
     padding: 16
@@ -441,7 +441,7 @@ const styles = StyleSheet.create({
     width: 58,
     height: 58,
     borderRadius: 29,
-    backgroundColor: '#2563EB',
+    backgroundColor: '#0CA678',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
@@ -546,14 +546,14 @@ const styles = StyleSheet.create({
     width: 18,
     height: 4,
     borderRadius: 2,
-    backgroundColor: '#2563EB'
+    backgroundColor: '#0CA678'
   },
   greenRaceCard: {
-    backgroundColor: '#EFF6FF',
+    backgroundColor: '#EBFBF5',
     borderRadius: 20,
     overflow: 'hidden',
     borderWidth: 1.5,
-    borderColor: '#BFDBFE',
+    borderColor: '#C3FAE8',
     marginBottom: 16
   },
   greenRaceTopBar: {
@@ -563,7 +563,7 @@ const styles = StyleSheet.create({
     paddingRight: 12
   },
   greenRaceRibbon: {
-    backgroundColor: '#DBEAFE',
+    backgroundColor: '#C3FAE8',
     paddingHorizontal: 16,
     paddingVertical: 7,
     borderBottomRightRadius: 18
@@ -572,7 +572,7 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.family,
     fontSize: 13,
     fontWeight: '700',
-    color: '#1E3A8A'
+    color: '#087F5B'
   },
   progressBtnPill: {
     flexDirection: 'row',
@@ -588,7 +588,7 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.family,
     fontSize: 11,
     fontWeight: '600',
-    color: '#2563EB'
+    color: '#0CA678'
   },
   greenRaceBodyRow: {
     flexDirection: 'row',
@@ -714,10 +714,10 @@ const styles = StyleSheet.create({
     borderColor: '#FFFFFF'
   },
   familyCardCream: {
-    backgroundColor: '#FFFBEB'
+    backgroundColor: '#F6F3EC'
   },
   businessCardAqua: {
-    backgroundColor: '#EFF6FF'
+    backgroundColor: '#EBFBF5'
   },
   accountTypeTitle: {
     fontFamily: FONTS.family,

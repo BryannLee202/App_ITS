@@ -3,7 +3,13 @@ import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { FONTS } from '../styles/theme';
 
-export default function VehicleCard({ vehicle, onSelect, onBook, style: customStyle, accentColor = '#2563EB' }) {
+export default function VehicleCard({
+  vehicle,
+  onSelect,
+  onBook,
+  style: customStyle,
+  accentColor = '#0CA678'
+}) {
   const isElectric = vehicle.powerType === 'ELECTRIC';
   const formattedHourlyPrice = vehicle.hourlyPrice.toLocaleString('vi-VN');
   const formattedDailyPrice = vehicle.dailyPrice.toLocaleString('vi-VN');
@@ -15,7 +21,7 @@ export default function VehicleCard({ vehicle, onSelect, onBook, style: customSt
       activeOpacity={0.94}
       onPress={() => onSelect(vehicle)}
     >
-      {/* Clean Unframed Showroom Photo with Single Subtle Rating Pill */}
+      {/* Clean Showroom Photo with Single Frosted Pill */}
       <View style={styles.imageContainer}>
         <Image
           source={{ uri: vehicle.thumbnail }}
@@ -23,12 +29,13 @@ export default function VehicleCard({ vehicle, onSelect, onBook, style: customSt
           resizeMode="cover"
         />
 
-        {/* Top Left: Single Clean Frosted Badge */}
         <View style={styles.topFloatingRow}>
           <View style={styles.frostedBadge}>
-            <View style={[styles.dot, { backgroundColor: isElectric ? accentColor : '#64748B' }]} />
+            <View style={[styles.dot, { backgroundColor: accentColor }]} />
             <Text style={styles.frostedBadgeText}>
-              {isElectric ? `Pin ${batteryPct}% • ${vehicle.rangeKm} km` : `Hybrid • ${vehicle.rangeKm} km`}
+              {isElectric
+                ? `Pin ${batteryPct}% · ${vehicle.rangeKm} km`
+                : `Hybrid · ${vehicle.rangeKm} km`}
             </Text>
           </View>
 
@@ -40,27 +47,14 @@ export default function VehicleCard({ vehicle, onSelect, onBook, style: customSt
         </View>
       </View>
 
-      {/* Editorial Vehicle Details */}
+      {/* Clean Editorial Vehicle Details (No Cluttered AI Badges) */}
       <View style={styles.body}>
-        <View style={styles.headerRow}>
-          <View style={{ flex: 1, marginRight: 8 }}>
-            <Text style={styles.vehicleName} numberOfLines={1}>
-              {vehicle.name}
-            </Text>
-            <Text style={styles.metaLine} numberOfLines={1}>
-              Số tự động • {vehicle.seats} chỗ • Biển số {vehicle.plateNumber}
-            </Text>
-          </View>
-        </View>
-
-        {/* IoT Telemetry & Pre-Trip Safety Line */}
-        <View style={styles.tagsRow}>
-          <Text style={[styles.tagItem, { color: accentColor }]}>✓ Lốp {vehicle.telematics?.tirePressurePsi?.fl || 34} PSI</Text>
-          <Text style={styles.tagDot}>·</Text>
-          <Text style={[styles.tagItem, { color: accentColor }]}>✓ Mở khóa BLE 5.2</Text>
-          <Text style={styles.tagDot}>·</Text>
-          <Text style={[styles.tagItem, { color: accentColor }]}>✓ Miễn cọc GPLX B2</Text>
-        </View>
+        <Text style={styles.vehicleName} numberOfLines={1}>
+          {vehicle.name}
+        </Text>
+        <Text style={styles.metaLine} numberOfLines={1}>
+          Số tự động · {vehicle.seats} chỗ · Biển số {vehicle.plateNumber}
+        </Text>
 
         <View style={styles.divider} />
 
@@ -75,7 +69,7 @@ export default function VehicleCard({ vehicle, onSelect, onBook, style: customSt
           </View>
 
           <TouchableOpacity
-            style={[styles.ctaButton, { backgroundColor: accentColor }]}
+            style={styles.ctaButton}
             activeOpacity={0.85}
             onPress={() => onBook(vehicle)}
           >
@@ -90,22 +84,17 @@ export default function VehicleCard({ vehicle, onSelect, onBook, style: customSt
 const styles = StyleSheet.create({
   card: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 18,
+    borderRadius: 20,
     marginHorizontal: 16,
-    marginBottom: 16,
+    marginBottom: 14,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: '#EBEBED',
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.04,
-    shadowRadius: 12,
-    elevation: 2
+    borderColor: '#EBECE8'
   },
   imageContainer: {
     width: '100%',
-    height: 196,
-    backgroundColor: '#F6F5F2',
+    height: 192,
+    backgroundColor: '#F2F2F0',
     position: 'relative'
   },
   image: {
@@ -124,7 +113,7 @@ const styles = StyleSheet.create({
   frostedBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.92)',
+    backgroundColor: 'rgba(255, 255, 255, 0.94)',
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 99,
@@ -139,12 +128,12 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.family,
     fontSize: 11,
     fontWeight: '600',
-    color: '#111111'
+    color: '#1D1D1F'
   },
   ratingFrosted: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.92)',
+    backgroundColor: 'rgba(255, 255, 255, 0.94)',
     paddingHorizontal: 9,
     paddingVertical: 5,
     borderRadius: 99,
@@ -154,7 +143,7 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.family,
     fontSize: 11,
     fontWeight: '600',
-    color: '#111111'
+    color: '#1D1D1F'
   },
   tripsCount: {
     fontFamily: FONTS.family,
@@ -164,44 +153,22 @@ const styles = StyleSheet.create({
   body: {
     padding: 16
   },
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start'
-  },
   vehicleName: {
     fontFamily: FONTS.family,
     fontSize: 17,
-    fontWeight: '600',
-    color: '#111111',
+    fontWeight: '700',
+    color: '#1D1D1F',
     letterSpacing: -0.2
   },
   metaLine: {
     fontFamily: FONTS.family,
     fontSize: 13,
     color: '#6E6E73',
-    marginTop: 3
-  },
-  tagsRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 8,
-    flexWrap: 'wrap'
-  },
-  tagItem: {
-    fontFamily: FONTS.family,
-    fontSize: 12,
-    color: '#2563EB',
-    fontWeight: '600'
-  },
-  tagDot: {
-    marginHorizontal: 6,
-    color: '#8E8E93',
-    fontSize: 12
+    marginTop: 4
   },
   divider: {
     height: 1,
-    backgroundColor: '#F2F2F5',
+    backgroundColor: '#F2F2F0',
     marginVertical: 12
   },
   footerRow: {
@@ -217,23 +184,23 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.family,
     fontSize: 18,
     fontWeight: '700',
-    color: '#0F172A',
+    color: '#1D1D1F',
     letterSpacing: -0.3
   },
   priceUnit: {
     fontFamily: FONTS.family,
     fontSize: 13,
-    color: '#64748B',
+    color: '#6E6E73',
     fontWeight: '400'
   },
   dailySub: {
     fontFamily: FONTS.family,
     fontSize: 12,
-    color: '#94A3B8',
+    color: '#8E8E93',
     marginTop: 2
   },
   ctaButton: {
-    backgroundColor: '#2563EB',
+    backgroundColor: '#1D1D1F',
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 12
@@ -242,6 +209,6 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.family,
     color: '#FFFFFF',
     fontSize: 13,
-    fontWeight: '700'
+    fontWeight: '600'
   }
 });
