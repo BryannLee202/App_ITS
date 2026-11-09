@@ -1,44 +1,40 @@
-// Authentic Xanh SM (GSM) Modern Mobility Design System
+// Warm Pastel & Slate Blue Tactile Neumorphism (Bento Soft UI) Design System
 export const COLORS = {
-  // Signature Xanh SM Cyan Palette
-  primary: '#00BFA5',         // GSM Vibrant Cyan Mint
-  primaryLight: '#26E1CC',    // Bright Electric Cyan
-  primaryDark: '#008E7B',     // Rich Deep Cyan
-  primaryMuted: '#E0F7F4',    // Soft Mint Ice
+  // Primary Palette (Warm Terracotta Coral & Dusty Slate Blue from reference image)
+  primary: '#DF8268',         // Warm Terracotta Coral
+  primaryLight: '#F5BFA9',    // Soft Pastel Peach
+  primaryDark: '#C4684F',     // Deep Terracotta
+  primaryMuted: '#FCEEE9',    // Soft Peach Mist
 
-  secondary: '#10B981',       // Fresh Eco Leaf Green
-  secondaryLight: '#34D399',
-  secondaryDark: '#059669',
-  secondaryMuted: '#ECFDF5',
+  secondary: '#6E92B5',       // Dusty Slate Blue (Wave & Dial accent)
+  secondaryLight: '#94B4D1',  // Soft Sky Blue
+  secondaryDark: '#527394',   // Deep Slate Blue
+  secondaryMuted: '#EBF2F8',  // Ice Blue Mist
 
-  accent: '#F59E0B',          // Warm Amber (Badges, Stars)
-  accentLight: '#FEF3C7',
-  coral: '#FF6B6B',           // Promo discount tag
+  accent: '#F2C97D',          // Warm Butter Gold
+  accentLight: '#FDF6E4',
+  coral: '#E08A70',
 
-  // Big Hero Card Gradients (from Xanh SM screenshot)
-  heroCarBg: '#E6F8F6',
-  heroCarBgEnd: '#D0F3EE',
-  heroFoodBg: '#FFF7EB',
-  heroFoodBgEnd: '#FEEFD6',
+  // Bento Card Surfaces (Warm Ivory & Alabaster)
+  background: '#EFE5DC',      // Warm Rose-Beige Studio Canvas
+  surface: '#FDFBF7',         // Pure Warm Ivory Card
+  surfaceVariant: '#F7F1E8',  // Soft Cream Inset
+  peachSurface: '#F5C2AF',    // Split Bento Peach Card
+  terracottaSurface: '#E59B82',
+  border: '#E6D9CE',          // Warm Subtle Border
+  borderLight: '#FBF8F3',     // 3D Top-Left Highlight Border
 
-  // Surfaces & Backgrounds
-  background: '#F5F7F9',      // Clean daylight ambient backdrop
-  surface: '#FFFFFF',         // Pure White Cards
-  surfaceVariant: '#F8FAFC',
-  border: '#E8ECEF',          // Subtle divider
-  borderDark: '#CBD5E1',
-
-  // High-legibility Typography
-  textPrimary: '#1E293B',     // Soft Charcoal Slate
-  textSecondary: '#64748B',   // Muted Slate
-  textMuted: '#94A3B8',
+  // High-legibility Warm Espresso Typography
+  textPrimary: '#2C221E',     // Deep Warm Espresso
+  textSecondary: '#7A6A63',   // Muted Warm Taupe
+  textMuted: '#A6968E',       // Soft Sand Gray
   textInverse: '#FFFFFF',
 
-  // Cockpit Mode (Dark Slate)
-  cockpitBg: '#0F172A',
-  cockpitCard: '#1E293B',
-  cockpitBorder: '#334155',
-  cockpitGlow: 'rgba(0, 191, 165, 0.3)'
+  // Tactile Cockpit Mode
+  cockpitBg: '#EAE0D5',
+  cockpitCard: '#FDFBF7',
+  cockpitBorder: '#E2D4C8',
+  cockpitGlow: 'rgba(223, 130, 104, 0.25)'
 };
 
 export const FONTS = {
@@ -55,10 +51,10 @@ export const SPACING = {
 };
 
 export const RADIUS = {
-  sm: 8,
-  md: 12,
-  lg: 16,
-  xl: 20,
-  xxl: 24,
+  sm: 10,
+  md: 16,
+  lg: 22,
+  xl: 28,
+  xxl: 32,
   full: 999
 };

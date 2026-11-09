@@ -43,7 +43,7 @@ export default function HomeScreen({ onNavigateToKey }) {
       const res = await ApiService.getVehicles();
       setVehicles(res.vehicles || []);
     } catch (err) {
-      console.warn('Load vehicles error:', err.message);
+      console.warn('Error loading vehicles:', err.message);
     } finally {
       setLoading(false);
     }
@@ -51,28 +51,28 @@ export default function HomeScreen({ onNavigateToKey }) {
 
   const handleOpenBooking = (vehicle) => {
     setSelectedVehicle(vehicle);
+    setDurationHours(3);
     setModalVisible(true);
   };
 
   const handleConfirmBooking = async () => {
     if (!selectedVehicle) return;
-
     try {
       setBookingLoading(true);
       const res = await ApiService.bookVehicle({
         vehicleId: selectedVehicle.id,
         rentalType: 'HOURLY',
         durationHours,
-        pickupStationId: selectedVehicle.stationId
+        pickupStationId: selectedVehicle.stationId || 'hub-uth-01'
       });
 
       setModalVisible(false);
       Alert.alert(
-        'Thuê Xe Thành Công',
-        `Hợp đồng điện tử ${res.trip.contractNumber} đã được ký.\nChìa khóa số Digital Key đã kích hoạt trong tab Điều Khiển.`,
+        'Đặt Xe Thành Công',
+        `Hợp đồng điện tử ${res.trip.contractNumber} đã kích hoạt.\nChìa khóa số 3D Digital Key đã sẵn sàng.`,
         [
           {
-            text: 'Mở Điều Khiển Xe Ngay',
+            text: 'Mở Buồng Lái Ngay',
             onPress: () => {
               if (onNavigateToKey) onNavigateToKey();
             }
@@ -86,7 +86,7 @@ export default function HomeScreen({ onNavigateToKey }) {
     }
   };
 
-  const filteredVehicles = vehicles.filter(v => {
+  const filteredVehicles = vehicles.filter((v) => {
     if (selectedFilter === 'CAR') return v.category === 'CAR';
     if (selectedFilter === 'MOTORBIKE') return v.category === 'MOTORBIKE';
     return (
@@ -101,279 +101,337 @@ export default function HomeScreen({ onNavigateToKey }) {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        {/* =========================================
-            1. TOP FLOATING SEARCH BAR (XANH SM STYLE)
-        ========================================= */}
-        <View style={styles.topSearchWrapper}>
-          <View style={styles.searchPill}>
-            <Ionicons name="search" size={20} color="#64748B" style={styles.searchIcon} />
+        {/* =========================================================
+            1. LAYERED WAVE HERO CARD & 3D PILL SEARCH (CENTER IMAGE REF)
+        ========================================================= */}
+        <View style={styles.waveHeroCard}>
+          {/* Decorative Soft Wave Layers at Bottom of Hero Card */}
+          <View style={styles.waveBackLayer} />
+          <View style={styles.waveFrontLayer} />
+          <View style={styles.waveFloatingSphereWhite} />
+          <View style={styles.waveFloatingCupPeach} />
+
+          {/* Top Micro Header Row */}
+          <View style={styles.waveCardTopRow}>
+            <View style={styles.microBrandRow}>
+              <View style={styles.amberDot} />
+              <Text style={styles.microBrandText}>ITS SMART MOBILITY</Text>
+            </View>
+            <View style={styles.microStatusRow}>
+              <View style={styles.peachTinyDot} />
+              <Text style={styles.microLocationText}>UTH • TP.HCM</Text>
+            </View>
+          </View>
+
+          {/* Extruded 3D Tactile Search Pill */}
+          <View style={styles.tactileSearchPill}>
             <TextInput
               placeholder="Bạn muốn đi đâu, thuê xe gì?"
-              placeholderTextColor="#94A3B8"
+              placeholderTextColor="#A6968E"
               style={styles.searchInput}
               value={searchQuery}
               onChangeText={setSearchQuery}
             />
             {searchQuery ? (
-              <TouchableOpacity onPress={() => setSearchQuery('')}>
-                <Ionicons name="close-circle" size={18} color="#94A3B8" />
+              <TouchableOpacity onPress={() => setSearchQuery('')} style={styles.clearBtn}>
+                <Ionicons name="close-circle" size={16} color="#A6968E" />
               </TouchableOpacity>
             ) : null}
+            <TouchableOpacity style={styles.searchSkyBlueKnob}>
+              <Ionicons name="search" size={14} color="#FFFFFF" />
+            </TouchableOpacity>
+          </View>
+
+          {/* Center Minimalist Title Over Waves */}
+          <View style={styles.waveCenterTitleWrap}>
+            <Text style={styles.waveCenterCode}>SOOT • EV MOBILITY</Text>
+            <Text style={styles.waveCenterSub}>Chạm mở khóa 24/7 • Không thế chấp cọc</Text>
           </View>
         </View>
 
-        {/* =========================================
-            2. "GẦN BẠN" HORIZONTAL CAROUSEL
-        ========================================= */}
-        <View style={styles.nearbySection}>
-          <View style={styles.nearbyHeaderRow}>
-            <View style={styles.nearbyTitleGroup}>
-              <Ionicons name="sparkles" size={15} color="#00BFA5" />
-              <Text style={styles.nearbyTitle}>Xe điện sẵn sàng? Đội xe gần bạn đang chờ bạn.</Text>
-            </View>
-            <TouchableOpacity>
-              <Ionicons name="ellipsis-horizontal" size={18} color="#94A3B8" />
-            </TouchableOpacity>
-          </View>
-
-          {/* Quick Vehicle Mini Carousel */}
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.carouselRow}
+        {/* =========================================================
+            2. BENTO ROW: CONCENTRIC DIAL CARD + SPLIT PEACH/IVORY CARD
+        ========================================================= */}
+        <View style={styles.bentoSplitRow}>
+          {/* Left Vertical Card: Concentric Color Ring Dial (Middle-Left Ref) */}
+          <TouchableOpacity
+            style={styles.bentoLeftDialCard}
+            activeOpacity={0.9}
+            onPress={onNavigateToKey}
           >
-            {vehicles.slice(0, 4).map((veh) => (
-              <TouchableOpacity
-                key={veh.id}
-                style={styles.miniCard}
-                activeOpacity={0.88}
-                onPress={() => handleOpenBooking(veh)}
-              >
-                <View style={styles.miniCardImageWrap}>
-                  <Image source={{ uri: veh.thumbnail }} style={styles.miniCardImage} />
-                  <View style={styles.priceTagOver}>
-                    <Text style={styles.priceTagOverText}>
-                      {veh.hourlyPrice >= 100000 
-                        ? `${Math.round(veh.hourlyPrice / 1000)}k/h` 
-                        : `${veh.hourlyPrice.toLocaleString('vi-VN')}đ/h`}
-                    </Text>
-                  </View>
-                  <View style={styles.miniRatingTag}>
-                    <Ionicons name="star" size={10} color="#F59E0B" />
-                    <Text style={styles.miniRatingText}>{veh.rating}</Text>
-                  </View>
-                </View>
-                <View style={styles.miniCardContent}>
-                  <View style={styles.verifiedRow}>
-                    <Ionicons name="checkmark-circle" size={11} color="#00BFA5" />
-                    <Text style={styles.miniVehName} numberOfLines={1}>{veh.name}</Text>
-                  </View>
-                  <Text style={styles.miniDistText}>
-                    📍 {veh.stationId === 'hub-uth-01' ? 'UTH Cơ sở 2 • 0.6 km' : 'Ga Metro • 1.1 km'}
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
+            <View style={styles.miniCardDotsRow}>
+              <View style={styles.amberDot} />
+              <View style={styles.greyMiniDash} />
+            </View>
 
-          {/* Quick Filter Pill Buttons (Matching Xanh SM Screenshot) */}
-          <View style={styles.filterPillsRow}>
-            <TouchableOpacity
-              style={[styles.filterPill, selectedFilter === 'ALL' && styles.filterPillActive]}
-              onPress={() => setSelectedFilter('ALL')}
-            >
-              <Text style={[styles.filterPillText, selectedFilter === 'ALL' && styles.filterPillTextActive]}>
-                Đặt xe
-              </Text>
-            </TouchableOpacity>
+            {/* 3D Concentric Ring with Raised Center Knob */}
+            <View style={styles.concentricOuterPlate}>
+              <View style={styles.concentricRingSplit}>
+                <View style={styles.ringHalfPeach} />
+                <View style={styles.ringHalfBlue} />
+                <View style={styles.concentricCenterKnob}>
+                  <Ionicons name="key" size={16} color="#DF8268" />
+                </View>
+              </View>
+            </View>
 
+            <Text style={styles.dialCardLabel}>Digital Key</Text>
+            <Text style={styles.dialCardSub}>BLE 5.2</Text>
+
+            <View style={styles.bottomTinyKnobs}>
+              <View style={styles.yellowKnobTiny} />
+              <View style={styles.whiteKnobTiny} />
+            </View>
+          </TouchableOpacity>
+
+          {/* Right Split Peach & Ivory Card (Top-Right Image Ref) */}
+          <View style={styles.bentoRightSplitCard}>
+            {/* Left Peach Half */}
             <TouchableOpacity
-              style={[styles.filterPill, selectedFilter === 'CAR' && styles.filterPillActive]}
+              style={styles.splitPeachHalf}
+              activeOpacity={0.9}
               onPress={() => setSelectedFilter('CAR')}
             >
-              <Text style={[styles.filterPillText, selectedFilter === 'CAR' && styles.filterPillTextActive]}>
-                Thuê tự lái
-              </Text>
+              <View style={styles.peachTopHeader}>
+                <View style={styles.whiteMicroDot} />
+                <Text style={styles.peachHeaderTitle}>Ô TÔ EV</Text>
+              </View>
+
+              {/* 3D White Tactile Extruded Circle Knob */}
+              <View style={styles.extrudedWhiteKnobLarge}>
+                <Ionicons name="car-sport" size={20} color="#DF8268" />
+              </View>
+
+              <Text style={styles.peachActionTitle}>Thuê tự lái</Text>
+
+              {/* Bottom Tactile Micro Pills */}
+              <View style={styles.peachMicroPillsRow}>
+                <View style={styles.microWhitePill}>
+                  <Text style={styles.microPillText}>0đ cọc</Text>
+                </View>
+                <View style={styles.microWhitePill}>
+                  <Text style={styles.microPillText}>24/7</Text>
+                </View>
+              </View>
             </TouchableOpacity>
 
+            {/* Right Ivory Half */}
             <TouchableOpacity
-              style={[styles.filterPill, selectedFilter === 'MOTORBIKE' && styles.filterPillActive]}
+              style={styles.splitIvoryHalf}
+              activeOpacity={0.9}
               onPress={() => setSelectedFilter('MOTORBIKE')}
             >
-              <Text style={[styles.filterPillText, selectedFilter === 'MOTORBIKE' && styles.filterPillTextActive]}>
-                Xe máy điện
-              </Text>
-            </TouchableOpacity>
+              <View style={styles.ivoryTopHeader}>
+                <View style={styles.skyBlueSphere} />
+                <View>
+                  <Text style={styles.ivoryTitleBold}>Xe máy điện</Text>
+                  <Text style={styles.ivorySubMuted}>Đổi pin 0đ</Text>
+                </View>
+              </View>
 
-            <TouchableOpacity
-              style={styles.filterPill}
-              onPress={() => setSelectedFilter('ALL')}
-            >
-              <Text style={styles.filterPillText}>
-                Xem ưu đãi
-              </Text>
+              {/* Floating Pill Bar inside Ivory Half */}
+              <View style={styles.floatingMiniBar}>
+                <Text style={styles.floatingMiniBarText}>Từ 22.000đ/h</Text>
+                <View style={styles.tinyBlueDotBtn}>
+                  <Ionicons name="flash" size={9} color="#FFFFFF" />
+                </View>
+              </View>
+
+              {/* Raised White Circle + Pastel Pills */}
+              <View style={styles.ivoryBottomRow}>
+                <View style={styles.extrudedWhiteKnobMedium}>
+                  <Ionicons name="bicycle" size={16} color="#6E92B5" />
+                </View>
+                <View style={styles.pastelButtonsPair}>
+                  <View style={styles.pastelBlueCapsule} />
+                  <View style={styles.pastelPeachCapsule} />
+                </View>
+              </View>
             </TouchableOpacity>
           </View>
         </View>
 
-        {/* =========================================
-            3. TWO BIG HERO ACTION CARDS (XANH SM STYLE)
-        ========================================= */}
-        <View style={[styles.bigHeroCardsRow, isDesktop && styles.desktopHeroRow]}>
-          {/* Card 1: Thuê xe tự lái (Cyan Gradient) */}
-          <TouchableOpacity
-            style={[styles.heroActionCardLeft, isDesktop && styles.desktopHeroCard]}
-            activeOpacity={0.88}
-            onPress={() => setSelectedFilter('CAR')}
-          >
-            <View style={styles.heroTextCol}>
-              <Text style={[styles.heroCardTitle, isDesktop && { fontSize: 16 }]}>Đặt xe</Text>
-              <Text style={[styles.heroCardSub, isDesktop && { fontSize: 12 }]}>Nhận xe 24/7</Text>
-              <View style={styles.heroTagPill}>
-                <Text style={styles.heroTagText}>0đ cọc</Text>
-              </View>
+        {/* =========================================================
+            3. STACKED TACTILE KNOB CONSOLE (CENTER-BOTTOM IMAGE REF)
+        ========================================================= */}
+        <View style={styles.stackedConsoleWrapper}>
+          {/* Offset Split Backing Card (Cream + Terracotta Peach) */}
+          <View style={styles.consoleBackingCard}>
+            <View style={styles.backingLeftCream}>
+              <Text style={styles.backingHintText}>✦ 6 Trạm Hub ĐH GTVT & Metro</Text>
             </View>
-            <Image
-              source={{ uri: 'https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&w=400&q=80' }}
-              style={[styles.heroCarImage, isDesktop && { width: 140, height: 75 }]}
-              resizeMode="contain"
-            />
-          </TouchableOpacity>
+            <View style={styles.backingRightTerracotta} />
+          </View>
 
-          {/* Card 2: Xe máy điện / Đổi pin (Peach-Mint Gradient) */}
-          <TouchableOpacity
-            style={[styles.heroActionCardRight, isDesktop && styles.desktopHeroCard]}
-            activeOpacity={0.88}
-            onPress={() => setSelectedFilter('MOTORBIKE')}
-          >
-            <View style={styles.heroTextCol}>
-              <Text style={[styles.heroCardTitle, isDesktop && { fontSize: 16 }]}>Xe máy điện</Text>
-              <Text style={[styles.heroCardSub, isDesktop && { fontSize: 12 }]}>Đổi pin miễn phí</Text>
-              <View style={[styles.heroTagPill, { backgroundColor: '#FEEFD6' }]}>
-                <Text style={[styles.heroTagText, { color: '#B45309' }]}>Từ 22k/h</Text>
+          {/* Foreground Floating Ivory Console Card */}
+          <View style={styles.consoleForegroundCard}>
+            <View style={styles.consoleHeaderRow}>
+              <View style={styles.microBrandRow}>
+                <View style={styles.amberDot} />
+                <Text style={styles.consoleTitle}>DỊCH VỤ GIAO THÔNG THÔNG MINH</Text>
               </View>
+              <TouchableOpacity onPress={() => setSelectedFilter('ALL')}>
+                <Text style={styles.resetFilterText}>Tất cả ({vehicles.length})</Text>
+              </TouchableOpacity>
             </View>
-            <Image
-              source={{ uri: 'https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&w=400&q=80' }}
-              style={[styles.heroCarImage, isDesktop && { width: 140, height: 75 }]}
-              resizeMode="contain"
-            />
-          </TouchableOpacity>
-        </View>
 
-        {/* =========================================
-            4. "DỊCH VỤ KHÁC" (GRID OF 8 ROUNDED ICONS)
-        ========================================= */}
-        <View style={styles.servicesSection}>
-          <View style={styles.servicesHeaderRow}>
-            <Text style={styles.servicesSectionTitle}>Dịch vụ giao thông thông minh</Text>
-            <TouchableOpacity>
-              <Text style={styles.seeAllText}>Xem tất cả</Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={[styles.servicesGrid, isDesktop && styles.desktopServicesGrid]}>
-            {/* Row 1 */}
-            <TouchableOpacity style={isDesktop ? styles.desktopServiceItem : styles.serviceItem} onPress={() => setSelectedFilter('MOTORBIKE')}>
-              <View style={styles.serviceIconWrap}>
-                <Ionicons name="bicycle" size={26} color="#00BFA5" />
-              </View>
-              <Text style={styles.serviceLabel}>Xe máy điện</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={isDesktop ? styles.desktopServiceItem : styles.serviceItem} onPress={() => setSelectedFilter('CAR')}>
-              <View style={styles.badgeTopCorner}>
-                <Text style={styles.badgeTopCornerText}>-20%</Text>
-              </View>
-              <View style={styles.serviceIconWrap}>
-                <Ionicons name="car-sport" size={26} color="#0EA5E9" />
-              </View>
-              <Text style={styles.serviceLabel}>Xe tự lái EV</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={isDesktop ? styles.desktopServiceItem : styles.serviceItem}>
-              <View style={styles.serviceIconWrap}>
-                <Ionicons name="bus" size={26} color="#10B981" />
-              </View>
-              <Text style={styles.serviceLabel}>VinBus & Metro</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={isDesktop ? styles.desktopServiceItem : styles.serviceItem}>
-              <View style={[styles.badgeTopCorner, { backgroundColor: '#FEF3C7' }]}>
-                <Text style={[styles.badgeTopCornerText, { color: '#B45309' }]}>MỚI</Text>
-              </View>
-              <View style={styles.serviceIconWrap}>
-                <Ionicons name="diamond" size={26} color="#F59E0B" />
-              </View>
-              <Text style={styles.serviceLabel}>Hội viên ITS</Text>
-            </TouchableOpacity>
-
-            {/* Row 2 */}
-            <TouchableOpacity style={isDesktop ? styles.desktopServiceItem : styles.serviceItem} onPress={onNavigateToKey}>
-              <View style={styles.serviceIconWrap}>
-                <Ionicons name="key" size={26} color="#6366F1" />
-              </View>
-              <Text style={styles.serviceLabel}>Digital Key</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={isDesktop ? styles.desktopServiceItem : styles.serviceItem}>
-              <View style={styles.serviceIconWrap}>
-                <Ionicons name="battery-charging" size={26} color="#00BFA5" />
-              </View>
-              <Text style={styles.serviceLabel}>Trạm sạc Hub</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={isDesktop ? styles.desktopServiceItem : styles.serviceItem}>
-              <View style={styles.serviceIconWrap}>
-                <Ionicons name="git-network" size={26} color="#0284C7" />
-              </View>
-              <Text style={styles.serviceLabel}>Làn sóng xanh</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={isDesktop ? styles.desktopServiceItem : styles.serviceItem}>
-              <View style={styles.serviceIconWrap}>
-                <Ionicons name="gift" size={26} color="#EC4899" />
-              </View>
-              <Text style={styles.serviceLabel}>Thẻ quà tặng</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* =========================================
-            5. ITS GREEN WAVE CORRIDOR TICKER
-        ========================================= */}
-        <View style={styles.corridorBanner}>
-          <View style={styles.corridorLeft}>
-            <View style={styles.corridorTagRow}>
-              <View style={styles.pulseDot} />
-              <Text style={styles.corridorTagTitle}>HÀNH LANG LÀN SÓNG XANH GLOSA</Text>
+            {/* Inset Search/Filter Track Bar */}
+            <View style={styles.insetTrackBar}>
+              <TouchableOpacity
+                style={[styles.trackTab, selectedFilter === 'ALL' && styles.trackTabActive]}
+                onPress={() => setSelectedFilter('ALL')}
+              >
+                <Text style={[styles.trackTabText, selectedFilter === 'ALL' && styles.trackTabTextActive]}>
+                  Tất cả đội xe
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.trackTab, selectedFilter === 'CAR' && styles.trackTabActive]}
+                onPress={() => setSelectedFilter('CAR')}
+              >
+                <Text style={[styles.trackTabText, selectedFilter === 'CAR' && styles.trackTabTextActive]}>
+                  Ô tô điện EV
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.trackTab, selectedFilter === 'MOTORBIKE' && styles.trackTabActive]}
+                onPress={() => setSelectedFilter('MOTORBIKE')}
+              >
+                <Text style={[styles.trackTabText, selectedFilter === 'MOTORBIKE' && styles.trackTabTextActive]}>
+                  Xe máy điện
+                </Text>
+              </TouchableOpacity>
             </View>
-            <Text style={styles.corridorName}>Trục UTH - Điện Biên Phủ - Mai Chí Thọ</Text>
-            <Text style={styles.corridorDetail}>Vận tốc đồng bộ 45 km/h • Giảm 18.5% pin</Text>
-          </View>
-          <View style={styles.gaugePill}>
-            <Text style={styles.gaugeNumber}>45</Text>
-            <Text style={styles.gaugeLabel}>km/h</Text>
+
+            {/* 4 Tactile 3D Extruded Circular Knobs */}
+            <View style={styles.tactileKnobsGrid}>
+              <TouchableOpacity
+                style={styles.knobColumn}
+                onPress={() => setSelectedFilter('CAR')}
+              >
+                <View style={[styles.knobOuterRing, styles.knobRingPeach]}>
+                  <View style={styles.knobInnerCap}>
+                    <Ionicons name="car-sport" size={18} color="#DF8268" />
+                  </View>
+                </View>
+                <Text style={styles.knobTitle}>Thuê tự lái</Text>
+                <Text style={styles.knobSub}>Ô tô EV</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.knobColumn}
+                onPress={() => setSelectedFilter('MOTORBIKE')}
+              >
+                <View style={styles.knobOuterRing}>
+                  <View style={styles.knobInnerCap}>
+                    <Ionicons name="bicycle" size={18} color="#6E92B5" />
+                  </View>
+                </View>
+                <Text style={styles.knobTitle}>Xe máy điện</Text>
+                <Text style={styles.knobSub}>Đổi pin 0đ</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.knobColumn}
+                onPress={onNavigateToKey}
+              >
+                <View style={styles.knobOuterRing}>
+                  <View style={styles.knobInnerCap}>
+                    <Ionicons name="key" size={18} color="#C4684F" />
+                  </View>
+                </View>
+                <Text style={styles.knobTitle}>Khóa BLE</Text>
+                <Text style={styles.knobSub}>Mở 1 chạm</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.knobColumn}
+                onPress={() => setSelectedFilter('ALL')}
+              >
+                <View style={styles.knobOuterSquares}>
+                  <View style={styles.miniSquareBtn}>
+                    <Ionicons name="flash" size={13} color="#DF8268" />
+                  </View>
+                  <View style={styles.miniSquareBtn}>
+                    <Ionicons name="gift" size={13} color="#6E92B5" />
+                  </View>
+                </View>
+                <Text style={styles.knobTitle}>Ưu đãi -20%</Text>
+                <Text style={styles.knobSub}>Hội viên</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
 
-        {/* =========================================
-            6. VEHICLE CATALOG LIST
-        ========================================= */}
+        {/* =========================================================
+            4. TRIPLE CONCENTRIC 3D DIAL GAUGES (BOTTOM-LEFT IMAGE REF)
+        ========================================================= */}
+        <View style={styles.tripleGaugesCard}>
+          <View style={styles.waveCardTopRow}>
+            <View style={styles.microBrandRow}>
+              <View style={styles.amberDot} />
+              <Text style={styles.microBrandText}>ĐỒNG HỒ ĐIỀU VẬN LÀN SÓNG XANH GLOSA</Text>
+            </View>
+          </View>
+          <Text style={styles.gaugesSubtitle}>
+            Trục UTH – Điện Biên Phủ – Mai Chí Thọ • Đồng bộ đèn tín hiệu thời gian thực
+          </Text>
+
+          <View style={styles.threeDialsRow}>
+            {/* Dial 1: Peach + Slate Blue */}
+            <View style={styles.dialItem}>
+              <View style={styles.dialOuterDual}>
+                <View style={styles.dialHalfBlue} />
+                <View style={styles.dialCenter3DSphere}>
+                  <Text style={styles.sphereValText}>45</Text>
+                </View>
+              </View>
+              <Text style={styles.dialLabel}>km/h GLOSA</Text>
+            </View>
+
+            {/* Dial 2: Medium Terracotta Coral */}
+            <View style={styles.dialItem}>
+              <View style={styles.dialOuterCoral}>
+                <View style={styles.dialInnerCoralRing}>
+                  <View style={styles.dialCenter3DSphereSmall}>
+                    <Text style={styles.sphereValTextSmall}>92%</Text>
+                  </View>
+                </View>
+              </View>
+              <Text style={styles.dialLabel}>Pin Đội Xe</Text>
+            </View>
+
+            {/* Dial 3: Large Deep Terracotta Rose */}
+            <View style={styles.dialItem}>
+              <View style={styles.dialOuterDeepRose}>
+                <View style={styles.dialInnerRoseRing}>
+                  <View style={styles.dialCenter3DSphere}>
+                    <Text style={styles.sphereValText}>-18%</Text>
+                  </View>
+                </View>
+              </View>
+              <Text style={styles.dialLabel}>Giảm CO₂</Text>
+            </View>
+          </View>
+        </View>
+
+        {/* =========================================================
+            5. VEHICLE CATALOG LIST
+        ========================================================= */}
         <View style={styles.catalogHeaderRow}>
           <Text style={styles.catalogTitle}>
-            Danh mục xe sẵn sàng ({filteredVehicles.length})
+            Đội xe sẵn sàng ({filteredVehicles.length})
           </Text>
-          <TouchableOpacity style={styles.filterBtn}>
-            <Ionicons name="options-outline" size={14} color="#00BFA5" />
-            <Text style={styles.filterBtnText}>Lọc</Text>
-          </TouchableOpacity>
+          <View style={styles.filterBadgePill}>
+            <View style={styles.amberDot} />
+            <Text style={styles.filterBtnText}>Nhận xe tự động</Text>
+          </View>
         </View>
 
         <View style={isDesktop ? styles.desktopCardGrid : styles.mobileCardList}>
           {loading ? (
             <View style={styles.loadingBox}>
-              <ActivityIndicator size="small" color="#00BFA5" />
+              <ActivityIndicator size="small" color="#DF8268" />
               <Text style={styles.loadingText}>Đang đồng bộ đội xe...</Text>
             </View>
           ) : (
@@ -381,7 +439,11 @@ export default function HomeScreen({ onNavigateToKey }) {
               <VehicleCard
                 key={veh.id}
                 vehicle={veh}
-                style={isDesktop ? { width: width > 1050 ? '31.8%' : '48.5%', marginHorizontal: 0 } : null}
+                style={
+                  isDesktop
+                    ? { width: width > 1050 ? '31.8%' : '48.5%', marginHorizontal: 0 }
+                    : null
+                }
                 onSelect={handleOpenBooking}
                 onBook={handleOpenBooking}
               />
@@ -390,7 +452,7 @@ export default function HomeScreen({ onNavigateToKey }) {
         </View>
       </ScrollView>
 
-      {/* Booking Modal */}
+      {/* Tactile Soft UI Booking Modal */}
       <Modal visible={modalVisible} transparent animationType="fade">
         <View style={styles.modalBackdrop}>
           <View style={styles.modalContainer}>
@@ -400,54 +462,65 @@ export default function HomeScreen({ onNavigateToKey }) {
                 <Text style={styles.modalVehicleName}>{selectedVehicle?.name}</Text>
                 <Text style={styles.modalPlateText}>Biển số: {selectedVehicle?.plateNumber}</Text>
               </View>
-              <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.modalCloseIcon}>
-                <Ionicons name="close" size={20} color="#64748B" />
+              <TouchableOpacity
+                onPress={() => setModalVisible(false)}
+                style={styles.modalCloseKnob}
+              >
+                <Ionicons name="close" size={18} color="#2C221E" />
               </TouchableOpacity>
             </View>
 
             {selectedVehicle && (
               <>
-                <Text style={styles.modalSectionLabel}>Chọn thời gian thuê (theo giờ):</Text>
+                <Text style={styles.modalSectionLabel}>Chọn thời lượng thuê (theo giờ):</Text>
                 <View style={styles.durationRow}>
                   {[1, 2, 3, 5, 8, 24].map((h) => (
                     <TouchableOpacity
                       key={h}
-                      style={[styles.durationChip, durationHours === h && styles.durationChipActive]}
+                      style={[
+                        styles.durationChip,
+                        durationHours === h && styles.durationChipActive
+                      ]}
                       onPress={() => setDurationHours(h)}
                     >
-                      <Text style={[styles.durationText, durationHours === h && styles.durationTextActive]}>
+                      <Text
+                        style={[
+                          styles.durationText,
+                          durationHours === h && styles.durationTextActive
+                        ]}
+                      >
                         {h} Giờ
                       </Text>
                     </TouchableOpacity>
                   ))}
                 </View>
 
-                {/* Eco Impact Widget */}
                 <CO2Widget
                   eco={{
                     distanceKm: Math.round(durationHours * 22),
                     co2SavedKg: Math.round(durationHours * 2.64 * 10) / 10,
-                    treesEquivalent: Math.round((durationHours * 2.64 / 20) * 100) / 100,
+                    treesEquivalent: Math.round(durationHours * 0.13 * 100) / 100,
                     ecoPointsEarned: durationHours * 26
                   }}
                 />
 
-                {/* Price Breakdown */}
                 <View style={styles.priceSheet}>
                   <View style={styles.priceSheetRow}>
-                    <Text style={styles.sheetLabel}>Đơn giá</Text>
-                    <Text style={styles.sheetValue}>{selectedVehicle.hourlyPrice.toLocaleString('vi-VN')} đ/giờ</Text>
+                    <Text style={styles.sheetLabel}>Đơn giá thuê ({durationHours} giờ)</Text>
+                    <Text style={styles.sheetValue}>
+                      {(selectedVehicle.hourlyPrice * durationHours).toLocaleString('vi-VN')} đ
+                    </Text>
                   </View>
                   <View style={styles.priceSheetRow}>
-                    <Text style={styles.sheetLabel}>Thời gian</Text>
-                    <Text style={styles.sheetValue}>{durationHours} giờ</Text>
+                    <Text style={styles.sheetLabel}>Bảo hiểm & Phí ITS Hub</Text>
+                    <Text style={styles.sheetValue}>Miễn phí (0 đ)</Text>
                   </View>
                   <View style={styles.priceSheetRow}>
-                    <Text style={styles.sheetLabel}>Ký quỹ thế chấp (eKYC)</Text>
-                    <Text style={[styles.sheetValue, { color: '#00BFA5', fontWeight: '800' }]}>0 đ (Miễn cọc)</Text>
+                    <Text style={styles.sheetLabel}>Tiền thế chấp (eKYC Đã xác thực)</Text>
+                    <Text style={[styles.sheetValue, { color: '#6E92B5' }]}>0 đ (Miễn cọc)</Text>
                   </View>
                   <View style={[styles.priceSheetRow, styles.totalPriceRow]}>
-                    <Text style={styles.totalPriceLabel}>TỔNG THANH TOÁN:</Text>
+                    <Text style={styles.totalPriceLabel}>Tổng thanh toán</Text>
                     <Text style={styles.totalPriceValue}>
                       {(selectedVehicle.hourlyPrice * durationHours).toLocaleString('vi-VN')} đ
                     </Text>
@@ -456,16 +529,17 @@ export default function HomeScreen({ onNavigateToKey }) {
 
                 <TouchableOpacity
                   style={styles.modalSubmitButton}
-                  activeOpacity={0.88}
                   onPress={handleConfirmBooking}
                   disabled={bookingLoading}
                 >
                   {bookingLoading ? (
-                    <ActivityIndicator color="#FFFFFF" size="small" />
+                    <ActivityIndicator color="#FFFFFF" />
                   ) : (
                     <>
-                      <Ionicons name="key-outline" size={17} color="#FFFFFF" />
-                      <Text style={styles.modalSubmitText}>KÝ SỐ VÀ NHẬN XE NGAY</Text>
+                      <Text style={styles.modalSubmitText}>KÝ HỢP ĐỒNG & NHẬN KHÓA 3D</Text>
+                      <View style={styles.submitKnobCircle}>
+                        <Ionicons name="key" size={14} color="#DF8268" />
+                      </View>
                     </>
                   )}
                 </TouchableOpacity>
@@ -481,518 +555,829 @@ export default function HomeScreen({ onNavigateToKey }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F7F9'
+    backgroundColor: '#EFE5DC'
   },
   scrollContent: {
-    paddingBottom: 95
+    paddingTop: 14,
+    paddingBottom: 105
   },
-  topSearchWrapper: {
-    paddingHorizontal: 16,
-    paddingTop: 12,
-    paddingBottom: 8
+
+  /* ==========================================
+     1. LAYERED WAVE HERO CARD
+  ========================================== */
+  waveHeroCard: {
+    marginHorizontal: 16,
+    backgroundColor: '#FDFBF7',
+    borderRadius: 28,
+    padding: 18,
+    minHeight: 195,
+    position: 'relative',
+    overflow: 'hidden',
+    borderWidth: 1.5,
+    borderColor: '#FFFFFF',
+    shadowColor: '#8C6D5B',
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.16,
+    shadowRadius: 22,
+    elevation: 6
   },
-  searchPill: {
+  waveBackLayer: {
+    position: 'absolute',
+    bottom: -28,
+    left: -20,
+    right: -20,
+    height: 92,
+    backgroundColor: '#9AB8D4',
+    borderTopLeftRadius: 90,
+    borderTopRightRadius: 110,
+    opacity: 0.55
+  },
+  waveFrontLayer: {
+    position: 'absolute',
+    bottom: -36,
+    left: -10,
+    right: -30,
+    height: 82,
+    backgroundColor: '#6E92B5',
+    borderTopLeftRadius: 120,
+    borderTopRightRadius: 70
+  },
+  waveFloatingSphereWhite: {
+    position: 'absolute',
+    bottom: 18,
+    left: 38,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#FDFBF7',
+    shadowColor: '#2C221E',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.15,
+    shadowRadius: 10,
+    elevation: 4
+  },
+  waveFloatingCupPeach: {
+    position: 'absolute',
+    bottom: 14,
+    right: 26,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#F5BFA9',
+    borderWidth: 3,
+    borderColor: '#FDFBF7',
+    shadowColor: '#2C221E',
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.18,
+    shadowRadius: 8,
+    elevation: 4
+  },
+  waveCardTopRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 14,
+    zIndex: 3
+  },
+  microBrandRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6
+  },
+  amberDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#F2C97D'
+  },
+  microBrandText: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#7A6A63',
+    letterSpacing: 0.8
+  },
+  microStatusRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5
+  },
+  peachTinyDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#DF8268'
+  },
+  microLocationText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#A6968E'
+  },
+  tactileSearchPill: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    height: 48,
-    borderRadius: 24,
-    paddingHorizontal: 16,
+    height: 46,
+    borderRadius: 23,
+    paddingLeft: 16,
+    paddingRight: 6,
+    zIndex: 3,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.04,
-    shadowRadius: 6,
-    elevation: 2
-  },
-  searchIcon: {
-    marginRight: 10
+    borderColor: '#F7EFE6',
+    shadowColor: '#7A5C49',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.14,
+    shadowRadius: 14,
+    elevation: 5
   },
   searchInput: {
     flex: 1,
+    fontSize: 13,
+    color: '#2C221E',
+    fontWeight: '600'
+  },
+  clearBtn: {
+    paddingHorizontal: 6
+  },
+  searchSkyBlueKnob: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: '#86B4D9',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#6E92B5',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.35,
+    shadowRadius: 5
+  },
+  waveCenterTitleWrap: {
+    alignItems: 'center',
+    marginTop: 16,
+    marginBottom: 24,
+    zIndex: 3
+  },
+  waveCenterCode: {
     fontSize: 14,
-    color: '#1E293B',
-    fontWeight: '500'
+    fontWeight: '800',
+    color: '#5C4B43',
+    letterSpacing: 2.2
   },
-  nearbySection: {
-    paddingHorizontal: 16,
-    marginTop: 8
+  waveCenterSub: {
+    fontSize: 11,
+    color: '#8C7A70',
+    marginTop: 3,
+    fontWeight: '600'
   },
-  nearbyHeaderRow: {
+
+  /* ==========================================
+     2. BENTO ROW: LEFT DIAL + RIGHT SPLIT CARD
+  ========================================== */
+  bentoSplitRow: {
+    flexDirection: 'row',
+    marginHorizontal: 16,
+    marginTop: 16,
+    gap: 12
+  },
+  bentoLeftDialCard: {
+    width: '33%',
+    backgroundColor: '#FDFBF7',
+    borderRadius: 24,
+    padding: 12,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderWidth: 1.5,
+    borderColor: '#FFFFFF',
+    shadowColor: '#8C6D5B',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.14,
+    shadowRadius: 18,
+    elevation: 5
+  },
+  miniCardDotsRow: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  greyMiniDash: {
+    width: 14,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: '#E2D5C8'
+  },
+  concentricOuterPlate: {
+    width: 76,
+    height: 76,
+    borderRadius: 38,
+    backgroundColor: '#FBF6EF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 8,
+    shadowColor: '#7A5C49',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.18,
+    shadowRadius: 10,
+    elevation: 4,
+    borderWidth: 2,
+    borderColor: '#FFFFFF'
+  },
+  concentricRingSplit: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    overflow: 'hidden',
+    position: 'relative',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#F5BFA9'
+  },
+  ringHalfPeach: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    width: '55%',
+    backgroundColor: '#F5BFA9'
+  },
+  ringHalfBlue: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    width: '50%',
+    backgroundColor: '#86B4D9'
+  },
+  concentricCenterKnob: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: '#FDFBF7',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.18,
+    shadowRadius: 5,
+    elevation: 3
+  },
+  dialCardLabel: {
+    fontSize: 12,
+    fontWeight: '800',
+    color: '#2C221E'
+  },
+  dialCardSub: {
+    fontSize: 10,
+    color: '#A6968E',
+    fontWeight: '600'
+  },
+  bottomTinyKnobs: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    gap: 6,
+    marginTop: 6
+  },
+  yellowKnobTiny: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: '#F2C97D'
+  },
+  whiteKnobTiny: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: '#F2ECE4'
+  },
+
+  /* Right Split Peach / Ivory Card */
+  bentoRightSplitCard: {
+    flex: 1,
+    flexDirection: 'row',
+    borderRadius: 24,
+    overflow: 'hidden',
+    backgroundColor: '#FDFBF7',
+    borderWidth: 1.5,
+    borderColor: '#FFFFFF',
+    shadowColor: '#8C6D5B',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.14,
+    shadowRadius: 18,
+    elevation: 5
+  },
+  splitPeachHalf: {
+    width: '46%',
+    backgroundColor: '#F5C2AF',
+    padding: 12,
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  peachTopHeader: {
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5
+  },
+  whiteMicroDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#FDFBF7'
+  },
+  peachHeaderTitle: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#5C3A2E',
+    letterSpacing: 0.5
+  },
+  extrudedWhiteKnobLarge: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#FDFBF7',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 8,
+    shadowColor: '#8C4A32',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.22,
+    shadowRadius: 8,
+    elevation: 4
+  },
+  peachActionTitle: {
+    fontSize: 12,
+    fontWeight: '800',
+    color: '#2C221E',
+    marginBottom: 6
+  },
+  peachMicroPillsRow: {
+    flexDirection: 'row',
+    gap: 4
+  },
+  microWhitePill: {
+    backgroundColor: '#FDFBF7',
+    paddingHorizontal: 6,
+    paddingVertical: 3,
+    borderRadius: 8
+  },
+  microPillText: {
+    fontSize: 9,
+    fontWeight: '800',
+    color: '#7A5448'
+  },
+
+  splitIvoryHalf: {
+    flex: 1,
+    backgroundColor: '#FDFBF7',
+    padding: 12,
+    justifyContent: 'space-between'
+  },
+  ivoryTopHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8
+  },
+  skyBlueSphere: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    backgroundColor: '#98C4E6',
+    shadowColor: '#6E92B5',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4
+  },
+  ivoryTitleBold: {
+    fontSize: 12,
+    fontWeight: '800',
+    color: '#2C221E'
+  },
+  ivorySubMuted: {
+    fontSize: 10,
+    color: '#A6968E',
+    fontWeight: '600'
+  },
+  floatingMiniBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 10,
+    paddingVertical: 7,
+    borderRadius: 14,
+    marginVertical: 8,
+    borderWidth: 1,
+    borderColor: '#F5EFE8',
+    shadowColor: '#8C6D5B',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    elevation: 3
+  },
+  floatingMiniBarText: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#2C221E'
+  },
+  tinyBlueDotBtn: {
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    backgroundColor: '#86B4D9',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  ivoryBottomRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between'
+  },
+  extrudedWhiteKnobMedium: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#F5EFE8',
+    shadowColor: '#7A5C49',
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.16,
+    shadowRadius: 8,
+    elevation: 3
+  },
+  pastelButtonsPair: {
+    flexDirection: 'row',
+    gap: 6
+  },
+  pastelBlueCapsule: {
+    width: 22,
+    height: 16,
+    borderRadius: 8,
+    backgroundColor: '#98C4E6'
+  },
+  pastelPeachCapsule: {
+    width: 28,
+    height: 16,
+    borderRadius: 8,
+    backgroundColor: '#F5BFA9'
+  },
+
+  /* ==========================================
+     3. STACKED TACTILE KNOB CONSOLE
+  ========================================== */
+  stackedConsoleWrapper: {
+    marginHorizontal: 16,
+    marginTop: 20,
+    paddingBottom: 22,
+    position: 'relative'
+  },
+  consoleBackingCard: {
+    position: 'absolute',
+    bottom: 0,
+    left: 10,
+    right: 0,
+    height: 90,
+    borderRadius: 24,
+    overflow: 'hidden',
+    flexDirection: 'row',
+    shadowColor: '#8C6D5B',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.15,
+    shadowRadius: 16,
+    elevation: 3
+  },
+  backingLeftCream: {
+    width: '50%',
+    backgroundColor: '#F9ECE4',
+    justifyContent: 'flex-end',
+    padding: 12
+  },
+  backingHintText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#8C756A'
+  },
+  backingRightTerracotta: {
+    width: '50%',
+    backgroundColor: '#E59B82'
+  },
+  consoleForegroundCard: {
+    backgroundColor: '#FDFBF7',
+    borderRadius: 26,
+    padding: 16,
+    marginRight: 10,
+    borderWidth: 1.5,
+    borderColor: '#FFFFFF',
+    shadowColor: '#7A5C49',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.16,
+    shadowRadius: 20,
+    elevation: 6
+  },
+  consoleHeaderRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 10
   },
-  nearbyTitleGroup: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6
-  },
-  nearbyTitle: {
-    fontSize: 13,
+  consoleTitle: {
+    fontSize: 11,
     fontWeight: '800',
-    color: '#1E293B'
+    color: '#2C221E',
+    letterSpacing: 0.5
   },
-  carouselRow: {
-    gap: 10,
-    paddingBottom: 6
+  resetFilterText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#DF8268'
   },
-  miniCard: {
-    width: 145,
-    backgroundColor: '#FFFFFF',
+  insetTrackBar: {
+    flexDirection: 'row',
+    backgroundColor: '#F4ECE2',
     borderRadius: 14,
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: '#E8ECEF',
-    shadowColor: '#000',
+    padding: 4,
+    marginBottom: 16
+  },
+  trackTab: {
+    flex: 1,
+    paddingVertical: 6,
+    borderRadius: 11,
+    alignItems: 'center'
+  },
+  trackTabActive: {
+    backgroundColor: '#FDFBF7',
+    shadowColor: '#7A5C49',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.04,
-    shadowRadius: 6,
+    shadowOpacity: 0.12,
+    shadowRadius: 4,
     elevation: 2
   },
-  miniCardImageWrap: {
-    width: '100%',
-    height: 90,
-    position: 'relative',
-    backgroundColor: '#F1F5F9'
+  trackTabText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#8C7A70'
   },
-  miniCardImage: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'cover'
-  },
-  priceTagOver: {
-    position: 'absolute',
-    top: 6,
-    left: 6,
-    backgroundColor: 'rgba(239, 68, 68, 0.95)',
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 4
-  },
-  priceTagOverText: {
-    color: '#FFFFFF',
-    fontSize: 10,
+  trackTabTextActive: {
+    color: '#2C221E',
     fontWeight: '800'
   },
-  miniRatingTag: {
-    position: 'absolute',
-    bottom: 6,
-    left: 6,
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(15, 23, 42, 0.75)',
-    paddingHorizontal: 5,
-    paddingVertical: 2,
-    borderRadius: 4,
-    gap: 3
-  },
-  miniRatingText: {
-    color: '#FFFFFF',
-    fontSize: 10,
-    fontWeight: '700'
-  },
-  miniCardContent: {
-    padding: 8
-  },
-  verifiedRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4
-  },
-  miniVehName: {
-    fontSize: 12,
-    fontWeight: '800',
-    color: '#1E293B',
-    flex: 1
-  },
-  miniDistText: {
-    fontSize: 10,
-    color: '#64748B',
-    marginTop: 2
-  },
-  filterPillsRow: {
-    flexDirection: 'row',
-    gap: 8,
-    marginTop: 10
-  },
-  filterPill: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: '#E2E8F0'
-  },
-  filterPillActive: {
-    backgroundColor: '#00BFA5',
-    borderColor: '#00BFA5'
-  },
-  filterPillText: {
-    fontSize: 11,
-    fontWeight: '600',
-    color: '#64748B'
-  },
-  filterPillTextActive: {
-    color: '#FFFFFF',
-    fontWeight: '700'
-  },
-  bigHeroCardsRow: {
-    flexDirection: 'row',
-    paddingHorizontal: 16,
-    marginTop: 14,
-    gap: 10
-  },
-  heroActionCardLeft: {
-    flex: 1,
-    height: 96,
-    borderRadius: 16,
-    backgroundColor: '#E6F8F6',
-    borderWidth: 1,
-    borderColor: '#C7F1EC',
-    padding: 12,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    overflow: 'hidden'
-  },
-  heroActionCardRight: {
-    flex: 1,
-    height: 96,
-    borderRadius: 16,
-    backgroundColor: '#FFF7EB',
-    borderWidth: 1,
-    borderColor: '#FEEFD6',
-    padding: 12,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    overflow: 'hidden'
-  },
-  heroTextCol: {
-    justifyContent: 'center',
-    zIndex: 2
-  },
-  heroCardTitle: {
-    fontSize: 14,
-    fontWeight: '800',
-    color: '#0F172A'
-  },
-  heroCardSub: {
-    fontSize: 10,
-    color: '#64748B',
-    marginTop: 2
-  },
-  heroTagPill: {
-    backgroundColor: '#C7F1EC',
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 4,
-    alignSelf: 'flex-start',
-    marginTop: 6
-  },
-  heroTagText: {
-    fontSize: 9,
-    fontWeight: '800',
-    color: '#008E7B'
-  },
-  heroCarImage: {
-    width: 68,
-    height: 52,
-    borderRadius: 6
-  },
-  servicesSection: {
-    paddingHorizontal: 16,
-    marginTop: 18
-  },
-  servicesHeaderRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 12
-  },
-  servicesSectionTitle: {
-    fontSize: 14,
-    fontWeight: '800',
-    color: '#1E293B'
-  },
-  seeAllText: {
-    fontSize: 12,
-    color: '#64748B',
-    fontWeight: '600'
-  },
-  servicesGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    rowGap: 14
-  },
-  serviceItem: {
-    width: '22%',
-    alignItems: 'center',
-    position: 'relative'
-  },
-  serviceIconWrap: {
-    width: 54,
-    height: 54,
-    borderRadius: 18,
-    backgroundColor: '#FFFFFF',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: '#E8ECEF',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.04,
-    shadowRadius: 5,
-    elevation: 2
-  },
-  serviceLabel: {
-    fontSize: 11,
-    fontWeight: '600',
-    color: '#475569',
-    marginTop: 6,
-    textAlign: 'center'
-  },
-  badgeTopCorner: {
-    position: 'absolute',
-    top: -4,
-    right: 0,
-    backgroundColor: '#FEE2E2',
-    paddingHorizontal: 5,
-    paddingVertical: 1.5,
-    borderRadius: 4,
-    zIndex: 5
-  },
-  badgeTopCornerText: {
-    fontSize: 8,
-    fontWeight: '800',
-    color: '#DC2626'
-  },
-  corridorBanner: {
-    backgroundColor: '#0F172A',
-    borderRadius: 16,
-    marginHorizontal: 16,
-    marginTop: 18,
-    padding: 14,
+  tactileKnobsGrid: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center'
   },
-  corridorLeft: {
-    flex: 1
-  },
-  corridorTagRow: {
-    flexDirection: 'row',
+  knobColumn: {
     alignItems: 'center',
-    gap: 6,
-    marginBottom: 4
+    width: '23%'
   },
-  pulseDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: '#00BFA5'
-  },
-  corridorTagTitle: {
-    fontSize: 9,
-    fontWeight: '800',
-    color: '#5EEAD4',
-    letterSpacing: 0.5
-  },
-  corridorName: {
-    color: '#FFFFFF',
-    fontSize: 13,
-    fontWeight: '800'
-  },
-  corridorDetail: {
-    color: '#94A3B8',
-    fontSize: 10,
-    marginTop: 2
-  },
-  gaugePill: {
-    width: 48,
-    height: 48,
-    borderRadius: 14,
-    backgroundColor: '#1E293B',
+  knobOuterRing: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: '#F7F0E6',
     alignItems: 'center',
     justifyContent: 'center',
+    marginBottom: 8,
     borderWidth: 1.5,
-    borderColor: '#00BFA5'
+    borderColor: '#FFFFFF',
+    shadowColor: '#7A5C49',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.16,
+    shadowRadius: 10,
+    elevation: 4
   },
-  gaugeNumber: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '800'
+  knobRingPeach: {
+    backgroundColor: '#FCE3D7'
   },
-  gaugeLabel: {
-    color: '#5EEAD4',
-    fontSize: 8,
-    fontWeight: '700',
-    marginTop: -2
+  knobInnerCap: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4
   },
+  knobOuterSquares: {
+    width: 56,
+    height: 56,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 4
+  },
+  miniSquareBtn: {
+    width: 25,
+    height: 52,
+    borderRadius: 10,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#7A5C49',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 6,
+    elevation: 3
+  },
+  knobTitle: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: '#2C221E',
+    textAlign: 'center'
+  },
+  knobSub: {
+    fontSize: 9,
+    color: '#A6968E',
+    fontWeight: '600',
+    marginTop: 1
+  },
+
+  /* ==========================================
+     4. TRIPLE CONCENTRIC 3D DIAL GAUGES
+  ========================================== */
+  tripleGaugesCard: {
+    marginHorizontal: 16,
+    marginTop: 16,
+    backgroundColor: '#FDFBF7',
+    borderRadius: 26,
+    padding: 18,
+    borderWidth: 1.5,
+    borderColor: '#FFFFFF',
+    shadowColor: '#8C6D5B',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.14,
+    shadowRadius: 18,
+    elevation: 5
+  },
+  gaugesSubtitle: {
+    fontSize: 11,
+    color: '#8C7A70',
+    marginBottom: 16,
+    fontWeight: '600'
+  },
+  threeDialsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center'
+  },
+  dialItem: {
+    alignItems: 'center'
+  },
+  dialOuterDual: {
+    width: 78,
+    height: 78,
+    borderRadius: 39,
+    backgroundColor: '#F5C2AF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+    overflow: 'hidden',
+    shadowColor: '#7A5C49',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+    elevation: 4
+  },
+  dialHalfBlue: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    top: 0,
+    width: '55%',
+    backgroundColor: '#7FA5C9'
+  },
+  dialOuterCoral: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: '#F2BAA6',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#7A5C49',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+    elevation: 4
+  },
+  dialInnerCoralRing: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: '#DF8E74',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  dialOuterDeepRose: {
+    width: 84,
+    height: 84,
+    borderRadius: 42,
+    backgroundColor: '#E5A898',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#7A5C49',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.22,
+    shadowRadius: 10,
+    elevation: 4
+  },
+  dialInnerRoseRing: {
+    width: 68,
+    height: 68,
+    borderRadius: 34,
+    backgroundColor: '#C97B68',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  dialCenter3DSphere: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: '#FDFBF7',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.22,
+    shadowRadius: 5,
+    elevation: 4
+  },
+  dialCenter3DSphereSmall: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: '#FDFBF7',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3
+  },
+  sphereValText: {
+    fontSize: 10,
+    fontWeight: '900',
+    color: '#2C221E'
+  },
+  sphereValTextSmall: {
+    fontSize: 9,
+    fontWeight: '900',
+    color: '#2C221E'
+  },
+  dialLabel: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: '#5C4B43',
+    marginTop: 8
+  },
+
+  /* ==========================================
+     5. CATALOG SECTION
+  ========================================== */
   catalogHeaderRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    marginTop: 18,
-    marginBottom: 8
+    paddingHorizontal: 18,
+    marginTop: 22,
+    marginBottom: 12
   },
   catalogTitle: {
-    fontSize: 14,
-    fontWeight: '800',
-    color: '#1E293B'
+    fontSize: 16,
+    fontWeight: '900',
+    color: '#2C221E'
   },
-  filterBtn: {
+  filterBadgePill: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4
+    backgroundColor: '#FDFBF7',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    gap: 6,
+    borderWidth: 1,
+    borderColor: '#FFFFFF'
   },
   filterBtnText: {
-    fontSize: 12,
-    color: '#00BFA5',
-    fontWeight: '700'
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#7A6A63'
   },
   loadingBox: {
-    paddingVertical: 30,
+    padding: 40,
     alignItems: 'center'
   },
   loadingText: {
+    marginTop: 8,
     fontSize: 12,
-    color: '#64748B',
-    marginTop: 6
-  },
-  modalBackdrop: {
-    flex: 1,
-    backgroundColor: 'rgba(15, 23, 42, 0.7)',
-    justifyContent: 'center',
-    padding: 16
-  },
-  modalContainer: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    padding: 18,
-    maxHeight: '90%'
-  },
-  modalHeaderStrip: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    borderBottomWidth: 1,
-    borderBottomColor: '#F1F5F9',
-    paddingBottom: 10,
-    marginBottom: 12
-  },
-  modalContractTitle: {
-    fontSize: 10,
-    fontWeight: '800',
-    color: '#00BFA5',
-    letterSpacing: 0.6
-  },
-  modalVehicleName: {
-    fontSize: 16,
-    fontWeight: '800',
-    color: '#1E293B',
-    marginTop: 2
-  },
-  modalPlateText: {
-    fontSize: 11,
-    color: '#64748B',
-    fontWeight: '600'
-  },
-  modalCloseIcon: {
-    padding: 4
-  },
-  modalSectionLabel: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#475569',
-    marginBottom: 8
-  },
-  durationRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 6,
-    marginBottom: 12
-  },
-  durationChip: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 8,
-    backgroundColor: '#F8FAFC',
-    borderWidth: 1,
-    borderColor: '#E2E8F0'
-  },
-  durationChipActive: {
-    backgroundColor: '#00BFA5',
-    borderColor: '#00BFA5'
-  },
-  durationText: {
-    fontSize: 11,
-    fontWeight: '600',
-    color: '#64748B'
-  },
-  durationTextActive: {
-    color: '#FFFFFF',
-    fontWeight: '700'
-  },
-  priceSheet: {
-    backgroundColor: '#F8FAFC',
-    borderRadius: 10,
-    padding: 12,
-    marginVertical: 10,
-    borderWidth: 1,
-    borderColor: '#E2E8F0'
-  },
-  priceSheetRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 6
-  },
-  sheetLabel: {
-    fontSize: 11,
-    color: '#64748B'
-  },
-  sheetValue: {
-    fontSize: 11,
-    color: '#1E293B',
-    fontWeight: '700'
-  },
-  totalPriceRow: {
-    borderTopWidth: 1,
-    borderTopColor: '#E2E8F0',
-    paddingTop: 8,
-    marginTop: 4,
-    marginBottom: 0
-  },
-  totalPriceLabel: {
-    fontSize: 12,
-    fontWeight: '800',
-    color: '#1E293B'
-  },
-  totalPriceValue: {
-    fontSize: 16,
-    fontWeight: '800',
-    color: '#00BFA5'
-  },
-  modalSubmitButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#00BFA5',
-    paddingVertical: 13,
-    borderRadius: 12,
-    gap: 8,
-    marginTop: 8
-  },
-  modalSubmitText: {
-    color: '#FFFFFF',
-    fontSize: 13,
-    fontWeight: '800',
-    letterSpacing: 0.5
+    color: '#7A6A63'
   },
   desktopCardGrid: {
     flexDirection: 'row',
@@ -1007,24 +1392,164 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingBottom: 24
   },
-  desktopHeroRow: {
-    gap: 16,
-    marginTop: 18
+
+  /* ==========================================
+     6. BOOKING MODAL (SOFT UI)
+  ========================================== */
+  modalBackdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(44, 34, 30, 0.45)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 18
   },
-  desktopHeroCard: {
-    height: 110,
-    padding: 16,
-    borderRadius: 16
+  modalContainer: {
+    width: '100%',
+    maxWidth: 400,
+    backgroundColor: '#FDFBF7',
+    borderRadius: 28,
+    padding: 20,
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
+    shadowColor: '#2C221E',
+    shadowOffset: { width: 0, height: 14 },
+    shadowOpacity: 0.22,
+    shadowRadius: 24,
+    elevation: 12
   },
-  desktopServicesGrid: {
+  modalHeaderStrip: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 14
+  },
+  modalContractTitle: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#DF8268',
+    letterSpacing: 0.8
+  },
+  modalVehicleName: {
+    fontSize: 17,
+    fontWeight: '900',
+    color: '#2C221E',
+    marginTop: 2
+  },
+  modalPlateText: {
+    fontSize: 11,
+    color: '#7A6A63',
+    marginTop: 2,
+    fontWeight: '600'
+  },
+  modalCloseKnob: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: '#F5EFE8',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  modalSectionLabel: {
+    fontSize: 12,
+    fontWeight: '800',
+    color: '#5C4B43',
+    marginBottom: 8
+  },
+  durationRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    paddingHorizontal: 12
+    gap: 8,
+    marginBottom: 12
   },
-  desktopServiceItem: {
-    width: '12%',
+  durationChip: {
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+    borderRadius: 14,
+    backgroundColor: '#F5EFE8',
+    borderWidth: 1,
+    borderColor: '#FFFFFF'
+  },
+  durationChipActive: {
+    backgroundColor: '#DF8268',
+    borderColor: '#F5BFA9'
+  },
+  durationText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#7A6A63'
+  },
+  durationTextActive: {
+    color: '#FFFFFF',
+    fontWeight: '800'
+  },
+  priceSheet: {
+    backgroundColor: '#F7F1E8',
+    borderRadius: 18,
+    padding: 14,
+    marginVertical: 10,
+    borderWidth: 1,
+    borderColor: '#FFFFFF'
+  },
+  priceSheetRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 6
+  },
+  sheetLabel: {
+    fontSize: 11,
+    color: '#7A6A63',
+    fontWeight: '600'
+  },
+  sheetValue: {
+    fontSize: 11,
+    color: '#2C221E',
+    fontWeight: '800'
+  },
+  totalPriceRow: {
+    borderTopWidth: 1,
+    borderTopColor: '#E6D9CE',
+    paddingTop: 8,
+    marginTop: 4,
+    marginBottom: 0
+  },
+  totalPriceLabel: {
+    fontSize: 13,
+    fontWeight: '900',
+    color: '#2C221E'
+  },
+  totalPriceValue: {
+    fontSize: 16,
+    fontWeight: '900',
+    color: '#DF8268'
+  },
+  modalSubmitButton: {
+    flexDirection: 'row',
     alignItems: 'center',
-    position: 'relative'
+    justifyContent: 'center',
+    backgroundColor: '#DF8268',
+    paddingVertical: 10,
+    paddingHorizontal: 18,
+    borderRadius: 24,
+    gap: 10,
+    marginTop: 8,
+    shadowColor: '#DF8268',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.35,
+    shadowRadius: 12,
+    elevation: 5
+  },
+  modalSubmitText: {
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontWeight: '800',
+    letterSpacing: 0.4
+  },
+  submitKnobCircle: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: '#FDFBF7',
+    alignItems: 'center',
+    justifyContent: 'center'
   }
 });
