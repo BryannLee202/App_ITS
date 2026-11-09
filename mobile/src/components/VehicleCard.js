@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
   tagItem: {
     fontFamily: FONTS.family,
     fontSize: 12,
-    color: '#0D9488',
+    color: '#2E7D5B',
     fontWeight: '500'
   },
   tagDot: {
@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
     marginTop: 2
   },
   ctaButton: {
-    backgroundColor: '#18B6B4',
+    backgroundColor: '#2E7D5B',
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 12

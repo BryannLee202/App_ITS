@@ -224,7 +224,7 @@ export default function HomeScreen({
 
                   {/* Verified Checkmark + Title + Distance */}
                   <View style={styles.promoTitleLine}>
-                    <Ionicons name="checkmark-circle" size={14} color="#26C6DA" style={{ marginTop: 2 }} />
+                    <Ionicons name="checkmark-circle" size={14} color="#2E7D5B" style={{ marginTop: 2 }} />
                     <Text style={styles.promoItemTitle} numberOfLines={2}>
                       {veh.name} - {veh.plateNumber}
                     </Text>
@@ -433,7 +433,7 @@ export default function HomeScreen({
           </View>
 
           {loading ? (
-            <ActivityIndicator size="large" color="#18B6B4" style={{ marginVertical: 28 }} />
+            <ActivityIndicator size="large" color="#2E7D5B" style={{ marginVertical: 28 }} />
           ) : (
             vehicles.map(vehicle => (
               <VehicleCard
@@ -577,13 +577,13 @@ export default function HomeScreen({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F4F7F8'
+    backgroundColor: '#F4F7F5'
   },
   scrollContent: {
     paddingBottom: 30
   },
   topMapBackdrop: {
-    backgroundColor: '#DCE3E6',
+    backgroundColor: '#DDE7E1',
     paddingTop: 18,
     paddingBottom: 18,
     paddingHorizontal: 16,
@@ -596,9 +596,9 @@ const styles = StyleSheet.create({
     left: 40,
     width: 14,
     height: 180,
-    backgroundColor: '#EEF2F4',
+    backgroundColor: '#EFF4F1',
     transform: [{ rotate: '35deg' }],
-    opacity: 0.7
+    opacity: 0.75
   },
   roadLineDiagonal2: {
     position: 'absolute',
@@ -606,9 +606,9 @@ const styles = StyleSheet.create({
     right: 60,
     width: 10,
     height: 180,
-    backgroundColor: '#EEF2F4',
+    backgroundColor: '#EFF4F1',
     transform: [{ rotate: '-28deg' }],
-    opacity: 0.7
+    opacity: 0.75
   },
   buildingBlock1: {
     position: 'absolute',
@@ -617,7 +617,7 @@ const styles = StyleSheet.create({
     width: 65,
     height: 36,
     borderRadius: 6,
-    backgroundColor: '#CBD4D8',
+    backgroundColor: '#C8D6CE',
     opacity: 0.5,
     transform: [{ rotate: '15deg' }]
   },
@@ -628,7 +628,7 @@ const styles = StyleSheet.create({
     width: 80,
     height: 40,
     borderRadius: 6,
-    backgroundColor: '#CBD4D8',
+    backgroundColor: '#C8D6CE',
     opacity: 0.5,
     transform: [{ rotate: '-12deg' }]
   },
@@ -649,14 +649,14 @@ const styles = StyleSheet.create({
   searchPlaceholderText: {
     fontFamily: FONTS.family,
     fontSize: 15,
-    color: '#6F767E',
+    color: '#5C6B63',
     fontWeight: '500',
     flex: 1
   },
   toastBanner: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#18B6B4',
+    backgroundColor: '#2E7D5B',
     marginHorizontal: 16,
     marginTop: 10,
     padding: 12,
@@ -671,12 +671,12 @@ const styles = StyleSheet.create({
   },
   toastMsg: {
     fontFamily: FONTS.family,
-    color: '#E0F7FA',
+    color: '#EAF6F0',
     fontSize: 11,
     marginTop: 1
   },
   sparkleSection: {
-    backgroundColor: '#EBF0F2',
+    backgroundColor: '#EAEFE9',
     paddingTop: 14,
     paddingBottom: 16
   },
@@ -831,10 +831,10 @@ const styles = StyleSheet.create({
     elevation: 2
   },
   bigHeroAqua: {
-    backgroundColor: '#E4F8F8'
+    backgroundColor: '#EAF6F0'
   },
   bigHeroCream: {
-    backgroundColor: '#FDF7E7'
+    backgroundColor: '#FDF6EC'
   },
   aquaInnerGlow: {
     position: 'absolute',
@@ -843,7 +843,7 @@ const styles = StyleSheet.create({
     width: 110,
     height: 110,
     borderRadius: 55,
-    backgroundColor: '#B2EBF2',
+    backgroundColor: '#A7F3D0',
     opacity: 0.45
   },
   creamInnerGlow: {
@@ -853,8 +853,8 @@ const styles = StyleSheet.create({
     width: 110,
     height: 110,
     borderRadius: 55,
-    backgroundColor: '#FFE082',
-    opacity: 0.35
+    backgroundColor: '#FDE68A',
+    opacity: 0.4
   },
   bigHeroTitle: {
     fontFamily: FONTS.family,
@@ -951,31 +951,31 @@ const styles = StyleSheet.create({
   vf8BannerCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#E0F2F1',
+    backgroundColor: '#EAF6F0',
     marginHorizontal: 16,
     marginTop: 18,
     borderRadius: 20,
     padding: 14,
     borderWidth: 1,
-    borderColor: '#B2DFDB'
+    borderColor: '#B7E4CE'
   },
   vf8BannerTag: {
     fontFamily: FONTS.family,
     fontSize: 10,
     fontWeight: '700',
-    color: '#00796B'
+    color: '#2E7D5B'
   },
   vf8BannerTitle: {
     fontFamily: FONTS.family,
     fontSize: 16,
     fontWeight: '800',
-    color: '#004D40',
+    color: '#14532D',
     marginTop: 2
   },
   vf8BannerSub: {
     fontFamily: FONTS.family,
     fontSize: 11,
-    color: '#00695C',
+    color: '#1E563F',
     marginTop: 2
   },
   vf8BannerImg: {
@@ -1005,8 +1005,8 @@ const styles = StyleSheet.create({
     borderColor: '#E2E8F0'
   },
   catPillActive: {
-    backgroundColor: '#18B6B4',
-    borderColor: '#18B6B4'
+    backgroundColor: '#2E7D5B',
+    borderColor: '#2E7D5B'
   },
   catPillText: {
     fontFamily: FONTS.family,
@@ -1083,7 +1083,7 @@ const styles = StyleSheet.create({
     height: 46,
     borderRadius: 12,
     borderWidth: 1.5,
-    borderColor: '#18B6B4',
+    borderColor: '#2E7D5B',
     paddingHorizontal: 12,
     gap: 10,
     backgroundColor: '#FFFFFF'
@@ -1111,7 +1111,7 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 10,
-    backgroundColor: '#26C6DA',
+    backgroundColor: '#2E7D5B',
     alignItems: 'center',
     justifyContent: 'center'
   },

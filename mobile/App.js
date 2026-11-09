@@ -221,7 +221,7 @@ export default function App() {
                     {isActive ? (
                       <View style={styles.activeCyanGlowOuter}>
                         <View style={styles.activeCyanGlowInner}>
-                          <Ionicons name={tab.icon} size={22} color="#18B6B4" />
+                          <Ionicons name={tab.icon} size={22} color="#2E7D5B" />
                         </View>
                       </View>
                     ) : (
@@ -506,7 +506,7 @@ export default function App() {
 const styles = StyleSheet.create({
   outerViewport: {
     flex: 1,
-    backgroundColor: '#E4EEF0',
+    backgroundColor: '#E4EDE8',
     alignItems: 'center',
     justifyContent: 'flex-start'
   },
@@ -515,7 +515,7 @@ const styles = StyleSheet.create({
     height: 44,
     backgroundColor: '#FFFFFF',
     borderBottomWidth: 1,
-    borderBottomColor: '#E0ECEE',
+    borderBottomColor: '#DFEAE3',
     paddingHorizontal: 20,
     flexDirection: 'row',
     alignItems: 'center',
@@ -530,7 +530,7 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: '#18B6B4'
+    backgroundColor: '#2E7D5B'
   },
   toolbarTitle: {
     fontFamily: FONTS.family,
@@ -567,13 +567,13 @@ const styles = StyleSheet.create({
     color: '#64748B'
   },
   modeBtnTextActive: {
-    color: '#00838F',
+    color: '#2E7D5B',
     fontWeight: '700'
   },
   appShell: {
     flex: 1,
     width: '100%',
-    backgroundColor: '#F5F7F9'
+    backgroundColor: '#F4F7F5'
   },
   phoneSimulatorShell: {
     width: 414,
@@ -620,14 +620,14 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 62,
     borderRadius: 31,
-    backgroundColor: 'rgba(232, 237, 241, 0.94)',
+    backgroundColor: 'rgba(232, 239, 235, 0.94)',
     borderWidth: 1.5,
     borderColor: 'rgba(255, 255, 255, 0.95)',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around',
     paddingHorizontal: 6,
-    shadowColor: '#102A43',
+    shadowColor: '#143326',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.12,
     shadowRadius: 18,
@@ -643,19 +643,19 @@ const styles = StyleSheet.create({
     width: 66,
     height: 52,
     borderRadius: 26,
-    backgroundColor: 'rgba(128, 222, 234, 0.35)',
+    backgroundColor: 'rgba(110, 231, 183, 0.38)',
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#26C6DA',
+    shadowColor: '#2E7D5B',
     shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.55,
+    shadowOpacity: 0.45,
     shadowRadius: 12
   },
   activeCyanGlowInner: {
     width: 46,
     height: 40,
     borderRadius: 20,
-    backgroundColor: 'rgba(224, 247, 250, 0.92)',
+    backgroundColor: 'rgba(234, 246, 240, 0.95)',
     alignItems: 'center',
     justifyContent: 'center'
   },
@@ -669,12 +669,12 @@ const styles = StyleSheet.create({
     width: 62,
     height: 62,
     borderRadius: 31,
-    backgroundColor: 'rgba(232, 237, 241, 0.94)',
+    backgroundColor: 'rgba(232, 239, 235, 0.94)',
     borderWidth: 1.5,
     borderColor: 'rgba(255, 255, 255, 0.95)',
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#102A43',
+    shadowColor: '#143326',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.14,
     shadowRadius: 18,
@@ -913,7 +913,7 @@ const styles = StyleSheet.create({
     gap: 12
   },
   grTurquoiseBtn: {
-    backgroundColor: '#22BDC6',
+    backgroundColor: '#2E7D5B',
     paddingVertical: 15,
     borderRadius: 12,
     alignItems: 'center',
@@ -1032,16 +1032,16 @@ const styles = StyleSheet.create({
   voucherCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F4FBFB',
+    backgroundColor: '#F3FAF6',
     borderRadius: 14,
     padding: 14,
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: '#B2EBF2'
+    borderColor: '#B7E4CE'
   },
   voucherCodeText: {
     fontFamily: FONTS.family,
-    color: '#00838F',
+    color: '#2E7D5B',
     fontSize: 12,
     fontWeight: '800',
     marginBottom: 2
@@ -1059,7 +1059,7 @@ const styles = StyleSheet.create({
     marginTop: 2
   },
   copyVoucherBtn: {
-    backgroundColor: '#18B6B4',
+    backgroundColor: '#2E7D5B',
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 10

@@ -64,9 +64,9 @@ export default function ProfileScreen({ onOpenGreenRace }) {
            ============================================================ */}
         <View style={styles.emailVerifyCard}>
           <View style={styles.envelope3DBox}>
-            <Ionicons name="mail-open" size={26} color="#90CAF9" />
+            <Ionicons name="mail-open" size={26} color="#34D399" />
             <View style={styles.shieldCyanBadge}>
-              <Ionicons name="shield-checkmark" size={14} color="#00BCD4" />
+              <Ionicons name="shield-checkmark" size={14} color="#2E7D5B" />
             </View>
           </View>
           <View style={{ flex: 1 }}>
@@ -157,7 +157,7 @@ export default function ProfileScreen({ onOpenGreenRace }) {
               <View style={styles.heartBubbleRed}>
                 <Ionicons name="heart" size={10} color="#FFFFFF" />
               </View>
-              <Ionicons name="home" size={38} color="#26C6DA" />
+              <Ionicons name="home" size={38} color="#2E7D5B" />
             </View>
           </TouchableOpacity>
 
@@ -177,15 +177,15 @@ export default function ProfileScreen({ onOpenGreenRace }) {
         <Text style={styles.sectionTitle}>Tác vụ</Text>
         <View style={styles.grid2x2}>
           <TouchableOpacity style={styles.taskCardItem}>
-            <View style={[styles.taskIcon3D, { backgroundColor: '#E0F7FA' }]}>
-              <Ionicons name="card" size={20} color="#00BCD4" />
+            <View style={[styles.taskIcon3D, { backgroundColor: '#EAF6F0' }]}>
+              <Ionicons name="card" size={20} color="#2E7D5B" />
             </View>
             <Text style={styles.taskCardLabel}>Thanh toán</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.taskCardItem}>
-            <View style={[styles.taskIcon3D, { backgroundColor: '#E1F5FE' }]}>
-              <Ionicons name="ticket" size={20} color="#0288D1" />
+            <View style={[styles.taskIcon3D, { backgroundColor: '#ECFCCB' }]}>
+              <Ionicons name="ticket" size={20} color="#4D7C0F" />
             </View>
             <Text style={styles.taskCardLabel}>Mã khuyến mại</Text>
           </TouchableOpacity>
@@ -426,7 +426,7 @@ export default function ProfileScreen({ onOpenGreenRace }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F3FAF9'
+    backgroundColor: '#F4F7F5'
   },
   scrollContent: {
     padding: 16
@@ -441,7 +441,7 @@ const styles = StyleSheet.create({
     width: 58,
     height: 58,
     borderRadius: 29,
-    backgroundColor: '#4DD0E1',
+    backgroundColor: '#2E7D5B',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
@@ -546,14 +546,14 @@ const styles = StyleSheet.create({
     width: 18,
     height: 4,
     borderRadius: 2,
-    backgroundColor: '#18B6B4'
+    backgroundColor: '#2E7D5B'
   },
   greenRaceCard: {
-    backgroundColor: '#E8F8F5',
+    backgroundColor: '#EAF6F0',
     borderRadius: 20,
     overflow: 'hidden',
     borderWidth: 1.5,
-    borderColor: '#B2EBE0',
+    borderColor: '#B7E4CE',
     marginBottom: 16
   },
   greenRaceTopBar: {
@@ -563,7 +563,7 @@ const styles = StyleSheet.create({
     paddingRight: 12
   },
   greenRaceRibbon: {
-    backgroundColor: '#BCECE0',
+    backgroundColor: '#C6EBD8',
     paddingHorizontal: 16,
     paddingVertical: 7,
     borderBottomRightRadius: 18
@@ -572,7 +572,7 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.family,
     fontSize: 13,
     fontWeight: '700',
-    color: '#004D40'
+    color: '#14532D'
   },
   progressBtnPill: {
     flexDirection: 'row',
@@ -670,7 +670,7 @@ const styles = StyleSheet.create({
   },
   greenRaceMetricsBox: {
     flexDirection: 'row',
-    backgroundColor: 'rgba(178, 235, 242, 0.45)',
+    backgroundColor: 'rgba(167, 243, 208, 0.45)',
     marginHorizontal: 10,
     marginBottom: 10,
     borderRadius: 14,
@@ -695,7 +695,7 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.family,
     fontSize: 15,
     fontWeight: '800',
-    color: '#00695C',
+    color: '#1E563F',
     marginTop: 4
   },
   dualAccountCardsRow: {
@@ -714,10 +714,10 @@ const styles = StyleSheet.create({
     borderColor: '#FFFFFF'
   },
   familyCardCream: {
-    backgroundColor: '#FDF7E7'
+    backgroundColor: '#FDF6EC'
   },
   businessCardAqua: {
-    backgroundColor: '#E4F8F8'
+    backgroundColor: '#EAF6F0'
   },
   accountTypeTitle: {
     fontFamily: FONTS.family,
@@ -812,7 +812,7 @@ const styles = StyleSheet.create({
   giftPromoBanner: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#D6F5F7',
+    backgroundColor: '#DCEFE5',
     borderRadius: 18,
     padding: 14,
     marginBottom: 20,
@@ -932,7 +932,7 @@ const styles = StyleSheet.create({
   gsmTurquoiseBanner: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#18B6B4',
+    backgroundColor: '#2E7D5B',
     padding: 16,
     gap: 14
   },
@@ -955,7 +955,7 @@ const styles = StyleSheet.create({
   },
   gsmCompanySub: {
     fontFamily: FONTS.family,
-    color: '#E0F7FA',
+    color: '#EAF6F0',
     fontSize: 12,
     marginTop: 4
   },
@@ -1000,7 +1000,7 @@ const styles = StyleSheet.create({
     borderTopColor: '#E2E8F0'
   },
   understandTurquoiseBtn: {
-    backgroundColor: '#18B6B4',
+    backgroundColor: '#2E7D5B',
     borderRadius: 12,
     paddingVertical: 14,
     alignItems: 'center'
