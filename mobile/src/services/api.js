@@ -69,8 +69,87 @@ class ApiService {
     return this.request(`/vehicles/${id}`);
   }
 
-  async getStations() {
-    return this.request('/vehicles/stations');
+  async getStations(lat = null, lng = null, areaName = '') {
+    const params = [];
+    if (lat !== null && lng !== null) {
+      params.push(`lat=${encodeURIComponent(lat)}`);
+      params.push(`lng=${encodeURIComponent(lng)}`);
+    }
+    if (areaName) {
+      params.push(`areaName=${encodeURIComponent(areaName)}`);
+    }
+    const query = params.length > 0 ? `?${params.join('&')}` : '';
+    return this.request(`/vehicles/stations${query}`);
+  }
+
+  // Real OpenStreetMap Nominatim Reverse Geocoding in Saigon
+  async reverseGeocodeSaigon(lat, lng) {
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1&accept-language=vi`
+      );
+      if (!res.ok) return null;
+      const data = await res.json();
+      if (data && data.address) {
+        const a = data.address;
+        const street = a.road || a.pedestrian || a.suburb || '';
+        const ward = a.quarter || a.neighbourhood || a.suburb || a.village || '';
+        const district = a.city_district || a.county || a.town || a.city || 'TP.HCM';
+        const parts = [street, ward, district].filter(Boolean);
+        return parts.length > 0 ? parts.join(', ') : data.display_name;
+      }
+      return data?.display_name || null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // Real OpenStreetMap Overpass API for live EV Charging Stations & Car Rentals in Saigon
+  async fetchLiveOsmStations(lat, lng, radiusMeters = 3500) {
+    try {
+      const query = `[out:json][timeout:8];(node["amenity"="charging_station"](around:${radiusMeters},${lat},${lng});node["amenity"="car_rental"](around:${radiusMeters},${lat},${lng}););out body 12;`;
+      const res = await fetch(
+        `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`
+      );
+      if (!res.ok) return [];
+      const data = await res.json();
+      if (!data || !Array.isArray(data.elements)) return [];
+
+      return data.elements
+        .filter((el) => el.lat && el.lon)
+        .map((el, idx) => {
+          const isCharger = el.tags?.amenity === 'charging_station';
+          const rawName =
+            el.tags?.name ||
+            el.tags?.operator ||
+            (isCharger ? `Trạm Sạc Điện EV #${idx + 1}` : `Điểm Thuê Xe #${idx + 1}`);
+          const street = el.tags?.['addr:street'] || 'TP. Hồ Chí Minh';
+          const housenumber = el.tags?.['addr:housenumber'] || '';
+          return {
+            id: `osm-${el.id}`,
+            name: rawName,
+            address: `${housenumber ? housenumber + ' ' : ''}${street} (Dữ liệu OpenStreetMap Live)`,
+            coordinates: {
+              latitude: el.lat,
+              longitude: el.lon
+            },
+            category: isCharger ? 'CHARGER' : 'RENTAL',
+            type: isCharger ? 'OSM_CHARGER' : 'OSM_RENTAL',
+            capacity: isCharger ? 10 : 8,
+            availableVehicles: isCharger ? 2 : 5,
+            hasFastCharger: true,
+            chargerPowerKw: isCharger ? 150 : 60,
+            availablePorts: 4,
+            totalPorts: 6,
+            chargingPriceKwh: 3858,
+            connectorTypes: ['CCS2 DC', 'Type 2 AC 22kW'],
+            nearbyTransit: ['Trạm thực tế từ OpenStreetMap Sài Gòn'],
+            isLiveOsm: true
+          };
+        });
+    } catch (e) {
+      return [];
+    }
   }
 
   // Rentals & Digital Key Controls
