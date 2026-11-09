@@ -32,10 +32,10 @@ const ECOGO_RACE_BADGES = [
   {
     id: 'badge_10_trips',
     title: 'Chứng nhận\n10 Chuyến Xanh',
-    outerColor: '#60A5FA',
-    innerBg: '#EFF6FF',
+    outerColor: '#38D9A9',
+    innerBg: '#EBFBF5',
     icon: 'car-sport',
-    iconColor: '#2563EB',
+    iconColor: '#0CA678',
     progress: '3/10 chuyến'
   },
   {
@@ -120,11 +120,11 @@ export default function App() {
           />
         );
       case 'MAP':
-        return <MapScreen onNavigateToKey={() => setActiveTab('KEY')} />;
+        return <MapScreen theme={theme} onNavigateToKey={() => setActiveTab('KEY')} />;
       case 'KEY':
-        return <DigitalKeyScreen onNavigateHome={() => setActiveTab('HOME')} />;
+        return <DigitalKeyScreen theme={theme} onNavigateHome={() => setActiveTab('HOME')} />;
       case 'TRIPS':
-        return <TripsHistoryScreen onNavigateToKey={() => setActiveTab('KEY')} />;
+        return <TripsHistoryScreen theme={theme} onNavigateToKey={() => setActiveTab('KEY')} />;
       case 'PROFILE':
         return (
           <ProfileScreen

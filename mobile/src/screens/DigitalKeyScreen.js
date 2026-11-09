@@ -10,13 +10,13 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { io } from 'socket.io-client';
-import { FONTS } from '../styles/theme';
+import { FONTS, THEME_PRESETS } from '../styles/theme';
 import CO2Widget from '../components/CO2Widget';
 import ApiService from '../services/api';
 
 const SOCKET_URL = 'http://localhost:5000';
 
-export default function DigitalKeyScreen({ onNavigateHome }) {
+export default function DigitalKeyScreen({ theme = THEME_PRESETS.MINT, onNavigateHome }) {
   const [activeTrip, setActiveTrip] = useState(null);
   const [telematics, setTelematics] = useState(null);
   const [glosa, setGlosa] = useState(null);
@@ -150,7 +150,7 @@ export default function DigitalKeyScreen({ onNavigateHome }) {
         </View>
 
         <View style={styles.statusToastRow}>
-          <Ionicons name="checkmark-circle" size={15} color="#0D9488" />
+          <Ionicons name="checkmark-circle" size={15} color={theme.primary} />
           <Text style={styles.statusToastText} numberOfLines={1}>{statusToast}</Text>
         </View>
 
@@ -199,7 +199,10 @@ export default function DigitalKeyScreen({ onNavigateHome }) {
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[styles.primaryActionBtn, isEngineOn && styles.primaryActionBtnMint]}
+            style={[
+              styles.primaryActionBtn,
+              isEngineOn && { backgroundColor: theme.primary }
+            ]}
             disabled={commandLoading}
             onPress={() => handleControl(isEngineOn ? 'ENGINE_STOP' : 'ENGINE_START')}
           >
@@ -265,7 +268,7 @@ export default function DigitalKeyScreen({ onNavigateHome }) {
       )}
 
       {/* 5. CO2 Impact Widget */}
-      <CO2Widget eco={eco} />
+      <CO2Widget eco={eco} accentColor={theme.primary} softBg={theme.primarySoft} />
 
       {/* 6. Return Vehicle CTA */}
       <TouchableOpacity
@@ -284,7 +287,7 @@ export default function DigitalKeyScreen({ onNavigateHome }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F7F7F9'
+    backgroundColor: '#F7F7F5'
   },
   scrollContent: {
     padding: 16
@@ -294,7 +297,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 24,
-    backgroundColor: '#F7F7F9'
+    backgroundColor: '#F7F7F5'
   },
   loadingText: {
     fontFamily: FONTS.family,
@@ -307,7 +310,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 28,
-    backgroundColor: '#F7F7F9'
+    backgroundColor: '#F7F7F5'
   },
   emptyIconCircle: {
     width: 64,
@@ -318,13 +321,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: 16,
     borderWidth: 1,
-    borderColor: '#EBEBED'
+    borderColor: '#EBECE8'
   },
   emptyTitle: {
     fontFamily: FONTS.family,
     fontSize: 18,
     fontWeight: '700',
-    color: '#111111'
+    color: '#1D1D1F'
   },
   emptyDesc: {
     fontFamily: FONTS.family,
@@ -335,7 +338,7 @@ const styles = StyleSheet.create({
     lineHeight: 19
   },
   goHomeBtn: {
-    backgroundColor: '#2563EB',
+    backgroundColor: '#1D1D1F',
     paddingHorizontal: 22,
     paddingVertical: 12,
     borderRadius: 12,
@@ -370,7 +373,7 @@ const styles = StyleSheet.create({
     width: 7,
     height: 7,
     borderRadius: 4,
-    backgroundColor: '#0D9488'
+    backgroundColor: '#0CA678'
   },
   subStatusText: {
     fontFamily: FONTS.family,
@@ -482,10 +485,10 @@ const styles = StyleSheet.create({
     gap: 8
   },
   primaryActionBtnActive: {
-    backgroundColor: '#0F172A'
+    backgroundColor: '#1D1D1F'
   },
   primaryActionBtnMint: {
-    backgroundColor: '#2563EB'
+    backgroundColor: '#0CA678'
   },
   primaryActionText: {
     fontFamily: FONTS.family,
@@ -545,7 +548,7 @@ const styles = StyleSheet.create({
   glosaSignalBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F0FDFA',
+    backgroundColor: '#EBFBF5',
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 99,
@@ -555,19 +558,19 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: '#0D9488'
+    backgroundColor: '#0CA678'
   },
   glosaSignalText: {
     fontFamily: FONTS.family,
     fontSize: 11,
     fontWeight: '600',
-    color: '#0D9488'
+    color: '#0CA678'
   },
   glosaSpeedBox: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#F7F7F9',
+    backgroundColor: '#F6F3EC',
     borderRadius: 12,
     padding: 12
   },
@@ -575,7 +578,7 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.family,
     fontSize: 12,
     fontWeight: '600',
-    color: '#111111'
+    color: '#1D1D1F'
   },
   glosaAdviceMsg: {
     fontFamily: FONTS.family,
@@ -588,10 +591,10 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.family,
     fontSize: 20,
     fontWeight: '700',
-    color: '#0D9488'
+    color: '#0CA678'
   },
   returnBtn: {
-    backgroundColor: '#2563EB',
+    backgroundColor: '#1D1D1F',
     paddingVertical: 15,
     borderRadius: 12,
     alignItems: 'center',

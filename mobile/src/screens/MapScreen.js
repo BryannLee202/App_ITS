@@ -9,11 +9,16 @@ import {
   Platform
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { COLORS, SPACING, RADIUS } from '../styles/theme';
+import { FONTS, THEME_PRESETS } from '../styles/theme';
 import ApiService from '../services/api';
 import BookingModal from '../components/BookingModal';
 
-export default function MapScreen({ navigation, onSelectVehicle, onNavigateToKey }) {
+export default function MapScreen({
+  theme = THEME_PRESETS.MINT,
+  navigation,
+  onSelectVehicle,
+  onNavigateToKey
+}) {
   const [stations, setStations] = useState([]);
   const [vehicles, setVehicles] = useState([]);
   const [selectedStation, setSelectedStation] = useState(null);
@@ -47,10 +52,10 @@ export default function MapScreen({ navigation, onSelectVehicle, onNavigateToKey
         try {
           const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
           if (data && data.type === 'SELECT_STATION' && data.stationId) {
-            const found = stations.find(s => s.id === data.stationId);
+            const found = stations.find((s) => s.id === data.stationId);
             if (found) setSelectedStation(found);
           } else if (data && data.type === 'SELECT_VEHICLE' && data.vehicleId) {
-            const vFound = vehicles.find(v => v.id === data.vehicleId);
+            const vFound = vehicles.find((v) => v.id === data.vehicleId);
             if (vFound) {
               setBookingVehicle(vFound);
               setShowBookingModal(true);
@@ -66,13 +71,13 @@ export default function MapScreen({ navigation, onSelectVehicle, onNavigateToKey
   }, [stations, vehicles]);
 
   const getVehiclesAtStation = (stationId) => {
-    return vehicles.filter(v => v.stationId === stationId);
+    return vehicles.filter((v) => v.stationId === stationId);
   };
 
-  // Interactive Leaflet HTML with CartoDB Voyager (Clean Apple Map aesthetic)
   const leafletSrcDoc = useMemo(() => {
     const centerLat = selectedStation?.coordinates?.latitude || 10.8018;
     const centerLng = selectedStation?.coordinates?.longitude || 106.7142;
+    const mintColor = theme.primary || '#0CA678';
 
     return `
       <!DOCTYPE html>
@@ -83,37 +88,34 @@ export default function MapScreen({ navigation, onSelectVehicle, onNavigateToKey
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
         <style>
-          html, body, #map { margin: 0; padding: 0; width: 100%; height: 100%; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #F5F2EB; }
+          html, body, #map { margin: 0; padding: 0; width: 100%; height: 100%; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #F6F3EC; }
           .hub-pill {
-            background: #10B981;
-            color: #FFFFFF;
-            padding: 5px 10px;
+            background: #FFFFFF;
+            color: #1D1D1F;
+            padding: 6px 12px;
             border-radius: 99px;
-            font-weight: 800;
+            font-weight: 700;
             font-size: 11px;
-            border: 2px solid #FFFFFF;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
+            border: 1.5px solid ${mintColor};
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             white-space: nowrap;
             display: inline-flex;
             align-items: center;
-            gap: 4px;
+            gap: 5px;
             cursor: pointer;
           }
-          .hub-pill-active {
-            background: #111827;
-            border-color: #10B981;
-            transform: scale(1.1);
+          .hub-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 4px;
+            background: ${mintColor};
+            display: inline-block;
           }
-          .veh-price-tag {
-            background: #FFFFFF;
-            color: #059669;
-            padding: 3px 8px;
-            border-radius: 8px;
-            font-weight: 800;
-            font-size: 10px;
-            border: 1.5px solid #10B981;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.12);
-            white-space: nowrap;
+          .hub-pill-active {
+            background: #1D1D1F;
+            color: #FFFFFF;
+            border-color: #1D1D1F;
+            transform: scale(1.06);
           }
         </style>
       </head>
@@ -123,10 +125,9 @@ export default function MapScreen({ navigation, onSelectVehicle, onNavigateToKey
           const map = L.map('map', { zoomControl: false }).setView([${centerLat}, ${centerLng}], 14);
           L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
             maxZoom: 19,
-            attribution: '© OpenStreetMap • ITS Green Mobility'
+            attribution: '© OpenStreetMap • EcoGo Smart'
           }).addTo(map);
 
-          // Draw Green Wave Corridor Line (UTH -> Cầu Sài Gòn -> Mai Chí Thọ)
           const corridorCoords = [
             [10.8018, 106.7142],
             [10.7985, 106.7175],
@@ -135,10 +136,10 @@ export default function MapScreen({ navigation, onSelectVehicle, onNavigateToKey
             [10.7758, 106.7245]
           ];
           L.polyline(corridorCoords, {
-            color: '#10B981',
-            weight: 5,
-            opacity: 0.75,
-            dashArray: '10, 8'
+            color: '${mintColor}',
+            weight: 4,
+            opacity: 0.8,
+            dashArray: '8, 8'
           }).addTo(map);
 
           const stations = ${JSON.stringify(stations)};
@@ -146,11 +147,12 @@ export default function MapScreen({ navigation, onSelectVehicle, onNavigateToKey
 
           stations.forEach(st => {
             const isSelected = st.id === selectedId;
+            const shortLabel = (st.name.split('-')[1] || st.name).trim().substring(0, 18);
             const icon = L.divIcon({
               className: '',
-              html: '<div class="hub-pill ' + (isSelected ? 'hub-pill-active' : '') + '">⚡ ' + st.availableVehicles + ' xe • ' + (st.name.split('-')[1] || st.name).trim().substring(0, 16) + '</div>',
-              iconSize: [140, 30],
-              iconAnchor: [70, 15]
+              html: '<div class="hub-pill ' + (isSelected ? 'hub-pill-active' : '') + '"><span class="hub-dot"></span>' + st.availableVehicles + ' xe · ' + shortLabel + '</div>',
+              iconSize: [148, 32],
+              iconAnchor: [74, 16]
             });
 
             const marker = L.marker([st.coordinates.latitude, st.coordinates.longitude], { icon }).addTo(map);
@@ -158,33 +160,33 @@ export default function MapScreen({ navigation, onSelectVehicle, onNavigateToKey
               window.parent.postMessage(JSON.stringify({ type: 'SELECT_STATION', stationId: st.id }), '*');
             });
 
-            // Geofence 150m circle
             L.circle([st.coordinates.latitude, st.coordinates.longitude], {
-              radius: 180,
-              color: '#10B981',
-              fillColor: '#10B981',
-              fillOpacity: isSelected ? 0.18 : 0.07,
-              weight: 1.5
+              radius: 160,
+              color: '${mintColor}',
+              fillColor: '${mintColor}',
+              fillOpacity: isSelected ? 0.14 : 0.05,
+              weight: 1.2
             }).addTo(map);
           });
         </script>
       </body>
       </html>
     `;
-  }, [stations, selectedStation]);
+  }, [stations, selectedStation, theme.primary]);
 
   return (
     <View style={styles.container}>
-      {/* Floating Apple-Style Top Search & Hub Selector */}
+      {/* Floating Apple-Style Top Search & Station Filter Pills */}
       <View style={styles.topOverlay}>
         <View style={styles.mapSearchBox}>
-          <View style={styles.liveDot} />
-          <Ionicons name="location" size={16} color="#10B981" />
+          <View style={[styles.liveDot, { backgroundColor: theme.primary }]} />
           <Text style={styles.mapSearchText} numberOfLines={1}>
-            {selectedStation ? selectedStation.name : 'Bản đồ Trạm Hub ITS TP.HCM'}
+            {selectedStation ? selectedStation.name : 'Hệ thống trạm EcoGo TP.HCM'}
           </Text>
-          <View style={styles.geofenceChip}>
-            <Text style={styles.geofenceChipText}>Bán kính 150m</Text>
+          <View style={[styles.stationCountBadge, { backgroundColor: theme.primarySoft }]}>
+            <Text style={[styles.stationCountText, { color: theme.primary }]}>
+              {stations.length} trạm
+            </Text>
           </View>
         </View>
 
@@ -193,7 +195,7 @@ export default function MapScreen({ navigation, onSelectVehicle, onNavigateToKey
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.stationPillsRow}
         >
-          {stations.map(station => {
+          {stations.map((station) => {
             const isSelected = selectedStation?.id === station.id;
             const shortName = (station.name.split('-')[1] || station.name).trim();
             return (
@@ -202,10 +204,11 @@ export default function MapScreen({ navigation, onSelectVehicle, onNavigateToKey
                 style={[styles.stationPill, isSelected && styles.stationPillActive]}
                 onPress={() => setSelectedStation(station)}
               >
-                <Ionicons
-                  name="flash"
-                  size={12}
-                  color={isSelected ? '#FFFFFF' : '#10B981'}
+                <View
+                  style={[
+                    styles.pillDot,
+                    { backgroundColor: isSelected ? theme.primaryLight : theme.primary }
+                  ]}
                 />
                 <Text style={[styles.stationPillText, isSelected && styles.stationPillTextActive]}>
                   {shortName} ({station.availableVehicles})
@@ -216,68 +219,59 @@ export default function MapScreen({ navigation, onSelectVehicle, onNavigateToKey
         </ScrollView>
       </View>
 
-      {/* Real Interactive Leaflet Map on Web / Vector Simulation Fallback on Native */}
+      {/* Interactive Map Canvas */}
       <View style={styles.mapCanvas}>
         {Platform.OS === 'web' ? (
           <iframe
-            title="ITS Interactive Leaflet Map"
+            title="EcoGo Interactive Map"
             srcDoc={leafletSrcDoc}
             style={{ width: '100%', height: '100%', border: 'none' }}
           />
         ) : (
           <View style={styles.nativeMapFallback}>
-            <Text style={styles.nativeFallbackText}>Bản đồ Trạm Hub ITS TP.HCM</Text>
+            <Text style={styles.nativeFallbackText}>Bản đồ Trạm EcoGo TP.HCM</Text>
           </View>
         )}
-
-        {/* Floating Green Wave Legend Pill */}
-        <View style={styles.corridorLegendPill}>
-          <Ionicons name="pulse" size={13} color="#10B981" />
-          <Text style={styles.corridorLegendText}>
-            Hành lang Làn Sóng Xanh UTH - Mai Chí Thọ (45 km/h)
-          </Text>
-        </View>
       </View>
 
-      {/* Bottom Sheet for Selected Station & Available Vehicles */}
+      {/* Clean Editorial Bottom Sheet for Selected Station */}
       {selectedStation && (
         <View style={styles.bottomSheet}>
           <View style={styles.sheetHandle} />
 
           <View style={styles.stationInfoRow}>
-            <View style={{ flex: 1, marginRight: 8 }}>
-              <View style={styles.hubBadgeRow}>
-                <View style={styles.hubTypeBadge}>
-                  <Text style={styles.hubTypeBadgeText}>{selectedStation.type}</Text>
-                </View>
-                <Text style={styles.fastChargeText}>• Sạc siêu nhanh 250kW</Text>
-              </View>
-              <Text style={styles.sheetStationName} numberOfLines={1}>{selectedStation.name}</Text>
-              <Text style={styles.sheetStationAddress} numberOfLines={1}>{selectedStation.address}</Text>
+            <View style={{ flex: 1, marginRight: 10 }}>
+              <Text style={styles.sheetStationName} numberOfLines={1}>
+                {selectedStation.name}
+              </Text>
+              <Text style={styles.sheetStationAddress} numberOfLines={1}>
+                {selectedStation.address}
+              </Text>
             </View>
 
-            <View style={styles.capacityBadge}>
-              <Text style={styles.capacityNum}>{selectedStation.availableVehicles}</Text>
+            <View style={[styles.capacityBadge, { backgroundColor: theme.beigeSoft }]}>
+              <Text style={[styles.capacityNum, { color: theme.primary }]}>
+                {selectedStation.availableVehicles}
+              </Text>
               <Text style={styles.capacitySub}>xe sẵn sàng</Text>
             </View>
           </View>
 
-          {/* Connected MaaS Transit Modes */}
-          <View style={styles.transitRow}>
-            <Ionicons name="train-outline" size={13} color="#059669" />
+          {/* Connected Transit Line */}
+          <View style={[styles.transitRow, { backgroundColor: theme.primarySoft }]}>
+            <Ionicons name="navigate-circle-outline" size={15} color={theme.primary} />
             <Text style={styles.transitText} numberOfLines={1}>
-              Liên kết MaaS: {selectedStation.nearbyTransit.join(' • ')}
+              Kết nối: {selectedStation.nearbyTransit.join(' · ')}
             </Text>
           </View>
 
-          {/* Vehicles at this station */}
-          <Text style={styles.vehiclesListTitle}>Chạm vào xe để đặt thuê & mở khóa ngay:</Text>
+          {/* Horizontal Vehicles at Station */}
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.stationVehiclesRow}
           >
-            {getVehiclesAtStation(selectedStation.id).map(veh => (
+            {getVehiclesAtStation(selectedStation.id).map((veh) => (
               <TouchableOpacity
                 key={veh.id}
                 style={styles.miniVehCard}
@@ -289,13 +283,19 @@ export default function MapScreen({ navigation, onSelectVehicle, onNavigateToKey
               >
                 <Image source={{ uri: veh.thumbnail }} style={styles.miniImage} />
                 <View style={styles.miniInfo}>
-                  <Text style={styles.miniTitle} numberOfLines={1}>{veh.name}</Text>
-                  <Text style={styles.miniPlate}>{veh.plateNumber}</Text>
+                  <Text style={styles.miniTitle} numberOfLines={1}>
+                    {veh.name}
+                  </Text>
+                  <Text style={styles.miniPlate}>
+                    Pin {Math.round(veh.telematics?.batteryLevelPct || 90)}% · {veh.plateNumber}
+                  </Text>
                   <View style={styles.miniBottomRow}>
-                    <Text style={styles.miniPrice}>{veh.hourlyPrice.toLocaleString('vi-VN')}đ/h</Text>
-                    <View style={styles.miniBadge}>
-                      <Ionicons name="battery-charging" size={10} color="#059669" />
-                      <Text style={styles.miniBattery}>{Math.round(veh.telematics?.batteryLevelPct || 90)}%</Text>
+                    <Text style={styles.miniPrice}>
+                      {veh.hourlyPrice.toLocaleString('vi-VN')}đ
+                      <Text style={styles.miniPriceUnit}>/h</Text>
+                    </Text>
+                    <View style={styles.bookMiniPill}>
+                      <Text style={styles.bookMiniPillText}>Đặt</Text>
                     </View>
                   </View>
                 </View>
@@ -321,11 +321,11 @@ export default function MapScreen({ navigation, onSelectVehicle, onNavigateToKey
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F7'
+    backgroundColor: '#F7F7F5'
   },
   topOverlay: {
     position: 'absolute',
-    top: 10,
+    top: 12,
     left: 0,
     right: 0,
     zIndex: 10,
@@ -335,40 +335,39 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: 'rgba(255, 255, 255, 0.96)',
-    borderRadius: 99,
+    borderRadius: 16,
     paddingHorizontal: 14,
-    height: 44,
-    gap: 8,
+    height: 46,
+    gap: 10,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
-    shadowColor: '#0F172A',
+    borderColor: '#EBECE8',
+    shadowColor: '#000000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 10,
-    elevation: 4
+    shadowOpacity: 0.06,
+    shadowRadius: 12,
+    elevation: 3
   },
   liveDot: {
-    width: 7,
-    height: 7,
-    borderRadius: 4,
-    backgroundColor: '#10B981'
+    width: 8,
+    height: 8,
+    borderRadius: 4
   },
   mapSearchText: {
     flex: 1,
-    fontSize: 12,
-    color: '#111827',
-    fontWeight: '800'
+    fontFamily: FONTS.family,
+    fontSize: 13,
+    color: '#1D1D1F',
+    fontWeight: '600'
   },
-  geofenceChip: {
-    backgroundColor: '#ECFDF5',
-    paddingHorizontal: 8,
-    paddingVertical: 3,
+  stationCountBadge: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
     borderRadius: 99
   },
-  geofenceChipText: {
-    fontSize: 9,
-    fontWeight: '800',
-    color: '#059669'
+  stationCountText: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    fontWeight: '700'
   },
   stationPillsRow: {
     paddingTop: 8,
@@ -379,31 +378,33 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'rgba(255, 255, 255, 0.96)',
     paddingHorizontal: 12,
-    paddingVertical: 6,
+    paddingVertical: 7,
     borderRadius: 99,
-    gap: 5,
+    gap: 6,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
-    shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowRadius: 4
+    borderColor: '#EBECE8'
   },
   stationPillActive: {
-    backgroundColor: '#10B981',
-    borderColor: '#10B981'
+    backgroundColor: '#1D1D1F',
+    borderColor: '#1D1D1F'
+  },
+  pillDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3
   },
   stationPillText: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#111827'
+    fontFamily: FONTS.family,
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#1D1D1F'
   },
   stationPillTextActive: {
-    color: '#FFFFFF',
-    fontWeight: '800'
+    color: '#FFFFFF'
   },
   mapCanvas: {
     flex: 1,
-    backgroundColor: '#F5F2EB',
+    backgroundColor: '#F6F3EC',
     position: 'relative'
   },
   nativeMapFallback: {
@@ -412,185 +413,142 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   nativeFallbackText: {
+    fontFamily: FONTS.family,
     fontSize: 14,
-    fontWeight: '700',
-    color: '#4B5563'
-  },
-  corridorLegendPill: {
-    position: 'absolute',
-    bottom: 12,
-    alignSelf: 'center',
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.94)',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 99,
-    gap: 6,
-    borderWidth: 1,
-    borderColor: '#D1FAE5',
-    shadowColor: '#000',
-    shadowOpacity: 0.08,
-    shadowRadius: 6
-  },
-  corridorLegendText: {
-    color: '#111827',
-    fontSize: 10,
-    fontWeight: '800'
+    fontWeight: '600',
+    color: '#6E6E73'
   },
   bottomSheet: {
     backgroundColor: '#FFFFFF',
     borderTopLeftRadius: 26,
     borderTopRightRadius: 26,
     padding: 16,
-    paddingBottom: 14,
+    paddingBottom: 92,
     borderTopWidth: 1,
-    borderColor: '#E5E7EB',
-    shadowColor: '#0F172A',
+    borderColor: '#EBECE8',
+    shadowColor: '#000000',
     shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.06,
+    shadowOpacity: 0.04,
     shadowRadius: 12,
-    elevation: 8
+    elevation: 6
   },
   sheetHandle: {
-    width: 38,
+    width: 36,
     height: 4,
-    backgroundColor: '#D1D5DB',
+    backgroundColor: '#E5E5EA',
     borderRadius: 2,
     alignSelf: 'center',
-    marginBottom: 10
+    marginBottom: 12
   },
   stationInfoRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-start'
-  },
-  hubBadgeRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    marginBottom: 3
-  },
-  hubTypeBadge: {
-    backgroundColor: '#ECFDF5',
-    paddingHorizontal: 7,
-    paddingVertical: 2,
-    borderRadius: 6
-  },
-  hubTypeBadgeText: {
-    fontSize: 8,
-    fontWeight: '800',
-    color: '#059669'
-  },
-  fastChargeText: {
-    fontSize: 10,
-    fontWeight: '700',
-    color: '#059669'
+    alignItems: 'center'
   },
   sheetStationName: {
-    fontSize: 14,
-    fontWeight: '900',
-    color: '#111827'
+    fontFamily: FONTS.family,
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#1D1D1F'
   },
   sheetStationAddress: {
-    fontSize: 11,
-    color: '#6B7280',
-    marginTop: 1
+    fontFamily: FONTS.family,
+    fontSize: 12,
+    color: '#6E6E73',
+    marginTop: 2
   },
   capacityBadge: {
-    backgroundColor: '#F5F2EB',
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 12,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#E5DEC9'
+    borderRadius: 14,
+    alignItems: 'center'
   },
   capacityNum: {
+    fontFamily: FONTS.family,
     fontSize: 16,
-    fontWeight: '900',
-    color: '#059669'
+    fontWeight: '800'
   },
   capacitySub: {
-    fontSize: 9,
-    color: '#786B59',
-    fontWeight: '700'
+    fontFamily: FONTS.family,
+    fontSize: 10,
+    color: '#6E6E73',
+    fontWeight: '500'
   },
   transitRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F8FAFC',
     paddingHorizontal: 10,
-    paddingVertical: 6,
+    paddingVertical: 7,
     borderRadius: 10,
-    marginTop: 8,
+    marginTop: 10,
+    marginBottom: 12,
     gap: 6
   },
   transitText: {
-    fontSize: 10,
-    color: '#4B5563',
-    fontWeight: '600',
-    flex: 1
-  },
-  vehiclesListTitle: {
+    fontFamily: FONTS.family,
     fontSize: 11,
-    fontWeight: '800',
-    color: '#111827',
-    marginTop: 10,
-    marginBottom: 8
+    color: '#1D1D1F',
+    fontWeight: '500',
+    flex: 1
   },
   stationVehiclesRow: {
     gap: 10
   },
   miniVehCard: {
-    width: 152,
+    width: 164,
     backgroundColor: '#FFFFFF',
-    borderRadius: 14,
+    borderRadius: 16,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: '#E5E7EB'
+    borderColor: '#EBECE8'
   },
   miniImage: {
     width: '100%',
-    height: 80,
-    backgroundColor: '#F5F2EB'
+    height: 88,
+    backgroundColor: '#F2F2F0'
   },
   miniInfo: {
-    padding: 8
+    padding: 10
   },
   miniTitle: {
-    fontSize: 11,
-    fontWeight: '800',
-    color: '#111827'
+    fontFamily: FONTS.family,
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#1D1D1F'
   },
   miniPlate: {
-    fontSize: 9,
-    color: '#6B7280',
-    marginTop: 1
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    color: '#6E6E73',
+    marginTop: 2
   },
   miniBottomRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 5
+    marginTop: 8
   },
   miniPrice: {
+    fontFamily: FONTS.family,
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#1D1D1F'
+  },
+  miniPriceUnit: {
     fontSize: 11,
-    fontWeight: '900',
-    color: '#059669'
+    fontWeight: '400',
+    color: '#6E6E73'
   },
-  miniBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#ECFDF5',
-    paddingHorizontal: 5,
-    paddingVertical: 2,
-    borderRadius: 6,
-    gap: 2
+  bookMiniPill: {
+    backgroundColor: '#1D1D1F',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 8
   },
-  miniBattery: {
-    fontSize: 9,
-    color: '#059669',
-    fontWeight: '800'
+  bookMiniPillText: {
+    fontFamily: FONTS.family,
+    color: '#FFFFFF',
+    fontSize: 11,
+    fontWeight: '600'
   }
 });

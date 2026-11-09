@@ -99,8 +99,8 @@ export default function ProfileScreen({ onOpenGreenRace, theme = THEME_PRESETS.M
             </View>
 
             <TouchableOpacity style={styles.progressBtnPill} onPress={onOpenGreenRace}>
-              <Text style={styles.progressBtnText}>Xem tiến trình</Text>
-              <Ionicons name="chevron-forward" size={13} color="#00796B" />
+              <Text style={[styles.progressBtnText, { color: theme.primary }]}>Xem tiến trình</Text>
+              <Ionicons name="chevron-forward" size={13} color={theme.primary} />
             </TouchableOpacity>
           </View>
 
@@ -157,14 +157,14 @@ export default function ProfileScreen({ onOpenGreenRace, theme = THEME_PRESETS.M
               <View style={styles.heartBubbleRed}>
                 <Ionicons name="heart" size={10} color="#FFFFFF" />
               </View>
-              <Ionicons name="home" size={38} color="#2E7D5B" />
+              <Ionicons name="home" size={38} color={theme.primary} />
             </View>
           </TouchableOpacity>
 
           <TouchableOpacity style={[styles.accountTypeCard, styles.businessCardAqua]} activeOpacity={0.9}>
             <Text style={styles.accountTypeTitle}>Doanh nghiệp</Text>
             <View style={styles.briefcase3DIllustration}>
-              <Ionicons name="briefcase" size={38} color="#1E3A8A" />
+              <Ionicons name="briefcase" size={38} color="#1D1D1F" />
               <View style={styles.claspLeftGold} />
               <View style={styles.claspRightGold} />
             </View>
@@ -177,29 +177,29 @@ export default function ProfileScreen({ onOpenGreenRace, theme = THEME_PRESETS.M
         <Text style={styles.sectionTitle}>Tác vụ</Text>
         <View style={styles.grid2x2}>
           <TouchableOpacity style={styles.taskCardItem}>
-            <View style={[styles.taskIcon3D, { backgroundColor: '#EAF6F0' }]}>
-              <Ionicons name="card" size={20} color="#2E7D5B" />
+            <View style={[styles.taskIcon3D, { backgroundColor: theme.primarySoft }]}>
+              <Ionicons name="card" size={20} color={theme.primary} />
             </View>
             <Text style={styles.taskCardLabel}>Thanh toán</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.taskCardItem}>
-            <View style={[styles.taskIcon3D, { backgroundColor: '#ECFCCB' }]}>
-              <Ionicons name="ticket" size={20} color="#4D7C0F" />
+            <View style={[styles.taskIcon3D, { backgroundColor: theme.beigeSoft }]}>
+              <Ionicons name="ticket" size={20} color="#8C6239" />
             </View>
             <Text style={styles.taskCardLabel}>Mã khuyến mại</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.taskCardItem} onPress={handleOpenSurvey}>
-            <View style={[styles.taskIcon3D, { backgroundColor: '#FFF8E1' }]}>
-              <Ionicons name="headset" size={20} color="#F59E0B" />
+            <View style={[styles.taskIcon3D, { backgroundColor: theme.beigeSoft }]}>
+              <Ionicons name="headset" size={20} color="#D97706" />
             </View>
             <Text style={styles.taskCardLabel}>Trung tâm hỗ trợ</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.taskCardItem}>
-            <View style={[styles.taskIcon3D, { backgroundColor: '#E0F2F1' }]}>
-              <Ionicons name="shield-checkmark" size={20} color="#009688" />
+            <View style={[styles.taskIcon3D, { backgroundColor: theme.primarySoft }]}>
+              <Ionicons name="shield-checkmark" size={20} color={theme.primary} />
             </View>
             <Text style={styles.taskCardLabel}>Trung tâm an toàn</Text>
           </TouchableOpacity>
@@ -211,29 +211,29 @@ export default function ProfileScreen({ onOpenGreenRace, theme = THEME_PRESETS.M
         <Text style={styles.sectionTitle}>Tiện ích & Ưu đãi</Text>
         <View style={styles.grid2x2}>
           <TouchableOpacity style={styles.taskCardItem} onPress={onOpenGreenRace}>
-            <View style={styles.greenCircleIcon}>
-              <Ionicons name="ribbon" size={18} color="#00C853" />
+            <View style={[styles.greenCircleIcon, { backgroundColor: theme.primarySoft }]}>
+              <Ionicons name="ribbon" size={18} color={theme.primary} />
             </View>
             <Text style={styles.taskCardLabel}>Hạng thành viên</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.taskCardItem}>
-            <View style={styles.greenCircleIcon}>
-              <Ionicons name="shield" size={18} color="#00C853" />
+            <View style={[styles.greenCircleIcon, { backgroundColor: theme.primarySoft }]}>
+              <Ionicons name="shield" size={18} color={theme.primary} />
             </View>
             <Text style={styles.taskCardLabel}>Hội viên</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.taskCardItem}>
-            <View style={styles.greenCircleIcon}>
-              <Ionicons name="gift" size={18} color="#00C853" />
+            <View style={[styles.greenCircleIcon, { backgroundColor: theme.primarySoft }]}>
+              <Ionicons name="gift" size={18} color={theme.primary} />
             </View>
             <Text style={styles.taskCardLabel}>Thẻ quà tặng</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.taskCardItem}>
-            <View style={styles.greenCircleIcon}>
-              <Ionicons name="person-add" size={18} color="#00C853" />
+            <View style={[styles.greenCircleIcon, { backgroundColor: theme.primarySoft }]}>
+              <Ionicons name="person-add" size={18} color={theme.primary} />
             </View>
             <Text style={styles.taskCardLabel}>Giới thiệu bạn bè</Text>
           </TouchableOpacity>
@@ -643,7 +643,7 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.family,
     fontSize: 12,
     fontWeight: '700',
-    color: '#1E3A8A',
+    color: '#087F5B',
     textAlign: 'right'
   },
   amberCounterPill: {
@@ -666,11 +666,11 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.family,
     fontSize: 12,
     fontWeight: '700',
-    color: '#1E3A8A'
+    color: '#087F5B'
   },
   greenRaceMetricsBox: {
     flexDirection: 'row',
-    backgroundColor: 'rgba(219, 234, 254, 0.65)',
+    backgroundColor: 'rgba(255, 255, 255, 0.75)',
     marginHorizontal: 10,
     marginBottom: 10,
     borderRadius: 14,
@@ -687,7 +687,7 @@ const styles = StyleSheet.create({
   grMetricLabel: {
     fontFamily: FONTS.family,
     fontSize: 10,
-    color: '#1A1D1F',
+    color: '#1D1D1F',
     textAlign: 'center',
     lineHeight: 13
   },
@@ -695,7 +695,7 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.family,
     fontSize: 15,
     fontWeight: '800',
-    color: '#1D4ED8',
+    color: '#0CA678',
     marginTop: 4
   },
   dualAccountCardsRow: {
@@ -812,7 +812,7 @@ const styles = StyleSheet.create({
   giftPromoBanner: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#EFF6FF',
+    backgroundColor: '#F6F3EC',
     borderRadius: 18,
     padding: 14,
     marginBottom: 20,
@@ -932,7 +932,7 @@ const styles = StyleSheet.create({
   gsmTurquoiseBanner: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#2563EB',
+    backgroundColor: '#0CA678',
     padding: 16,
     gap: 14
   },
@@ -1000,7 +1000,7 @@ const styles = StyleSheet.create({
     borderTopColor: '#E2E8F0'
   },
   understandTurquoiseBtn: {
-    backgroundColor: '#2563EB',
+    backgroundColor: '#1D1D1F',
     borderRadius: 12,
     paddingVertical: 14,
     alignItems: 'center'
