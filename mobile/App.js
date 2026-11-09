@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -11,6 +11,7 @@ import {
   useWindowDimensions
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { FONTS } from './src/styles/theme';
 
 import HomeScreen from './src/screens/HomeScreen';
 import MapScreen from './src/screens/MapScreen';
@@ -19,10 +20,10 @@ import TripsHistoryScreen from './src/screens/TripsHistoryScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
 
 const TABS = [
-  { id: 'HOME', label: 'Trang chủ', icon: 'home-outline', activeIcon: 'home' },
-  { id: 'MAP', label: 'Bản đồ Hub', icon: 'map-outline', activeIcon: 'map' },
-  { id: 'KEY', label: 'Khóa số', icon: 'key-outline', activeIcon: 'key', isCenter: true },
-  { id: 'TRIPS', label: 'Chuyến đi', icon: 'document-text-outline', activeIcon: 'document-text' },
+  { id: 'HOME', label: 'Khám phá', icon: 'search-outline', activeIcon: 'search' },
+  { id: 'MAP', label: 'Bản đồ', icon: 'map-outline', activeIcon: 'map' },
+  { id: 'KEY', label: 'Khóa xe', icon: 'key-outline', activeIcon: 'key' },
+  { id: 'TRIPS', label: 'Chuyến đi', icon: 'calendar-outline', activeIcon: 'calendar' },
   { id: 'PROFILE', label: 'Tài khoản', icon: 'person-outline', activeIcon: 'person' }
 ];
 
@@ -34,6 +35,20 @@ export default function App() {
 
   const { width: windowWidth } = useWindowDimensions();
   const isDesktopBrowser = Platform.OS === 'web' && windowWidth >= 768;
+
+  // Inject Plus Jakarta Sans & Inter on Web for authentic editorial typography
+  useEffect(() => {
+    if (Platform.OS === 'web' && typeof document !== 'undefined') {
+      const id = 'google-font-plus-jakarta';
+      if (!document.getElementById(id)) {
+        const link = document.createElement('link');
+        link.id = id;
+        link.rel = 'stylesheet';
+        link.href = 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap';
+        document.head.appendChild(link);
+      }
+    }
+  }, []);
 
   const renderContent = () => {
     switch (activeTab) {
@@ -64,14 +79,12 @@ export default function App() {
     <View style={styles.outerViewport}>
       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
 
-      {/* Top Mode Switcher on Desktop Browser */}
+      {/* Minimalist Top Mode Switcher on Desktop Browser */}
       {isDesktopBrowser && (
         <View style={styles.desktopToolbar}>
           <View style={styles.toolbarBrand}>
-            <View style={styles.mintStatusDot} />
-            <Text style={styles.toolbarTitle}>
-              ITS SMART VEHICLE RENTAL • APPLE WHITE & MINT EDITION
-            </Text>
+            <View style={styles.statusDot} />
+            <Text style={styles.toolbarTitle}>ITS Mobility · UTH</Text>
           </View>
 
           <View style={styles.modeToggleGroup}>
@@ -82,10 +95,10 @@ export default function App() {
               <Ionicons
                 name="phone-portrait-outline"
                 size={13}
-                color={viewMode === 'PHONE' ? '#FFFFFF' : '#4B5563'}
+                color={viewMode === 'PHONE' ? '#111111' : '#6E6E73'}
               />
               <Text style={[styles.modeBtnText, viewMode === 'PHONE' && styles.modeBtnTextActive]}>
-                Tỉ lệ Điện thoại (414×896)
+                Điện thoại
               </Text>
             </TouchableOpacity>
 
@@ -94,12 +107,12 @@ export default function App() {
               onPress={() => setViewMode('WIDE')}
             >
               <Ionicons
-                name="desktop-outline"
+                name="expand-outline"
                 size={13}
-                color={viewMode === 'WIDE' ? '#FFFFFF' : '#4B5563'}
+                color={viewMode === 'WIDE' ? '#111111' : '#6E6E73'}
               />
               <Text style={[styles.modeBtnText, viewMode === 'WIDE' && styles.modeBtnTextActive]}>
-                Toàn màn hình Web
+                Mở rộng
               </Text>
             </TouchableOpacity>
           </View>
@@ -117,43 +130,22 @@ export default function App() {
         <SafeAreaView style={styles.safeArea}>
           <View style={styles.mainContentArea}>{renderContent()}</View>
 
-          {/* Apple-Style Docked Bottom Tab Bar */}
+          {/* Flat iOS 18 / Uber Style Bottom Tab Bar */}
           <View style={styles.bottomTabBar}>
             {TABS.map(tab => {
               const isActive = activeTab === tab.id;
-
-              if (tab.isCenter) {
-                return (
-                  <TouchableOpacity
-                    key={tab.id}
-                    style={styles.centerKeyTabWrap}
-                    activeOpacity={0.9}
-                    onPress={() => setActiveTab(tab.id)}
-                  >
-                    <View style={[styles.centerKeyCircle, isActive && styles.centerKeyCircleActive]}>
-                      <Ionicons name="key" size={20} color="#FFFFFF" />
-                    </View>
-                    <Text style={[styles.tabLabel, isActive && styles.tabLabelActive]}>
-                      {tab.label}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              }
-
               return (
                 <TouchableOpacity
                   key={tab.id}
                   style={styles.tabButton}
-                  activeOpacity={0.8}
+                  activeOpacity={0.7}
                   onPress={() => setActiveTab(tab.id)}
                 >
-                  <View style={[styles.tabIconPill, isActive && styles.tabIconPillActive]}>
-                    <Ionicons
-                      name={isActive ? tab.activeIcon : tab.icon}
-                      size={19}
-                      color={isActive ? '#059669' : '#6B7280'}
-                    />
-                  </View>
+                  <Ionicons
+                    name={isActive ? tab.activeIcon : tab.icon}
+                    size={21}
+                    color={isActive ? '#111111' : '#8E8E93'}
+                  />
                   <Text style={[styles.tabLabel, isActive && styles.tabLabelActive]}>
                     {tab.label}
                   </Text>
@@ -164,7 +156,7 @@ export default function App() {
         </SafeAreaView>
       </View>
 
-      {/* Voucher & Rewards Modal */}
+      {/* Clean Voucher & Promotions Modal */}
       <Modal
         visible={showRewardsModal}
         transparent
@@ -175,39 +167,37 @@ export default function App() {
           <View style={styles.rewardsModalCard}>
             <View style={styles.rewardsHeader}>
               <View>
-                <Text style={styles.rewardsTag}>KHO VOUCHER XANH ITS</Text>
-                <Text style={styles.rewardsTitle}>Ưu Đãi Thuê Xe Tự Lái</Text>
+                <Text style={styles.rewardsTitle}>Mã ưu đãi hiện có</Text>
+                <Text style={styles.rewardsSub}>Áp dụng khi đặt thuê xe tự lái</Text>
               </View>
               <TouchableOpacity
                 style={styles.closeModalBtn}
                 onPress={() => setShowRewardsModal(false)}
               >
-                <Ionicons name="close" size={18} color="#111827" />
+                <Ionicons name="close" size={18} color="#111111" />
               </TouchableOpacity>
             </View>
 
             {[
               {
                 code: 'XANH20',
-                title: 'Giảm 20% Thuê Ô Tô Điện (Tối đa 120K)',
+                title: 'Giảm 20% chuyến xe điện (Tối đa 120.000đ)',
                 desc: 'Áp dụng cho VinFast VF 3, VF e34, VF 8 và Hyundai Ioniq 5'
               },
               {
                 code: 'UTH50K',
-                title: 'Giảm Trực Tiếp 50.000đ Tại Hub UTH',
-                desc: 'Dành riêng cho Sinh viên & Giảng viên ĐH GTVT TP.HCM'
+                title: 'Giảm 50.000đ tại Trạm ĐH GTVT (UTH)',
+                desc: 'Ưu đãi dành cho sinh viên và giảng viên trường ĐH GTVT TP.HCM'
               },
               {
                 code: 'FREEDELIVERY',
-                title: 'Miễn Phí Giao Xe Tận Nơi (Trị giá 50K)',
-                desc: 'Giao nhận xe tận nhà trong bán kính 5km quanh 6 trạm ITS Hub'
+                title: 'Miễn phí giao nhận xe tận nơi',
+                desc: 'Miễn 100% phí giao xe trong bán kính 5km quanh trạm Hub'
               }
             ].map(item => (
               <View key={item.code} style={styles.voucherCard}>
-                <View style={{ flex: 1, marginRight: 10 }}>
-                  <View style={styles.voucherCodePill}>
-                    <Text style={styles.voucherCodeText}>{item.code}</Text>
-                  </View>
+                <View style={{ flex: 1, marginRight: 12 }}>
+                  <Text style={styles.voucherCodeText}>{item.code}</Text>
                   <Text style={styles.voucherItemTitle}>{item.title}</Text>
                   <Text style={styles.voucherItemDesc}>{item.desc}</Text>
                 </View>
@@ -217,7 +207,7 @@ export default function App() {
                   onPress={() => setCopiedCode(item.code)}
                 >
                   <Text style={styles.copyVoucherText}>
-                    {copiedCode === item.code ? 'Đã lưu' : 'Dùng mã'}
+                    {copiedCode === item.code ? 'Đã lưu' : 'Sao chép'}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -232,16 +222,16 @@ export default function App() {
 const styles = StyleSheet.create({
   outerViewport: {
     flex: 1,
-    backgroundColor: '#E5E5EA',
+    backgroundColor: '#F0F0F3',
     alignItems: 'center',
     justifyContent: 'flex-start'
   },
   desktopToolbar: {
     width: '100%',
-    height: 46,
+    height: 44,
     backgroundColor: '#FFFFFF',
     borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
+    borderBottomColor: '#E5E5EA',
     paddingHorizontal: 20,
     flexDirection: 'row',
     alignItems: 'center',
@@ -252,71 +242,76 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 8
   },
-  mintStatusDot: {
-    width: 8,
-    height: 8,
+  statusDot: {
+    width: 7,
+    height: 7,
     borderRadius: 4,
-    backgroundColor: '#10B981'
+    backgroundColor: '#0D9488'
   },
   toolbarTitle: {
-    fontSize: 11,
-    fontWeight: '800',
-    color: '#111827',
-    letterSpacing: 0.4
+    fontFamily: FONTS.family,
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#111111'
   },
   modeToggleGroup: {
     flexDirection: 'row',
-    backgroundColor: '#F3F4F6',
-    padding: 3,
-    borderRadius: 10,
-    gap: 4
+    backgroundColor: '#F5F5F7',
+    padding: 2,
+    borderRadius: 8,
+    gap: 2
   },
   modeBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 10,
     paddingVertical: 5,
-    borderRadius: 8,
+    borderRadius: 6,
     gap: 5
   },
   modeBtnActive: {
-    backgroundColor: '#10B981'
+    backgroundColor: '#FFFFFF',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 2
   },
   modeBtnText: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#4B5563'
+    fontFamily: FONTS.family,
+    fontSize: 12,
+    fontWeight: '500',
+    color: '#6E6E73'
   },
   modeBtnTextActive: {
-    color: '#FFFFFF',
-    fontWeight: '800'
+    color: '#111111',
+    fontWeight: '600'
   },
   appShell: {
     flex: 1,
     width: '100%',
-    backgroundColor: '#F5F5F7'
+    backgroundColor: '#F7F7F9'
   },
   phoneSimulatorShell: {
-    width: 420,
+    width: 414,
     maxWidth: '100%',
-    marginVertical: 12,
-    borderRadius: 38,
-    borderWidth: 8,
-    borderColor: '#FFFFFF',
+    marginVertical: 14,
+    borderRadius: 32,
+    borderWidth: 1,
+    borderColor: '#DCDCE0',
     overflow: 'hidden',
-    shadowColor: '#0F172A',
-    shadowOffset: { width: 0, height: 18 },
-    shadowOpacity: 0.14,
-    shadowRadius: 32,
-    elevation: 14
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.08,
+    shadowRadius: 28,
+    elevation: 10
   },
   wideWebShell: {
-    maxWidth: 1080,
+    maxWidth: 1024,
     width: '100%'
   },
   safeArea: {
     flex: 1,
-    backgroundColor: '#F5F5F7'
+    backgroundColor: '#F7F7F9'
   },
   mainContentArea: {
     flex: 1
@@ -325,63 +320,32 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around',
-    height: 66,
+    height: 60,
     backgroundColor: '#FFFFFF',
     borderTopWidth: 1,
-    borderTopColor: '#E5E7EB',
-    paddingHorizontal: 6
+    borderTopColor: '#EBEBED',
+    paddingHorizontal: 4
   },
   tabButton: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 4
-  },
-  tabIconPill: {
-    paddingHorizontal: 12,
-    paddingVertical: 3,
-    borderRadius: 99
-  },
-  tabIconPillActive: {
-    backgroundColor: '#ECFDF5'
-  },
-  centerKeyTabWrap: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: -14
-  },
-  centerKeyCircle: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: '#111827',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 3,
-    borderColor: '#FFFFFF',
-    shadowColor: '#10B981',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 8,
-    elevation: 5
-  },
-  centerKeyCircleActive: {
-    backgroundColor: '#10B981'
+    paddingVertical: 6
   },
   tabLabel: {
+    fontFamily: FONTS.family,
     fontSize: 10,
-    fontWeight: '600',
-    color: '#6B7280',
-    marginTop: 2
+    fontWeight: '500',
+    color: '#8E8E93',
+    marginTop: 3
   },
   tabLabelActive: {
-    color: '#059669',
-    fontWeight: '800'
+    color: '#111111',
+    fontWeight: '600'
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(15, 23, 42, 0.5)',
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20
@@ -390,80 +354,74 @@ const styles = StyleSheet.create({
     width: '100%',
     maxWidth: 380,
     backgroundColor: '#FFFFFF',
-    borderRadius: 24,
-    padding: 18,
-    borderWidth: 1,
-    borderColor: '#E5E7EB'
+    borderRadius: 20,
+    padding: 20
   },
   rewardsHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: 14
-  },
-  rewardsTag: {
-    fontSize: 9,
-    fontWeight: '800',
-    color: '#059669'
+    marginBottom: 16
   },
   rewardsTitle: {
-    fontSize: 17,
-    fontWeight: '900',
-    color: '#111827',
+    fontFamily: FONTS.family,
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#111111'
+  },
+  rewardsSub: {
+    fontFamily: FONTS.family,
+    fontSize: 12,
+    color: '#6E6E73',
     marginTop: 2
   },
   closeModalBtn: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: '#F3F4F6',
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: '#F5F5F7',
     alignItems: 'center',
     justifyContent: 'center'
   },
   voucherCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F5F2EB',
-    borderRadius: 16,
-    padding: 12,
+    backgroundColor: '#F7F7F9',
+    borderRadius: 14,
+    padding: 14,
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: '#E5DEC9'
-  },
-  voucherCodePill: {
-    alignSelf: 'flex-start',
-    backgroundColor: '#10B981',
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 6,
-    marginBottom: 4
+    borderColor: '#EBEBED'
   },
   voucherCodeText: {
-    color: '#FFFFFF',
-    fontSize: 10,
-    fontWeight: '800'
+    fontFamily: FONTS.family,
+    color: '#0D9488',
+    fontSize: 12,
+    fontWeight: '700',
+    marginBottom: 2
   },
   voucherItemTitle: {
-    fontSize: 12,
-    fontWeight: '800',
-    color: '#111827'
+    fontFamily: FONTS.family,
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#111111'
   },
   voucherItemDesc: {
-    fontSize: 10,
-    color: '#6B7280',
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    color: '#6E6E73',
     marginTop: 2
   },
   copyVoucherBtn: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#111111',
     paddingHorizontal: 12,
-    paddingVertical: 7,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#10B981'
+    paddingVertical: 8,
+    borderRadius: 8
   },
   copyVoucherText: {
+    fontFamily: FONTS.family,
     fontSize: 11,
-    fontWeight: '800',
-    color: '#059669'
+    fontWeight: '600',
+    color: '#FFFFFF'
   }
 });
