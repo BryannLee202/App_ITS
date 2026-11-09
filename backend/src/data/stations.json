@@ -1,5 +1,45 @@
 [
   {
+    "id": "hub-chuvanan-01",
+    "name": "EcoGo Hub & Trạm Sạc - Chu Văn An (Phường 26, Bình Thạnh)",
+    "address": "85 Chu Văn An, Phường 26, Quận Bình Thạnh, TP.HCM",
+    "coordinates": {
+      "latitude": 10.8116,
+      "longitude": 106.7094
+    },
+    "category": "BOTH",
+    "type": "URBAN_HUB",
+    "capacity": 16,
+    "availableVehicles": 7,
+    "hasFastCharger": true,
+    "chargerPowerKw": 180,
+    "availablePorts": 5,
+    "totalPorts": 6,
+    "chargingPriceKwh": 3858,
+    "connectorTypes": ["CCS2 180kW DC", "Type 2 22kW", "Mở khóa BLE 24/7"],
+    "nearbyTransit": ["Hẻm 71 Chu Văn An (120m)", "Ngã 5 Bình Hòa", "Học viện Cán bộ TP.HCM"]
+  },
+  {
+    "id": "charger-dinhbolinh-01",
+    "name": "Trạm Siêu Sạc EV 250kW - Đinh Bộ Lĩnh (Bình Thạnh)",
+    "address": "292 Đinh Bộ Lĩnh, Phường 26, Quận Bình Thạnh, TP.HCM",
+    "coordinates": {
+      "latitude": 10.8142,
+      "longitude": 106.7118
+    },
+    "category": "CHARGER",
+    "type": "SUPERCHARGER",
+    "capacity": 24,
+    "availableVehicles": 5,
+    "hasFastCharger": true,
+    "chargerPowerKw": 250,
+    "availablePorts": 8,
+    "totalPorts": 10,
+    "chargingPriceKwh": 3858,
+    "connectorTypes": ["CCS2 250kW DC", "CHAdeMO 60kW", "Đổi pin xe máy điện"],
+    "nearbyTransit": ["Đinh Bộ Lĩnh - Chu Văn An", "Cầu Bình Triệu (900m)"]
+  },
+  {
     "id": "hub-uth-01",
     "name": "EcoGo Hub & Trạm Sạc - ĐH GTVT (UTH Bình Thạnh)",
     "address": "Số 2 Võ Oanh, Phường 25, Quận Bình Thạnh, TP.HCM",

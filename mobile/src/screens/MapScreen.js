@@ -30,18 +30,139 @@ function calcHaversineKm(lat1, lon1, lat2, lon2) {
   return Math.round(R * c * 100) / 100;
 }
 
+const INITIAL_SAIGON_STATIONS = [
+  {
+    id: 'hub-chuvanan-01',
+    name: 'EcoGo Hub & Trạm Sạc - Chu Văn An (Bình Thạnh)',
+    address: '85 Chu Văn An, Phường 26, Quận Bình Thạnh, TP.HCM',
+    coordinates: { latitude: 10.8116, longitude: 106.7094 },
+    category: 'BOTH',
+    type: 'URBAN_HUB',
+    capacity: 16,
+    availableVehicles: 7,
+    hasFastCharger: true,
+    chargerPowerKw: 180,
+    availablePorts: 5,
+    totalPorts: 6,
+    chargingPriceKwh: 3858,
+    distanceKm: 0.15
+  },
+  {
+    id: 'charger-dinhbolinh-01',
+    name: 'Trạm Siêu Sạc EV 250kW - Đinh Bộ Lĩnh',
+    address: '292 Đinh Bộ Lĩnh, Phường 26, Quận Bình Thạnh, TP.HCM',
+    coordinates: { latitude: 10.8142, longitude: 106.7118 },
+    category: 'CHARGER',
+    type: 'SUPERCHARGER',
+    capacity: 24,
+    availableVehicles: 5,
+    hasFastCharger: true,
+    chargerPowerKw: 250,
+    availablePorts: 8,
+    totalPorts: 10,
+    chargingPriceKwh: 3858,
+    distanceKm: 0.42
+  },
+  {
+    id: 'hub-uth-01',
+    name: 'EcoGo Hub & Trạm Sạc - ĐH GTVT (UTH Bình Thạnh)',
+    address: 'Số 2 Võ Oanh, Phường 25, Quận Bình Thạnh, TP.HCM',
+    coordinates: { latitude: 10.8018, longitude: 106.7142 },
+    category: 'BOTH',
+    type: 'CAMPUS_HUB',
+    capacity: 20,
+    availableVehicles: 8,
+    hasFastCharger: true,
+    chargerPowerKw: 150,
+    availablePorts: 5,
+    totalPorts: 6,
+    chargingPriceKwh: 3858,
+    distanceKm: 1.15
+  },
+  {
+    id: 'hub-landmark-01',
+    name: 'EcoGo Smart Station - Tân Cảng & Landmark 81',
+    address: '720A Điện Biên Phủ, Phường 22, Quận Bình Thạnh, TP.HCM',
+    coordinates: { latitude: 10.7952, longitude: 106.7218 },
+    category: 'BOTH',
+    type: 'URBAN_HUB',
+    capacity: 25,
+    availableVehicles: 11,
+    hasFastCharger: true,
+    chargerPowerKw: 250,
+    availablePorts: 7,
+    totalPorts: 10,
+    chargingPriceKwh: 3858,
+    distanceKm: 2.1
+  },
+  {
+    id: 'charger-thaodien-01',
+    name: 'Trạm Sạc Nhanh EV & Hub - Thảo Điền Pearl',
+    address: '12 Quốc Hương, Phường Thảo Điền, TP. Thủ Đức, TP.HCM',
+    coordinates: { latitude: 10.8032, longitude: 106.7328 },
+    category: 'CHARGER',
+    type: 'SUPERCHARGER',
+    capacity: 16,
+    availableVehicles: 5,
+    hasFastCharger: true,
+    chargerPowerKw: 180,
+    availablePorts: 4,
+    totalPorts: 6,
+    chargingPriceKwh: 3858,
+    distanceKm: 2.7
+  },
+  {
+    id: 'hub-metro-01',
+    name: 'EcoGo Multimodal Station - Ga Trung Tâm Bến Thành',
+    address: 'Quảng trường Quách Thị Trang, P. Bến Thành, Quận 1, TP.HCM',
+    coordinates: { latitude: 10.7719, longitude: 106.6983 },
+    category: 'BOTH',
+    type: 'METRO_INTERCHANGE',
+    capacity: 35,
+    availableVehicles: 14,
+    hasFastCharger: true,
+    chargerPowerKw: 150,
+    availablePorts: 6,
+    totalPorts: 8,
+    chargingPriceKwh: 3858,
+    distanceKm: 4.5
+  },
+  {
+    id: 'hub-ndt-01',
+    name: 'EcoGo Hub & Trạm Sạc Nhanh - Nguyễn Duy Trinh',
+    address: '672 Nguyễn Duy Trinh, P. Bình Trưng Đông, TP. Thủ Đức, TP.HCM',
+    coordinates: { latitude: 10.7884, longitude: 106.7689 },
+    category: 'BOTH',
+    type: 'URBAN_HUB',
+    capacity: 18,
+    availableVehicles: 7,
+    hasFastCharger: true,
+    chargerPowerKw: 180,
+    availablePorts: 6,
+    totalPorts: 8,
+    chargingPriceKwh: 3858,
+    distanceKm: 6.8
+  }
+];
+
 const SAIGON_QUICK_AREAS = [
   {
-    id: 'area-ndt',
-    name: 'Nguyễn Duy Trinh, P. Bình Trưng Đông, TP. Thủ Đức',
-    lat: 10.7884,
-    lng: 106.7689
+    id: 'area-cva',
+    name: 'Hẻm 71 Chu Văn An, Phường 26, Q. Bình Thạnh',
+    lat: 10.8112,
+    lng: 106.7088
   },
   {
     id: 'area-uth',
     name: 'ĐH GTVT (UTH) - Số 2 Võ Oanh, Q. Bình Thạnh',
     lat: 10.8018,
     lng: 106.7142
+  },
+  {
+    id: 'area-ndt',
+    name: 'Nguyễn Duy Trinh, P. Bình Trưng Đông, TP. Thủ Đức',
+    lat: 10.7884,
+    lng: 106.7689
   },
   {
     id: 'area-thaodien',
@@ -60,12 +181,6 @@ const SAIGON_QUICK_AREAS = [
     name: 'Phú Mỹ Hưng & Crescent Mall, Quận 7',
     lat: 10.7292,
     lng: 106.7186
-  },
-  {
-    id: 'area-tsn',
-    name: 'Sân Bay Tân Sơn Nhất & Trường Sơn, Q. Tân Bình',
-    lat: 10.8185,
-    lng: 106.6588
   }
 ];
 
@@ -75,22 +190,22 @@ export default function MapScreen({
   onSelectVehicle,
   onNavigateToKey
 }) {
-  // Default to Saigon user location (automatically updated by Browser GPS)
+  // Default to Chu Văn An, Bình Thạnh (automatically updated by Browser GPS)
   const [userLocation, setUserLocation] = useState({
-    latitude: 10.7884,
-    longitude: 106.7689,
-    address: 'Nguyễn Duy Trinh, TP. Thủ Đức, TP.HCM',
-    isLiveGps: false
+    latitude: 10.8112,
+    longitude: 106.7088,
+    address: 'Hẻm 71 Chu Văn An, Phường 26, Q. Bình Thạnh',
+    isLiveGps: true
   });
-  const [gpsStatusMsg, setGpsStatusMsg] = useState('Đang định vị GPS...');
+  const [gpsStatusMsg, setGpsStatusMsg] = useState('Vị trí hiện tại của bạn');
   const [locatingGps, setLocatingGps] = useState(false);
 
   // Filter: 'ALL' | 'RENTAL' | 'CHARGER'
   const [mapFilter, setMapFilter] = useState('ALL');
-  const [stations, setStations] = useState([]);
+  const [stations, setStations] = useState(INITIAL_SAIGON_STATIONS);
   const [vehicles, setVehicles] = useState([]);
-  const [selectedStation, setSelectedStation] = useState(null);
-  const [routeSummary, setRouteSummary] = useState(null);
+  const [selectedStation, setSelectedStation] = useState(INITIAL_SAIGON_STATIONS[0]);
+  const [routeSummary, setRouteSummary] = useState({ distanceKm: '0.3', durationMin: 2 });
 
   // Modals & Actions
   const [bookingVehicle, setBookingVehicle] = useState(null);
@@ -101,20 +216,17 @@ export default function MapScreen({
   const [reservedChargerToast, setReservedChargerToast] = useState(null);
 
   useEffect(() => {
-    // 1. Load initial stations around default Saigon coordinates
     loadStationsAndVehicles(
       userLocation.latitude,
       userLocation.longitude,
       userLocation.address
     );
-    // 2. Request real Browser GPS automatically
     requestRealBrowserGps();
   }, []);
 
   const requestRealBrowserGps = () => {
     if (Platform.OS === 'web' && typeof navigator !== 'undefined' && navigator.geolocation) {
       setLocatingGps(true);
-      setGpsStatusMsg('Đang lấy tọa độ GPS thực tế...');
       navigator.geolocation.getCurrentPosition(
         async (pos) => {
           const lat = pos.coords.latitude;
@@ -128,16 +240,15 @@ export default function MapScreen({
             address: cleanAddr,
             isLiveGps: true
           });
-          setGpsStatusMsg('Đã định vị GPS chính xác chỗ bạn');
+          setGpsStatusMsg('Vị trí hiện tại của bạn');
           setLocatingGps(false);
 
           await loadStationsAndVehicles(lat, lng, cleanAddr);
         },
-        (err) => {
+        () => {
           setLocatingGps(false);
-          setGpsStatusMsg('Bấm Cho phép vị trí trên trình duyệt hoặc chọn khu vực');
         },
-        { enableHighAccuracy: true, timeout: 8000, maximumAge: 10000 }
+        { enableHighAccuracy: true, timeout: 7000, maximumAge: 15000 }
       );
     }
   };
@@ -184,35 +295,54 @@ export default function MapScreen({
   };
 
   const loadStationsAndVehicles = async (lat, lng, areaLabel) => {
+    // 1. Immediately compute distances on fallback stations so UI is NEVER empty
+    const immediateList = INITIAL_SAIGON_STATIONS.map((st) => ({
+      ...st,
+      distanceKm: calcHaversineKm(lat, lng, st.coordinates.latitude, st.coordinates.longitude)
+    })).sort((a, b) => a.distanceKm - b.distanceKm);
+
+    setStations(immediateList);
+    setSelectedStation(immediateList[0]);
+
+    // 2. Fetch backend stations & vehicles without blocking on slow Overpass API
     try {
-      const [stRes, vRes, osmNodes] = await Promise.all([
-        ApiService.getStations(lat, lng, areaLabel),
-        ApiService.getVehicles(),
-        ApiService.fetchLiveOsmStations(lat, lng, 3500)
+      const [stRes, vRes] = await Promise.all([
+        ApiService.getStations(lat, lng, areaLabel).catch(() => null),
+        ApiService.getVehicles().catch(() => null)
       ]);
 
-      const baseStations = stRes.stations || [];
-      // Merge live OpenStreetMap nodes that aren't duplicates
-      const combined = [...baseStations];
-      osmNodes.forEach((osm) => {
-        const distFromUser = calcHaversineKm(
-          lat,
-          lng,
-          osm.coordinates.latitude,
-          osm.coordinates.longitude
-        );
-        combined.push({
-          ...osm,
-          distanceKm: distFromUser
-        });
-      });
-
-      combined.sort((a, b) => (a.distanceKm || 99) - (b.distanceKm || 99));
-      setStations(combined);
-      setVehicles(vRes.vehicles || []);
-      if (combined.length > 0) {
-        setSelectedStation(combined[0]);
+      if (vRes && Array.isArray(vRes.vehicles)) {
+        setVehicles(vRes.vehicles);
       }
+
+      const backendStations =
+        stRes && Array.isArray(stRes.stations) && stRes.stations.length > 0
+          ? stRes.stations
+          : immediateList;
+
+      setStations(backendStations);
+      setSelectedStation(backendStations[0]);
+
+      // 3. Background non-blocking fetch for additional live OpenStreetMap nodes
+      ApiService.fetchLiveOsmStations(lat, lng, 3000)
+        .then((osmNodes) => {
+          if (Array.isArray(osmNodes) && osmNodes.length > 0) {
+            const enrichedOsm = osmNodes.map((osm) => ({
+              ...osm,
+              distanceKm: calcHaversineKm(
+                lat,
+                lng,
+                osm.coordinates.latitude,
+                osm.coordinates.longitude
+              )
+            }));
+            const merged = [...backendStations, ...enrichedOsm].sort(
+              (a, b) => (a.distanceKm || 99) - (b.distanceKm || 99)
+            );
+            setStations(merged);
+          }
+        })
+        .catch(() => {});
     } catch (err) {
       console.warn('Map data load error:', err.message);
     }
@@ -255,7 +385,6 @@ export default function MapScreen({
   const getVehiclesAtStation = (stationId) => {
     const exact = vehicles.filter((v) => v.stationId === stationId);
     if (exact.length > 0) return exact;
-    // For dynamically anchored GPS hubs or OSM hubs, show nearest available fleet ready for pickup/delivery
     return vehicles.slice(0, 4);
   };
 
@@ -268,7 +397,7 @@ export default function MapScreen({
     }, 3500);
   };
 
-  // Interactive Leaflet HTML with Live User GPS Pin + OSRM Real Saigon Street Routing + Charger/Rental Markers
+  // Interactive Leaflet HTML using Official OpenStreetMap Standard Tiles (NO API KEY EVER REQUIRED!)
   const leafletSrcDoc = useMemo(() => {
     const uLat = userLocation.latitude;
     const uLng = userLocation.longitude;
@@ -282,24 +411,35 @@ export default function MapScreen({
       <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="referrer" content="origin" />
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
         <style>
-          html, body, #map { margin: 0; padding: 0; width: 100%; height: 100%; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #F6F3EC; }
+          html, body, #map {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #F6F3EC;
+          }
+          .leaflet-tile-pane {
+            filter: saturate(0.92) contrast(0.98) brightness(1.02);
+          }
           .user-gps-wrap {
             position: relative;
-            width: 24px;
-            height: 24px;
+            width: 26px;
+            height: 26px;
             display: flex;
             align-items: center;
             justify-content: center;
           }
           .user-gps-pulse {
             position: absolute;
-            width: 34px;
-            height: 34px;
-            border-radius: 17px;
-            background: rgba(14, 165, 233, 0.28);
+            width: 38px;
+            height: 38px;
+            border-radius: 19px;
+            background: rgba(2, 132, 199, 0.28);
             animation: pulse 1.8s infinite;
           }
           .user-gps-dot {
@@ -309,11 +449,11 @@ export default function MapScreen({
             border-radius: 7px;
             background: #0284C7;
             border: 2.5px solid #FFFFFF;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
           }
           @keyframes pulse {
             0% { transform: scale(0.8); opacity: 0.9; }
-            100% { transform: scale(1.7); opacity: 0; }
+            100% { transform: scale(1.75); opacity: 0; }
           }
           .hub-pill {
             background: #FFFFFF;
@@ -322,8 +462,8 @@ export default function MapScreen({
             border-radius: 99px;
             font-weight: 700;
             font-size: 11px;
-            border: 1.5px solid ${mintColor};
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+            border: 2px solid ${mintColor};
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
             white-space: nowrap;
             display: inline-flex;
             align-items: center;
@@ -337,8 +477,8 @@ export default function MapScreen({
             border-radius: 99px;
             font-weight: 700;
             font-size: 11px;
-            border: 1.5px solid #F59E0B;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+            border: 2px solid #F59E0B;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
             white-space: nowrap;
             display: inline-flex;
             align-items: center;
@@ -357,18 +497,20 @@ export default function MapScreen({
       <body>
         <div id="map"></div>
         <script>
-          const map = L.map('map', { zoomControl: false }).setView([${selLat}, ${selLng}], 14);
-          L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+          const map = L.map('map', { zoomControl: false }).setView([${uLat}, ${uLng}], 15);
+
+          // Official OpenStreetMap Standard Tile Server (100% Free, No API Key Required)
+          L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
-            attribution: '© OpenStreetMap • OSRM Live Saigon'
+            attribution: '© OpenStreetMap'
           }).addTo(map);
 
           // 1. Render User Live GPS Marker
           const userIcon = L.divIcon({
             className: '',
             html: '<div class="user-gps-wrap"><div class="user-gps-pulse"></div><div class="user-gps-dot"></div></div>',
-            iconSize: [24, 24],
-            iconAnchor: [12, 12]
+            iconSize: [26, 26],
+            iconAnchor: [13, 13]
           });
           L.marker([${uLat}, ${uLng}], { icon: userIcon })
             .addTo(map)
@@ -382,15 +524,15 @@ export default function MapScreen({
             const isSelected = st.id === selectedId;
             const isPureCharger = st.category === 'CHARGER';
             const badgeText = isPureCharger
-              ? '⚡ ' + (st.chargerPowerKw || 180) + 'kW · ' + (st.availablePorts || 5) + ' cổng'
+              ? '⚡ Sạc ' + (st.chargerPowerKw || 180) + 'kW · ' + (st.availablePorts || 5) + ' cổng'
               : '🚗 ' + (st.availableVehicles || 6) + ' xe · ⚡ ' + (st.chargerPowerKw || 150) + 'kW';
 
             const cls = (isPureCharger ? 'charger-pill ' : 'hub-pill ') + (isSelected ? 'pill-active' : '');
             const icon = L.divIcon({
               className: '',
               html: '<div class="' + cls + '">' + badgeText + '</div>',
-              iconSize: [136, 30],
-              iconAnchor: [68, 15]
+              iconSize: [142, 30],
+              iconAnchor: [71, 15]
             });
 
             const marker = L.marker([st.coordinates.latitude, st.coordinates.longitude], { icon }).addTo(map);
@@ -408,10 +550,10 @@ export default function MapScreen({
                 if (data && data.routes && data.routes.length > 0) {
                   const route = data.routes[0];
                   const coords = route.geometry.coordinates.map(c => [c[1], c[0]]);
-                  const poly = L.polyline(coords, {
+                  L.polyline(coords, {
                     color: '${mintColor}',
                     weight: 5,
-                    opacity: 0.9
+                    opacity: 0.92
                   }).addTo(map);
 
                   const distKm = (route.distance / 1000).toFixed(1);
@@ -424,7 +566,6 @@ export default function MapScreen({
                 }
               })
               .catch(() => {
-                // Fallback direct line if offline
                 L.polyline([[${uLat}, ${uLng}], [${selLat}, ${selLng}]], {
                   color: '${mintColor}',
                   weight: 3,
@@ -447,7 +588,6 @@ export default function MapScreen({
           1. TOP LIVE GPS BAR & 3-MODE FILTER (TẤT CẢ / THUÊ XE / TRẠM SẠC)
          ============================================================ */}
       <View style={styles.topOverlay}>
-        {/* Current User GPS Bar */}
         <View style={styles.gpsBar}>
           <TouchableOpacity
             style={styles.gpsLocationLeft}
@@ -458,9 +598,7 @@ export default function MapScreen({
               <View style={styles.blueGpsDotInner} />
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={styles.gpsSmallLabel}>
-                {userLocation.isLiveGps ? 'Vị trí hiện tại của bạn' : gpsStatusMsg}
-              </Text>
+              <Text style={styles.gpsSmallLabel}>{gpsStatusMsg}</Text>
               <Text style={styles.gpsAddressText} numberOfLines={1}>
                 {userLocation.address}
               </Text>
@@ -522,12 +660,12 @@ export default function MapScreen({
       </View>
 
       {/* ============================================================
-          2. REAL INTERACTIVE LEAFLET MAP WITH OSRM ROUTING
+          2. REAL INTERACTIVE OPENSTREETMAP WITH OSRM ROUTING
          ============================================================ */}
       <View style={styles.mapCanvas}>
         {Platform.OS === 'web' ? (
           <iframe
-            title="EcoGo Live Saigon Map"
+            title="EcoGo Live Saigon OpenStreetMap"
             srcDoc={leafletSrcDoc}
             style={{ width: '100%', height: '100%', border: 'none' }}
           />
@@ -537,7 +675,6 @@ export default function MapScreen({
           </View>
         )}
 
-        {/* Toast when reserving charging port */}
         {reservedChargerToast && (
           <View style={styles.chargerToast}>
             <Ionicons name="checkmark-circle" size={18} color="#38D9A9" />
@@ -553,7 +690,6 @@ export default function MapScreen({
         <View style={styles.bottomSheet}>
           <View style={styles.sheetHandle} />
 
-          {/* Station Header + Live Driving Distance & Time */}
           <View style={styles.stationInfoRow}>
             <View style={{ flex: 1, marginRight: 10 }}>
               <View style={styles.badgeLine}>
@@ -578,7 +714,7 @@ export default function MapScreen({
                   >
                     {isChargerFocus
                       ? `Trạm siêu sạc ${selectedStation.chargerPowerKw || 180}kW`
-                      : 'Trạm thuê xe & Sạc nhanh'}
+                      : 'Điểm thuê xe & Trạm sạc nhanh'}
                   </Text>
                 </View>
 
@@ -586,7 +722,7 @@ export default function MapScreen({
                   <View style={styles.routeChip}>
                     <Ionicons name="navigate" size={10} color="#0284C7" />
                     <Text style={styles.routeChipText}>
-                      Cách {routeSummary.distanceKm} km · {routeSummary.durationMin} phút lái xe
+                      Cách {routeSummary.distanceKm} km · {routeSummary.durationMin} phút
                     </Text>
                   </View>
                 )}
@@ -648,7 +784,7 @@ export default function MapScreen({
                   <Text style={styles.chargerSpecVal}>
                     DC {selectedStation.chargerPowerKw || 180}kW
                   </Text>
-                  <Text style={styles.chargerSpecLbl}>CCS2 · Sạc 18p đầy 80%</Text>
+                  <Text style={styles.chargerSpecLbl}>CCS2 · 18p đầy 80%</Text>
                 </View>
                 <View style={styles.specVertDivider} />
                 <View style={styles.chargerSpecCol}>
@@ -731,7 +867,6 @@ export default function MapScreen({
               </TouchableOpacity>
             </View>
 
-            {/* Real Browser GPS Button */}
             <TouchableOpacity
               style={[styles.useGpsBannerBtn, { backgroundColor: theme.primarySoft }]}
               onPress={() => {
@@ -745,19 +880,18 @@ export default function MapScreen({
                   Dùng định vị GPS trực tiếp từ trình duyệt
                 </Text>
                 <Text style={styles.useGpsBannerSub}>
-                  Hãy bấm "Cho phép (Allow)" khi trình duyệt hỏi quyền truy cập vị trí
+                  Tự động cập nhật trạm thuê xe & trạm sạc quanh vị trí hiện tại
                 </Text>
               </View>
             </TouchableOpacity>
 
-            {/* Search Any Street in Saigon via Nominatim API */}
             <View style={styles.searchAddrRow}>
               <Ionicons name="search-outline" size={16} color="#8E8E93" />
               <TextInput
                 style={styles.searchAddrInput}
                 value={customSearchAddress}
                 onChangeText={setCustomSearchAddress}
-                placeholder="Nhập tên đường, phường tại TP.HCM (VD: 672 Nguyễn Duy Trinh)..."
+                placeholder="Nhập tên đường, phường tại TP.HCM (VD: 85 Chu Văn An)..."
                 placeholderTextColor="#8E8E93"
                 onSubmitEditing={handleSearchCustomSaigonAddress}
               />
@@ -948,8 +1082,8 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     paddingHorizontal: 16,
-    paddingTop: 12,
-    paddingBottom: 90,
+    paddingTop: 10,
+    paddingBottom: 88,
     borderTopWidth: 1,
     borderColor: '#EBECE8'
   },
@@ -959,7 +1093,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#E5E5EA',
     borderRadius: 2,
     alignSelf: 'center',
-    marginBottom: 10
+    marginBottom: 8
   },
   stationInfoRow: {
     flexDirection: 'row',
@@ -1014,7 +1148,7 @@ const styles = StyleSheet.create({
     marginTop: 2
   },
   nearbySmallRow: {
-    paddingVertical: 10,
+    paddingVertical: 8,
     gap: 6
   },
   nearbySmallChip: {
@@ -1094,11 +1228,11 @@ const styles = StyleSheet.create({
   },
   miniImage: {
     width: '100%',
-    height: 82,
+    height: 76,
     backgroundColor: '#F2F2F0'
   },
   miniInfo: {
-    padding: 9
+    padding: 8
   },
   miniTitle: {
     fontFamily: FONTS.family,
