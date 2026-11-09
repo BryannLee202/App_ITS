@@ -1,44 +1,49 @@
-// Warm Pastel & Slate Blue Tactile Neumorphism (Bento Soft UI) Design System
+// Apple Pure White & Mint Green / Champagne Beige Luxury Automotive Design System
 export const COLORS = {
-  // Primary Palette (Warm Terracotta Coral & Dusty Slate Blue from reference image)
-  primary: '#DF8268',         // Warm Terracotta Coral
-  primaryLight: '#F5BFA9',    // Soft Pastel Peach
-  primaryDark: '#C4684F',     // Deep Terracotta
-  primaryMuted: '#FCEEE9',    // Soft Peach Mist
+  // Primary Palette: Luxury Mint Emerald (Xanh Bạc Hà Sang Trọng)
+  primary: '#10B981',         // Signature Mint Emerald
+  primaryLight: '#34D399',    // Fresh Mint Accent
+  primaryDark: '#059669',     // Deep Emerald Mint
+  primaryMuted: '#ECFDF5',    // Soft Mint Ice Surface
 
-  secondary: '#6E92B5',       // Dusty Slate Blue (Wave & Dial accent)
-  secondaryLight: '#94B4D1',  // Soft Sky Blue
-  secondaryDark: '#527394',   // Deep Slate Blue
-  secondaryMuted: '#EBF2F8',  // Ice Blue Mist
+  // Secondary Palette: Champagne Beige & Executive Slate
+  secondary: '#0F172A',       // Apple Charcoal Slate
+  secondaryLight: '#334155',  // Muted Slate
+  secondaryDark: '#064E3B',   // Deep Forest Mint
+  secondaryMuted: '#F5F2EB',  // Luxury Champagne Beige Surface
 
-  accent: '#F2C97D',          // Warm Butter Gold
-  accentLight: '#FDF6E4',
-  coral: '#E08A70',
+  // Champagne Beige Accents
+  beige: '#F5F2EB',           // Warm Champagne Beige
+  beigeDark: '#E5DEC9',       // Champagne Border
+  beigeText: '#786B59',       // Warm Bronze Text
+  accent: '#F59E0B',          // Gold Star / Amber
+  accentLight: '#FEF3C7',
+  danger: '#EF4444',
 
-  // Bento Card Surfaces (Warm Ivory & Alabaster)
-  background: '#EFE5DC',      // Warm Rose-Beige Studio Canvas
-  surface: '#FDFBF7',         // Pure Warm Ivory Card
-  surfaceVariant: '#F7F1E8',  // Soft Cream Inset
-  peachSurface: '#F5C2AF',    // Split Bento Peach Card
-  terracottaSurface: '#E59B82',
-  border: '#E6D9CE',          // Warm Subtle Border
-  borderLight: '#FBF8F3',     // 3D Top-Left Highlight Border
+  // Apple Pure White Surfaces
+  background: '#F5F5F7',      // Apple iOS System Background (Alabaster White)
+  surface: '#FFFFFF',         // Pure Crisp White Card
+  surfaceVariant: '#F8FAFC',  // Subtle Inset Surface
+  peachSurface: '#F5F2EB',    // Champagne Beige Card
+  border: '#E5E7EB',          // Crisp Hairline Border
+  borderDark: '#D1D5DB',
+  borderLight: '#FFFFFF',
 
-  // High-legibility Warm Espresso Typography
-  textPrimary: '#2C221E',     // Deep Warm Espresso
-  textSecondary: '#7A6A63',   // Muted Warm Taupe
-  textMuted: '#A6968E',       // Soft Sand Gray
+  // Apple High-Contrast Typography
+  textPrimary: '#111827',     // Deep Apple Ink
+  textSecondary: '#4B5563',   // Neutral Slate Gray
+  textMuted: '#9CA3AF',       // Muted Silver Gray
   textInverse: '#FFFFFF',
 
-  // Tactile Cockpit Mode
-  cockpitBg: '#EAE0D5',
-  cockpitCard: '#FDFBF7',
-  cockpitBorder: '#E2D4C8',
-  cockpitGlow: 'rgba(223, 130, 104, 0.25)'
+  // Cockpit Mode
+  cockpitBg: '#F5F5F7',
+  cockpitCard: '#FFFFFF',
+  cockpitBorder: '#E5E7EB',
+  cockpitGlow: 'rgba(16, 185, 129, 0.2)'
 };
 
 export const FONTS = {
-  family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif'
+  family: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, "Helvetica Neue", sans-serif'
 };
 
 export const SPACING = {
@@ -52,9 +57,9 @@ export const SPACING = {
 
 export const RADIUS = {
   sm: 10,
-  md: 16,
-  lg: 22,
-  xl: 28,
-  xxl: 32,
+  md: 14,
+  lg: 20,
+  xl: 24,
+  xxl: 30,
   full: 999
 };

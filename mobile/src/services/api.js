@@ -74,6 +74,17 @@ class ApiService {
   }
 
   // Rentals & Digital Key Controls
+  async getBookingQuote(quoteData) {
+    return this.request('/rentals/quote', {
+      method: 'POST',
+      body: JSON.stringify(quoteData)
+    });
+  }
+
+  async getVouchers() {
+    return this.request('/rentals/vouchers');
+  }
+
   async getActiveTrip() {
     return this.request('/rentals/active');
   }

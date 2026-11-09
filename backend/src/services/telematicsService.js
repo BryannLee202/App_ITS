@@ -99,6 +99,12 @@ class TelematicsService {
       case 'FLASH_LIGHTS':
         resultMessage = 'Đã nháy đèn khẩn cấp 3 lần hỗ trợ tìm xe trong bãi';
         break;
+      case 'TRUNK_OPEN':
+        resultMessage = 'Đã mở cốp điện tự động qua Digital Key IoT';
+        break;
+      case 'AC_PRECOOL':
+        resultMessage = 'Đã bật làm mát cabin từ xa (22°C • Chế độ Eco)';
+        break;
       default:
         throw new Error(`Unsupported command: ${command}`);
     }

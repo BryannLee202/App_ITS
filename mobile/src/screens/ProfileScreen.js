@@ -24,6 +24,14 @@ export default function ProfileScreen() {
     memberTier: 'HỘI VIÊN DIAMOND GREEN'
   });
 
+  const [toastMessage, setToastMessage] = useState(null);
+
+  const handleTopUp = () => {
+    setUser(prev => ({ ...prev, walletBalance: prev.walletBalance + 500000 }));
+    setToastMessage('Đã nạp +500.000đ vào Ví ITS GreenPay thành công!');
+    setTimeout(() => setToastMessage(null), 2500);
+  };
+
   const handleOpenSurvey = () => {
     const surveyUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSfq1tFb8DmWn5QNuS5tkb6U5QXKND7s4JFDFg3F_8oXnberlA/viewform';
     Linking.openURL(surveyUrl).catch(() => {
@@ -32,27 +40,37 @@ export default function ProfileScreen() {
   };
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
-      {/* Profile Header */}
+    <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+      {/* Profile Header Card */}
       <View style={styles.profileCard}>
         <View style={styles.avatarBig}>
-          <Ionicons name="person" size={36} color={COLORS.primary} />
+          <Ionicons name="person" size={34} color="#059669" />
+          <View style={styles.verifiedCheckDot}>
+            <Ionicons name="checkmark" size={10} color="#FFFFFF" />
+          </View>
         </View>
         <Text style={styles.profileName}>{user.fullName}</Text>
         <Text style={styles.profilePhone}>{user.phone} • {user.email}</Text>
 
         <View style={styles.tierPill}>
-          <Ionicons name="ribbon" size={12} color="#FFFFFF" />
+          <Ionicons name="diamond" size={11} color="#FFFFFF" />
           <Text style={styles.tierText}>{user.memberTier}</Text>
         </View>
       </View>
 
-      {/* eKYC Verification Banner */}
+      {toastMessage && (
+        <View style={styles.toastBox}>
+          <Ionicons name="checkmark-circle" size={16} color="#FFFFFF" />
+          <Text style={styles.toastText}>{toastMessage}</Text>
+        </View>
+      )}
+
+      {/* eKYC Verification Card */}
       <View style={styles.ekycCard}>
         <View style={styles.ekycHeader}>
           <View style={styles.ekycTitleRow}>
-            <Ionicons name="shield-checkmark" size={18} color={COLORS.secondary} />
-            <Text style={styles.ekycTitle}>XÁC THỰC DANH TÍNH SỐ (eKYC AI)</Text>
+            <Ionicons name="shield-checkmark" size={17} color="#059669" />
+            <Text style={styles.ekycTitle}>HỒ SƠ ĐỊNH DANH SỐ eKYC AI</Text>
           </View>
           <View style={styles.verifiedTag}>
             <Text style={styles.verifiedTagText}>ĐÃ XÁC THỰC</Text>
@@ -61,34 +79,43 @@ export default function ProfileScreen() {
 
         <View style={styles.ekycBody}>
           <View style={styles.ekycItem}>
-            <Text style={styles.ekycLabel}>Giấy phép lái xe</Text>
+            <Text style={styles.ekycLabel}>Giấy phép lái xe quốc gia</Text>
             <Text style={styles.ekycValue}>{user.licenseNumber}</Text>
           </View>
           <View style={styles.ekycItem}>
-            <Text style={styles.ekycLabel}>CCCD gắn chip</Text>
+            <Text style={styles.ekycLabel}>CCCD gắn chip (VNeID)</Text>
             <Text style={styles.ekycValue}>{user.cccdNumber}</Text>
           </View>
         </View>
-        <Text style={styles.ekycNote}>
-          ✓ Đủ điều kiện tự nhận xe 24/7 không cần gặp chủ xe hoặc cọc tiền mặt.
-        </Text>
+        <View style={styles.ekycPrivilegeBox}>
+          <Ionicons name="key-outline" size={13} color="#059669" />
+          <Text style={styles.ekycNote}>
+            Đặc quyền: Nhận xe tự động 24/7 và miễn 100% tiền đặt cọc thế chấp.
+          </Text>
+        </View>
       </View>
 
-      {/* Wallet & Eco Points */}
+      {/* Wallet & Eco Points (Mint & Champagne Beige) */}
       <View style={styles.walletRow}>
         <View style={styles.walletBox}>
-          <Text style={styles.walletLabel}>Số dư ví ITS</Text>
-          <Text style={styles.walletVal}>{user.walletBalance.toLocaleString('vi-VN')} đ</Text>
-          <TouchableOpacity style={styles.rechargeBtn}>
-            <Text style={styles.rechargeText}>+ Nạp tiền ví</Text>
+          <View style={styles.walletTopIconRow}>
+            <Text style={styles.walletLabel}>Ví ITS GreenPay</Text>
+            <Ionicons name="wallet-outline" size={15} color="#059669" />
+          </View>
+          <Text style={styles.walletVal}>{user.walletBalance.toLocaleString('vi-VN')}đ</Text>
+          <TouchableOpacity style={styles.rechargeBtn} onPress={handleTopUp}>
+            <Text style={styles.rechargeText}>+ Nạp nhanh 500k</Text>
           </TouchableOpacity>
         </View>
 
-        <View style={[styles.walletBox, { backgroundColor: COLORS.secondaryMuted }]}>
-          <Text style={styles.walletLabel}>Điểm Xanh Eco Points</Text>
-          <Text style={[styles.walletVal, { color: COLORS.secondaryDark }]}>{user.ecoPoints} Pts</Text>
-          <TouchableOpacity style={[styles.rechargeBtn, { backgroundColor: COLORS.secondaryDark }]}>
-            <Text style={styles.rechargeText}>Đổi voucher</Text>
+        <View style={[styles.walletBox, styles.walletBoxBeige]}>
+          <View style={styles.walletTopIconRow}>
+            <Text style={styles.walletLabelBeige}>Điểm Thưởng Xanh</Text>
+            <Ionicons name="leaf-outline" size={15} color="#786B59" />
+          </View>
+          <Text style={[styles.walletVal, { color: '#059669' }]}>{user.ecoPoints} Eco Pts</Text>
+          <TouchableOpacity style={styles.rechargeBtnBeige}>
+            <Text style={styles.rechargeText}>Đổi ưu đãi -20%</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -96,47 +123,55 @@ export default function ProfileScreen() {
       {/* Survey & Feedback Banner (Linking to user's Google Form) */}
       <TouchableOpacity style={styles.surveyCard} onPress={handleOpenSurvey} activeOpacity={0.88}>
         <View style={styles.surveyIconCircle}>
-          <Ionicons name="document-text-outline" size={20} color="#FFFFFF" />
+          <Ionicons name="clipboard-outline" size={20} color="#FFFFFF" />
         </View>
         <View style={styles.surveyContent}>
-          <Text style={styles.surveyTitle}>PHIẾU KHẢO SÁT CHẤT LƯỢNG DỊCH VỤ ITS</Text>
+          <Text style={styles.surveyTitle}>KHẢO SÁT CHẤT LƯỢNG HẠ TẦNG ITS</Text>
           <Text style={styles.surveySub}>
-            Đóng góp ý kiến nâng cấp hạ tầng giao thông thông minh kết nối Metro Tuyến 1
+            Đóng góp ý kiến nghiên cứu kết nối giao thông xanh ĐH GTVT TP.HCM (UTH)
           </Text>
         </View>
-        <Ionicons name="chevron-forward" size={16} color="#CBD5E1" />
+        <Ionicons name="chevron-forward" size={16} color="#059669" />
       </TouchableOpacity>
 
       {/* Menu Options */}
       <View style={styles.menuSection}>
         <TouchableOpacity style={styles.menuItem}>
           <View style={styles.menuLeft}>
-            <Ionicons name="car-outline" size={20} color={COLORS.textPrimary} />
+            <View style={styles.menuIconWrap}>
+              <Ionicons name="document-text-outline" size={18} color="#059669" />
+            </View>
             <Text style={styles.menuText}>Hợp đồng thuê phương tiện điện tử</Text>
           </View>
-          <Ionicons name="chevron-forward" size={18} color="#CBD5E1" />
+          <Ionicons name="chevron-forward" size={16} color="#9CA3AF" />
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.menuItem}>
           <View style={styles.menuLeft}>
-            <Ionicons name="speedometer-outline" size={20} color={COLORS.textPrimary} />
+            <View style={styles.menuIconWrap}>
+              <Ionicons name="leaf-outline" size={18} color="#059669" />
+            </View>
             <Text style={styles.menuText}>Báo cáo tiết giảm phát thải CO₂ cá nhân</Text>
           </View>
-          <Ionicons name="chevron-forward" size={18} color="#CBD5E1" />
+          <Ionicons name="chevron-forward" size={16} color="#9CA3AF" />
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.menuItem}>
           <View style={styles.menuLeft}>
-            <Ionicons name="school-outline" size={20} color={COLORS.textPrimary} />
+            <View style={styles.menuIconWrapBeige}>
+              <Ionicons name="school-outline" size={18} color="#786B59" />
+            </View>
             <Text style={styles.menuText}>Chuyên đề ITS - ĐH GTVT TP.HCM (UTH)</Text>
           </View>
-          <Ionicons name="chevron-forward" size={18} color="#CBD5E1" />
+          <Ionicons name="chevron-forward" size={16} color="#9CA3AF" />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.menuItem}>
+        <TouchableOpacity style={[styles.menuItem, { borderBottomWidth: 0 }]}>
           <View style={styles.menuLeft}>
-            <Ionicons name="headset-outline" size={20} color={COLORS.textPrimary} />
-            <Text style={styles.menuText}>Tổng đài hỗ trợ khẩn cấp 24/7</Text>
+            <View style={styles.menuIconWrapBeige}>
+              <Ionicons name="call-outline" size={18} color="#786B59" />
+            </View>
+            <Text style={styles.menuText}>Tổng đài cứu hộ & kỹ thuật 24/7</Text>
           </View>
           <Text style={styles.hotlineText}>1900 8899</Text>
         </TouchableOpacity>
@@ -148,73 +183,101 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background
+    backgroundColor: '#F5F5F7'
   },
   scrollContent: {
-    padding: SPACING.lg,
-    paddingBottom: 90
+    padding: 16,
+    paddingBottom: 28
   },
   profileCard: {
-    backgroundColor: COLORS.surface,
-    borderRadius: RADIUS.lg,
-    padding: SPACING.xl,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 22,
+    padding: 20,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: COLORS.border,
-    marginBottom: SPACING.md
+    borderColor: '#E5E7EB',
+    marginBottom: 12
   },
   avatarBig: {
     width: 72,
     height: 72,
     borderRadius: 36,
-    backgroundColor: COLORS.primaryMuted,
+    backgroundColor: '#ECFDF5',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
-    borderColor: COLORS.primaryLight,
-    marginBottom: SPACING.sm
+    borderColor: '#10B981',
+    marginBottom: 10,
+    position: 'relative'
+  },
+  verifiedCheckDot: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    backgroundColor: '#10B981',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: '#FFFFFF'
   },
   profileName: {
     fontSize: 18,
-    fontWeight: '800',
-    color: COLORS.textPrimary
+    fontWeight: '900',
+    color: '#111827'
   },
   profilePhone: {
     fontSize: 12,
-    color: COLORS.textSecondary,
+    color: '#6B7280',
     marginTop: 2
   },
   tierPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: COLORS.primary,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: RADIUS.full,
-    gap: 4,
-    marginTop: SPACING.sm
+    backgroundColor: '#10B981',
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+    borderRadius: 99,
+    gap: 5,
+    marginTop: 10
   },
   tierText: {
     color: '#FFFFFF',
     fontSize: 10,
+    fontWeight: '800'
+  },
+  toastBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#059669',
+    padding: 10,
+    borderRadius: 12,
+    marginBottom: 12,
+    gap: 8
+  },
+  toastText: {
+    color: '#FFFFFF',
+    fontSize: 12,
     fontWeight: '700'
   },
   ekycCard: {
-    backgroundColor: COLORS.secondaryMuted,
-    borderRadius: RADIUS.lg,
-    padding: SPACING.md,
-    marginBottom: SPACING.md,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    padding: 14,
+    marginBottom: 12,
     borderWidth: 1,
-    borderColor: '#C5DCF0'
+    borderColor: '#E5E7EB'
   },
   ekycHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     borderBottomWidth: 1,
-    borderBottomColor: '#D4E4F2',
-    paddingBottom: SPACING.xs,
-    marginBottom: SPACING.sm
+    borderBottomColor: '#F3F4F6',
+    paddingBottom: 8,
+    marginBottom: 10
   },
   ekycTitleRow: {
     flexDirection: 'row',
@@ -222,96 +285,128 @@ const styles = StyleSheet.create({
     gap: 6
   },
   ekycTitle: {
-    color: COLORS.secondaryDark,
+    color: '#111827',
     fontSize: 11,
-    fontWeight: '800'
+    fontWeight: '900'
   },
   verifiedTag: {
-    backgroundColor: COLORS.secondaryDark,
+    backgroundColor: '#ECFDF5',
     paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: RADIUS.full
+    paddingVertical: 3,
+    borderRadius: 99,
+    borderWidth: 1,
+    borderColor: '#A7F3D0'
   },
   verifiedTagText: {
-    color: '#FFFFFF',
+    color: '#059669',
     fontSize: 9,
     fontWeight: '800'
   },
   ekycBody: {
-    marginBottom: SPACING.xs
+    marginBottom: 8
   },
   ekycItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginVertical: 3
+    marginVertical: 4
   },
   ekycLabel: {
     fontSize: 11,
-    color: COLORS.textSecondary,
+    color: '#6B7280',
     fontWeight: '600'
   },
   ekycValue: {
     fontSize: 11,
     fontWeight: '800',
-    color: COLORS.textPrimary
+    color: '#111827'
+  },
+  ekycPrivilegeBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#ECFDF5',
+    paddingHorizontal: 10,
+    paddingVertical: 7,
+    borderRadius: 10,
+    gap: 6
   },
   ekycNote: {
     fontSize: 10,
-    color: COLORS.secondaryDark,
+    color: '#059669',
     fontWeight: '700',
-    marginTop: 4
+    flex: 1
   },
   walletRow: {
     flexDirection: 'row',
-    gap: SPACING.md,
-    marginBottom: SPACING.md
+    gap: 10,
+    marginBottom: 12
   },
   walletBox: {
     flex: 1,
-    backgroundColor: COLORS.surface,
-    borderRadius: RADIUS.lg,
-    padding: SPACING.md,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 18,
+    padding: 14,
     borderWidth: 1,
-    borderColor: COLORS.border
+    borderColor: '#E5E7EB'
+  },
+  walletBoxBeige: {
+    backgroundColor: '#F5F2EB',
+    borderColor: '#E5DEC9'
+  },
+  walletTopIconRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
   },
   walletLabel: {
-    fontSize: 10,
-    color: COLORS.textSecondary,
-    fontWeight: '600'
+    fontSize: 11,
+    color: '#6B7280',
+    fontWeight: '700'
+  },
+  walletLabelBeige: {
+    fontSize: 11,
+    color: '#786B59',
+    fontWeight: '700'
   },
   walletVal: {
     fontSize: 16,
-    fontWeight: '800',
-    color: COLORS.textPrimary,
-    marginVertical: 4
+    fontWeight: '900',
+    color: '#111827',
+    marginVertical: 6
   },
   rechargeBtn: {
-    backgroundColor: COLORS.primary,
-    paddingVertical: 6,
-    borderRadius: RADIUS.full,
+    backgroundColor: '#10B981',
+    paddingVertical: 7,
+    borderRadius: 10,
     alignItems: 'center',
-    marginTop: 4
+    marginTop: 2
+  },
+  rechargeBtnBeige: {
+    backgroundColor: '#111827',
+    paddingVertical: 7,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginTop: 2
   },
   rechargeText: {
     color: '#FFFFFF',
-    fontSize: 10,
-    fontWeight: '700'
+    fontSize: 11,
+    fontWeight: '800'
   },
   surveyCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: COLORS.primaryMuted,
-    borderRadius: RADIUS.lg,
+    backgroundColor: '#ECFDF5',
+    borderRadius: 18,
     padding: 14,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: COLORS.primaryLight
+    borderColor: '#A7F3D0'
   },
   surveyIconCircle: {
     width: 38,
     height: 38,
     borderRadius: 12,
-    backgroundColor: COLORS.primary,
+    backgroundColor: '#10B981',
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 10
@@ -322,44 +417,59 @@ const styles = StyleSheet.create({
   surveyTitle: {
     fontSize: 11,
     fontWeight: '900',
-    color: COLORS.primaryDark,
-    letterSpacing: 0.4
+    color: '#059669'
   },
   surveySub: {
     fontSize: 10,
-    color: COLORS.textSecondary,
+    color: '#4B5563',
     marginTop: 2,
     fontWeight: '600'
   },
   menuSection: {
-    backgroundColor: COLORS.surface,
-    borderRadius: RADIUS.lg,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: '#E5E7EB',
     overflow: 'hidden'
   },
   menuItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: SPACING.md,
-    paddingVertical: 14,
+    paddingHorizontal: 14,
+    paddingVertical: 13,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.border
+    borderBottomColor: '#F3F4F6'
   },
   menuLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12
+    gap: 10
+  },
+  menuIconWrap: {
+    width: 32,
+    height: 32,
+    borderRadius: 10,
+    backgroundColor: '#ECFDF5',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  menuIconWrapBeige: {
+    width: 32,
+    height: 32,
+    borderRadius: 10,
+    backgroundColor: '#F5F2EB',
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   menuText: {
     fontSize: 13,
-    color: COLORS.textPrimary,
-    fontWeight: '600'
+    color: '#111827',
+    fontWeight: '700'
   },
   hotlineText: {
     fontSize: 12,
-    fontWeight: '700',
-    color: COLORS.danger
+    fontWeight: '900',
+    color: '#059669'
   }
 });

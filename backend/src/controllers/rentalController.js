@@ -29,8 +29,122 @@ let rentals = [
 // Start background simulation for the demo trip
 telematicsService.startTripSimulation('veh-vf8-001', 'trip_demo_101');
 
+// Available Promo Vouchers
+const VOUCHERS = [
+  {
+    code: 'XANH20',
+    title: 'Giảm 20% Thuê Xe Điện ITS',
+    description: 'Áp dụng cho mọi dòng xe thuần điện VinFast & Hyundai (tối đa 120.000đ)',
+    discountType: 'PERCENT',
+    discountValue: 20,
+    maxDiscount: 120000
+  },
+  {
+    code: 'UTH50K',
+    title: 'Ưu Đãi Sinh Viên & Giảng Viên UTH',
+    description: 'Giảm trực tiếp 50.000đ khi nhận xe tại Trạm Hub ĐH Giao Thông Vận Tải',
+    discountType: 'FIXED',
+    discountValue: 50000,
+    maxDiscount: 50000
+  },
+  {
+    code: 'FREEDELIVERY',
+    title: 'Miễn Phí Giao Xe Tận Nơi',
+    description: 'Miễn 100% phí giao nhận xe trong bán kính 5km quanh trạm ITS Hub',
+    discountType: 'DELIVERY_FREE',
+    discountValue: 50000,
+    maxDiscount: 50000
+  }
+];
+
+exports.getVouchers = (req, res) => {
+  return res.json({
+    success: true,
+    vouchers: VOUCHERS
+  });
+};
+
+exports.getBookingQuote = (req, res) => {
+  const {
+    vehicleId,
+    rentalType = 'HOURLY',
+    durationHours = 4,
+    durationDays = 1,
+    insuranceTier = 'STANDARD',
+    deliveryMode = 'STATION',
+    voucherCode = ''
+  } = req.body;
+
+  const vehicle = telematicsService.getVehicleById(vehicleId);
+  if (!vehicle) {
+    return res.status(404).json({ success: false, message: 'Không tìm thấy phương tiện' });
+  }
+
+  const baseRentalFee = rentalType === 'DAILY'
+    ? vehicle.dailyPrice * Math.max(1, durationDays)
+    : vehicle.hourlyPrice * Math.max(1, durationHours);
+
+  const insuranceRates = {
+    BASIC: 0,
+    STANDARD: rentalType === 'DAILY' ? 85000 * Math.max(1, durationDays) : 25000,
+    PREMIUM: rentalType === 'DAILY' ? 150000 * Math.max(1, durationDays) : 55000
+  };
+  const insuranceFee = insuranceRates[insuranceTier] ?? 25000;
+  const platformServiceFee = Math.round(baseRentalFee * 0.05);
+  let deliveryFee = deliveryMode === 'DOORSTEP' ? 50000 : 0;
+
+  let discountAmount = 0;
+  const normalizedCode = (voucherCode || '').trim().toUpperCase();
+  const appliedVoucher = VOUCHERS.find(v => v.code === normalizedCode) || null;
+
+  if (appliedVoucher) {
+    if (appliedVoucher.discountType === 'PERCENT') {
+      discountAmount = Math.min(
+        Math.round((baseRentalFee * appliedVoucher.discountValue) / 100),
+        appliedVoucher.maxDiscount
+      );
+    } else if (appliedVoucher.discountType === 'FIXED') {
+      discountAmount = appliedVoucher.discountValue;
+    } else if (appliedVoucher.discountType === 'DELIVERY_FREE') {
+      discountAmount = deliveryFee;
+    }
+  }
+
+  const totalAmount = Math.max(0, baseRentalFee + insuranceFee + platformServiceFee + deliveryFee - discountAmount);
+
+  return res.json({
+    success: true,
+    quote: {
+      vehicleId,
+      rentalType,
+      durationHours: rentalType === 'DAILY' ? durationDays * 24 : durationHours,
+      durationDays,
+      baseRentalFee,
+      insuranceTier,
+      insuranceFee,
+      platformServiceFee,
+      deliveryMode,
+      deliveryFee,
+      voucherCode: appliedVoucher ? appliedVoucher.code : null,
+      discountAmount,
+      depositAmount: 0,
+      totalAmount
+    }
+  });
+};
+
 exports.createRental = (req, res) => {
-  const { vehicleId, rentalType, durationHours, pickupStationId, returnStationId } = req.body;
+  const {
+    vehicleId,
+    rentalType,
+    durationHours,
+    durationDays,
+    pickupStationId,
+    returnStationId,
+    insuranceTier = 'STANDARD',
+    deliveryMode = 'STATION',
+    voucherCode = ''
+  } = req.body;
 
   const vehicle = telematicsService.getVehicleById(vehicleId);
   if (!vehicle) {
@@ -41,9 +155,29 @@ exports.createRental = (req, res) => {
     return res.status(400).json({ success: false, message: 'Phương tiện hiện đang có người thuê' });
   }
 
-  const hours = durationHours || 3;
-  const pricePerHour = vehicle.hourlyPrice;
-  const estimatedTotal = pricePerHour * hours;
+  const isDaily = rentalType === 'DAILY';
+  const hours = isDaily ? (durationDays || 1) * 24 : (durationHours || 4);
+  const baseRentalFee = isDaily
+    ? vehicle.dailyPrice * (durationDays || 1)
+    : vehicle.hourlyPrice * (durationHours || 4);
+  const insuranceFee = insuranceTier === 'PREMIUM' ? 55000 : insuranceTier === 'STANDARD' ? 25000 : 0;
+  const platformServiceFee = Math.round(baseRentalFee * 0.05);
+  const deliveryFee = deliveryMode === 'DOORSTEP' ? 50000 : 0;
+
+  let discountAmount = 0;
+  const normalizedCode = (voucherCode || '').trim().toUpperCase();
+  const voucher = VOUCHERS.find(v => v.code === normalizedCode);
+  if (voucher) {
+    if (voucher.discountType === 'PERCENT') {
+      discountAmount = Math.min(Math.round((baseRentalFee * voucher.discountValue) / 100), voucher.maxDiscount);
+    } else if (voucher.discountType === 'FIXED') {
+      discountAmount = voucher.discountValue;
+    } else if (voucher.discountType === 'DELIVERY_FREE') {
+      discountAmount = deliveryFee;
+    }
+  }
+
+  const estimatedTotal = Math.max(0, baseRentalFee + insuranceFee + platformServiceFee + deliveryFee - discountAmount);
 
   const newTrip = {
     id: `trip_${uuidv4().substring(0, 8)}`,
@@ -56,7 +190,15 @@ exports.createRental = (req, res) => {
     endTime: null,
     status: 'ACTIVE',
     totalHours: hours,
-    basePricePerHour: pricePerHour,
+    basePricePerHour: vehicle.hourlyPrice,
+    baseRentalFee,
+    insuranceTier,
+    insuranceFee,
+    platformServiceFee,
+    deliveryMode,
+    deliveryFee,
+    voucherCode: voucher ? voucher.code : null,
+    discountAmount,
     estimatedTotal,
     distanceTraveledKm: 0,
     co2SavedKg: 0,

@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import {
-  SafeAreaView,
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
+  SafeAreaView,
+  Platform,
   StatusBar,
-  useWindowDimensions,
-  Modal
+  Modal,
+  useWindowDimensions
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -17,237 +18,210 @@ import DigitalKeyScreen from './src/screens/DigitalKeyScreen';
 import TripsHistoryScreen from './src/screens/TripsHistoryScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
 
-export default function App() {
-  const [currentTab, setCurrentTab] = useState('HOME');
-  const [viewMode, setViewMode] = useState('MOBILE'); // 'MOBILE' | 'EXPANDED'
-  const [showRewardsModal, setShowRewardsModal] = useState(false);
+const TABS = [
+  { id: 'HOME', label: 'Trang chủ', icon: 'home-outline', activeIcon: 'home' },
+  { id: 'MAP', label: 'Bản đồ Hub', icon: 'map-outline', activeIcon: 'map' },
+  { id: 'KEY', label: 'Khóa số', icon: 'key-outline', activeIcon: 'key', isCenter: true },
+  { id: 'TRIPS', label: 'Chuyến đi', icon: 'document-text-outline', activeIcon: 'document-text' },
+  { id: 'PROFILE', label: 'Tài khoản', icon: 'person-outline', activeIcon: 'person' }
+];
 
-  const { width } = useWindowDimensions();
-  const isDesktop = width > 768;
-  const isPhoneMockup = isDesktop && viewMode === 'MOBILE';
+export default function App() {
+  const [activeTab, setActiveTab] = useState('HOME');
+  const [showRewardsModal, setShowRewardsModal] = useState(false);
+  const [copiedCode, setCopiedCode] = useState(null);
+  const [viewMode, setViewMode] = useState('PHONE'); // 'PHONE' | 'WIDE'
+
+  const { width: windowWidth } = useWindowDimensions();
+  const isDesktopBrowser = Platform.OS === 'web' && windowWidth >= 768;
 
   const renderContent = () => {
-    switch (currentTab) {
+    switch (activeTab) {
       case 'HOME':
         return (
           <HomeScreen
-            onNavigateToKey={() => setCurrentTab('KEY')}
-            onNavigateToMap={() => setCurrentTab('MAP')}
-            onNavigateToTrips={() => setCurrentTab('TRIPS')}
+            onNavigateToKey={() => setActiveTab('KEY')}
+            onNavigateToMap={() => setActiveTab('MAP')}
+            onNavigateToTrips={() => setActiveTab('TRIPS')}
+            onNavigateToProfile={() => setActiveTab('PROFILE')}
             onOpenRewards={() => setShowRewardsModal(true)}
           />
         );
       case 'MAP':
-        return <MapScreen onSelectVehicle={() => setCurrentTab('HOME')} />;
+        return <MapScreen onNavigateToKey={() => setActiveTab('KEY')} />;
       case 'KEY':
-        return <DigitalKeyScreen onNavigateHome={() => setCurrentTab('HOME')} />;
+        return <DigitalKeyScreen onNavigateHome={() => setActiveTab('HOME')} />;
       case 'TRIPS':
-        return <TripsHistoryScreen onNavigateToKey={() => setCurrentTab('KEY')} />;
+        return <TripsHistoryScreen onNavigateToKey={() => setActiveTab('KEY')} />;
       case 'PROFILE':
         return <ProfileScreen />;
       default:
-        return (
-          <HomeScreen
-            onNavigateToKey={() => setCurrentTab('KEY')}
-            onNavigateToMap={() => setCurrentTab('MAP')}
-            onNavigateToTrips={() => setCurrentTab('TRIPS')}
-            onOpenRewards={() => setShowRewardsModal(true)}
-          />
-        );
+        return <HomeScreen />;
     }
   };
 
   return (
-    <View style={isDesktop ? styles.desktopBackdrop : styles.mobileRoot}>
-      {/* Desktop Mode Switcher Bar */}
-      {isDesktop && (
-        <View style={styles.desktopSwitcherBar}>
-          <View style={styles.brandBadge}>
-            <View style={styles.brandIconMini}>
-              <Ionicons name="car-sport" size={14} color="#DF8268" />
-            </View>
-            <Text style={styles.brandTitleText}>UTH SMART MOBILITY • HỆ THỐNG ĐẶT THUÊ XE XANH</Text>
+    <View style={styles.outerViewport}>
+      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+
+      {/* Top Mode Switcher on Desktop Browser */}
+      {isDesktopBrowser && (
+        <View style={styles.desktopToolbar}>
+          <View style={styles.toolbarBrand}>
+            <View style={styles.mintStatusDot} />
+            <Text style={styles.toolbarTitle}>
+              ITS SMART VEHICLE RENTAL • APPLE WHITE & MINT EDITION
+            </Text>
           </View>
 
-          <View style={styles.switchButtonContainer}>
+          <View style={styles.modeToggleGroup}>
             <TouchableOpacity
-              style={[styles.switchBtn, viewMode === 'MOBILE' && styles.switchBtnActive]}
-              onPress={() => setViewMode('MOBILE')}
+              style={[styles.modeBtn, viewMode === 'PHONE' && styles.modeBtnActive]}
+              onPress={() => setViewMode('PHONE')}
             >
               <Ionicons
                 name="phone-portrait-outline"
-                size={14}
-                color={viewMode === 'MOBILE' ? '#DF8268' : '#7A6A63'}
+                size={13}
+                color={viewMode === 'PHONE' ? '#FFFFFF' : '#4B5563'}
               />
-              <Text style={[styles.switchBtnText, viewMode === 'MOBILE' && styles.switchBtnTextActive]}>
-                Tỉ lệ Điện thoại (Chuẩn App)
+              <Text style={[styles.modeBtnText, viewMode === 'PHONE' && styles.modeBtnTextActive]}>
+                Tỉ lệ Điện thoại (414×896)
               </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.switchBtn, viewMode === 'EXPANDED' && styles.switchBtnActive]}
-              onPress={() => setViewMode('EXPANDED')}
+              style={[styles.modeBtn, viewMode === 'WIDE' && styles.modeBtnActive]}
+              onPress={() => setViewMode('WIDE')}
             >
               <Ionicons
-                name="laptop-outline"
-                size={14}
-                color={viewMode === 'EXPANDED' ? '#DF8268' : '#7A6A63'}
+                name="desktop-outline"
+                size={13}
+                color={viewMode === 'WIDE' ? '#FFFFFF' : '#4B5563'}
               />
-              <Text style={[styles.switchBtnText, viewMode === 'EXPANDED' && styles.switchBtnTextActive]}>
-                Giao diện Web Mở rộng
+              <Text style={[styles.modeBtnText, viewMode === 'WIDE' && styles.modeBtnTextActive]}>
+                Toàn màn hình Web
               </Text>
             </TouchableOpacity>
           </View>
         </View>
       )}
 
-      {/* Main App Container */}
+      {/* Main App Shell */}
       <View
         style={[
-          styles.mainAppWrapper,
-          isPhoneMockup && styles.phoneDeviceFrame,
-          isDesktop && viewMode === 'EXPANDED' && styles.expandedDeviceFrame
+          styles.appShell,
+          isDesktopBrowser && viewMode === 'PHONE' && styles.phoneSimulatorShell,
+          isDesktopBrowser && viewMode === 'WIDE' && styles.wideWebShell
         ]}
       >
         <SafeAreaView style={styles.safeArea}>
-          <StatusBar barStyle="dark-content" />
+          <View style={styles.mainContentArea}>{renderContent()}</View>
 
-          {/* Screen Body */}
-          <View style={styles.screenBody}>
-            {renderContent()}
-          </View>
+          {/* Apple-Style Docked Bottom Tab Bar */}
+          <View style={styles.bottomTabBar}>
+            {TABS.map(tab => {
+              const isActive = activeTab === tab.id;
 
-          {/* Clear, Labeled Bottom Navigation Bar (Never overlaps content) */}
-          <View style={styles.bottomNavContainer}>
-            <View style={styles.capsuleNav}>
-              {/* 1. Trang chủ */}
-              <TouchableOpacity
-                style={styles.navTabItem}
-                onPress={() => setCurrentTab('HOME')}
-                activeOpacity={0.85}
-              >
-                <View style={[styles.iconPill, currentTab === 'HOME' && styles.iconPillActive]}>
-                  <Ionicons
-                    name={currentTab === 'HOME' ? 'compass' : 'compass-outline'}
-                    size={20}
-                    color={currentTab === 'HOME' ? '#DF8268' : '#8C7A70'}
-                  />
-                </View>
-                <Text style={[styles.navLabel, currentTab === 'HOME' && styles.navLabelActive]}>
-                  Trang chủ
-                </Text>
-              </TouchableOpacity>
+              if (tab.isCenter) {
+                return (
+                  <TouchableOpacity
+                    key={tab.id}
+                    style={styles.centerKeyTabWrap}
+                    activeOpacity={0.9}
+                    onPress={() => setActiveTab(tab.id)}
+                  >
+                    <View style={[styles.centerKeyCircle, isActive && styles.centerKeyCircleActive]}>
+                      <Ionicons name="key" size={20} color="#FFFFFF" />
+                    </View>
+                    <Text style={[styles.tabLabel, isActive && styles.tabLabelActive]}>
+                      {tab.label}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              }
 
-              {/* 2. Bản đồ Hub */}
-              <TouchableOpacity
-                style={styles.navTabItem}
-                onPress={() => setCurrentTab('MAP')}
-                activeOpacity={0.85}
-              >
-                <View style={[styles.iconPill, currentTab === 'MAP' && styles.iconPillActiveBlue]}>
-                  <Ionicons
-                    name={currentTab === 'MAP' ? 'location' : 'location-outline'}
-                    size={20}
-                    color={currentTab === 'MAP' ? '#6E92B5' : '#8C7A70'}
-                  />
-                </View>
-                <Text style={[styles.navLabel, currentTab === 'MAP' && styles.navLabelActiveBlue]}>
-                  Trạm Hub
-                </Text>
-              </TouchableOpacity>
-
-              {/* 3. Chìa khóa số (Center Prominent Action) */}
-              <TouchableOpacity
-                style={styles.centerKeyTabItem}
-                onPress={() => setCurrentTab('KEY')}
-                activeOpacity={0.9}
-              >
-                <View style={[styles.centerKeyOuter, currentTab === 'KEY' && styles.centerKeyOuterActive]}>
-                  <Ionicons name="key" size={20} color="#FFFFFF" />
-                </View>
-                <Text style={[styles.navLabelCenter, currentTab === 'KEY' && styles.navLabelActive]}>
-                  Khóa số
-                </Text>
-              </TouchableOpacity>
-
-              {/* 4. Chuyến đi */}
-              <TouchableOpacity
-                style={styles.navTabItem}
-                onPress={() => setCurrentTab('TRIPS')}
-                activeOpacity={0.85}
-              >
-                <View style={[styles.iconPill, currentTab === 'TRIPS' && styles.iconPillActive]}>
-                  <Ionicons
-                    name={currentTab === 'TRIPS' ? 'document-text' : 'document-text-outline'}
-                    size={20}
-                    color={currentTab === 'TRIPS' ? '#DF8268' : '#8C7A70'}
-                  />
-                </View>
-                <Text style={[styles.navLabel, currentTab === 'TRIPS' && styles.navLabelActive]}>
-                  Chuyến đi
-                </Text>
-              </TouchableOpacity>
-
-              {/* 5. Tài khoản */}
-              <TouchableOpacity
-                style={styles.navTabItem}
-                onPress={() => setCurrentTab('PROFILE')}
-                activeOpacity={0.85}
-              >
-                <View style={[styles.iconPill, currentTab === 'PROFILE' && styles.iconPillActiveBlue]}>
-                  <Ionicons
-                    name={currentTab === 'PROFILE' ? 'person' : 'person-outline'}
-                    size={20}
-                    color={currentTab === 'PROFILE' ? '#6E92B5' : '#8C7A70'}
-                  />
-                </View>
-                <Text style={[styles.navLabel, currentTab === 'PROFILE' && styles.navLabelActiveBlue]}>
-                  Tài khoản
-                </Text>
-              </TouchableOpacity>
-            </View>
+              return (
+                <TouchableOpacity
+                  key={tab.id}
+                  style={styles.tabButton}
+                  activeOpacity={0.8}
+                  onPress={() => setActiveTab(tab.id)}
+                >
+                  <View style={[styles.tabIconPill, isActive && styles.tabIconPillActive]}>
+                    <Ionicons
+                      name={isActive ? tab.activeIcon : tab.icon}
+                      size={19}
+                      color={isActive ? '#059669' : '#6B7280'}
+                    />
+                  </View>
+                  <Text style={[styles.tabLabel, isActive && styles.tabLabelActive]}>
+                    {tab.label}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
           </View>
         </SafeAreaView>
       </View>
 
-      {/* Rewards & Voucher Modal */}
-      <Modal visible={showRewardsModal} transparent animationType="fade">
+      {/* Voucher & Rewards Modal */}
+      <Modal
+        visible={showRewardsModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowRewardsModal(false)}
+      >
         <View style={styles.modalOverlay}>
-          <View style={styles.rewardsModalBox}>
-            <View style={styles.rewardsIconBadge}>
-              <Ionicons name="gift" size={28} color="#DF8268" />
-            </View>
-            <Text style={styles.rewardsTitle}>HỘI VIÊN XANH • ƯU ĐÃI ĐẶT XE</Text>
-            <Text style={styles.rewardsSub}>
-              Bạn đang có 120 điểm Eco • Đã tiết kiệm 18.5 kg CO₂ trong tháng này
-            </Text>
-
-            <View style={styles.rewardsCardPill}>
-              <View style={{ flex: 1 }}>
-                <Text style={styles.pillLabel}>Mã giảm giá tự động</Text>
-                <Text style={styles.pillVal}>Giảm 20% thuê xe điện theo giờ</Text>
+          <View style={styles.rewardsModalCard}>
+            <View style={styles.rewardsHeader}>
+              <View>
+                <Text style={styles.rewardsTag}>KHO VOUCHER XANH ITS</Text>
+                <Text style={styles.rewardsTitle}>Ưu Đãi Thuê Xe Tự Lái</Text>
               </View>
-              <View style={styles.applyTag}>
-                <Text style={styles.applyTagText}>Đã áp dụng</Text>
-              </View>
+              <TouchableOpacity
+                style={styles.closeModalBtn}
+                onPress={() => setShowRewardsModal(false)}
+              >
+                <Ionicons name="close" size={18} color="#111827" />
+              </TouchableOpacity>
             </View>
 
-            <View style={styles.rewardsCardPill}>
-              <View style={{ flex: 1 }}>
-                <Text style={styles.pillLabel}>Đặc quyền sinh viên & giảng viên UTH</Text>
-                <Text style={[styles.pillVal, { color: '#6E92B5' }]}>Miễn 100% tiền cọc thế chấp</Text>
-              </View>
-              <View style={styles.applyTag}>
-                <Text style={styles.applyTagText}>Đã kích hoạt</Text>
-              </View>
-            </View>
+            {[
+              {
+                code: 'XANH20',
+                title: 'Giảm 20% Thuê Ô Tô Điện (Tối đa 120K)',
+                desc: 'Áp dụng cho VinFast VF 3, VF e34, VF 8 và Hyundai Ioniq 5'
+              },
+              {
+                code: 'UTH50K',
+                title: 'Giảm Trực Tiếp 50.000đ Tại Hub UTH',
+                desc: 'Dành riêng cho Sinh viên & Giảng viên ĐH GTVT TP.HCM'
+              },
+              {
+                code: 'FREEDELIVERY',
+                title: 'Miễn Phí Giao Xe Tận Nơi (Trị giá 50K)',
+                desc: 'Giao nhận xe tận nhà trong bán kính 5km quanh 6 trạm ITS Hub'
+              }
+            ].map(item => (
+              <View key={item.code} style={styles.voucherCard}>
+                <View style={{ flex: 1, marginRight: 10 }}>
+                  <View style={styles.voucherCodePill}>
+                    <Text style={styles.voucherCodeText}>{item.code}</Text>
+                  </View>
+                  <Text style={styles.voucherItemTitle}>{item.title}</Text>
+                  <Text style={styles.voucherItemDesc}>{item.desc}</Text>
+                </View>
 
-            <TouchableOpacity
-              style={styles.closeRewardsBtn}
-              onPress={() => setShowRewardsModal(false)}
-            >
-              <Text style={styles.closeRewardsBtnText}>Đóng</Text>
-            </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.copyVoucherBtn}
+                  onPress={() => setCopiedCode(item.code)}
+                >
+                  <Text style={styles.copyVoucherText}>
+                    {copiedCode === item.code ? 'Đã lưu' : 'Dùng mã'}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            ))}
           </View>
         </View>
       </Modal>
@@ -256,296 +230,240 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-  desktopBackdrop: {
+  outerViewport: {
     flex: 1,
-    backgroundColor: '#E5D8CE',
+    backgroundColor: '#E5E5EA',
     alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 12
+    justifyContent: 'flex-start'
   },
-  mobileRoot: {
-    flex: 1,
-    backgroundColor: '#EFE5DC'
-  },
-  desktopSwitcherBar: {
+  desktopToolbar: {
+    width: '100%',
+    height: 46,
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E7EB',
+    paddingHorizontal: 20,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    width: '100%',
-    maxWidth: 1080,
-    marginBottom: 10,
-    paddingHorizontal: 16
+    justifyContent: 'space-between'
   },
-  brandBadge: {
+  toolbarBrand: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8
   },
-  brandIconMini: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: '#FDFBF7',
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#7A5C49',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 4
+  mintStatusDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#10B981'
   },
-  brandTitleText: {
-    fontSize: 12,
+  toolbarTitle: {
+    fontSize: 11,
     fontWeight: '800',
-    color: '#2C221E',
-    letterSpacing: 0.5
+    color: '#111827',
+    letterSpacing: 0.4
   },
-  switchButtonContainer: {
+  modeToggleGroup: {
     flexDirection: 'row',
-    backgroundColor: '#DFD1C5',
-    borderRadius: 20,
+    backgroundColor: '#F3F4F6',
     padding: 3,
+    borderRadius: 10,
     gap: 4
   },
-  switchBtn: {
+  modeBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
-    gap: 6
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 8,
+    gap: 5
   },
-  switchBtnActive: {
-    backgroundColor: '#FDFBF7',
-    shadowColor: '#7A5C49',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.12,
-    shadowRadius: 4,
-    elevation: 2
+  modeBtnActive: {
+    backgroundColor: '#10B981'
   },
-  switchBtnText: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#7A6A63'
+  modeBtnText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#4B5563'
   },
-  switchBtnTextActive: {
-    color: '#2C221E',
+  modeBtnTextActive: {
+    color: '#FFFFFF',
     fontWeight: '800'
   },
-  mainAppWrapper: {
+  appShell: {
     flex: 1,
     width: '100%',
-    backgroundColor: '#EFE5DC'
+    backgroundColor: '#F5F5F7'
   },
-  phoneDeviceFrame: {
-    width: 430,
-    height: '92vh',
-    maxHeight: 900,
-    borderRadius: 40,
+  phoneSimulatorShell: {
+    width: 420,
+    maxWidth: '100%',
+    marginVertical: 12,
+    borderRadius: 38,
+    borderWidth: 8,
+    borderColor: '#FFFFFF',
     overflow: 'hidden',
-    borderWidth: 7,
-    borderColor: '#FDFBF7',
-    shadowColor: '#6E503E',
+    shadowColor: '#0F172A',
     shadowOffset: { width: 0, height: 18 },
-    shadowOpacity: 0.22,
-    shadowRadius: 30,
-    elevation: 16
+    shadowOpacity: 0.14,
+    shadowRadius: 32,
+    elevation: 14
   },
-  expandedDeviceFrame: {
+  wideWebShell: {
     maxWidth: 1080,
-    borderRadius: 24,
-    overflow: 'hidden',
-    borderWidth: 3,
-    borderColor: '#FDFBF7',
-    shadowColor: '#6E503E',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.16,
-    shadowRadius: 22,
-    elevation: 10
+    width: '100%'
   },
   safeArea: {
     flex: 1,
-    backgroundColor: '#EFE5DC'
+    backgroundColor: '#F5F5F7'
   },
-  screenBody: {
-    flex: 1,
-    width: '100%'
+  mainContentArea: {
+    flex: 1
   },
-  bottomNavContainer: {
-    backgroundColor: '#FDFBF7',
-    borderTopWidth: 1,
-    borderTopColor: '#E6D9CE',
-    paddingTop: 6,
-    paddingBottom: 8,
-    paddingHorizontal: 8,
-    shadowColor: '#5C4438',
-    shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
-    elevation: 10
-  },
-  capsuleNav: {
+  bottomTabBar: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around',
-    maxWidth: 600,
-    alignSelf: 'center',
-    width: '100%'
+    height: 66,
+    backgroundColor: '#FFFFFF',
+    borderTopWidth: 1,
+    borderTopColor: '#E5E7EB',
+    paddingHorizontal: 6
   },
-  navTabItem: {
+  tabButton: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 2
+    paddingVertical: 4
   },
-  iconPill: {
-    width: 40,
-    height: 30,
-    borderRadius: 15,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 2
+  tabIconPill: {
+    paddingHorizontal: 12,
+    paddingVertical: 3,
+    borderRadius: 99
   },
-  iconPillActive: {
-    backgroundColor: '#FCEEE9'
+  tabIconPillActive: {
+    backgroundColor: '#ECFDF5'
   },
-  iconPillActiveBlue: {
-    backgroundColor: '#EBF2F8'
-  },
-  navLabel: {
-    fontSize: 10,
-    fontWeight: '600',
-    color: '#8C7A70'
-  },
-  navLabelActive: {
-    color: '#DF8268',
-    fontWeight: '800'
-  },
-  navLabelActiveBlue: {
-    color: '#6E92B5',
-    fontWeight: '800'
-  },
-  centerKeyTabItem: {
+  centerKeyTabWrap: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: -16
+    marginTop: -14
   },
-  centerKeyOuter: {
-    width: 46,
-    height: 46,
-    borderRadius: 23,
-    backgroundColor: '#DF8268',
+  centerKeyCircle: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#111827',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 3,
-    borderColor: '#FDFBF7',
-    shadowColor: '#DF8268',
+    borderColor: '#FFFFFF',
+    shadowColor: '#10B981',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.35,
+    shadowOpacity: 0.25,
     shadowRadius: 8,
-    elevation: 6,
-    marginBottom: 2
+    elevation: 5
   },
-  centerKeyOuterActive: {
-    backgroundColor: '#6E92B5',
-    shadowColor: '#6E92B5'
+  centerKeyCircleActive: {
+    backgroundColor: '#10B981'
   },
-  navLabelCenter: {
+  tabLabel: {
     fontSize: 10,
-    fontWeight: '700',
-    color: '#5C4B43'
+    fontWeight: '600',
+    color: '#6B7280',
+    marginTop: 2
+  },
+  tabLabelActive: {
+    color: '#059669',
+    fontWeight: '800'
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(44, 34, 30, 0.45)',
+    backgroundColor: 'rgba(15, 23, 42, 0.5)',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20
   },
-  rewardsModalBox: {
+  rewardsModalCard: {
     width: '100%',
     maxWidth: 380,
-    backgroundColor: '#FDFBF7',
-    borderRadius: 26,
-    padding: 22,
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: '#FFFFFF',
-    shadowColor: '#2C221E',
-    shadowOffset: { width: 0, height: 12 },
-    shadowOpacity: 0.2,
-    shadowRadius: 22,
-    elevation: 12
+    backgroundColor: '#FFFFFF',
+    borderRadius: 24,
+    padding: 18,
+    borderWidth: 1,
+    borderColor: '#E5E7EB'
   },
-  rewardsIconBadge: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: '#FCEEE9',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 12
-  },
-  rewardsTitle: {
-    fontSize: 15,
-    fontWeight: '900',
-    color: '#2C221E',
-    marginBottom: 6,
-    letterSpacing: 0.4
-  },
-  rewardsSub: {
-    fontSize: 12,
-    color: '#7A6A63',
-    textAlign: 'center',
-    lineHeight: 18,
-    marginBottom: 16,
-    fontWeight: '600'
-  },
-  rewardsCardPill: {
-    width: '100%',
-    backgroundColor: '#F6F0E8',
-    borderRadius: 16,
-    padding: 12,
+  rewardsHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#FFFFFF',
-    marginBottom: 10
+    alignItems: 'flex-start',
+    marginBottom: 14
   },
-  pillLabel: {
-    fontSize: 11,
-    color: '#7A6A63',
-    fontWeight: '600'
-  },
-  pillVal: {
-    fontSize: 13,
+  rewardsTag: {
+    fontSize: 9,
     fontWeight: '800',
-    color: '#DF8268',
+    color: '#059669'
+  },
+  rewardsTitle: {
+    fontSize: 17,
+    fontWeight: '900',
+    color: '#111827',
     marginTop: 2
   },
-  applyTag: {
-    backgroundColor: '#EBF2F8',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 10
-  },
-  applyTagText: {
-    fontSize: 10,
-    fontWeight: '800',
-    color: '#527394'
-  },
-  closeRewardsBtn: {
-    width: '100%',
-    backgroundColor: '#DF8268',
-    paddingVertical: 12,
-    borderRadius: 18,
+  closeModalBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#F3F4F6',
     alignItems: 'center',
-    marginTop: 6
+    justifyContent: 'center'
   },
-  closeRewardsBtnText: {
+  voucherCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F5F2EB',
+    borderRadius: 16,
+    padding: 12,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#E5DEC9'
+  },
+  voucherCodePill: {
+    alignSelf: 'flex-start',
+    backgroundColor: '#10B981',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 6,
+    marginBottom: 4
+  },
+  voucherCodeText: {
     color: '#FFFFFF',
-    fontSize: 13,
+    fontSize: 10,
     fontWeight: '800'
+  },
+  voucherItemTitle: {
+    fontSize: 12,
+    fontWeight: '800',
+    color: '#111827'
+  },
+  voucherItemDesc: {
+    fontSize: 10,
+    color: '#6B7280',
+    marginTop: 2
+  },
+  copyVoucherBtn: {
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#10B981'
+  },
+  copyVoucherText: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: '#059669'
   }
 });

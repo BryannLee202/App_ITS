@@ -7,15 +7,15 @@ export default function VehicleCard({ vehicle, onSelect, onBook, style: customSt
   const isElectric = vehicle.powerType === 'ELECTRIC';
   const formattedHourlyPrice = vehicle.hourlyPrice.toLocaleString('vi-VN');
   const formattedDailyPrice = vehicle.dailyPrice.toLocaleString('vi-VN');
-  const batteryPct = Math.round(vehicle.telematics.batteryLevelPct || 85);
+  const batteryPct = Math.round(vehicle.telematics?.batteryLevelPct || 88);
 
   return (
     <TouchableOpacity
       style={[styles.card, customStyle]}
-      activeOpacity={0.92}
+      activeOpacity={0.93}
       onPress={() => onSelect(vehicle)}
     >
-      {/* 16:10 Ratio Photo Container with Soft Frame */}
+      {/* 16:9 Automotive Showroom Photo Frame */}
       <View style={styles.imageOuterFrame}>
         <View style={styles.imageContainer}>
           <Image
@@ -24,40 +24,43 @@ export default function VehicleCard({ vehicle, onSelect, onBook, style: customSt
             resizeMode="cover"
           />
 
-          {/* Top Left Pill - Dusty Slate Blue / Peach */}
+          {/* Top Left Pill: Mint Green for EV, Champagne Beige for Hybrid */}
           <View style={styles.badgeTopLeft}>
             <View style={[styles.pill, isElectric ? styles.electricPill : styles.hybridPill]}>
-              <View style={styles.pillDot} />
-              <Text style={styles.pillText}>
+              <Ionicons
+                name={isElectric ? 'flash' : 'leaf'}
+                size={11}
+                color={isElectric ? '#FFFFFF' : '#786B59'}
+              />
+              <Text style={[styles.pillText, !isElectric && { color: '#786B59' }]}>
                 {isElectric ? 'THUẦN ĐIỆN EV' : 'HYBRID ECO'}
               </Text>
             </View>
           </View>
 
+          {/* Top Right Pill: Zero Deposit Guarantee */}
           {vehicle.noDeposit && (
             <View style={styles.badgeTopRight}>
-              <Ionicons name="shield-checkmark" size={11} color="#DF8268" />
-              <Text style={styles.noDepositText}>0đ Thế chấp</Text>
+              <Ionicons name="shield-checkmark" size={11} color="#10B981" />
+              <Text style={styles.noDepositText}>Miễn thế chấp</Text>
             </View>
           )}
 
-          {/* Bottom Floating Glass Pill Overlay */}
+          {/* Bottom Floating Glass Overlay */}
           <View style={styles.bottomOverlay}>
             <View style={styles.ratingBox}>
-              <View style={styles.starKnob}>
-                <Ionicons name="star" size={10} color="#DF8268" />
-              </View>
+              <Ionicons name="star" size={12} color="#F59E0B" />
               <Text style={styles.ratingText}>{vehicle.rating}</Text>
-              <Text style={styles.tripsText}>({vehicle.totalTrips} chuyến)</Text>
+              <Text style={styles.tripsText}>• {vehicle.totalTrips} chuyến</Text>
             </View>
             <View style={styles.batteryPill}>
               <Ionicons
                 name={isElectric ? 'battery-charging' : 'speedometer-outline'}
                 size={12}
-                color="#6E92B5"
+                color="#059669"
               />
               <Text style={styles.batteryText}>
-                {isElectric ? `${batteryPct}% Pin` : `${vehicle.telematics.fuelLevelPct}% Xăng`}
+                {isElectric ? `${batteryPct}% Pin` : `${vehicle.telematics?.fuelLevelPct || 85}% Xăng`}
               </Text>
             </View>
           </View>
@@ -67,39 +70,45 @@ export default function VehicleCard({ vehicle, onSelect, onBook, style: customSt
       {/* Vehicle Specification Sheet */}
       <View style={styles.infoContent}>
         <View style={styles.titleRow}>
-          <Text style={styles.vehicleName} numberOfLines={1}>{vehicle.name}</Text>
+          <View style={{ flex: 1, marginRight: 8 }}>
+            <Text style={styles.vehicleName} numberOfLines={1}>{vehicle.name}</Text>
+            <Text style={styles.locationSub} numberOfLines={1}>
+              <Ionicons name="location" size={11} color="#10B981" /> Giao nhận 24/7 tại Trạm ITS Hub
+            </Text>
+          </View>
           <View style={styles.plateTag}>
             <Text style={styles.plateNumber}>{vehicle.plateNumber}</Text>
           </View>
         </View>
 
-        {/* Tactile Neumorphic Specification Chips */}
+        {/* Specification Chips */}
         <View style={styles.specsRow}>
           <View style={styles.specBadge}>
-            <View style={styles.specDotBlue} />
+            <Ionicons name="people-outline" size={12} color="#4B5563" />
             <Text style={styles.specText}>{vehicle.seats} chỗ</Text>
           </View>
           <View style={styles.specBadge}>
-            <View style={styles.specDotPeach} />
-            <Text style={styles.specText}>Tự động</Text>
+            <Ionicons name="cog-outline" size={12} color="#4B5563" />
+            <Text style={styles.specText}>Số tự động</Text>
           </View>
           <View style={styles.specBadge}>
+            <Ionicons name="speedometer-outline" size={12} color="#4B5563" />
             <Text style={styles.specText}>{vehicle.rangeKm} km/sạc</Text>
           </View>
           <View style={[styles.specBadge, styles.bleBadge]}>
-            <Ionicons name="key" size={10} color="#6E92B5" />
-            <Text style={styles.bleText}>Digital Key</Text>
+            <Ionicons name="key-outline" size={11} color="#059669" />
+            <Text style={styles.bleText}>Khóa BLE 5.2</Text>
           </View>
         </View>
 
-        {/* Commercial Pricing & 3D Tactile Booking Button */}
+        {/* Commercial Pricing & Mint CTA Button */}
         <View style={styles.footerRow}>
           <View style={styles.priceContainer}>
             <View style={styles.hourlyRow}>
-              <Text style={styles.priceAmount}>{formattedHourlyPrice} đ</Text>
+              <Text style={styles.priceAmount}>{formattedHourlyPrice}đ</Text>
               <Text style={styles.priceUnit}>/giờ</Text>
             </View>
-            <Text style={styles.dailySub}>Trọn ngày: {formattedDailyPrice} đ</Text>
+            <Text style={styles.dailySub}>Thuê ngày: {formattedDailyPrice}đ/24h</Text>
           </View>
 
           <TouchableOpacity
@@ -107,9 +116,9 @@ export default function VehicleCard({ vehicle, onSelect, onBook, style: customSt
             activeOpacity={0.85}
             onPress={() => onBook(vehicle)}
           >
-            <Text style={styles.bookButtonText}>Đặt xe</Text>
+            <Text style={styles.bookButtonText}>Chọn thuê</Text>
             <View style={styles.bookKnobCircle}>
-              <Ionicons name="arrow-forward" size={12} color="#DF8268" />
+              <Ionicons name="arrow-forward" size={13} color="#059669" />
             </View>
           </TouchableOpacity>
         </View>
@@ -120,29 +129,27 @@ export default function VehicleCard({ vehicle, onSelect, onBook, style: customSt
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#FDFBF7',
-    borderRadius: 26,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 22,
     marginHorizontal: 16,
-    marginBottom: 18,
-    padding: 10,
-    borderWidth: 1.5,
-    borderColor: '#FFFFFF',
-    shadowColor: '#8C6D5B',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.14,
-    shadowRadius: 18,
-    elevation: 5
+    marginBottom: 16,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.06,
+    shadowRadius: 16,
+    elevation: 3
   },
   imageOuterFrame: {
-    borderRadius: 20,
+    borderRadius: 16,
     overflow: 'hidden',
-    backgroundColor: '#F3EAE0',
-    borderWidth: 1,
-    borderColor: '#EFE5DA'
+    backgroundColor: '#F5F2EB'
   },
   imageContainer: {
     width: '100%',
-    aspectRatio: 16 / 10,
+    aspectRatio: 16 / 9.5,
     position: 'relative'
   },
   image: {
@@ -160,30 +167,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 10,
     paddingVertical: 5,
-    borderRadius: 14,
-    gap: 5,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.12,
-    shadowRadius: 6
+    borderRadius: 99,
+    gap: 4
   },
   electricPill: {
-    backgroundColor: '#6E92B5'
+    backgroundColor: '#10B981'
   },
   hybridPill: {
-    backgroundColor: '#DF8268'
-  },
-  pillDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: '#FDFBF7'
+    backgroundColor: '#F5F2EB',
+    borderWidth: 1,
+    borderColor: '#E5DEC9'
   },
   pillText: {
     color: '#FFFFFF',
     fontSize: 10,
     fontWeight: '800',
-    letterSpacing: 0.4
+    letterSpacing: 0.3
   },
   badgeTopRight: {
     position: 'absolute',
@@ -191,19 +190,15 @@ const styles = StyleSheet.create({
     right: 10,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FDFBF7',
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
     paddingHorizontal: 10,
     paddingVertical: 5,
-    borderRadius: 14,
+    borderRadius: 99,
     gap: 4,
-    zIndex: 2,
-    shadowColor: '#5C4438',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.12,
-    shadowRadius: 6
+    zIndex: 2
   },
   noDepositText: {
-    color: '#2C221E',
+    color: '#111827',
     fontSize: 10,
     fontWeight: '700'
   },
@@ -217,117 +212,102 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 10,
     paddingVertical: 6,
-    borderRadius: 14,
-    backgroundColor: 'rgba(253, 251, 247, 0.92)'
+    borderRadius: 12,
+    backgroundColor: 'rgba(255, 255, 255, 0.94)'
   },
   ratingBox: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 5
-  },
-  starKnob: {
-    width: 18,
-    height: 18,
-    borderRadius: 9,
-    backgroundColor: '#FCEEE9',
-    alignItems: 'center',
-    justifyContent: 'center'
+    gap: 4
   },
   ratingText: {
-    color: '#2C221E',
+    color: '#111827',
     fontSize: 12,
     fontWeight: '800'
   },
   tripsText: {
-    color: '#7A6A63',
-    fontSize: 10,
+    color: '#6B7280',
+    fontSize: 11,
     fontWeight: '600'
   },
   batteryPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#EBF2F8',
+    backgroundColor: '#ECFDF5',
     paddingHorizontal: 8,
     paddingVertical: 3,
-    borderRadius: 10,
+    borderRadius: 8,
     gap: 4
   },
   batteryText: {
-    color: '#527394',
+    color: '#059669',
     fontSize: 11,
     fontWeight: '800'
   },
   infoContent: {
-    paddingHorizontal: 6,
+    paddingHorizontal: 4,
     paddingTop: 12,
-    paddingBottom: 4
+    paddingBottom: 2
   },
   titleRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     marginBottom: 10
   },
   vehicleName: {
     fontSize: 16,
     fontWeight: '800',
-    color: '#2C221E',
-    flex: 1,
-    marginRight: 8
+    color: '#111827'
+  },
+  locationSub: {
+    fontSize: 11,
+    color: '#6B7280',
+    fontWeight: '500',
+    marginTop: 2
   },
   plateTag: {
-    backgroundColor: '#F5EFE8',
+    backgroundColor: '#F5F2EB',
     paddingHorizontal: 9,
     paddingVertical: 4,
-    borderRadius: 10,
+    borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#E6D9CE'
+    borderColor: '#E5DEC9'
   },
   plateNumber: {
     fontSize: 11,
     fontWeight: '800',
-    color: '#7A6A63'
+    color: '#57534E'
   },
   specsRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 6,
-    marginBottom: 14
+    marginBottom: 12
   },
   specBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F6F0E8',
+    backgroundColor: '#F8FAFC',
     paddingHorizontal: 9,
     paddingVertical: 5,
-    borderRadius: 12,
-    gap: 5,
+    borderRadius: 8,
+    gap: 4,
     borderWidth: 1,
-    borderColor: '#FFFFFF'
-  },
-  specDotBlue: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: '#6E92B5'
-  },
-  specDotPeach: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: '#DF8268'
+    borderColor: '#F1F5F9'
   },
   specText: {
     fontSize: 11,
-    color: '#7A6A63',
-    fontWeight: '700'
+    color: '#4B5563',
+    fontWeight: '600'
   },
   bleBadge: {
-    backgroundColor: '#EBF2F8'
+    backgroundColor: '#ECFDF5',
+    borderColor: '#D1FAE5'
   },
   bleText: {
     fontSize: 11,
-    color: '#527394',
+    color: '#059669',
     fontWeight: '700'
   },
   footerRow: {
@@ -336,7 +316,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: 10,
     borderTopWidth: 1,
-    borderTopColor: '#F2E9DF'
+    borderTopColor: '#F3F4F6'
   },
   priceContainer: {
     flex: 1
@@ -348,36 +328,34 @@ const styles = StyleSheet.create({
   priceAmount: {
     fontSize: 18,
     fontWeight: '900',
-    color: '#2C221E'
+    color: '#059669'
   },
   priceUnit: {
     fontSize: 12,
-    color: '#7A6A63',
+    color: '#6B7280',
     fontWeight: '600',
     marginLeft: 2
   },
   dailySub: {
     fontSize: 11,
-    color: '#A6968E',
+    color: '#6B7280',
     marginTop: 1,
     fontWeight: '600'
   },
   bookButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#DF8268',
+    backgroundColor: '#10B981',
     paddingLeft: 16,
     paddingRight: 6,
     paddingVertical: 6,
-    borderRadius: 22,
+    borderRadius: 99,
     gap: 8,
-    shadowColor: '#DF8268',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.35,
-    shadowRadius: 10,
-    elevation: 4,
-    borderWidth: 1,
-    borderColor: '#F5BFA9'
+    shadowColor: '#10B981',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    elevation: 3
   },
   bookButtonText: {
     color: '#FFFFFF',
@@ -385,15 +363,11 @@ const styles = StyleSheet.create({
     fontWeight: '800'
   },
   bookKnobCircle: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: '#FDFBF7',
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    backgroundColor: '#FFFFFF',
     alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 3
+    justifyContent: 'center'
   }
 });
