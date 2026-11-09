@@ -129,7 +129,7 @@ export default function HomeScreen({ onNavigateToKey }) {
           <View style={styles.nearbyHeaderRow}>
             <View style={styles.nearbyTitleGroup}>
               <Ionicons name="sparkles" size={15} color="#00BFA5" />
-              <Text style={styles.nearbyTitle}>Đội xe thông minh gần đây đang sẵn sàng</Text>
+              <Text style={styles.nearbyTitle}>Xe điện sẵn sàng? Đội xe gần bạn đang chờ bạn.</Text>
             </View>
             <TouchableOpacity>
               <Ionicons name="ellipsis-horizontal" size={18} color="#94A3B8" />
@@ -176,14 +176,14 @@ export default function HomeScreen({ onNavigateToKey }) {
             ))}
           </ScrollView>
 
-          {/* Quick Filter Pill Buttons */}
+          {/* Quick Filter Pill Buttons (Matching Xanh SM Screenshot) */}
           <View style={styles.filterPillsRow}>
             <TouchableOpacity
               style={[styles.filterPill, selectedFilter === 'ALL' && styles.filterPillActive]}
               onPress={() => setSelectedFilter('ALL')}
             >
               <Text style={[styles.filterPillText, selectedFilter === 'ALL' && styles.filterPillTextActive]}>
-                Tất cả xe
+                Đặt xe
               </Text>
             </TouchableOpacity>
 
@@ -192,7 +192,7 @@ export default function HomeScreen({ onNavigateToKey }) {
               onPress={() => setSelectedFilter('CAR')}
             >
               <Text style={[styles.filterPillText, selectedFilter === 'CAR' && styles.filterPillTextActive]}>
-                Ô tô điện EV
+                Thuê tự lái
               </Text>
             </TouchableOpacity>
 
@@ -202,6 +202,15 @@ export default function HomeScreen({ onNavigateToKey }) {
             >
               <Text style={[styles.filterPillText, selectedFilter === 'MOTORBIKE' && styles.filterPillTextActive]}>
                 Xe máy điện
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.filterPill}
+              onPress={() => setSelectedFilter('ALL')}
+            >
+              <Text style={styles.filterPillText}>
+                Xem ưu đãi
               </Text>
             </TouchableOpacity>
           </View>
@@ -218,7 +227,7 @@ export default function HomeScreen({ onNavigateToKey }) {
             onPress={() => setSelectedFilter('CAR')}
           >
             <View style={styles.heroTextCol}>
-              <Text style={[styles.heroCardTitle, isDesktop && { fontSize: 16 }]}>Thuê xe tự lái</Text>
+              <Text style={[styles.heroCardTitle, isDesktop && { fontSize: 16 }]}>Đặt xe</Text>
               <Text style={[styles.heroCardSub, isDesktop && { fontSize: 12 }]}>Nhận xe 24/7</Text>
               <View style={styles.heroTagPill}>
                 <Text style={styles.heroTagText}>0đ cọc</Text>
@@ -245,7 +254,7 @@ export default function HomeScreen({ onNavigateToKey }) {
               </View>
             </View>
             <Image
-              source={{ uri: 'https://images.unsplash.com/photo-1593764592116-bfb2a97c642a?auto=format&fit=crop&w=400&q=80' }}
+              source={{ uri: 'https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&w=400&q=80' }}
               style={[styles.heroCarImage, isDesktop && { width: 140, height: 75 }]}
               resizeMode="contain"
             />
