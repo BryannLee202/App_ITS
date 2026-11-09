@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { FONTS } from '../styles/theme';
 
-export default function VehicleCard({ vehicle, onSelect, onBook, style: customStyle }) {
+export default function VehicleCard({ vehicle, onSelect, onBook, style: customStyle, accentColor = '#2563EB' }) {
   const isElectric = vehicle.powerType === 'ELECTRIC';
   const formattedHourlyPrice = vehicle.hourlyPrice.toLocaleString('vi-VN');
   const formattedDailyPrice = vehicle.dailyPrice.toLocaleString('vi-VN');
@@ -26,7 +26,7 @@ export default function VehicleCard({ vehicle, onSelect, onBook, style: customSt
         {/* Top Left: Single Clean Frosted Badge */}
         <View style={styles.topFloatingRow}>
           <View style={styles.frostedBadge}>
-            <View style={[styles.dot, { backgroundColor: isElectric ? '#0D9488' : '#57534E' }]} />
+            <View style={[styles.dot, { backgroundColor: isElectric ? accentColor : '#64748B' }]} />
             <Text style={styles.frostedBadgeText}>
               {isElectric ? `Pin ${batteryPct}% • ${vehicle.rangeKm} km` : `Hybrid • ${vehicle.rangeKm} km`}
             </Text>
@@ -55,11 +55,11 @@ export default function VehicleCard({ vehicle, onSelect, onBook, style: customSt
 
         {/* IoT Telemetry & Pre-Trip Safety Line */}
         <View style={styles.tagsRow}>
-          <Text style={styles.tagItem}>✓ Lốp {vehicle.telematics?.tirePressurePsi?.fl || 34} PSI</Text>
+          <Text style={[styles.tagItem, { color: accentColor }]}>✓ Lốp {vehicle.telematics?.tirePressurePsi?.fl || 34} PSI</Text>
           <Text style={styles.tagDot}>·</Text>
-          <Text style={styles.tagItem}>✓ Mở khóa BLE 5.2</Text>
+          <Text style={[styles.tagItem, { color: accentColor }]}>✓ Mở khóa BLE 5.2</Text>
           <Text style={styles.tagDot}>·</Text>
-          <Text style={styles.tagItem}>✓ Miễn cọc GPLX B2</Text>
+          <Text style={[styles.tagItem, { color: accentColor }]}>✓ Miễn cọc GPLX B2</Text>
         </View>
 
         <View style={styles.divider} />
@@ -75,7 +75,7 @@ export default function VehicleCard({ vehicle, onSelect, onBook, style: customSt
           </View>
 
           <TouchableOpacity
-            style={styles.ctaButton}
+            style={[styles.ctaButton, { backgroundColor: accentColor }]}
             activeOpacity={0.85}
             onPress={() => onBook(vehicle)}
           >
@@ -191,8 +191,8 @@ const styles = StyleSheet.create({
   tagItem: {
     fontFamily: FONTS.family,
     fontSize: 12,
-    color: '#2E7D5B',
-    fontWeight: '500'
+    color: '#2563EB',
+    fontWeight: '600'
   },
   tagDot: {
     marginHorizontal: 6,
@@ -217,23 +217,23 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.family,
     fontSize: 18,
     fontWeight: '700',
-    color: '#111111',
+    color: '#0F172A',
     letterSpacing: -0.3
   },
   priceUnit: {
     fontFamily: FONTS.family,
     fontSize: 13,
-    color: '#6E6E73',
+    color: '#64748B',
     fontWeight: '400'
   },
   dailySub: {
     fontFamily: FONTS.family,
     fontSize: 12,
-    color: '#8E8E93',
+    color: '#94A3B8',
     marginTop: 2
   },
   ctaButton: {
-    backgroundColor: '#2E7D5B',
+    backgroundColor: '#2563EB',
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 12

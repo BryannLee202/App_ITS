@@ -10,9 +10,9 @@ import {
   Modal
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { FONTS } from '../styles/theme';
+import { FONTS, THEME_PRESETS } from '../styles/theme';
 
-export default function ProfileScreen({ onOpenGreenRace }) {
+export default function ProfileScreen({ onOpenGreenRace, theme = THEME_PRESETS.COBALT }) {
   const [user] = useState({
     fullName: 'Minh Tài',
     phone: '+84386726647',
@@ -43,7 +43,7 @@ export default function ProfileScreen({ onOpenGreenRace }) {
             1. TOP PROFILE HEADER ("Minh Tài >" + "+84386726647")
            ============================================================ */}
         <View style={styles.topUserRow}>
-          <View style={styles.avatarCyanCircle}>
+          <View style={[styles.avatarCyanCircle, { backgroundColor: theme.primary }]}>
             <Ionicons name="person" size={30} color="#FFFFFF" />
             <View style={styles.avatarWarnBadge}>
               <Text style={styles.avatarWarnText}>!</Text>
@@ -64,9 +64,9 @@ export default function ProfileScreen({ onOpenGreenRace }) {
            ============================================================ */}
         <View style={styles.emailVerifyCard}>
           <View style={styles.envelope3DBox}>
-            <Ionicons name="mail-open" size={26} color="#34D399" />
+            <Ionicons name="mail-open" size={26} color={theme.primary} />
             <View style={styles.shieldCyanBadge}>
-              <Ionicons name="shield-checkmark" size={14} color="#2E7D5B" />
+              <Ionicons name="shield-checkmark" size={14} color={theme.primary} />
             </View>
           </View>
           <View style={{ flex: 1 }}>
@@ -426,7 +426,7 @@ export default function ProfileScreen({ onOpenGreenRace }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F4F7F5'
+    backgroundColor: '#F8FAFC'
   },
   scrollContent: {
     padding: 16
@@ -441,7 +441,7 @@ const styles = StyleSheet.create({
     width: 58,
     height: 58,
     borderRadius: 29,
-    backgroundColor: '#2E7D5B',
+    backgroundColor: '#2563EB',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
@@ -546,14 +546,14 @@ const styles = StyleSheet.create({
     width: 18,
     height: 4,
     borderRadius: 2,
-    backgroundColor: '#2E7D5B'
+    backgroundColor: '#2563EB'
   },
   greenRaceCard: {
-    backgroundColor: '#EAF6F0',
+    backgroundColor: '#EFF6FF',
     borderRadius: 20,
     overflow: 'hidden',
     borderWidth: 1.5,
-    borderColor: '#B7E4CE',
+    borderColor: '#BFDBFE',
     marginBottom: 16
   },
   greenRaceTopBar: {
@@ -563,7 +563,7 @@ const styles = StyleSheet.create({
     paddingRight: 12
   },
   greenRaceRibbon: {
-    backgroundColor: '#C6EBD8',
+    backgroundColor: '#DBEAFE',
     paddingHorizontal: 16,
     paddingVertical: 7,
     borderBottomRightRadius: 18
@@ -572,12 +572,12 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.family,
     fontSize: 13,
     fontWeight: '700',
-    color: '#14532D'
+    color: '#1E3A8A'
   },
   progressBtnPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 99,
@@ -588,7 +588,7 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.family,
     fontSize: 11,
     fontWeight: '600',
-    color: '#00695C'
+    color: '#2563EB'
   },
   greenRaceBodyRow: {
     flexDirection: 'row',
@@ -643,7 +643,7 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.family,
     fontSize: 12,
     fontWeight: '700',
-    color: '#004D40',
+    color: '#1E3A8A',
     textAlign: 'right'
   },
   amberCounterPill: {
@@ -666,11 +666,11 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.family,
     fontSize: 12,
     fontWeight: '700',
-    color: '#004D40'
+    color: '#1E3A8A'
   },
   greenRaceMetricsBox: {
     flexDirection: 'row',
-    backgroundColor: 'rgba(167, 243, 208, 0.45)',
+    backgroundColor: 'rgba(219, 234, 254, 0.65)',
     marginHorizontal: 10,
     marginBottom: 10,
     borderRadius: 14,
@@ -695,7 +695,7 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.family,
     fontSize: 15,
     fontWeight: '800',
-    color: '#1E563F',
+    color: '#1D4ED8',
     marginTop: 4
   },
   dualAccountCardsRow: {
@@ -714,10 +714,10 @@ const styles = StyleSheet.create({
     borderColor: '#FFFFFF'
   },
   familyCardCream: {
-    backgroundColor: '#FDF6EC'
+    backgroundColor: '#FFFBEB'
   },
   businessCardAqua: {
-    backgroundColor: '#EAF6F0'
+    backgroundColor: '#EFF6FF'
   },
   accountTypeTitle: {
     fontFamily: FONTS.family,
@@ -812,7 +812,7 @@ const styles = StyleSheet.create({
   giftPromoBanner: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#DCEFE5',
+    backgroundColor: '#EFF6FF',
     borderRadius: 18,
     padding: 14,
     marginBottom: 20,
@@ -932,7 +932,7 @@ const styles = StyleSheet.create({
   gsmTurquoiseBanner: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#2E7D5B',
+    backgroundColor: '#2563EB',
     padding: 16,
     gap: 14
   },
@@ -1000,7 +1000,7 @@ const styles = StyleSheet.create({
     borderTopColor: '#E2E8F0'
   },
   understandTurquoiseBtn: {
-    backgroundColor: '#2E7D5B',
+    backgroundColor: '#2563EB',
     borderRadius: 12,
     paddingVertical: 14,
     alignItems: 'center'

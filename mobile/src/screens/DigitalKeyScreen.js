@@ -335,7 +335,7 @@ const styles = StyleSheet.create({
     lineHeight: 19
   },
   goHomeBtn: {
-    backgroundColor: '#2E7D5B',
+    backgroundColor: '#2563EB',
     paddingHorizontal: 22,
     paddingVertical: 12,
     borderRadius: 12,
@@ -482,10 +482,10 @@ const styles = StyleSheet.create({
     gap: 8
   },
   primaryActionBtnActive: {
-    backgroundColor: '#1E563F'
+    backgroundColor: '#0F172A'
   },
   primaryActionBtnMint: {
-    backgroundColor: '#2E7D5B'
+    backgroundColor: '#2563EB'
   },
   primaryActionText: {
     fontFamily: FONTS.family,
@@ -591,7 +591,7 @@ const styles = StyleSheet.create({
     color: '#0D9488'
   },
   returnBtn: {
-    backgroundColor: '#2E7D5B',
+    backgroundColor: '#2563EB',
     paddingVertical: 15,
     borderRadius: 12,
     alignItems: 'center',

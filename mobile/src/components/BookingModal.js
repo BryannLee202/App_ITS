@@ -197,24 +197,24 @@ export default function BookingModal({ visible, vehicle, onClose, onBookingSucce
               {/* 4 Key Telemetry & Hardware Specs */}
               <View style={styles.specsGrid4}>
                 <View style={styles.specBox}>
-                  <Ionicons name="people-outline" size={16} color="#2E7D5B" />
+                  <Ionicons name="people-outline" size={16} color="#2563EB" />
                   <Text style={styles.specBoxVal}>{vehicle.seats} chỗ</Text>
                   <Text style={styles.specBoxLbl}>Nội thất</Text>
                 </View>
                 <View style={styles.specBox}>
-                  <Ionicons name="battery-charging-outline" size={16} color="#2E7D5B" />
+                  <Ionicons name="battery-charging-outline" size={16} color="#2563EB" />
                   <Text style={styles.specBoxVal}>{vehicle.rangeKm} km</Text>
                   <Text style={styles.specBoxLbl}>Quãng đường</Text>
                 </View>
                 <View style={styles.specBox}>
-                  <Ionicons name="disc-outline" size={16} color="#2E7D5B" />
+                  <Ionicons name="disc-outline" size={16} color="#2563EB" />
                   <Text style={styles.specBoxVal}>
                     {vehicle.telematics?.tirePressurePsi?.fl || 34} PSI
                   </Text>
                   <Text style={styles.specBoxLbl}>Áp suất 4 lốp</Text>
                 </View>
                 <View style={styles.specBox}>
-                  <Ionicons name="speedometer-outline" size={16} color="#2E7D5B" />
+                  <Ionicons name="speedometer-outline" size={16} color="#2563EB" />
                   <Text style={styles.specBoxVal}>GLOSA</Text>
                   <Text style={styles.specBoxLbl}>Làn sóng xanh</Text>
                 </View>
@@ -223,22 +223,22 @@ export default function BookingModal({ visible, vehicle, onClose, onBookingSucce
               {/* Pre-Trip IoT 4-Tire & Safety Check Box */}
               <View style={{
                 marginTop: 10,
-                backgroundColor: '#EAF6F0',
+                backgroundColor: '#EFF6FF',
                 borderRadius: 12,
                 padding: 10,
                 borderWidth: 1,
-                borderColor: '#B7E4CE',
+                borderColor: '#BFDBFE',
                 flexDirection: 'row',
                 alignItems: 'center',
                 justifyContent: 'space-between'
               }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                  <Ionicons name="shield-checkmark" size={16} color="#2E7D5B" />
-                  <Text style={{ fontSize: 11, fontWeight: '700', color: '#18221D' }}>
+                  <Ionicons name="shield-checkmark" size={16} color="#2563EB" />
+                  <Text style={{ fontSize: 11, fontWeight: '700', color: '#0F172A' }}>
                     Kiểm định IoT trước chuyến: Đạt chuẩn 100%
                   </Text>
                 </View>
-                <Text style={{ fontSize: 10, fontWeight: '800', color: '#2E7D5B' }}>
+                <Text style={{ fontSize: 10, fontWeight: '800', color: '#2563EB' }}>
                   4 Lốp OK • Pin {batteryPct}%
                 </Text>
               </View>
@@ -605,7 +605,7 @@ const styles = StyleSheet.create({
   mintBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#10B981',
+    backgroundColor: '#2563EB',
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 99,
@@ -667,7 +667,7 @@ const styles = StyleSheet.create({
   },
   priceHighlightBox: {
     alignItems: 'flex-end',
-    backgroundColor: '#ECFDF5',
+    backgroundColor: '#EFF6FF',
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 12
@@ -675,11 +675,11 @@ const styles = StyleSheet.create({
   priceBig: {
     fontSize: 16,
     fontWeight: '900',
-    color: '#059669'
+    color: '#2563EB'
   },
   priceUnitText: {
     fontSize: 10,
-    color: '#059669',
+    color: '#2563EB',
     fontWeight: '600'
   },
   specsGrid4: {
@@ -729,7 +729,7 @@ const styles = StyleSheet.create({
     gap: 5
   },
   modeTabActive: {
-    backgroundColor: '#10B981'
+    backgroundColor: '#2563EB'
   },
   modeTabText: {
     fontSize: 11,
@@ -755,8 +755,8 @@ const styles = StyleSheet.create({
     borderColor: '#E5E7EB'
   },
   durationChipActive: {
-    backgroundColor: '#ECFDF5',
-    borderColor: '#10B981'
+    backgroundColor: '#EFF6FF',
+    borderColor: '#2563EB'
   },
   durationChipText: {
     fontSize: 12,
@@ -764,7 +764,7 @@ const styles = StyleSheet.create({
     color: '#4B5563'
   },
   durationChipTextActive: {
-    color: '#059669',
+    color: '#2563EB',
     fontWeight: '800'
   },
   deliveryRow: {
@@ -780,8 +780,8 @@ const styles = StyleSheet.create({
     borderColor: '#E5E7EB'
   },
   deliveryOptionActive: {
-    backgroundColor: '#ECFDF5',
-    borderColor: '#10B981'
+    backgroundColor: '#EFF6FF',
+    borderColor: '#2563EB'
   },
   deliveryRadioRow: {
     flexDirection: 'row',
@@ -961,12 +961,12 @@ const styles = StyleSheet.create({
   confirmBookBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#10B981',
+    backgroundColor: '#2563EB',
     paddingHorizontal: 18,
     paddingVertical: 12,
     borderRadius: 14,
     gap: 8,
-    shadowColor: '#10B981',
+    shadowColor: '#2563EB',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8

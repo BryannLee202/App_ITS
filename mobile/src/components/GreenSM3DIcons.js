@@ -3,22 +3,22 @@ import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 
 /**
- * Renders rich multi-layered 3D Isometric illustrations in EcoGo Smart's
- * Alpine Matcha Jade (#2E7D5B) & Warm Sand (#FDF6EC) palette
+ * Renders 3D Isometric illustrations in Royal Cobalt (#2563EB), Sky Ice (#38BDF8),
+ * and Warm Amber (#F59E0B) on a crisp white/neutral canvas.
  */
-export default function GreenSM3DIcons({ type, size = 48 }) {
+export default function GreenSM3DIcons({ type, accentColor = '#2563EB' }) {
   switch (type) {
     case 'CAR_CYAN_3D':
       return (
         <View style={styles.car3DContainer}>
           <View style={styles.carShadow} />
-          <View style={styles.carBodyCyan}>
+          <View style={[styles.carBodyCobalt, { backgroundColor: '#60A5FA', shadowColor: accentColor }]}>
             <View style={styles.carRoofGlass} />
             <View style={styles.carHeadlightLeft} />
             <View style={styles.carHeadlightRight} />
-            <Ionicons name="car-sport" size={44} color="#1E563F" style={{ marginTop: -2 }} />
+            <Ionicons name="car-sport" size={44} color="#1E3A8A" style={{ marginTop: -2 }} />
           </View>
-          <View style={styles.carBadgeVF}>
+          <View style={[styles.carBadgeVF, { backgroundColor: accentColor }]}>
             <Text style={styles.carBadgeVFText}>ECO</Text>
           </View>
         </View>
@@ -27,19 +27,19 @@ export default function GreenSM3DIcons({ type, size = 48 }) {
     case 'SCOOTER_3D':
       return (
         <View style={styles.icon3DBox}>
-          <View style={[styles.baseGlow, { backgroundColor: '#DCFCE7' }]} />
-          <View style={[styles.isoPlatform, { backgroundColor: '#86EFAC', borderColor: '#2E7D5B' }]}>
-            <MaterialCommunityIcons name="motorbike-electric" size={26} color="#14532D" />
+          <View style={[styles.baseGlow, { backgroundColor: '#E0F2FE' }]} />
+          <View style={[styles.isoPlatform, { backgroundColor: '#7DD3FC', borderColor: '#0284C7' }]}>
+            <MaterialCommunityIcons name="motorbike-electric" size={26} color="#0C4A6E" />
           </View>
-          <View style={styles.sparkleDotCyan} />
+          <View style={[styles.sparkleDotCyan, { backgroundColor: accentColor }]} />
         </View>
       );
 
     case 'INTERCITY_MAP_3D':
       return (
         <View style={styles.icon3DBox}>
-          <View style={[styles.baseGlow, { backgroundColor: '#EAF6F0' }]} />
-          <View style={[styles.isoMapBoard, { backgroundColor: '#34D399' }]}>
+          <View style={[styles.baseGlow, { backgroundColor: '#EFF6FF' }]} />
+          <View style={[styles.isoMapBoard, { backgroundColor: '#3B82F6' }]}>
             <View style={styles.mapRoadStrip} />
             <View style={styles.pinYellow}>
               <Ionicons name="location" size={16} color="#F59E0B" />
@@ -65,8 +65,8 @@ export default function GreenSM3DIcons({ type, size = 48 }) {
     case 'MEMBER_DIAMOND_3D':
       return (
         <View style={styles.icon3DBox}>
-          <View style={[styles.baseGlow, { backgroundColor: '#D1FAE5' }]} />
-          <View style={[styles.isoDiamond, { backgroundColor: '#2E7D5B' }]}>
+          <View style={[styles.baseGlow, { backgroundColor: '#DBEAFE' }]} />
+          <View style={[styles.isoDiamond, { backgroundColor: accentColor }]}>
             <Ionicons name="diamond" size={25} color="#FFFFFF" />
           </View>
           <Ionicons name="sparkles" size={12} color="#FBBF24" style={styles.sparkleTopRight} />
@@ -76,11 +76,11 @@ export default function GreenSM3DIcons({ type, size = 48 }) {
     case 'SMARTKEY_3D':
       return (
         <View style={styles.icon3DBox}>
-          <View style={[styles.baseGlow, { backgroundColor: '#EAF6F0' }]} />
+          <View style={[styles.baseGlow, { backgroundColor: '#E2E8F0' }]} />
           <View style={styles.keyLanyard} />
           <View style={styles.keyFobBody}>
             <Text style={styles.keyFobLogo}>E</Text>
-            <Ionicons name="lock-open" size={11} color="#6EE7B7" />
+            <Ionicons name="lock-open" size={11} color="#60A5FA" />
           </View>
         </View>
       );
@@ -88,10 +88,10 @@ export default function GreenSM3DIcons({ type, size = 48 }) {
     case 'VINBUS_3D':
       return (
         <View style={styles.icon3DBox}>
-          <View style={[styles.baseGlow, { backgroundColor: '#ECFCCB' }]} />
+          <View style={[styles.baseGlow, { backgroundColor: '#E0F2FE' }]} />
           <View style={styles.bus3DBody}>
             <View style={styles.busRoofGreen} />
-            <Ionicons name="train" size={23} color="#1E563F" />
+            <Ionicons name="train" size={23} color="#1E3A8A" />
           </View>
         </View>
       );
@@ -99,14 +99,14 @@ export default function GreenSM3DIcons({ type, size = 48 }) {
     case 'SHOWROOM_3D':
       return (
         <View style={styles.icon3DBox}>
-          <View style={[styles.baseGlow, { backgroundColor: '#EAF6F0' }]} />
+          <View style={[styles.baseGlow, { backgroundColor: '#EFF6FF' }]} />
           <View style={styles.showroomBuilding}>
-            <View style={styles.showroomHeader}>
+            <View style={[styles.showroomHeader, { backgroundColor: accentColor }]}>
               <Text style={styles.showroomHeaderText}>ECOGO</Text>
             </View>
             <View style={styles.showroomGlass}>
-              <Ionicons name="car-sport" size={13} color="#1E293B" />
-              <Ionicons name="car-sport" size={13} color="#2E7D5B" />
+              <Ionicons name="car-sport" size={13} color="#0F172A" />
+              <Ionicons name="car-sport" size={13} color={accentColor} />
             </View>
           </View>
         </View>
@@ -128,7 +128,7 @@ export default function GreenSM3DIcons({ type, size = 48 }) {
       return (
         <View style={styles.trophyWrap}>
           <Ionicons name="trophy" size={24} color="#F59E0B" />
-          <View style={styles.trophyPedestal} />
+          <View style={[styles.trophyPedestal, { backgroundColor: accentColor }]} />
         </View>
       );
 
@@ -166,8 +166,7 @@ const styles = StyleSheet.create({
     right: 4,
     width: 6,
     height: 6,
-    borderRadius: 3,
-    backgroundColor: '#2E7D5B'
+    borderRadius: 3
   },
   isoMapBoard: {
     width: 38,
@@ -176,7 +175,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderBottomWidth: 4,
-    borderBottomColor: '#1E563F',
+    borderBottomColor: '#1D4ED8',
     position: 'relative'
   },
   mapRoadStrip: {
@@ -220,7 +219,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderBottomWidth: 3,
-    borderBottomColor: '#14532D'
+    borderBottomColor: '#1E3A8A'
   },
   sparkleTopRight: {
     position: 'absolute',
@@ -234,16 +233,16 @@ const styles = StyleSheet.create({
     width: 6,
     height: 28,
     borderRadius: 3,
-    backgroundColor: '#1E293B',
+    backgroundColor: '#0F172A',
     transform: [{ rotate: '18deg' }]
   },
   keyFobBody: {
     width: 24,
     height: 32,
     borderRadius: 8,
-    backgroundColor: '#1E3A2F',
+    backgroundColor: '#0F172A',
     borderWidth: 1.5,
-    borderColor: '#6EE7B7',
+    borderColor: '#60A5FA',
     alignItems: 'center',
     justifyContent: 'center',
     marginLeft: 10,
@@ -259,9 +258,9 @@ const styles = StyleSheet.create({
     width: 40,
     height: 34,
     borderRadius: 9,
-    backgroundColor: '#A7F3D0',
+    backgroundColor: '#93C5FD',
     borderBottomWidth: 3,
-    borderBottomColor: '#2E7D5B',
+    borderBottomColor: '#2563EB',
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden'
@@ -272,7 +271,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: 6,
-    backgroundColor: '#34D399'
+    backgroundColor: '#3B82F6'
   },
   showroomBuilding: {
     width: 42,
@@ -284,7 +283,6 @@ const styles = StyleSheet.create({
     overflow: 'hidden'
   },
   showroomHeader: {
-    backgroundColor: '#2E7D5B',
     height: 9,
     alignItems: 'center',
     justifyContent: 'center'
@@ -307,9 +305,9 @@ const styles = StyleSheet.create({
     width: 38,
     height: 34,
     borderRadius: 9,
-    backgroundColor: '#34D399',
+    backgroundColor: '#60A5FA',
     borderBottomWidth: 3,
-    borderBottomColor: '#2E7D5B',
+    borderBottomColor: '#2563EB',
     alignItems: 'center',
     justifyContent: 'center'
   },
@@ -343,18 +341,16 @@ const styles = StyleSheet.create({
     width: 82,
     height: 18,
     borderRadius: 20,
-    backgroundColor: 'rgba(46, 125, 91, 0.22)'
+    backgroundColor: 'rgba(37, 99, 235, 0.18)'
   },
-  carBodyCyan: {
+  carBodyCobalt: {
     width: 78,
     height: 50,
     borderRadius: 18,
-    backgroundColor: '#6EE7B7',
     borderWidth: 2,
     borderColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#2E7D5B',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.25,
     shadowRadius: 6
@@ -365,7 +361,7 @@ const styles = StyleSheet.create({
     width: 44,
     height: 12,
     borderRadius: 6,
-    backgroundColor: '#1E293B',
+    backgroundColor: '#0F172A',
     opacity: 0.22
   },
   carHeadlightLeft: {
@@ -390,7 +386,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 4,
     right: 4,
-    backgroundColor: '#2E7D5B',
     paddingHorizontal: 5,
     paddingVertical: 1,
     borderRadius: 6
@@ -408,7 +403,6 @@ const styles = StyleSheet.create({
     width: 18,
     height: 5,
     borderRadius: 2,
-    backgroundColor: '#2E7D5B',
     marginTop: -2
   }
 });

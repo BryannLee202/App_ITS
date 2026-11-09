@@ -1,31 +1,78 @@
-// EcoGo Smart Signature Design System (Alpine Matcha Jade & Warm Sand Pastel + 3D Isometric UI)
+// EcoGo Smart Signature Design System — Royal Cobalt & Snow White (BMW i / Polestar Aesthetic)
+export const THEME_PRESETS = {
+  COBALT: {
+    id: 'COBALT',
+    name: 'Xanh Cobalt',
+    primary: '#2563EB',
+    primaryDark: '#1D4ED8',
+    primaryLight: '#60A5FA',
+    primarySoft: '#EFF6FF',
+    primaryBorder: '#BFDBFE',
+    glow: '#93C5FD',
+    cockpitBg: '#0F172A'
+  },
+  TITANIUM: {
+    id: 'TITANIUM',
+    name: 'Đen Titan',
+    primary: '#1E293B',
+    primaryDark: '#0F172A',
+    primaryLight: '#64748B',
+    primarySoft: '#F1F5F9',
+    primaryBorder: '#CBD5E1',
+    glow: '#CBD5E1',
+    cockpitBg: '#18181B'
+  },
+  INDIGO: {
+    id: 'INDIGO',
+    name: 'Tím Indigo',
+    primary: '#4F46E5',
+    primaryDark: '#3730A3',
+    primaryLight: '#818CF8',
+    primarySoft: '#EEF2FF',
+    primaryBorder: '#C7D2FE',
+    glow: '#A5B4FC',
+    cockpitBg: '#1E1B4B'
+  },
+  CORAL: {
+    id: 'CORAL',
+    name: 'Đỏ Coral',
+    primary: '#E11D48',
+    primaryDark: '#BE123C',
+    primaryLight: '#FB7185',
+    primarySoft: '#FFF1F2',
+    primaryBorder: '#FECDD3',
+    glow: '#FDA4AF',
+    cockpitBg: '#1E293B'
+  }
+};
+
 export const COLORS = {
-  // EcoGo Smart Signature Alpine Matcha Jade (#2E7D5B)
-  primary: '#2E7D5B',         // Signature Alpine Matcha Jade
-  primaryLight: '#34D399',    // Soft Matcha Mint Glow
-  primaryDark: '#1E563F',     // Deep Forest Jade
-  primaryMuted: '#EAF6F0',    // Soft Matcha Mist Card Tint
+  // Primary Royal Cobalt (#2563EB)
+  primary: '#2563EB',
+  primaryLight: '#60A5FA',
+  primaryDark: '#1D4ED8',
+  primaryMuted: '#EFF6FF',
 
-  // Secondary Warm Sand & Amber Gold Accents
-  secondary: '#D97706',       // Warm Amber / Trophy Gold
-  secondaryLight: '#FEF08A',  // Promo Badge Yellow (-20%, MỚI)
-  secondaryDark: '#4D7C0F',   // "Người Ươm Mầm" Olive Leaf Pill
-  secondaryMuted: '#FDF6EC',  // Warm Sand Cream Card Tint
+  // Secondary Warm Amber & Sky Accents
+  secondary: '#F59E0B',
+  secondaryLight: '#FEF3C7',
+  secondaryDark: '#B45309',
+  secondaryMuted: '#FFFBEB',
 
-  // Backgrounds & Card Surfaces
-  background: '#F4F7F5',      // Soft Matcha Alabaster Canvas
-  surface: '#FFFFFF',         // Pure White Card
-  surfaceVariant: '#F8FAF9',  // Subtle Inset
-  aquaCard: '#EAF6F0',        // "Đặt xe tự lái" Soft Matcha Mist Card
-  creamCard: '#FDF6EC',       // "Thuê theo giờ / Gia đình" Warm Sand Card
-  greenRaceBg: '#E6F5EC',     // EcoGo Race Card Base
-  border: '#E4EDE8',          // Soft Sage Divider
-  borderDark: '#CBDAD2',
+  // Crisp Snow White & Alabaster Surfaces
+  background: '#F8FAFC',
+  surface: '#FFFFFF',
+  surfaceVariant: '#F1F5F9',
+  aquaCard: '#EFF6FF',
+  creamCard: '#FFFBEB',
+  greenRaceBg: '#EFF6FF',
+  border: '#E2E8F0',
+  borderDark: '#CBD5E1',
 
   // Typography
-  textPrimary: '#18221D',     // Deep Forest Charcoal
-  textSecondary: '#5C6B63',   // Muted Sage Slate
-  textMuted: '#8C9B93',       // Subtle Gray
+  textPrimary: '#0F172A',
+  textSecondary: '#475569',
+  textMuted: '#94A3B8',
   textInverse: '#FFFFFF',
 
   danger: '#EF4444',
