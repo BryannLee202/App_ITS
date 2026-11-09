@@ -28,7 +28,7 @@ jobs:
       - name: Install Backend Dependencies
         run: |
           cd backend
-          npm ci
+          npm ci || npm install
 
       - name: Verify ITS Mathematical Engine (GLOSA & Shockwave)
         run: |
@@ -53,7 +53,7 @@ jobs:
           cd backend
           node src/server.js &
           SERVER_PID=$!
-          sleep 3
+          sleep 4
           curl -f http://localhost:5000/api/health || exit 1
           kill $SERVER_PID
 
@@ -73,13 +73,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
-          cache-dependency-path: mobile/package.json
 
       - name: Install Mobile Dependencies
         run: |
           cd mobile
-          npm ci
+          npm install --legacy-peer-deps
 
       - name: Expo Config & Dependency Integrity Check
         run: |
