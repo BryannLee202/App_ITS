@@ -12,68 +12,65 @@ export default function VehicleCard({
 }) {
   const isElectric = vehicle.powerType === 'ELECTRIC';
   const formattedHourlyPrice = vehicle.hourlyPrice.toLocaleString('vi-VN');
-  const formattedDailyPrice = vehicle.dailyPrice.toLocaleString('vi-VN');
+  const formattedDailyPrice = Math.round(vehicle.dailyPrice / 1000) + 'k';
   const batteryPct = Math.round(vehicle.telematics?.batteryLevelPct || 90);
 
   return (
     <TouchableOpacity
       style={[styles.card, customStyle]}
-      activeOpacity={0.94}
+      activeOpacity={0.92}
       onPress={() => onSelect(vehicle)}
     >
-      {/* Clean Showroom Photo with Single Frosted Pill */}
-      <View style={styles.imageContainer}>
+      {/* Compact Left Thumbnail (No Giant Full-Screen Photo Overload) */}
+      <View style={styles.thumbWrapper}>
         <Image
           source={{ uri: vehicle.thumbnail }}
-          style={styles.image}
+          style={styles.thumbImage}
           resizeMode="cover"
         />
-
-        <View style={styles.topFloatingRow}>
-          <View style={styles.frostedBadge}>
-            <View style={[styles.dot, { backgroundColor: accentColor }]} />
-            <Text style={styles.frostedBadgeText}>
-              {isElectric
-                ? `Pin ${batteryPct}% · ${vehicle.rangeKm} km`
-                : `Hybrid · ${vehicle.rangeKm} km`}
-            </Text>
-          </View>
-
-          <View style={styles.ratingFrosted}>
-            <Ionicons name="star" size={11} color="#F59E0B" />
-            <Text style={styles.ratingText}>{vehicle.rating}</Text>
-            <Text style={styles.tripsCount}>({vehicle.totalTrips})</Text>
-          </View>
+        <View style={styles.batteryBadge}>
+          <View style={[styles.batteryDot, { backgroundColor: accentColor }]} />
+          <Text style={styles.batteryText}>
+            {isElectric ? `${batteryPct}%` : 'HEV'}
+          </Text>
         </View>
       </View>
 
-      {/* Clean Editorial Vehicle Details (No Cluttered AI Badges) */}
-      <View style={styles.body}>
-        <Text style={styles.vehicleName} numberOfLines={1}>
-          {vehicle.name}
-        </Text>
-        <Text style={styles.metaLine} numberOfLines={1}>
-          Số tự động · {vehicle.seats} chỗ · Biển số {vehicle.plateNumber}
+      {/* Right Content Column: Spacious, Easy to Scan & Tap */}
+      <View style={styles.infoCol}>
+        <View style={styles.topTitleRow}>
+          <Text style={styles.vehicleName} numberOfLines={1}>
+            {vehicle.name}
+          </Text>
+          <View style={styles.ratingBox}>
+            <Ionicons name="star" size={12} color="#F59E0B" />
+            <Text style={styles.ratingText}>{vehicle.rating}</Text>
+          </View>
+        </View>
+
+        <Text style={styles.specsLine} numberOfLines={1}>
+          {vehicle.seats} chỗ · {vehicle.rangeKm} km · {vehicle.plateNumber}
         </Text>
 
-        <View style={styles.divider} />
-
-        {/* Price & Action Row */}
-        <View style={styles.footerRow}>
+        <View style={styles.bottomActionRow}>
           <View>
-            <View style={styles.priceInline}>
-              <Text style={styles.priceAmount}>{formattedHourlyPrice}đ</Text>
-              <Text style={styles.priceUnit}> / giờ</Text>
+            <View style={styles.priceRow}>
+              <Text style={[styles.priceMain, { color: accentColor }]}>
+                {formattedHourlyPrice}đ
+              </Text>
+              <Text style={styles.priceUnit}>/giờ</Text>
             </View>
-            <Text style={styles.dailySub}>{formattedDailyPrice}đ / ngày (24h)</Text>
+            <Text style={styles.dailyPriceSub}>
+              {formattedDailyPrice}/ngày · Miễn cọc
+            </Text>
           </View>
 
           <TouchableOpacity
-            style={styles.ctaButton}
+            style={styles.bookBtn}
             activeOpacity={0.85}
             onPress={() => onBook(vehicle)}
           >
-            <Text style={styles.ctaButtonText}>Đặt xe</Text>
+            <Text style={styles.bookBtnText}>Đặt xe</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -83,61 +80,79 @@ export default function VehicleCard({
 
 const styles = StyleSheet.create({
   card: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    borderRadius: 20,
+    borderRadius: 18,
     marginHorizontal: 16,
-    marginBottom: 14,
-    overflow: 'hidden',
+    marginBottom: 10,
+    padding: 12,
     borderWidth: 1,
-    borderColor: '#EBECE8'
+    borderColor: '#EBECE8',
+    gap: 12
   },
-  imageContainer: {
-    width: '100%',
-    height: 192,
-    backgroundColor: '#F2F2F0',
+  thumbWrapper: {
+    width: 112,
+    height: 88,
+    borderRadius: 14,
+    backgroundColor: '#F4F4F2',
+    overflow: 'hidden',
     position: 'relative'
   },
-  image: {
+  thumbImage: {
     width: '100%',
     height: '100%'
   },
-  topFloatingRow: {
+  batteryBadge: {
     position: 'absolute',
-    top: 12,
-    left: 12,
-    right: 12,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center'
-  },
-  frostedBadge: {
+    top: 6,
+    left: 6,
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: 'rgba(255, 255, 255, 0.94)',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
+    paddingHorizontal: 7,
+    paddingVertical: 3,
     borderRadius: 99,
-    gap: 6
+    gap: 4
   },
-  dot: {
-    width: 6,
-    height: 6,
+  batteryDot: {
+    width: 5,
+    height: 5,
     borderRadius: 3
   },
-  frostedBadgeText: {
+  batteryText: {
     fontFamily: FONTS.family,
-    fontSize: 11,
-    fontWeight: '600',
+    fontSize: 10,
+    fontWeight: '700',
     color: '#1D1D1F'
   },
-  ratingFrosted: {
+  infoCol: {
+    flex: 1,
+    justifyContent: 'space-between',
+    minHeight: 86
+  },
+  topTitleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.94)',
-    paddingHorizontal: 9,
-    paddingVertical: 5,
-    borderRadius: 99,
-    gap: 3
+    justifyContent: 'space-between',
+    gap: 6
+  },
+  vehicleName: {
+    flex: 1,
+    fontFamily: FONTS.family,
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#1D1D1F',
+    letterSpacing: -0.2
+  },
+  ratingBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+    backgroundColor: '#F7F7F5',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 6
   },
   ratingText: {
     fontFamily: FONTS.family,
@@ -145,70 +160,49 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#1D1D1F'
   },
-  tripsCount: {
+  specsLine: {
     fontFamily: FONTS.family,
-    fontSize: 11,
-    color: '#6E6E73'
-  },
-  body: {
-    padding: 16
-  },
-  vehicleName: {
-    fontFamily: FONTS.family,
-    fontSize: 17,
-    fontWeight: '700',
-    color: '#1D1D1F',
-    letterSpacing: -0.2
-  },
-  metaLine: {
-    fontFamily: FONTS.family,
-    fontSize: 13,
+    fontSize: 12,
     color: '#6E6E73',
-    marginTop: 4
+    marginTop: 2
   },
-  divider: {
-    height: 1,
-    backgroundColor: '#F2F2F0',
-    marginVertical: 12
-  },
-  footerRow: {
+  bottomActionRow: {
     flexDirection: 'row',
+    alignItems: 'flex-end',
     justifyContent: 'space-between',
-    alignItems: 'center'
+    marginTop: 8
   },
-  priceInline: {
+  priceRow: {
     flexDirection: 'row',
     alignItems: 'baseline'
   },
-  priceAmount: {
+  priceMain: {
     fontFamily: FONTS.family,
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#1D1D1F',
-    letterSpacing: -0.3
+    fontSize: 16,
+    fontWeight: '800'
   },
   priceUnit: {
     fontFamily: FONTS.family,
-    fontSize: 13,
-    color: '#6E6E73',
-    fontWeight: '400'
-  },
-  dailySub: {
-    fontFamily: FONTS.family,
     fontSize: 12,
+    color: '#6E6E73',
+    fontWeight: '500'
+  },
+  dailyPriceSub: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
     color: '#8E8E93',
-    marginTop: 2
+    marginTop: 1
   },
-  ctaButton: {
+  bookBtn: {
     backgroundColor: '#1D1D1F',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 12
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 10
   },
-  ctaButtonText: {
+  bookBtnText: {
     fontFamily: FONTS.family,
     color: '#FFFFFF',
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: '600'
   }
 });

@@ -102,6 +102,16 @@ export default function App() {
           'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap';
         document.head.appendChild(link);
       }
+      const styleId = 'ecogo-clean-focus';
+      if (!document.getElementById(styleId)) {
+        const styleEl = document.createElement('style');
+        styleEl.id = styleId;
+        styleEl.innerHTML = `
+          * { -webkit-tap-highlight-color: transparent; }
+          *:focus, *:focus-visible { outline: none !important; }
+        `;
+        document.head.appendChild(styleEl);
+      }
     }
   }, []);
 

@@ -5,7 +5,6 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Image,
   ActivityIndicator,
   RefreshControl,
   TextInput,
@@ -61,13 +60,6 @@ const SAVED_PLACES = [
   }
 ];
 
-// Real studio photography for Bento service cards (0% vector cartoon look)
-const BENTO_PHOTOS = {
-  car: 'https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&w=700&q=80',
-  scooter: 'https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=600&q=80',
-  delivery: 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=600&q=80'
-};
-
 export default function HomeScreen({
   theme = THEME_PRESETS.MINT,
   onSelectVehicle,
@@ -79,7 +71,6 @@ export default function HomeScreen({
   onOpenGreenRace
 }) {
   const [vehicles, setVehicles] = useState([]);
-  const [stations, setStations] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('ALL');
   const [rentalPackageTab, setRentalPackageTab] = useState('HOURLY'); // 'HOURLY' | 'DAILY'
   const [glosaAdvisory, setGlosaAdvisory] = useState(null);
@@ -101,13 +92,11 @@ export default function HomeScreen({
   const loadInitialData = async () => {
     try {
       setLoading(true);
-      const [vehRes, stRes, glosaRes] = await Promise.all([
+      const [vehRes, glosaRes] = await Promise.all([
         ApiService.getVehicles(selectedCategory),
-        ApiService.getStations(),
         ApiService.getGreenWaveAdvisory(300, 42)
       ]);
       setVehicles(vehRes.vehicles || []);
-      setStations(stRes.stations || []);
       setGlosaAdvisory(glosaRes.data || null);
     } catch (err) {
       console.warn('Error loading home data:', err.message);
@@ -162,7 +151,7 @@ export default function HomeScreen({
         }
       >
         {/* ============================================================
-            1. CLEAN APPLE WHITE EDITORIAL HEADER (NO CLUTTERED PILLS)
+            1. COMPACT APPLE WHITE HEADER & QUICK BOOKING BOX
            ============================================================ */}
         <View style={styles.topHeaderSection}>
           <View style={styles.headerTopRow}>
@@ -171,10 +160,8 @@ export default function HomeScreen({
               activeOpacity={0.85}
               onPress={onNavigateToProfile}
             >
-              <View>
-                <Text style={styles.greetingSub}>Chào Minh Tài · GPLX B2</Text>
-                <Text style={styles.greetingTitle}>Bạn cần thuê xe ở đâu?</Text>
-              </View>
+              <Text style={styles.greetingSub}>Chào Minh Tài · GPLX B2</Text>
+              <Text style={styles.greetingTitle}>Bạn cần thuê xe ở đâu?</Text>
             </TouchableOpacity>
 
             <View style={styles.headerRightActions}>
@@ -183,7 +170,7 @@ export default function HomeScreen({
                 activeOpacity={0.85}
                 onPress={onOpenRewards}
               >
-                <Ionicons name="pricetag-outline" size={17} color="#1D1D1F" />
+                <Ionicons name="pricetag-outline" size={16} color="#1D1D1F" />
               </TouchableOpacity>
 
               <TouchableOpacity
@@ -196,11 +183,9 @@ export default function HomeScreen({
             </View>
           </View>
 
-          {/* ============================================================
-              2. MINIMAL BOOKING & SEARCH CARD (APPLE / UBER STYLE)
-             ============================================================ */}
+          {/* Compact Booking Widget */}
           <View style={styles.smartBookingCard}>
-            {/* Clean 2-Segment Switcher */}
+            {/* 2-Tab Mode Switcher */}
             <View style={styles.packageTabsRow}>
               {[
                 { id: 'HOURLY', label: 'Thuê theo giờ' },
@@ -221,7 +206,7 @@ export default function HomeScreen({
               })}
             </View>
 
-            {/* Pickup Location Row */}
+            {/* Combined Station & Time Row (Compact, Easy to Tap) */}
             <TouchableOpacity
               style={styles.stationSelectorRow}
               activeOpacity={0.85}
@@ -231,49 +216,35 @@ export default function HomeScreen({
                 <View style={[styles.mintDotInner, { backgroundColor: theme.primary }]} />
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={styles.stationLabelSub}>Điểm nhận & trả xe</Text>
                 <Text style={styles.stationSelectedName} numberOfLines={1}>
                   {selectedPlace ? selectedPlace.name : 'ĐH Giao Thông Vận Tải (UTH)'}
                 </Text>
+                <Text style={styles.stationTimeSub} numberOfLines={1}>
+                  {rentalPackageTab === 'DAILY'
+                    ? 'Nhận 15:30 hôm nay → 15:30 ngày mai (24h)'
+                    : 'Nhận 15:30 hôm nay → 19:30 hôm nay (4h)'}
+                </Text>
               </View>
-              <Text style={[styles.changeHubLink, { color: theme.primary }]}>Bản đồ</Text>
+              <View style={[styles.changeHubPill, { backgroundColor: theme.primarySoft }]}>
+                <Text style={[styles.changeHubLink, { color: theme.primary }]}>Đổi trạm</Text>
+              </View>
             </TouchableOpacity>
 
-            <View style={styles.cardDivider} />
-
-            {/* Pickup & Return Time Columns */}
-            <View style={styles.timeColumnsRow}>
-              <TouchableOpacity
-                style={styles.timeCol}
-                onPress={() => vehicles[0] && handleOpenBooking(vehicles[0])}
-              >
-                <Text style={styles.timeColLabel}>Nhận xe</Text>
-                <Text style={styles.timeColValue}>Hôm nay, 15:30</Text>
-              </TouchableOpacity>
-
-              <View style={styles.verticalDivider} />
-
-              <TouchableOpacity
-                style={styles.timeCol}
-                onPress={() => vehicles[0] && handleOpenBooking(vehicles[0])}
-              >
-                <Text style={styles.timeColLabel}>Trả xe</Text>
-                <Text style={styles.timeColValue}>
-                  {rentalPackageTab === 'DAILY' ? 'Ngày mai, 15:30 (24h)' : 'Hôm nay, 19:30 (4h)'}
-                </Text>
-              </TouchableOpacity>
-            </View>
-
-            {/* Minimal Search Input */}
+            {/* Quick Search Input */}
             <View style={styles.quickSearchBox}>
               <Ionicons name="search-outline" size={16} color="#8E8E93" />
               <TextInput
                 style={styles.quickSearchInput}
                 value={destinationQuery}
                 onChangeText={setDestinationQuery}
-                placeholder="Tìm theo dòng xe (Ioniq 5, CX-5, Corolla Cross...)"
+                placeholder="Tìm dòng xe (Ioniq 5, CX-5, Corolla Cross...)"
                 placeholderTextColor="#8E8E93"
               />
+              {destinationQuery.length > 0 && (
+                <TouchableOpacity onPress={() => setDestinationQuery('')}>
+                  <Ionicons name="close-circle" size={16} color="#8E8E93" />
+                </TouchableOpacity>
+              )}
             </View>
           </View>
         </View>
@@ -290,206 +261,130 @@ export default function HomeScreen({
         )}
 
         {/* ============================================================
-            3. BENTO SERVICE GRID WITH 100% REAL STUDIO PHOTOS
-               (Soft Mint #EBFBF5 + Warm Oat Beige #F6F3EC + Pure White)
+            2. SPACIOUS 2x2 QUICK FEATURE GRID (NO CRAMPED PHOTOS/TEXT)
            ============================================================ */}
-        <View style={styles.bentoSection}>
-          <View style={styles.bentoRow}>
-            {/* Left Tall Card: Self-Drive Cars (Soft Pastel Mint + Real Studio Car Photo) */}
+        <View style={styles.featuresSection}>
+          <View style={styles.featuresGrid}>
+            {/* Tile 1: Self-Drive Cars */}
             <TouchableOpacity
               style={[
-                styles.bentoTallCard,
+                styles.featureTile,
                 { backgroundColor: theme.primarySoft, borderColor: theme.primaryBorder }
               ]}
-              activeOpacity={0.92}
+              activeOpacity={0.88}
               onPress={() => setSelectedCategory('CAR')}
             >
-              <View>
-                <Text style={styles.bentoTallTitle}>Ô tô tự lái</Text>
-                <Text style={styles.bentoTallSub}>Hyundai, Mazda, Toyota</Text>
-                <Text style={[styles.bentoTallPrice, { color: theme.primary }]}>
+              <View style={[styles.featureIconBox, { backgroundColor: '#FFFFFF' }]}>
+                <Ionicons name="car-sport-outline" size={20} color={theme.primary} />
+              </View>
+              <View style={styles.featureTextCol}>
+                <Text style={styles.featureTitle} numberOfLines={1}>
+                  Ô tô tự lái
+                </Text>
+                <Text style={[styles.featureSub, { color: theme.primary }]} numberOfLines={1}>
                   Từ 85.000đ/giờ
                 </Text>
               </View>
+            </TouchableOpacity>
 
-              <View style={styles.bentoTallPhotoWrap}>
-                <Image
-                  source={{ uri: BENTO_PHOTOS.car }}
-                  style={styles.bentoPhotoImg}
-                  resizeMode="cover"
-                />
+            {/* Tile 2: Electric Scooters */}
+            <TouchableOpacity
+              style={[
+                styles.featureTile,
+                { backgroundColor: theme.beigeSoft, borderColor: theme.beigeBorder }
+              ]}
+              activeOpacity={0.88}
+              onPress={() => setSelectedCategory('MOTORBIKE')}
+            >
+              <View style={[styles.featureIconBox, { backgroundColor: '#FFFFFF' }]}>
+                <Ionicons name="bicycle-outline" size={20} color="#8C6239" />
+              </View>
+              <View style={styles.featureTextCol}>
+                <Text style={styles.featureTitle} numberOfLines={1}>
+                  Xe máy điện
+                </Text>
+                <Text style={[styles.featureSub, { color: '#8C6239' }]} numberOfLines={1}>
+                  Từ 22.000đ/giờ
+                </Text>
               </View>
             </TouchableOpacity>
 
-            {/* Right Stacked Column: Warm Oat Beige + Crisp Apple White */}
-            <View style={styles.bentoRightCol}>
-              {/* Top Right: Electric Scooters (Warm Oat Beige + Real Scooter Photo) */}
-              <TouchableOpacity
-                style={[
-                  styles.bentoSmallCard,
-                  { backgroundColor: theme.beigeSoft, borderColor: theme.beigeBorder }
-                ]}
-                activeOpacity={0.92}
-                onPress={() => setSelectedCategory('MOTORBIKE')}
-              >
-                <View style={styles.bentoSmallTextCol}>
-                  <Text style={styles.bentoSmallTitle}>Xe máy điện</Text>
-                  <Text style={styles.bentoSmallSub}>Yamaha & Honda</Text>
-                  <Text style={styles.bentoSmallPriceBeige}>Từ 22.000đ/h</Text>
-                </View>
-                <Image
-                  source={{ uri: BENTO_PHOTOS.scooter }}
-                  style={styles.bentoSmallPhoto}
-                  resizeMode="cover"
-                />
-              </TouchableOpacity>
+            {/* Tile 3: Doorstep Delivery */}
+            <TouchableOpacity
+              style={styles.featureTileWhite}
+              activeOpacity={0.88}
+              onPress={() => vehicles[0] && handleOpenBooking(vehicles[0])}
+            >
+              <View style={[styles.featureIconBox, { backgroundColor: theme.primarySoft }]}>
+                <Ionicons name="navigate-outline" size={19} color={theme.primary} />
+              </View>
+              <View style={styles.featureTextCol}>
+                <Text style={styles.featureTitle} numberOfLines={1}>
+                  Giao xe tận nơi
+                </Text>
+                <Text style={styles.featureSubMuted} numberOfLines={1}>
+                  Miễn phí 5km
+                </Text>
+              </View>
+            </TouchableOpacity>
 
-              {/* Bottom Right: Doorstep Delivery (Pure White + Real Handover Photo) */}
-              <TouchableOpacity
-                style={styles.bentoSmallCardWhite}
-                activeOpacity={0.92}
-                onPress={() => vehicles[0] && handleOpenBooking(vehicles[0])}
-              >
-                <View style={styles.bentoSmallTextCol}>
-                  <Text style={styles.bentoSmallTitle}>Giao xe tận nơi</Text>
-                  <Text style={styles.bentoSmallSub}>Bán kính 5km</Text>
-                  <Text style={[styles.bentoSmallPriceMint, { color: theme.primary }]}>
-                    Miễn phí giao
-                  </Text>
-                </View>
-                <Image
-                  source={{ uri: BENTO_PHOTOS.delivery }}
-                  style={styles.bentoSmallPhoto}
-                  resizeMode="cover"
-                />
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-
-        {/* ============================================================
-            4. CLEAN LIGHT GLOSA TRAFFIC BAR (NO DARK CYBER DASHBOARD)
-           ============================================================ */}
-        <TouchableOpacity
-          style={[
-            styles.glosaLightCard,
-            { backgroundColor: theme.primarySoft, borderColor: theme.primaryBorder }
-          ]}
-          activeOpacity={0.9}
-          onPress={onNavigateToMap}
-        >
-          <View style={styles.glosaLeftCol}>
-            <View style={styles.glosaTitleRow}>
-              <View style={[styles.liveDot, { backgroundColor: theme.primary }]} />
-              <Text style={styles.glosaLightTitle}>
-                Làn sóng xanh · Võ Oanh → Điện Biên Phủ
-              </Text>
-            </View>
-            <Text style={styles.glosaLightSub}>
-              {glosaAdvisory?.advisoryMessage ||
-                'Đèn xanh còn 28s · Duy trì tốc độ ổn định để qua nút giao không dừng'}
-            </Text>
-          </View>
-
-          <View style={styles.glosaWhiteSpeedPill}>
-            <Text style={[styles.glosaSpeedValue, { color: theme.primary }]}>
-              {glosaAdvisory ? glosaAdvisory.recommendedSpeedKmh : 45}
-            </Text>
-            <Text style={styles.glosaSpeedUnitText}>km/h</Text>
-          </View>
-        </TouchableOpacity>
-
-        {/* ============================================================
-            5. HORIZONTAL NEARBY VEHICLES ("Xe gần bạn")
-           ============================================================ */}
-        <View style={styles.showroomCarouselSection}>
-          <View style={styles.sectionHeaderRow}>
-            <Text style={styles.sectionMainTitle}>Xe gần bạn</Text>
-            <TouchableOpacity onPress={onNavigateToMap}>
-              <Text style={[styles.seeMapLink, { color: theme.primary }]}>Xem trên bản đồ</Text>
+            {/* Tile 4: Green Wave GLOSA Advisory */}
+            <TouchableOpacity
+              style={styles.featureTileWhite}
+              activeOpacity={0.88}
+              onPress={onNavigateToMap}
+            >
+              <View style={[styles.featureIconBox, { backgroundColor: theme.beigeSoft }]}>
+                <Ionicons name="speedometer-outline" size={19} color="#8C6239" />
+              </View>
+              <View style={styles.featureTextCol}>
+                <Text style={styles.featureTitle} numberOfLines={1}>
+                  Làn sóng xanh
+                </Text>
+                <Text style={[styles.featureSub, { color: theme.primary }]} numberOfLines={1}>
+                  {glosaAdvisory ? `${glosaAdvisory.recommendedSpeedKmh} km/h · Đèn 28s` : '45 km/h · Đèn 28s'}
+                </Text>
+              </View>
             </TouchableOpacity>
           </View>
-
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.wideShowroomRow}
-          >
-            {filteredVehicles.map((veh, idx) => {
-              const batteryPct = Math.round(veh.telematics?.batteryLevelPct || 92);
-              const distMeters = 120 + idx * 140;
-
-              return (
-                <TouchableOpacity
-                  key={veh.id}
-                  style={styles.wideShowroomCard}
-                  activeOpacity={0.92}
-                  onPress={() => handleOpenBooking(veh)}
-                >
-                  <View style={styles.wideImgWrap}>
-                    <Image source={{ uri: veh.thumbnail }} style={styles.wideImg} resizeMode="cover" />
-
-                    {/* Single Clean Frosted Distance Pill */}
-                    <View style={styles.frostedDistPill}>
-                      <Text style={styles.frostedDistText}>Cách {distMeters}m</Text>
-                    </View>
-                  </View>
-
-                  <View style={styles.wideCardBody}>
-                    <Text style={styles.wideVehName} numberOfLines={1}>
-                      {veh.name}
-                    </Text>
-                    <Text style={styles.wideVehMeta}>
-                      Pin {batteryPct}% · {veh.seats} chỗ · {veh.plateNumber}
-                    </Text>
-
-                    <View style={styles.wideCardFooter}>
-                      <Text style={styles.widePriceMain}>
-                        {veh.hourlyPrice.toLocaleString('vi-VN')}đ
-                        <Text style={styles.widePriceUnit}> / giờ</Text>
-                      </Text>
-
-                      <View style={styles.ratingInline}>
-                        <Ionicons name="star" size={12} color="#F59E0B" />
-                        <Text style={styles.ratingInlineText}>{veh.rating}</Text>
-                      </View>
-                    </View>
-                  </View>
-                </TouchableOpacity>
-              );
-            })}
-          </ScrollView>
         </View>
 
         {/* ============================================================
-            6. FULL FLEET LIST WITH APPLE CHARCOAL FILTER PILLS
+            3. UNIFIED VEHICLE LIST (EASY TO SCAN, NO DUPLICATED PHOTOS)
            ============================================================ */}
         <View style={styles.catalogSection}>
           <View style={styles.catalogHeaderRow}>
-            <Text style={styles.sectionMainTitle}>Danh mục xe sẵn sàng</Text>
-            <View style={styles.catFilterRow}>
-              {CATEGORIES.map((cat) => {
-                const active = selectedCategory === cat.id;
-                return (
-                  <TouchableOpacity
-                    key={cat.id}
-                    style={[
-                      styles.catPill,
-                      active && { backgroundColor: '#1D1D1F', borderColor: '#1D1D1F' }
-                    ]}
-                    onPress={() => setSelectedCategory(cat.id)}
-                  >
-                    <Text style={[styles.catPillText, active && styles.catPillTextActive]}>
-                      {cat.label}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
+            <Text style={styles.sectionMainTitle}>
+              Xe sẵn sàng gần bạn ({filteredVehicles.length})
+            </Text>
+            <TouchableOpacity onPress={onNavigateToMap}>
+              <Text style={[styles.seeMapLink, { color: theme.primary }]}>Xem bản đồ</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Clean Category Filter Pills */}
+          <View style={styles.catFilterRow}>
+            {CATEGORIES.map((cat) => {
+              const active = selectedCategory === cat.id;
+              return (
+                <TouchableOpacity
+                  key={cat.id}
+                  style={[
+                    styles.catPill,
+                    active && { backgroundColor: '#1D1D1F', borderColor: '#1D1D1F' }
+                  ]}
+                  onPress={() => setSelectedCategory(cat.id)}
+                >
+                  <Text style={[styles.catPillText, active && styles.catPillTextActive]}>
+                    {cat.label}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
           </View>
 
           {loading ? (
-            <ActivityIndicator size="large" color="#1D1D1F" style={{ marginVertical: 28 }} />
+            <ActivityIndicator size="large" color={theme.primary} style={{ marginVertical: 28 }} />
           ) : (
             filteredVehicles.map((vehicle) => (
               <VehicleCard
@@ -503,7 +398,7 @@ export default function HomeScreen({
           )}
         </View>
 
-        <View style={{ height: 100 }} />
+        <View style={{ height: 96 }} />
       </ScrollView>
 
       {/* ============================================================
@@ -588,16 +483,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#F7F7F5'
   },
   scrollContent: {
-    paddingBottom: 30
+    paddingBottom: 24
   },
 
   /* ============================================================
-     1. APPLE WHITE EDITORIAL HEADER
+     1. COMPACT APPLE WHITE HEADER & BOOKING BOX
      ============================================================ */
   topHeaderSection: {
     backgroundColor: '#FFFFFF',
-    paddingTop: 16,
-    paddingBottom: 18,
+    paddingTop: 14,
+    paddingBottom: 14,
     paddingHorizontal: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#EBECE8'
@@ -606,92 +501,84 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 16
+    marginBottom: 12
   },
   userGreetingLeft: {
     flex: 1
   },
   greetingSub: {
     fontFamily: FONTS.family,
-    fontSize: 13,
+    fontSize: 12,
     color: '#6E6E73',
     fontWeight: '500'
   },
   greetingTitle: {
     fontFamily: FONTS.family,
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: '700',
     color: '#1D1D1F',
-    letterSpacing: -0.4,
-    marginTop: 2
+    letterSpacing: -0.3,
+    marginTop: 1
   },
   headerRightActions: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10
+    gap: 8
   },
   headerCircleBtn: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     backgroundColor: '#F5F5F3',
     alignItems: 'center',
     justifyContent: 'center'
   },
   avatarCircle: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     alignItems: 'center',
     justifyContent: 'center'
   },
   avatarInitials: {
     fontFamily: FONTS.family,
     color: '#FFFFFF',
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: '700'
   },
 
-  /* ============================================================
-     2. MINIMAL BOOKING & SEARCH CARD
-     ============================================================ */
   smartBookingCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    padding: 14,
+    borderRadius: 18,
+    padding: 12,
     borderWidth: 1,
-    borderColor: '#EBECE8',
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.03,
-    shadowRadius: 12,
-    elevation: 2
+    borderColor: '#EBECE8'
   },
   packageTabsRow: {
     flexDirection: 'row',
     backgroundColor: '#F3F3F1',
-    padding: 4,
-    borderRadius: 12,
-    marginBottom: 14
+    padding: 3,
+    borderRadius: 11,
+    marginBottom: 10
   },
   pkgTabBtn: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 8,
-    borderRadius: 9
+    paddingVertical: 7,
+    borderRadius: 8
   },
   pkgTabBtnActive: {
     backgroundColor: '#FFFFFF',
     shadowColor: '#000000',
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.06,
-    shadowRadius: 3,
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
     elevation: 1
   },
   pkgTabText: {
     fontFamily: FONTS.family,
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: '500',
     color: '#6E6E73'
   },
@@ -702,13 +589,14 @@ const styles = StyleSheet.create({
   stationSelectorRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 4,
-    gap: 10
+    paddingVertical: 6,
+    gap: 10,
+    marginBottom: 8
   },
   mintDotOuter: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
+    width: 26,
+    height: 26,
+    borderRadius: 13,
     alignItems: 'center',
     justifyContent: 'center'
   },
@@ -717,67 +605,41 @@ const styles = StyleSheet.create({
     height: 8,
     borderRadius: 4
   },
-  stationLabelSub: {
-    fontFamily: FONTS.family,
-    fontSize: 11,
-    color: '#8E8E93'
-  },
   stationSelectedName: {
     fontFamily: FONTS.family,
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '600',
-    color: '#1D1D1F',
-    marginTop: 1
+    color: '#1D1D1F'
+  },
+  stationTimeSub: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    color: '#6E6E73',
+    marginTop: 2
+  },
+  changeHubPill: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 99
   },
   changeHubLink: {
     fontFamily: FONTS.family,
-    fontSize: 13,
-    fontWeight: '600'
-  },
-  cardDivider: {
-    height: 1,
-    backgroundColor: '#F2F2F0',
-    marginVertical: 12
-  },
-  timeColumnsRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12
-  },
-  timeCol: {
-    flex: 1
-  },
-  verticalDivider: {
-    width: 1,
-    height: 28,
-    backgroundColor: '#EBECE8',
-    marginHorizontal: 14
-  },
-  timeColLabel: {
-    fontFamily: FONTS.family,
     fontSize: 11,
-    color: '#8E8E93'
-  },
-  timeColValue: {
-    fontFamily: FONTS.family,
-    fontSize: 13,
-    fontWeight: '600',
-    color: '#1D1D1F',
-    marginTop: 2
+    fontWeight: '700'
   },
   quickSearchBox: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#F5F5F3',
     paddingHorizontal: 12,
-    height: 40,
-    borderRadius: 12,
+    height: 38,
+    borderRadius: 10,
     gap: 8
   },
   quickSearchInput: {
     flex: 1,
     fontFamily: FONTS.family,
-    fontSize: 13,
+    fontSize: 12,
     color: '#1D1D1F'
   },
 
@@ -785,7 +647,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginHorizontal: 16,
-    marginTop: 12,
+    marginTop: 10,
     padding: 12,
     borderRadius: 14,
     gap: 10
@@ -804,307 +666,104 @@ const styles = StyleSheet.create({
   },
 
   /* ============================================================
-     3. BENTO GRID WITH REAL STUDIO VEHICLE PHOTOGRAPHY
+     2. SPACIOUS 2x2 QUICK FEATURE TILES (ZERO TEXT WRAPPING)
      ============================================================ */
-  bentoSection: {
+  featuresSection: {
     paddingHorizontal: 16,
-    marginTop: 16
+    marginTop: 12
   },
-  bentoRow: {
+  featuresGrid: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    rowGap: 8
+  },
+  featureTile: {
+    width: '48.8%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 11,
+    paddingHorizontal: 12,
+    borderRadius: 16,
+    borderWidth: 1,
     gap: 10
   },
-  bentoTallCard: {
-    flex: 1.05,
-    height: 204,
-    borderRadius: 20,
-    padding: 14,
+  featureTileWhite: {
+    width: '48.8%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    paddingVertical: 11,
+    paddingHorizontal: 12,
+    borderRadius: 16,
     borderWidth: 1,
-    justifyContent: 'space-between',
-    overflow: 'hidden'
+    borderColor: '#EBECE8',
+    gap: 10
   },
-  bentoTallTitle: {
+  featureIconBox: {
+    width: 36,
+    height: 36,
+    borderRadius: 11,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  featureTextCol: {
+    flex: 1
+  },
+  featureTitle: {
     fontFamily: FONTS.family,
-    fontSize: 17,
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#1D1D1F'
+  },
+  featureSub: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    fontWeight: '600',
+    marginTop: 1
+  },
+  featureSubMuted: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    color: '#6E6E73',
+    fontWeight: '500',
+    marginTop: 1
+  },
+
+  /* ============================================================
+     3. UNIFIED VEHICLE CATALOG
+     ============================================================ */
+  catalogSection: {
+    marginTop: 16
+  },
+  catalogHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    marginBottom: 10
+  },
+  sectionMainTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 16,
     fontWeight: '700',
     color: '#1D1D1F',
     letterSpacing: -0.2
   },
-  bentoTallSub: {
-    fontFamily: FONTS.family,
-    fontSize: 12,
-    color: '#6E6E73',
-    marginTop: 2
-  },
-  bentoTallPrice: {
-    fontFamily: FONTS.family,
-    fontSize: 13,
-    fontWeight: '700',
-    marginTop: 4
-  },
-  bentoTallPhotoWrap: {
-    width: '100%',
-    height: 98,
-    borderRadius: 14,
-    overflow: 'hidden',
-    backgroundColor: '#FFFFFF'
-  },
-  bentoPhotoImg: {
-    width: '100%',
-    height: '100%'
-  },
-  bentoRightCol: {
-    flex: 1,
-    justifyContent: 'space-between',
-    gap: 10
-  },
-  bentoSmallCard: {
-    flex: 1,
-    borderRadius: 20,
-    padding: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    borderWidth: 1,
-    overflow: 'hidden'
-  },
-  bentoSmallCardWhite: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    padding: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    borderWidth: 1,
-    borderColor: '#EBECE8',
-    overflow: 'hidden'
-  },
-  bentoSmallTextCol: {
-    flex: 1,
-    paddingRight: 8
-  },
-  bentoSmallTitle: {
-    fontFamily: FONTS.family,
-    fontSize: 14,
-    fontWeight: '700',
-    color: '#1D1D1F'
-  },
-  bentoSmallSub: {
-    fontFamily: FONTS.family,
-    fontSize: 11,
-    color: '#6E6E73',
-    marginTop: 2
-  },
-  bentoSmallPriceBeige: {
-    fontFamily: FONTS.family,
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#8C6239',
-    marginTop: 4
-  },
-  bentoSmallPriceMint: {
-    fontFamily: FONTS.family,
-    fontSize: 12,
-    fontWeight: '700',
-    marginTop: 4
-  },
-  bentoSmallPhoto: {
-    width: 68,
-    height: 68,
-    borderRadius: 12,
-    backgroundColor: '#F2F2F0'
-  },
-
-  /* ============================================================
-     4. CLEAN LIGHT GLOSA TRAFFIC BAR
-     ============================================================ */
-  glosaLightCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginHorizontal: 16,
-    marginTop: 14,
-    borderRadius: 18,
-    padding: 14,
-    borderWidth: 1,
-    gap: 12
-  },
-  glosaLeftCol: {
-    flex: 1
-  },
-  glosaTitleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6
-  },
-  liveDot: {
-    width: 7,
-    height: 7,
-    borderRadius: 4
-  },
-  glosaLightTitle: {
-    fontFamily: FONTS.family,
-    fontSize: 13,
-    fontWeight: '700',
-    color: '#1D1D1F'
-  },
-  glosaLightSub: {
-    fontFamily: FONTS.family,
-    fontSize: 12,
-    color: '#6E6E73',
-    marginTop: 3,
-    lineHeight: 16
-  },
-  glosaWhiteSpeedPill: {
-    backgroundColor: '#FFFFFF',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 14,
-    alignItems: 'center',
-    justifyContent: 'center',
-    minWidth: 62
-  },
-  glosaSpeedValue: {
-    fontFamily: FONTS.family,
-    fontSize: 18,
-    fontWeight: '800',
-    lineHeight: 20
-  },
-  glosaSpeedUnitText: {
-    fontFamily: FONTS.family,
-    fontSize: 10,
-    color: '#6E6E73',
-    fontWeight: '500'
-  },
-
-  /* ============================================================
-     5. HORIZONTAL NEARBY VEHICLES
-     ============================================================ */
-  showroomCarouselSection: {
-    marginTop: 22
-  },
-  sectionHeaderRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    marginBottom: 12
-  },
-  sectionMainTitle: {
-    fontFamily: FONTS.family,
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#1D1D1F',
-    letterSpacing: -0.3
-  },
   seeMapLink: {
     fontFamily: FONTS.family,
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: '600'
-  },
-  wideShowroomRow: {
-    paddingHorizontal: 16,
-    gap: 12
-  },
-  wideShowroomCard: {
-    width: 248,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 18,
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: '#EBECE8'
-  },
-  wideImgWrap: {
-    width: '100%',
-    height: 142,
-    backgroundColor: '#F2F2F0',
-    position: 'relative'
-  },
-  wideImg: {
-    width: '100%',
-    height: '100%'
-  },
-  frostedDistPill: {
-    position: 'absolute',
-    top: 10,
-    left: 10,
-    backgroundColor: 'rgba(255, 255, 255, 0.92)',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 99
-  },
-  frostedDistText: {
-    fontFamily: FONTS.family,
-    fontSize: 11,
-    fontWeight: '600',
-    color: '#1D1D1F'
-  },
-  wideCardBody: {
-    padding: 12
-  },
-  wideVehName: {
-    fontFamily: FONTS.family,
-    fontSize: 15,
-    fontWeight: '700',
-    color: '#1D1D1F'
-  },
-  wideVehMeta: {
-    fontFamily: FONTS.family,
-    fontSize: 12,
-    color: '#6E6E73',
-    marginTop: 3
-  },
-  wideCardFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 10,
-    paddingTop: 10,
-    borderTopWidth: 1,
-    borderTopColor: '#F2F2F0'
-  },
-  widePriceMain: {
-    fontFamily: FONTS.family,
-    fontSize: 15,
-    fontWeight: '700',
-    color: '#1D1D1F'
-  },
-  widePriceUnit: {
-    fontSize: 12,
-    fontWeight: '400',
-    color: '#6E6E73'
-  },
-  ratingInline: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 3
-  },
-  ratingInlineText: {
-    fontFamily: FONTS.family,
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#1D1D1F'
-  },
-
-  /* ============================================================
-     6. FULL FLEET CATALOG
-     ============================================================ */
-  catalogSection: {
-    marginTop: 24
-  },
-  catalogHeaderRow: {
-    paddingHorizontal: 16,
-    marginBottom: 12,
-    gap: 10
   },
   catFilterRow: {
     flexDirection: 'row',
+    paddingHorizontal: 16,
     gap: 8,
-    marginTop: 8
+    marginBottom: 12
   },
   catPill: {
     paddingHorizontal: 14,
-    paddingVertical: 7,
+    paddingVertical: 6,
     borderRadius: 99,
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
@@ -1112,7 +771,7 @@ const styles = StyleSheet.create({
   },
   catPillText: {
     fontFamily: FONTS.family,
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: '500',
     color: '#6E6E73'
   },
