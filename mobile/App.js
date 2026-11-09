@@ -144,7 +144,7 @@ export default function App() {
         <View style={styles.desktopToolbar}>
           <View style={styles.toolbarBrand}>
             <View style={styles.statusDot} />
-            <Text style={styles.toolbarTitle}>Green SM Mobility · v5.12.0(437)</Text>
+            <Text style={styles.toolbarTitle}>ECOGO SMART · Thuê xe tự động 24/7</Text>
           </View>
 
           <View style={styles.modeToggleGroup}>
@@ -271,7 +271,7 @@ export default function App() {
 
               <View style={styles.grTitleWrap}>
                 <Ionicons name="leaf" size={18} color="#66BB6A" style={{ transform: [{ scaleX: -1 }] }} />
-                <Text style={styles.grTitleText}>GREEN RACE</Text>
+                <Text style={styles.grTitleText}>ECOGO RACE</Text>
                 <Ionicons name="leaf" size={18} color="#66BB6A" />
               </View>
 
@@ -347,7 +347,7 @@ export default function App() {
                       <Text style={styles.grSeedlingTagText}>Hạng hiện tại: Người Ươm Mầm</Text>
                     </View>
                     <Text style={styles.grProgressSub}>
-                      Hoàn thành các chuyến thuê xe điện Xanh SM / VinFast tại trạm UTH để mở khóa
+                      Hoàn thành các chuyến thuê xe xanh tại hệ thống trạm EcoGo Smart để mở khóa
                       trọn bộ huy hiệu bảo vệ môi trường và đóng góp vào Quỹ Vì Tương Lai Xanh.
                     </Text>
                   </View>
@@ -395,7 +395,7 @@ export default function App() {
                 }}
               >
                 <Text style={styles.grTurquoiseBtnText}>
-                  ĐẶT GREEN SM ĐỂ MỞ KHÓA CHỨNG NHẬN
+                  ĐẶT XE ECOGO ĐỂ MỞ KHÓA CHỨNG NHẬN
                 </Text>
               </TouchableOpacity>
 
@@ -451,7 +451,7 @@ export default function App() {
           <View style={styles.rewardsModalCard}>
             <View style={styles.rewardsHeader}>
               <View>
-                <Text style={styles.rewardsTitle}>Ưu đãi Xanh SM hiện có</Text>
+                <Text style={styles.rewardsTitle}>Ưu đãi EcoGo Smart hiện có</Text>
                 <Text style={styles.rewardsSub}>Áp dụng cho Đặt xe, Thuê xe tự lái & Liên tỉnh</Text>
               </View>
               <TouchableOpacity
@@ -465,8 +465,8 @@ export default function App() {
             {[
               {
                 code: 'XANH20',
-                title: 'Giảm 20% chuyến xe điện (Tối đa 120.000đ)',
-                desc: 'Áp dụng cho VinFast VF 3, VF e34, VF 8 và Liên tỉnh'
+                title: 'Giảm 20% chuyến xe EcoGo (Tối đa 120.000đ)',
+                desc: 'Áp dụng cho Hyundai Ioniq 5, Toyota Cross HEV, Mazda CX-5 & Honda CR-V'
               },
               {
                 code: 'UTH50K',

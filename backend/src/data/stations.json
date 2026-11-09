@@ -1,7 +1,7 @@
 [
   {
     "id": "hub-uth-01",
-    "name": "ITS Mobility Hub - ĐH Giao Thông Vận Tải (UTH)",
+    "name": "EcoGo Mobility Hub - ĐH Giao Thông Vận Tải (UTH)",
     "address": "Số 2, Đường Võ Oanh, P.25, Q. Bình Thạnh, TP.HCM",
     "coordinates": {
       "latitude": 10.8018,
@@ -15,7 +15,7 @@
   },
   {
     "id": "hub-metro-01",
-    "name": "ITS Multimodal Station - Ga Trung Tâm Bến Thành",
+    "name": "EcoGo Multimodal Station - Ga Trung Tâm Bến Thành",
     "address": "Quảng trường Quách Thị Trang, P. Bến Thành, Quận 1, TP.HCM",
     "coordinates": {
       "latitude": 10.7719,
@@ -29,7 +29,7 @@
   },
   {
     "id": "hub-landmark-01",
-    "name": "Smart Station - Landmark 81 & Vinhomes Central Park",
+    "name": "EcoGo Smart Station - Khu Đô Thị Tân Cảng & Landmark 81",
     "address": "720A Điện Biên Phủ, P.22, Q. Bình Thạnh, TP.HCM",
     "coordinates": {
       "latitude": 10.7952,
@@ -43,7 +43,7 @@
   },
   {
     "id": "hub-tsn-01",
-    "name": "Airport Transit Hub - Ga Quốc Tế Tân Sơn Nhất",
+    "name": "EcoGo Airport Hub - Ga Quốc Tế Tân Sơn Nhất",
     "address": "Đường Trường Sơn, P.2, Q. Tân Bình, TP.HCM",
     "coordinates": {
       "latitude": 10.8185,
@@ -57,7 +57,7 @@
   },
   {
     "id": "hub-thuthiem-01",
-    "name": "ITS Eco Station - Khu Đô Thị Mới Thủ Thiêm",
+    "name": "EcoGo Eco Station - Khu Đô Thị Mới Thủ Thiêm",
     "address": "Đại lộ Mai Chí Thọ, P. An Khánh, TP. Thủ Đức, TP.HCM",
     "coordinates": {
       "latitude": 10.7758,
@@ -71,7 +71,7 @@
   },
   {
     "id": "hub-shtp-01",
-    "name": "High-Tech Mobility Hub - Khu Công Nghệ Cao (SHTP)",
+    "name": "EcoGo High-Tech Hub - Khu Công Nghệ Cao (SHTP)",
     "address": "Đường D1, Khu Công Nghệ Cao, P. Tân Phú, TP. Thủ Đức, TP.HCM",
     "coordinates": {
       "latitude": 10.8542,
@@ -81,6 +81,6 @@
     "capacity": 30,
     "availableVehicles": 12,
     "hasFastCharger": true,
-    "nearbyTransit": ["Metro Ga Khu Công Nghệ Cao", "VinBus D4"]
+    "nearbyTransit": ["Metro Ga Khu Công Nghệ Cao", "Tuyến Buýt Điện D4"]
   }
 ]

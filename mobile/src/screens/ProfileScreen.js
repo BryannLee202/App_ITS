@@ -92,10 +92,10 @@ export default function ProfileScreen({ onOpenGreenRace }) {
           activeOpacity={0.93}
           onPress={onOpenGreenRace}
         >
-          {/* Top Ribbon "GREEN RACE" & "Xem tiến trình >" */}
+          {/* Top Ribbon "ECOGO RACE" & "Xem tiến trình >" */}
           <View style={styles.greenRaceTopBar}>
             <View style={styles.greenRaceRibbon}>
-              <Text style={styles.greenRaceRibbonText}>GREEN RACE</Text>
+              <Text style={styles.greenRaceRibbonText}>ECOGO RACE</Text>
             </View>
 
             <TouchableOpacity style={styles.progressBtnPill} onPress={onOpenGreenRace}>
@@ -317,7 +317,7 @@ export default function ProfileScreen({ onOpenGreenRace }) {
             <Ionicons name="log-out-outline" size={20} color="#1A1D1F" />
             <Text style={styles.logoutText}>Đăng xuất</Text>
           </TouchableOpacity>
-          <Text style={styles.versionText}>Green SM - v5.12.0(437) • Chuyên đề ITS UTH</Text>
+          <Text style={styles.versionText}>EcoGo Smart - v2.4.0 • Ứng dụng di chuyển xanh & Thuê xe 24/7</Text>
 
           <View style={styles.bctBadgesRow}>
             <View style={styles.bctBlueBadge}>
@@ -335,7 +335,7 @@ export default function ProfileScreen({ onOpenGreenRace }) {
       </ScrollView>
 
       {/* ============================================================
-          MODAL: OFFICIAL GSM PLATFORM SERVICE CONTRACT (18:56 SCREENSHOT)
+          MODAL: ECOGO SMART PLATFORM SERVICE CONTRACT
          ============================================================ */}
       <Modal
         visible={showGSMContractModal}
@@ -353,42 +353,42 @@ export default function ProfileScreen({ onOpenGreenRace }) {
           {/* Turquoise Banner */}
           <View style={styles.gsmTurquoiseBanner}>
             <View style={styles.gsmLogoBox}>
-              <Ionicons name="checkmark-done" size={22} color="#F59E0B" />
-              <Text style={styles.gsmLogoText}>GREEN SM</Text>
+              <Ionicons name="leaf" size={22} color="#F59E0B" />
+              <Text style={styles.gsmLogoText}>ECOGO</Text>
             </View>
             <View style={{ flex: 1 }}>
               <Text style={styles.gsmCompanyTitle}>
-                CÔNG TY CỔ PHẦN DI CHUYỂN XANH VÀ THÔNG MINH GSM
+                CÔNG TY CỔ PHẦN DI CHUYỂN THÔNG MINH ECOGO VIỆT NAM
               </Text>
-              <Text style={styles.gsmCompanySub}>Hợp đồng dịch vụ sử dụng nền tảng</Text>
+              <Text style={styles.gsmCompanySub}>Hợp đồng dịch vụ sử dụng nền tảng EcoGo Smart</Text>
             </View>
           </View>
 
           <ScrollView style={styles.contractScrollBody}>
             <View style={styles.contractWhiteBox}>
-              <Text style={styles.contractBoxHeading}>Thông tin của GSM</Text>
+              <Text style={styles.contractBoxHeading}>Thông tin của EcoGo Smart</Text>
 
-              <Text style={styles.contractFieldLabel}>Tên công ty</Text>
+              <Text style={styles.contractFieldLabel}>Tên đơn vị vận hành</Text>
               <Text style={styles.contractFieldValue}>
-                CÔNG TY CỔ PHẦN DI CHUYỂN XANH VÀ THÔNG MINH GSM
+                CÔNG TY CỔ PHẦN DI CHUYỂN THÔNG MINH ECOGO VIỆT NAM
               </Text>
 
               <View style={styles.contractDivider} />
 
-              <Text style={styles.contractFieldLabel}>Địa chỉ</Text>
+              <Text style={styles.contractFieldLabel}>Địa chỉ trụ sở</Text>
               <Text style={styles.contractFieldValue}>
-                Tòa Văn phòng Symphony, đường Chu Huy Mân, khu đô thị Vinhomes Riverside, phường Phúc Lợi, thành phố Hà Nội
+                Số 2 Đường Võ Oanh, Phường 25, Quận Bình Thạnh, Thành phố Hồ Chí Minh
               </Text>
 
               <View style={styles.contractDivider} />
 
               <Text style={styles.contractFieldLabel}>Giấy chứng nhận đăng ký doanh nghiệp số</Text>
-              <Text style={styles.contractFieldValue}>0110269067</Text>
+              <Text style={styles.contractFieldValue}>0318269068</Text>
 
               <View style={styles.contractDivider} />
 
-              <Text style={styles.contractFieldLabel}>Số điện thoại</Text>
-              <Text style={styles.contractFieldValue}>1555 hoặc 19002088</Text>
+              <Text style={styles.contractFieldLabel}>Tổng đài hỗ trợ 24/7</Text>
+              <Text style={styles.contractFieldValue}>1900 6868</Text>
             </View>
 
             <View style={styles.contractWhiteBox}>

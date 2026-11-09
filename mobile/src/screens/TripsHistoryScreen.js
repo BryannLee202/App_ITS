@@ -103,7 +103,7 @@ export default function TripsHistoryScreen({ onNavigateToKey }) {
                       style={styles.vehImg}
                     />
                     <View style={styles.tripDetails}>
-                      <Text style={styles.vehName}>{trip.vehicle?.name || 'VinFast VF 8 Plus'}</Text>
+                      <Text style={styles.vehName}>{trip.vehicle?.name || 'Hyundai Ioniq 5 Prestige'}</Text>
                       <Text style={styles.plate}>
                         Biển số: {trip.vehicle?.plateNumber || '51K-882.91'} • Gói {trip.totalHours || 4}h
                       </Text>
@@ -182,7 +182,7 @@ export default function TripsHistoryScreen({ onNavigateToKey }) {
 
             <View style={styles.contractLine}>
               <Text style={styles.cLabel}>Bên thuê (Khách hàng eKYC):</Text>
-              <Text style={styles.cVal}>Nguyễn Văn An (GPLX B2)</Text>
+              <Text style={styles.cVal}>Minh Tài (GPLX B2)</Text>
             </View>
             <View style={styles.contractLine}>
               <Text style={styles.cLabel}>Phương tiện bàn giao:</Text>

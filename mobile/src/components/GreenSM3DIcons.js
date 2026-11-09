@@ -18,7 +18,7 @@ export default function GreenSM3DIcons({ type, size = 48 }) {
             <Ionicons name="car-sport" size={44} color="#00ACC1" style={{ marginTop: -2 }} />
           </View>
           <View style={styles.carBadgeVF}>
-            <Text style={styles.carBadgeVFText}>VF</Text>
+            <Text style={styles.carBadgeVFText}>ECO</Text>
           </View>
         </View>
       );
@@ -78,7 +78,7 @@ export default function GreenSM3DIcons({ type, size = 48 }) {
           <View style={[styles.baseGlow, { backgroundColor: '#ECEFF1' }]} />
           <View style={styles.keyLanyard} />
           <View style={styles.keyFobBody}>
-            <Text style={styles.keyFobLogo}>V</Text>
+            <Text style={styles.keyFobLogo}>E</Text>
             <Ionicons name="lock-open" size={11} color="#4DD0E1" />
           </View>
         </View>
@@ -101,7 +101,7 @@ export default function GreenSM3DIcons({ type, size = 48 }) {
           <View style={[styles.baseGlow, { backgroundColor: '#E3F2FD' }]} />
           <View style={styles.showroomBuilding}>
             <View style={styles.showroomHeader}>
-              <Text style={styles.showroomHeaderText}>VINFAST</Text>
+              <Text style={styles.showroomHeaderText}>ECOGO</Text>
             </View>
             <View style={styles.showroomGlass}>
               <Ionicons name="car-sport" size={13} color="#1E293B" />

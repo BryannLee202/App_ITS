@@ -34,29 +34,29 @@ const SAVED_PLACES = [
   },
   {
     id: 'place-2',
-    name: 'ITS Mobility Hub - ĐH Giao Thông Vận Tải (UTH)',
+    name: 'EcoGo Mobility Hub - ĐH Giao Thông Vận Tải (UTH)',
     address: 'Số 2 Võ Oanh, Phường 25, Quận Bình Thạnh, TP.HCM',
     distance: '0,6 km',
     icon: 'school-outline'
   },
   {
     id: 'place-3',
-    name: 'Ga Metro Bến Thành',
+    name: 'Ga Trung Tâm Metro Bến Thành',
     address: 'Đường Trần Hưng Đạo, Phường Bến Thành, Quận 1, TP.HCM',
     distance: '8,8 km',
     icon: 'train-outline'
   },
   {
     id: 'place-4',
-    name: 'Vincom Center Đồng Khởi',
-    address: '72 Lê Thánh Tôn, Phường Bến Nghé, Quận 1, TP.HCM',
+    name: 'Saigon Centre & Takashimaya',
+    address: '65 Lê Lợi, Phường Bến Nghé, Quận 1, TP.HCM',
     distance: '8,2 km',
     icon: 'time-outline'
   },
   {
     id: 'place-5',
-    name: 'Vinhomes Central Park & Landmark 81',
-    address: '208 Nguyễn Hữu Cảnh, Phường 22, Quận Bình Thạnh, TP.HCM',
+    name: 'Khu Đô Thị Tân Cảng & Landmark 81',
+    address: '720A Điện Biên Phủ, Phường 22, Quận Bình Thạnh, TP.HCM',
     distance: '1,4 km',
     icon: 'time-outline'
   }
@@ -365,7 +365,7 @@ export default function HomeScreen({
               onPress={onNavigateToMap}
             >
               <GreenSM3DIcons type="VINBUS_3D" />
-              <Text style={styles.gridTileLabel}>VinBus</Text>
+              <Text style={styles.gridTileLabel}>Buýt & Metro</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -374,7 +374,7 @@ export default function HomeScreen({
               onPress={() => setSelectedCategory('CAR')}
             >
               <GreenSM3DIcons type="SHOWROOM_3D" />
-              <Text style={styles.gridTileLabel}>Mua xe{'\n'}VinFast</Text>
+              <Text style={styles.gridTileLabel}>Thuê xe{'\n'}dài hạn</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -389,7 +389,7 @@ export default function HomeScreen({
         </View>
 
         {/* ============================================================
-            5. VF 8 D-SUV PROMOTIONAL BANNER + FULL FLEET CATALOG
+            5. ECOGO SMART FLEET PROMOTIONAL BANNER + FULL FLEET CATALOG
            ============================================================ */}
         <TouchableOpacity
           style={styles.vf8BannerCard}
@@ -397,14 +397,14 @@ export default function HomeScreen({
           onPress={() => vehicles[0] && handleOpenBooking(vehicles[0])}
         >
           <View style={{ flex: 1 }}>
-            <Text style={styles.vf8BannerTag}>TRẢI NGHIỆM D-SUV MỚI</Text>
-            <Text style={styles.vf8BannerTitle}>VINFAST VF 8 PLUS</Text>
+            <Text style={styles.vf8BannerTag}>ECOGO SMART • ĐỘI XE ĐỜI MỚI</Text>
+            <Text style={styles.vf8BannerTitle}>HYUNDAI IONIQ 5 & TOYOTA HEV</Text>
             <Text style={styles.vf8BannerSub}>
               Làn sóng xanh GLOSA {glosaAdvisory ? `${glosaAdvisory.recommendedSpeedKmh} km/h` : '45 km/h'} • Mở khóa BLE
             </Text>
           </View>
           <Image
-            source={{ uri: 'https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&w=600&q=80' }}
+            source={{ uri: 'https://images.unsplash.com/photo-1619767886558-efdc259cde1a?auto=format&fit=crop&w=600&q=80' }}
             style={styles.vf8BannerImg}
             resizeMode="cover"
           />

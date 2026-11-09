@@ -1,9 +1,9 @@
 [
   {
-    "id": "veh-vf8-001",
-    "name": "VinFast VF 8 Plus",
-    "brand": "VinFast",
-    "model": "VF 8",
+    "id": "veh-ioniq5-001",
+    "name": "Hyundai Ioniq 5 Prestige",
+    "brand": "Hyundai",
+    "model": "Ioniq 5",
     "year": 2024,
     "plateNumber": "51K-882.91",
     "category": "CAR",
@@ -14,14 +14,14 @@
     "dailyPrice": 1150000,
     "depositAmount": 0,
     "noDeposit": true,
-    "rangeKm": 471,
-    "thumbnail": "https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&w=800&q=80",
+    "rangeKm": 451,
+    "thumbnail": "https://images.unsplash.com/photo-1619767886558-efdc259cde1a?auto=format&fit=crop&w=800&q=80",
     "images": [
-      "https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1619767886558-efdc259cde1a?auto=format&fit=crop&w=800&q=80",
       "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=800&q=80"
     ],
-    "rating": 4.95,
-    "totalTrips": 142,
+    "rating": 4.96,
+    "totalTrips": 168,
     "status": "AVAILABLE",
     "stationId": "hub-uth-01",
     "telematics": {
@@ -29,44 +29,44 @@
       "longitude": 106.7145,
       "speedKmh": 0,
       "heading": 45,
-      "batteryLevelPct": 92,
+      "batteryLevelPct": 94,
       "fuelLevelPct": null,
       "isLocked": true,
       "isEngineOn": false,
-      "odometerKm": 14520,
+      "odometerKm": 12450,
       "tirePressurePsi": { "fl": 34, "fr": 34, "rl": 33, "rr": 34 },
       "lastPing": "2026-10-26T15:00:00Z"
     },
     "features": [
-      "Khóa thông minh BLE (Digital Key)",
-      "Tự nhận xe 24/7 không cần gặp chủ",
-      "Hệ thống Làn sóng xanh ITS",
-      "ADAS Cấp độ 2 (Hỗ trợ giữ làn, Cảnh báo va chạm)",
-      "Miễn phí sạc tại các Hub ITS"
+      "Khóa thông minh EcoGo BLE 5.2 (Digital Key)",
+      "Tự nhận xe 24/7 không cần thế chấp",
+      "Hệ thống Làn sóng xanh ITS GLOSA",
+      "Sạc siêu nhanh 800V (10-80% trong 18 phút)",
+      "Cửa sổ trời toàn cảnh Vision Roof"
     ]
   },
   {
-    "id": "veh-vf3-002",
-    "name": "VinFast VF 3 Mini EV",
-    "brand": "VinFast",
-    "model": "VF 3",
+    "id": "veh-cx5-002",
+    "name": "Mazda CX-5 2.0L Premium",
+    "brand": "Mazda",
+    "model": "CX-5 Premium",
     "year": 2024,
     "plateNumber": "51L-128.45",
     "category": "CAR",
-    "powerType": "ELECTRIC",
-    "seats": 4,
+    "powerType": "HYBRID",
+    "seats": 5,
     "transmission": "AUTOMATIC",
-    "hourlyPrice": 60000,
-    "dailyPrice": 550000,
+    "hourlyPrice": 85000,
+    "dailyPrice": 800000,
     "depositAmount": 0,
     "noDeposit": true,
-    "rangeKm": 215,
-    "thumbnail": "https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=800&q=80",
+    "rangeKm": 680,
+    "thumbnail": "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=800&q=80",
     "images": [
-      "https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=800&q=80"
+      "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=800&q=80"
     ],
-    "rating": 4.88,
-    "totalTrips": 210,
+    "rating": 4.92,
+    "totalTrips": 245,
     "status": "AVAILABLE",
     "stationId": "hub-uth-01",
     "telematics": {
@@ -74,43 +74,43 @@
       "longitude": 106.7139,
       "speedKmh": 0,
       "heading": 180,
-      "batteryLevelPct": 86,
-      "fuelLevelPct": null,
+      "batteryLevelPct": 90,
+      "fuelLevelPct": 88,
       "isLocked": true,
       "isEngineOn": false,
-      "odometerKm": 6820,
-      "tirePressurePsi": { "fl": 32, "fr": 32, "rl": 32, "rr": 32 },
+      "odometerKm": 9820,
+      "tirePressurePsi": { "fl": 33, "fr": 33, "rl": 33, "rr": 33 },
       "lastPing": "2026-10-26T15:01:00Z"
     },
     "features": [
-      "Khóa mở qua App (Digital Key)",
-      "Thiết kế nhỏ gọn, tối ưu đô thị TP.HCM",
-      "Tiết kiệm năng lượng 100%",
-      "Cảnh báo tắc đường & sóng xung kích ITS"
+      "Mở khóa tự động qua ứng dụng EcoGo",
+      "Màn hình HUD hiển thị tốc độ trên kính lái",
+      "Hệ thống âm thanh 10 loa Bose cao cấp",
+      "Gói an toàn chủ động i-Activsense"
     ]
   },
   {
-    "id": "veh-vfe34-003",
-    "name": "VinFast VF e34 Smart C-SUV",
-    "brand": "VinFast",
-    "model": "VF e34",
-    "year": 2023,
+    "id": "veh-cross-003",
+    "name": "Toyota Corolla Cross 1.8HEV",
+    "brand": "Toyota",
+    "model": "Corolla Cross HEV",
+    "year": 2024,
     "plateNumber": "51K-554.12",
     "category": "CAR",
-    "powerType": "ELECTRIC",
+    "powerType": "HYBRID",
     "seats": 5,
     "transmission": "AUTOMATIC",
-    "hourlyPrice": 85000,
-    "dailyPrice": 750000,
+    "hourlyPrice": 95000,
+    "dailyPrice": 890000,
     "depositAmount": 0,
     "noDeposit": true,
-    "rangeKm": 318,
-    "thumbnail": "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=800&q=80",
+    "rangeKm": 780,
+    "thumbnail": "https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&w=800&q=80",
     "images": [
-      "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=800&q=80"
+      "https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&w=800&q=80"
     ],
-    "rating": 4.91,
-    "totalTrips": 188,
+    "rating": 4.94,
+    "totalTrips": 198,
     "status": "AVAILABLE",
     "stationId": "hub-metro-01",
     "telematics": {
@@ -119,42 +119,42 @@
       "speedKmh": 0,
       "heading": 90,
       "batteryLevelPct": 95,
-      "fuelLevelPct": null,
+      "fuelLevelPct": 92,
       "isLocked": true,
       "isEngineOn": false,
-      "odometerKm": 21400,
+      "odometerKm": 16400,
       "tirePressurePsi": { "fl": 33, "fr": 33, "rl": 33, "rr": 33 },
       "lastPing": "2026-10-26T15:02:00Z"
     },
     "features": [
-      "Trợ lý ảo thông minh tiếng Việt",
-      "Kết nối liên tuyến Metro Tuyến 1",
-      "Điều khiển điều hòa từ xa",
+      "Động cơ Hybrid tự sạc siêu tiết kiệm 4.2L/100km",
+      "Kết nối Apple CarPlay & Android Auto không dây",
+      "Gói an toàn Toyota Safety Sense",
       "Cảnh báo làn sóng xanh GLOSA"
     ]
   },
   {
-    "id": "veh-ioniq5-004",
-    "name": "Hyundai Ioniq 5 EV Lounge",
-    "brand": "Hyundai",
-    "model": "Ioniq 5",
+    "id": "veh-crv-004",
+    "name": "Honda CR-V e:HEV RS 2024",
+    "brand": "Honda",
+    "model": "CR-V e:HEV RS",
     "year": 2024,
     "plateNumber": "51K-990.11",
     "category": "CAR",
-    "powerType": "ELECTRIC",
+    "powerType": "HYBRID",
     "seats": 5,
     "transmission": "AUTOMATIC",
-    "hourlyPrice": 140000,
-    "dailyPrice": 1350000,
+    "hourlyPrice": 135000,
+    "dailyPrice": 1290000,
     "depositAmount": 0,
     "noDeposit": true,
-    "rangeKm": 450,
-    "thumbnail": "https://images.unsplash.com/photo-1619767886558-efdc259cde1a?auto=format&fit=crop&w=800&q=80",
+    "rangeKm": 820,
+    "thumbnail": "https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=800&q=80",
     "images": [
-      "https://images.unsplash.com/photo-1619767886558-efdc259cde1a?auto=format&fit=crop&w=800&q=80"
+      "https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=800&q=80"
     ],
     "rating": 4.98,
-    "totalTrips": 95,
+    "totalTrips": 112,
     "status": "AVAILABLE",
     "stationId": "hub-landmark-01",
     "telematics": {
@@ -163,25 +163,25 @@
       "speedKmh": 0,
       "heading": 270,
       "batteryLevelPct": 98,
-      "fuelLevelPct": null,
+      "fuelLevelPct": 95,
       "isLocked": true,
       "isEngineOn": false,
-      "odometerKm": 11200,
+      "odometerKm": 8200,
       "tirePressurePsi": { "fl": 34, "fr": 34, "rl": 34, "rr": 34 },
       "lastPing": "2026-10-26T15:00:30Z"
     },
     "features": [
-      "Sạc siêu nhanh 800V (10-80% trong 18 phút)",
-      "Cửa sổ trời toàn cảnh Vision Roof",
-      "Tích hợp Digital Key 2.0 & NFC",
-      "Tính toán phát thải CO2 thời gian thực"
+      "Công nghệ Honda SENSING thế hệ mới",
+      "Camera 360 độ & Quan sát làn đường LaneWatch",
+      "Tích hợp khóa thông minh EcoGo Smart Key",
+      "Tính toán giảm phát thải CO2 thời gian thực"
     ]
   },
   {
-    "id": "veh-klara-005",
-    "name": "VinFast Klara S 2024 (Xe máy điện)",
-    "brand": "VinFast",
-    "model": "Klara S",
+    "id": "veh-yamaha-005",
+    "name": "Yamaha NEO's Smart EV",
+    "brand": "Yamaha",
+    "model": "NEO's EV",
     "year": 2024,
     "plateNumber": "59-AA 192.83",
     "category": "MOTORBIKE",
@@ -192,7 +192,7 @@
     "dailyPrice": 150000,
     "depositAmount": 0,
     "noDeposit": true,
-    "rangeKm": 194,
+    "rangeKm": 144,
     "thumbnail": "https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=800&q=80",
     "images": [
       "https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=800&q=80"
@@ -215,17 +215,17 @@
       "lastPing": "2026-10-26T15:03:00Z"
     },
     "features": [
-      "Đổi pin nhanh tại mọi trạm sạc VinFast/Hub ITS",
-      "Cốp xe rộng chứa 2 mũ bảo hiểm",
-      "Mở khóa 1 chạm bằng Bluetooth",
-      "Phù hợp sinh viên UTH di chuyển liên quận"
+      "Động cơ điện YIPU 2 êm ái chính hãng Yamaha",
+      "Cốp rộng 27 lít chứa 2 mũ bảo hiểm",
+      "Mở khóa 1 chạm bằng Bluetooth EcoGo",
+      "Phù hợp sinh viên UTH di chuyển nội đô"
     ]
   },
   {
-    "id": "veh-feliz-006",
-    "name": "VinFast Feliz S Smart Scooter",
-    "brand": "VinFast",
-    "model": "Feliz S",
+    "id": "veh-honda-006",
+    "name": "Honda ICON e: Smart Scooter",
+    "brand": "Honda",
+    "model": "ICON e:",
     "year": 2024,
     "plateNumber": "59-AB 883.21",
     "category": "MOTORBIKE",
@@ -236,12 +236,12 @@
     "dailyPrice": 140000,
     "depositAmount": 0,
     "noDeposit": true,
-    "rangeKm": 198,
+    "rangeKm": 150,
     "thumbnail": "https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=800&q=80",
     "images": [
       "https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=800&q=80"
     ],
-    "rating": 4.89,
+    "rating": 4.91,
     "totalTrips": 275,
     "status": "AVAILABLE",
     "stationId": "hub-metro-01",
@@ -259,18 +259,18 @@
       "lastPing": "2026-10-26T15:02:40Z"
     },
     "features": [
-      "Tốc độ tối đa 78 km/h",
-      "Tiêu chuẩn chống nước IP67 lội nước ngập",
+      "Pin Lithium-ion tháo rời đổi pin trong 30 giây",
+      "Tiêu chuẩn chống nước IP67 vận hành an toàn",
       "Định vị GPS chống trộm 24/7",
       "Mở khóa từ xa bằng điện thoại"
     ]
   },
   {
     "id": "veh-camry-007",
-    "name": "Toyota Camry 2.5 HEV Hybrid",
+    "name": "Toyota Camry 2.5HEV Luxury",
     "brand": "Toyota",
     "model": "Camry Hybrid",
-    "year": 2023,
+    "year": 2024,
     "plateNumber": "51G-772.33",
     "category": "CAR",
     "powerType": "HYBRID",
@@ -285,7 +285,7 @@
     "images": [
       "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?auto=format&fit=crop&w=800&q=80"
     ],
-    "rating": 4.96,
+    "rating": 4.97,
     "totalTrips": 115,
     "status": "AVAILABLE",
     "stationId": "hub-tsn-01",
@@ -306,7 +306,7 @@
       "Động cơ Hybrid êm ái, tiết kiệm 4.4L/100km",
       "Ghế da thương gia chỉnh điện ngả lưng",
       "Tự động nhận diện biển báo giao thông ITS",
-      "Khóa số thông minh Digital Key"
+      "Khóa số thông minh EcoGo Digital Key"
     ]
   }
 ]

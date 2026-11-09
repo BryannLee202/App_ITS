@@ -7,7 +7,7 @@ let rentals = [
   {
     id: 'trip_demo_101',
     userId: 'usr_demo_01',
-    vehicleId: 'veh-vf8-001',
+    vehicleId: 'veh-ioniq5-001',
     pickupStationId: 'hub-uth-01',
     returnStationId: 'hub-thuthiem-01',
     rentalType: 'HOURLY',
@@ -22,19 +22,19 @@ let rentals = [
     ecoPointsEarned: 17,
     digitalKeyActivated: true,
     eContractSigned: true,
-    contractNumber: 'HD-ITS-2026-9812'
+    contractNumber: 'HD-ECOGO-2026-9812'
   }
 ];
 
 // Start background simulation for the demo trip
-telematicsService.startTripSimulation('veh-vf8-001', 'trip_demo_101');
+telematicsService.startTripSimulation('veh-ioniq5-001', 'trip_demo_101');
 
 // Available Promo Vouchers
 const VOUCHERS = [
   {
     code: 'XANH20',
-    title: 'Giảm 20% Thuê Xe Điện ITS',
-    description: 'Áp dụng cho mọi dòng xe thuần điện VinFast & Hyundai (tối đa 120.000đ)',
+    title: 'Giảm 20% Thuê Xe Xanh EcoGo',
+    description: 'Áp dụng cho mọi dòng xe Hyundai, Toyota, Mazda, Honda & Yamaha (tối đa 120.000đ)',
     discountType: 'PERCENT',
     discountValue: 20,
     maxDiscount: 120000
