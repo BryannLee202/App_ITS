@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -6,7 +6,9 @@ import {
   TouchableOpacity,
   TextInput,
   Platform,
-  ActivityIndicator
+  ActivityIndicator,
+  Animated,
+  Easing
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { FONTS } from '../styles/theme';
@@ -29,12 +31,13 @@ const KEYPAD_KEYS = [
 
 export default function OnboardingAuthFlow({ onComplete }) {
   // Steps:
+  // 0: Animated Vector Logo Splash Screen (Video 1 style)
   // 1: Location Permission (Ảnh 1)
   // 2: Welcome Orbit Screen (Ảnh 2)
   // 3: Phone Input Screen with iOS Keypad (Ảnh 3)
   // 4: OTP Channel Bottom Sheet over Phone Input (Ảnh 4)
   // 5: OTP 4-Digit Verification + Notification Banner (Ảnh 5)
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(0);
   const [phone, setPhone] = useState(''); // Empty by default for manual entry
   const [otpChannel, setOtpChannel] = useState('ZALO'); // 'ZALO' | 'WHATSAPP' | 'SMS'
   const [otpDigits, setOtpDigits] = useState(['', '', '', '']);
@@ -42,6 +45,82 @@ export default function OnboardingAuthFlow({ onComplete }) {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [latestGeneratedOtp, setLatestGeneratedOtp] = useState('');
+
+  // Animated values for Step 0 Logo Splash Screen
+  const useNative = Platform.OS !== 'web';
+  const splashScale = useRef(new Animated.Value(0.7)).current;
+  const splashOpacity = useRef(new Animated.Value(0)).current;
+  const pathDrawAnim = useRef(new Animated.Value(0)).current;
+  const splashGlow = useRef(new Animated.Value(0.3)).current;
+
+  // Animated value for Shake Error & Red Border
+  const shakeAnim = useRef(new Animated.Value(0)).current;
+
+  const triggerShake = () => {
+    Animated.sequence([
+      Animated.timing(shakeAnim, { toValue: 10, duration: 50, useNativeDriver: useNative }),
+      Animated.timing(shakeAnim, { toValue: -10, duration: 50, useNativeDriver: useNative }),
+      Animated.timing(shakeAnim, { toValue: 8, duration: 50, useNativeDriver: useNative }),
+      Animated.timing(shakeAnim, { toValue: -8, duration: 50, useNativeDriver: useNative }),
+      Animated.timing(shakeAnim, { toValue: 4, duration: 50, useNativeDriver: useNative }),
+      Animated.timing(shakeAnim, { toValue: 0, duration: 50, useNativeDriver: useNative })
+    ]).start();
+  };
+
+  // Run Splash animation on Step 0
+  useEffect(() => {
+    if (step === 0) {
+      splashScale.setValue(0.7);
+      splashOpacity.setValue(0);
+      pathDrawAnim.setValue(0);
+
+      Animated.parallel([
+        Animated.spring(splashScale, {
+          toValue: 1,
+          friction: 6,
+          tension: 40,
+          useNativeDriver: useNative
+        }),
+        Animated.timing(splashOpacity, {
+          toValue: 1,
+          duration: 600,
+          useNativeDriver: useNative
+        }),
+        Animated.timing(pathDrawAnim, {
+          toValue: 1,
+          duration: 1800,
+          easing: Easing.out(Easing.cubic),
+          useNativeDriver: false
+        })
+      ]).start();
+
+      const glowLoop = Animated.loop(
+        Animated.sequence([
+          Animated.timing(splashGlow, { toValue: 0.9, duration: 900, useNativeDriver: useNative }),
+          Animated.timing(splashGlow, { toValue: 0.3, duration: 900, useNativeDriver: useNative })
+        ])
+      );
+      glowLoop.start();
+
+      const autoTimer = setTimeout(() => {
+        handleProceedFromSplash();
+      }, 2800);
+
+      return () => {
+        glowLoop.stop();
+        clearTimeout(autoTimer);
+      };
+    }
+  }, [step]);
+
+  const handleProceedFromSplash = () => {
+    Animated.parallel([
+      Animated.timing(splashScale, { toValue: 1.25, duration: 350, useNativeDriver: useNative }),
+      Animated.timing(splashOpacity, { toValue: 0, duration: 350, useNativeDriver: useNative })
+    ]).start(() => {
+      setStep(1);
+    });
+  };
 
   // Countdown timer for OTP on Step 5
   useEffect(() => {
@@ -84,6 +163,7 @@ export default function OnboardingAuthFlow({ onComplete }) {
   const handleSendOtpRequest = async () => {
     const targetPhone = cleanPhoneNumber(phone);
     if (!targetPhone || targetPhone.length < 9) {
+      triggerShake();
       setErrorMessage('Vui lòng nhập số điện thoại hợp lệ (9-10 chữ số)');
       return;
     }
@@ -98,6 +178,7 @@ export default function OnboardingAuthFlow({ onComplete }) {
       setOtpDigits(['', '', '', '']);
       setStep(5);
     } catch (err) {
+      triggerShake();
       setErrorMessage(err.message || 'Không thể gửi mã OTP, vui lòng thử lại.');
     } finally {
       setLoading(false);
@@ -118,10 +199,12 @@ export default function OnboardingAuthFlow({ onComplete }) {
           onComplete(res.user || { fullName: 'Minh Tài', phone: targetPhone });
         }
       } else {
+        triggerShake();
         setErrorMessage(res.message || 'Mã OTP không đúng');
         setOtpDigits(['', '', '', '']);
       }
     } catch (err) {
+      triggerShake();
       setErrorMessage(err.message || 'Mã OTP không chính xác. Vui lòng kiểm tra lại.');
       setOtpDigits(['', '', '', '']);
     } finally {
@@ -168,7 +251,7 @@ export default function OnboardingAuthFlow({ onComplete }) {
   const renderStepProgressStrip = (darkTheme = false) => (
     <View style={[styles.stepProgressStrip, darkTheme && styles.stepProgressStripDark]}>
       <View style={styles.stepDotsRow}>
-        {[1, 2, 3, 4, 5].map((s) => (
+        {[0, 1, 2, 3, 4, 5].map((s) => (
           <TouchableOpacity
             key={s}
             onPress={() => {
@@ -188,13 +271,101 @@ export default function OnboardingAuthFlow({ onComplete }) {
                 darkTheme && step !== s && { color: '#E2E8F0' }
               ]}
             >
-              Bước {s}/5
+              {s === 0 ? '✨ Intro' : `Bước ${s}/5`}
             </Text>
           </TouchableOpacity>
         ))}
       </View>
     </View>
   );
+
+  // ============================================================================
+  // STEP 0: ANIMATED VECTOR LOGO SPLASH SCREEN (VIDEO 1 STYLE)
+  // ============================================================================
+  if (step === 0) {
+    return (
+      <View style={styles.splashContainer}>
+        {renderStepProgressStrip(true)}
+
+        {/* Ambient Glowing Radial Halo */}
+        <Animated.View
+          style={[
+            styles.splashAmbientHalo,
+            {
+              opacity: splashGlow,
+              transform: [{ scale: splashScale }]
+            }
+          ]}
+        />
+
+        <TouchableOpacity
+          style={styles.splashCenterTouchable}
+          activeOpacity={1}
+          onPress={handleProceedFromSplash}
+        >
+          <Animated.View
+            style={[
+              styles.splashCardInner,
+              {
+                opacity: splashOpacity,
+                transform: [{ scale: splashScale }]
+              }
+            ]}
+          >
+            {/* Animated Logo Wing / Leaf Emblem */}
+            <View style={styles.splashEmblemWrap}>
+              <View style={styles.splashOuterGlowRing}>
+                <View style={styles.splashInnerShield}>
+                  <Ionicons
+                    name="navigate"
+                    size={46}
+                    color="#00F5D4"
+                    style={{ transform: [{ rotate: '15deg' }] }}
+                  />
+                </View>
+              </View>
+
+              {/* Animated Orbiting Ring Arc */}
+              <View style={styles.splashOrbitRing} />
+            </View>
+
+            {/* Brand Typography */}
+            <Text style={styles.splashBrandTitle}>Green SM</Text>
+            <View style={styles.splashBadgePill}>
+              <Text style={styles.splashBadgePillText}>ECOGO SMART MOBILITY</Text>
+            </View>
+
+            <Text style={styles.splashSloganText}>
+              Mọi thứ trong tầm tay{'\n'}Hành trình xanh thông minh
+            </Text>
+
+            {/* Animated Vector Drawing Path Line */}
+            <View style={styles.splashDrawingLineWrap}>
+              <Animated.View
+                style={[
+                  styles.splashDrawingLineFill,
+                  {
+                    width: pathDrawAnim.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: ['0%', '100%']
+                    })
+                  }
+                ]}
+              />
+            </View>
+
+            <View style={styles.splashSkipPill}>
+              <Text style={styles.splashSkipText}>Chạm để tiếp tục →</Text>
+            </View>
+          </Animated.View>
+        </TouchableOpacity>
+
+        <View style={styles.splashFooterInfo}>
+          <Text style={styles.splashFooterVersion}>Phiên bản 1.0.0-PROD · Chuyên đề UTH</Text>
+        </View>
+      </View>
+    );
+  }
 
   // ============================================================================
   // STEP 1: LOCATION PERMISSION DIALOG (IMAGE 1)
@@ -441,7 +612,13 @@ export default function OnboardingAuthFlow({ onComplete }) {
           </Text>
 
           {/* User inputs their own real phone number */}
-          <View style={styles.phoneInputFocused}>
+          <Animated.View
+            style={[
+              styles.phoneInputFocused,
+              errorMessage ? { borderColor: '#EF4444' } : null,
+              { transform: [{ translateX: shakeAnim }] }
+            ]}
+          >
             <View style={styles.countryCodePill}>
               <View style={styles.vnFlagBox}>
                 <Text style={styles.vnStar}>★</Text>
@@ -468,7 +645,7 @@ export default function OnboardingAuthFlow({ onComplete }) {
                 <Ionicons name="close-circle" size={18} color="#94A3B8" />
               </TouchableOpacity>
             )}
-          </View>
+          </Animated.View>
 
           {errorMessage ? (
             <Text style={styles.errorTextInline}>{errorMessage}</Text>
@@ -482,18 +659,32 @@ export default function OnboardingAuthFlow({ onComplete }) {
               { marginHorizontal: 18, marginBottom: 14 },
               isValidPhone && styles.continueBtnTurquoise
             ]}
-            disabled={!isValidPhone || loading}
+            disabled={loading}
             activeOpacity={0.85}
-            onPress={() => setStep(4)}
+            onPress={() => {
+              if (!isValidPhone) {
+                triggerShake();
+                setErrorMessage('Vui lòng nhập đủ số điện thoại của bạn');
+                return;
+              }
+              setStep(4);
+            }}
           >
-            <Text
-              style={[
-                styles.continueBtnText,
-                isValidPhone && styles.continueBtnTextWhite
-              ]}
-            >
-              Tiếp tục
-            </Text>
+            {loading ? (
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                <ActivityIndicator size="small" color="#FFFFFF" />
+                <Text style={[styles.continueBtnText, styles.continueBtnTextWhite]}>Đang xử lý...</Text>
+              </View>
+            ) : (
+              <Text
+                style={[
+                  styles.continueBtnText,
+                  isValidPhone && styles.continueBtnTextWhite
+                ]}
+              >
+                Tiếp tục
+              </Text>
+            )}
           </TouchableOpacity>
 
           {/* iOS Gray Numeric Keypad */}
@@ -675,7 +866,12 @@ export default function OnboardingAuthFlow({ onComplete }) {
         </View>
 
         {/* 4 OTP Digit Boxes */}
-        <View style={styles.otpBoxesRow}>
+        <Animated.View
+          style={[
+            styles.otpBoxesRow,
+            { transform: [{ translateX: shakeAnim }] }
+          ]}
+        >
           {[0, 1, 2, 3].map((i) => {
             const val = otpDigits[i];
             const isFocused =
@@ -687,14 +883,14 @@ export default function OnboardingAuthFlow({ onComplete }) {
                 style={[
                   styles.otpDigitBox,
                   isFocused && styles.otpDigitBoxFocused,
-                  errorMessage && { borderColor: '#EF4444' }
+                  errorMessage ? { borderColor: '#EF4444' } : null
                 ]}
               >
                 <Text style={styles.otpDigitText}>{val}</Text>
               </View>
             );
           })}
-        </View>
+        </Animated.View>
 
         {errorMessage ? (
           <Text style={styles.errorTextCentered}>{errorMessage}</Text>
@@ -796,6 +992,154 @@ const styles = StyleSheet.create({
   },
   stepMiniTextActive: {
     color: '#FFFFFF'
+  },
+
+  /* ============================================================
+     STEP 0: ANIMATED VECTOR LOGO SPLASH SCREEN (VIDEO 1 STYLE)
+     ============================================================ */
+  splashContainer: {
+    flex: 1,
+    backgroundColor: '#041E1E',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    position: 'relative',
+    overflow: 'hidden'
+  },
+  splashAmbientHalo: {
+    position: 'absolute',
+    top: '25%',
+    width: 280,
+    height: 280,
+    borderRadius: 140,
+    backgroundColor: 'rgba(0, 245, 212, 0.12)',
+    shadowColor: '#00F5D4',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius: 60
+  },
+  splashCenterTouchable: {
+    flex: 1,
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 24
+  },
+  splashCardInner: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    maxWidth: 320
+  },
+  splashEmblemWrap: {
+    width: 108,
+    height: 108,
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+    marginBottom: 20
+  },
+  splashOuterGlowRing: {
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    backgroundColor: 'rgba(0, 196, 180, 0.15)',
+    borderWidth: 2,
+    borderColor: 'rgba(0, 245, 212, 0.5)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#00F5D4',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.6,
+    shadowRadius: 16
+  },
+  splashInnerShield: {
+    width: 76,
+    height: 76,
+    borderRadius: 22,
+    backgroundColor: '#073333',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1.5,
+    borderColor: '#00F5D4'
+  },
+  splashOrbitRing: {
+    position: 'absolute',
+    width: 116,
+    height: 116,
+    borderRadius: 58,
+    borderWidth: 1,
+    borderStyle: 'dashed',
+    borderColor: 'rgba(255, 255, 255, 0.25)'
+  },
+  splashBrandTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 34,
+    fontWeight: '900',
+    color: '#FFFFFF',
+    letterSpacing: -0.5,
+    marginBottom: 4
+  },
+  splashBadgePill: {
+    backgroundColor: 'rgba(0, 245, 212, 0.15)',
+    borderWidth: 1,
+    borderColor: 'rgba(0, 245, 212, 0.4)',
+    borderRadius: 99,
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    marginBottom: 12
+  },
+  splashBadgePillText: {
+    fontFamily: FONTS.family,
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#5EEAD4',
+    letterSpacing: 1.2
+  },
+  splashSloganText: {
+    fontFamily: FONTS.family,
+    fontSize: 13,
+    color: '#94A3B8',
+    textAlign: 'center',
+    lineHeight: 19,
+    marginBottom: 20
+  },
+  splashDrawingLineWrap: {
+    width: 180,
+    height: 4,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: 2,
+    overflow: 'hidden',
+    marginBottom: 24
+  },
+  splashDrawingLineFill: {
+    height: '100%',
+    backgroundColor: '#00F5D4',
+    borderRadius: 2
+  },
+  splashSkipPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.15)',
+    borderRadius: 20,
+    paddingHorizontal: 14,
+    paddingVertical: 7
+  },
+  splashSkipText: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#E2E8F0'
+  },
+  splashFooterInfo: {
+    paddingBottom: 24
+  },
+  splashFooterVersion: {
+    fontFamily: FONTS.family,
+    fontSize: 10,
+    color: '#64748B',
+    fontWeight: '500'
   },
 
   /* STEP 1 */
