@@ -247,46 +247,12 @@ export default function OnboardingAuthFlow({ onComplete }) {
     }
   };
 
-  // Top step switcher for convenience
-  const renderStepProgressStrip = (darkTheme = false) => (
-    <View style={[styles.stepProgressStrip, darkTheme && styles.stepProgressStripDark]}>
-      <View style={styles.stepDotsRow}>
-        {[0, 1, 2, 3, 4, 5].map((s) => (
-          <TouchableOpacity
-            key={s}
-            onPress={() => {
-              setErrorMessage('');
-              setStep(s);
-            }}
-            style={[
-              styles.stepMiniPill,
-              step === s && styles.stepMiniPillActive,
-              darkTheme && step !== s && { backgroundColor: 'rgba(255,255,255,0.22)' }
-            ]}
-          >
-            <Text
-              style={[
-                styles.stepMiniText,
-                step === s && styles.stepMiniTextActive,
-                darkTheme && step !== s && { color: '#E2E8F0' }
-              ]}
-            >
-              {s === 0 ? '✨ Intro' : `Bước ${s}/5`}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-    </View>
-  );
-
   // ============================================================================
   // STEP 0: ANIMATED VECTOR LOGO SPLASH SCREEN (VIDEO 1 STYLE)
   // ============================================================================
   if (step === 0) {
     return (
       <View style={styles.splashContainer}>
-        {renderStepProgressStrip(true)}
-
         {/* Ambient Glowing Radial Halo */}
         <Animated.View
           style={[
@@ -373,8 +339,6 @@ export default function OnboardingAuthFlow({ onComplete }) {
   if (step === 1) {
     return (
       <View style={styles.step1Container}>
-        {renderStepProgressStrip(true)}
-
         <View style={styles.step1CenterWrap}>
           <View style={styles.locDialogCard}>
             <View style={styles.locAppIconWrap}>
@@ -458,11 +422,6 @@ export default function OnboardingAuthFlow({ onComplete }) {
               <Text style={styles.locPermBtnText}>Từ chối</Text>
             </TouchableOpacity>
           </View>
-
-          <View style={styles.step1BottomDecor}>
-            <View style={styles.decorBarWhite} />
-            <View style={styles.decorBarGold} />
-          </View>
         </View>
       </View>
     );
@@ -474,8 +433,6 @@ export default function OnboardingAuthFlow({ onComplete }) {
   if (step === 2) {
     return (
       <View style={styles.step2Container}>
-        {renderStepProgressStrip(false)}
-
         <View style={styles.step2TopRow}>
           <TouchableOpacity style={styles.langPill}>
             <Ionicons name="earth-outline" size={16} color="#1E293B" />
@@ -599,8 +556,6 @@ export default function OnboardingAuthFlow({ onComplete }) {
   if (step === 3 || step === 4) {
     return (
       <View style={styles.step3Container}>
-        {renderStepProgressStrip(false)}
-
         <View style={styles.step3TopContent}>
           <TouchableOpacity style={styles.backArrowBtn} onPress={() => setStep(2)}>
             <Ionicons name="arrow-back" size={24} color="#1E293B" />
@@ -816,8 +771,6 @@ export default function OnboardingAuthFlow({ onComplete }) {
 
   return (
     <View style={styles.step5Container}>
-      {renderStepProgressStrip(false)}
-
       {/* Top Notification Banner showing the newly generated OTP */}
       {latestGeneratedOtp ? (
         <TouchableOpacity
@@ -955,45 +908,6 @@ export default function OnboardingAuthFlow({ onComplete }) {
 }
 
 const styles = StyleSheet.create({
-  stepProgressStrip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    backgroundColor: '#F8FAFC',
-    borderBottomWidth: 1,
-    borderBottomColor: '#E2E8F0',
-    zIndex: 50
-  },
-  stepProgressStripDark: {
-    backgroundColor: 'rgba(19, 54, 53, 0.85)',
-    borderBottomColor: 'rgba(255,255,255,0.12)'
-  },
-  stepDotsRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6
-  },
-  stepMiniPill: {
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 99,
-    backgroundColor: '#E2E8F0'
-  },
-  stepMiniPillActive: {
-    backgroundColor: '#00C4B4'
-  },
-  stepMiniText: {
-    fontFamily: FONTS.family,
-    fontSize: 10,
-    fontWeight: '700',
-    color: '#475569'
-  },
-  stepMiniTextActive: {
-    color: '#FFFFFF'
-  },
-
   /* ============================================================
      STEP 0: ANIMATED VECTOR LOGO SPLASH SCREEN (VIDEO 1 STYLE)
      ============================================================ */
@@ -1315,22 +1229,6 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 14,
     fontWeight: '600'
-  },
-  step1BottomDecor: {
-    marginTop: 14,
-    alignItems: 'center'
-  },
-  decorBarWhite: {
-    width: 100,
-    height: 10,
-    borderTopLeftRadius: 8,
-    backgroundColor: 'rgba(255,255,255,0.4)'
-  },
-  decorBarGold: {
-    width: 180,
-    height: 10,
-    backgroundColor: '#CA8A04',
-    marginRight: 30
   },
 
   /* STEP 2 */
