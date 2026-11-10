@@ -29,31 +29,73 @@ let rentals = [
 // Start background simulation for the demo trip
 telematicsService.startTripSimulation('veh-ioniq5-001', 'trip_demo_101');
 
-// Available Promo Vouchers
+// Available Promo Vouchers & Events
 const VOUCHERS = [
+  {
+    code: 'CHAOXANH',
+    title: 'Gói Quà Bạn Mới - Giảm 30%',
+    description: 'Giảm 30% chuyến đầu tiên cho tài khoản mới (tối đa 80.000đ)',
+    discountType: 'PERCENT',
+    discountValue: 30,
+    maxDiscount: 80000,
+    tag: 'BẠN MỚI',
+    claimedPct: 88,
+    expiry: 'Còn 3 ngày'
+  },
   {
     code: 'XANH20',
     title: 'Giảm 20% Thuê Xe Xanh EcoGo',
     description: 'Áp dụng cho mọi dòng xe Hyundai, Toyota, Mazda, Honda & Yamaha (tối đa 120.000đ)',
     discountType: 'PERCENT',
     discountValue: 20,
-    maxDiscount: 120000
+    maxDiscount: 120000,
+    tag: 'HOT',
+    claimedPct: 76,
+    expiry: 'Còn 5 ngày'
+  },
+  {
+    code: 'GIOVANG25',
+    title: 'Flash Sale Giờ Vàng - Giảm 25K',
+    description: 'Áp dụng cho các khung giờ cao điểm 11h-13h và 17h-19h hàng ngày',
+    discountType: 'FIXED',
+    discountValue: 25000,
+    maxDiscount: 25000,
+    tag: 'GIỜ VÀNG',
+    claimedPct: 92,
+    expiry: 'Hôm nay'
   },
   {
     code: 'UTH50K',
-    title: 'Ưu Đãi Sinh Viên & Giảng Viên UTH',
-    description: 'Giảm trực tiếp 50.000đ khi nhận xe tại Trạm Hub ĐH Giao Thông Vận Tải',
+    title: 'Ưu Đãi Độc Quyền Sinh Viên UTH',
+    description: 'Giảm trực tiếp 50.000đ khi nhận xe tại Trạm Hub ĐH Giao Thông Vận Tải TP.HCM',
     discountType: 'FIXED',
     discountValue: 50000,
-    maxDiscount: 50000
+    maxDiscount: 50000,
+    tag: 'UTH CHUYÊN ĐỀ',
+    claimedPct: 65,
+    expiry: 'Hết tháng 11'
   },
   {
-    code: 'FREEDELIVERY',
-    title: 'Miễn Phí Giao Xe Tận Nơi',
-    description: 'Miễn 100% phí giao nhận xe trong bán kính 5km quanh trạm ITS Hub',
+    code: 'THUENGAY200',
+    title: 'Gói Dã Ngoại 24H - Giảm 200K',
+    description: 'Giảm ngay 200.000đ khi thuê ô tô tự lái theo ngày dịp cuối tuần',
+    discountType: 'FIXED',
+    discountValue: 200000,
+    maxDiscount: 200000,
+    tag: 'CUỐI TUẦN',
+    claimedPct: 54,
+    expiry: 'Cuối tuần'
+  },
+  {
+    code: 'FREESHIP5KM',
+    title: 'Miễn Phí Giao Xe Tận Nơi 5KM',
+    description: 'Miễn 100% phí giao nhận xe tận cửa nhà trong bán kính 5km quanh trạm EcoGo Hub',
     discountType: 'DELIVERY_FREE',
     discountValue: 50000,
-    maxDiscount: 50000
+    maxDiscount: 50000,
+    tag: 'TIỆN LỢI',
+    claimedPct: 83,
+    expiry: 'Còn 7 ngày'
   }
 ];
 

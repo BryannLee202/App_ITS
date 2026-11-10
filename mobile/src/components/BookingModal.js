@@ -40,18 +40,30 @@ const INSURANCE_PLANS = [
   }
 ];
 
-export default function BookingModal({ visible, vehicle, onClose, onBookingSuccess }) {
+export default function BookingModal({
+  visible,
+  vehicle,
+  onClose,
+  onBookingSuccess,
+  initialVoucherCode = 'CHAOXANH'
+}) {
   const [rentalType, setRentalType] = useState('HOURLY'); // 'HOURLY' | 'DAILY'
   const [durationHours, setDurationHours] = useState(4);
   const [durationDays, setDurationDays] = useState(1);
   const [deliveryMode, setDeliveryMode] = useState('STATION'); // 'STATION' | 'DOORSTEP'
   const [insuranceTier, setInsuranceTier] = useState('STANDARD');
-  const [voucherCode, setVoucherCode] = useState('XANH20');
+  const [voucherCode, setVoucherCode] = useState(initialVoucherCode);
   const [agreedTerms, setAgreedTerms] = useState(true);
   const [quote, setQuote] = useState(null);
   const [loadingQuote, setLoadingQuote] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [activePhotoIdx, setActivePhotoIdx] = useState(0);
+
+  useEffect(() => {
+    if (visible && initialVoucherCode) {
+      setVoucherCode(initialVoucherCode);
+    }
+  }, [visible, initialVoucherCode]);
 
   useEffect(() => {
     if (visible && vehicle) {
@@ -84,11 +96,23 @@ export default function BookingModal({ visible, vehicle, onClose, onBookingSucce
       const insuranceFee = insuranceTier === 'PREMIUM' ? 55000 : insuranceTier === 'STANDARD' ? 25000 : 0;
       const platformServiceFee = Math.round(baseRentalFee * 0.05);
       const deliveryFee = deliveryMode === 'DOORSTEP' ? 50000 : 0;
-      const discountAmount = voucherCode.trim().toUpperCase() === 'XANH20'
-        ? Math.min(Math.round(baseRentalFee * 0.2), 120000)
-        : voucherCode.trim().toUpperCase() === 'UTH50K'
-        ? 50000
-        : 0;
+      
+      const code = voucherCode.trim().toUpperCase();
+      let discountAmount = 0;
+      if (code === 'CHAOXANH') {
+        discountAmount = Math.min(Math.round(baseRentalFee * 0.3), 80000);
+      } else if (code === 'XANH20') {
+        discountAmount = Math.min(Math.round(baseRentalFee * 0.2), 120000);
+      } else if (code === 'GIOVANG25') {
+        discountAmount = 25000;
+      } else if (code === 'UTH50K') {
+        discountAmount = 50000;
+      } else if (code === 'THUENGAY200') {
+        discountAmount = rentalType === 'DAILY' ? 200000 : 100000;
+      } else if (code === 'FREESHIP5KM' || code === 'FREEDELIVERY') {
+        discountAmount = deliveryFee > 0 ? deliveryFee : 50000;
+      }
+
       setQuote({
         baseRentalFee,
         insuranceFee,
@@ -391,7 +415,7 @@ export default function BookingModal({ visible, vehicle, onClose, onBookingSucce
                   placeholderTextColor="#9CA3AF"
                 />
                 <View style={styles.quickVoucherRow}>
-                  {['XANH20', 'UTH50K'].map(code => (
+                  {['CHAOXANH', 'XANH20', 'GIOVANG25', 'UTH50K', 'THUENGAY200', 'FREESHIP5KM'].map(code => (
                     <TouchableOpacity
                       key={code}
                       style={[
