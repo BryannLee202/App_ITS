@@ -19,6 +19,7 @@ import MapScreen from './src/screens/MapScreen';
 import DigitalKeyScreen from './src/screens/DigitalKeyScreen';
 import TripsHistoryScreen from './src/screens/TripsHistoryScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
+import OnboardingAuthFlow from './src/screens/OnboardingAuthFlow';
 
 const DOCK_TABS = [
   { id: 'HOME', icon: 'search-outline', activeIcon: 'search', label: 'Khám phá' },
@@ -77,6 +78,8 @@ const ECOGO_RACE_BADGES = [
 ];
 
 export default function App() {
+  const [isOnboarded, setIsOnboarded] = useState(false);
+  const [onboardingAutoPlay, setOnboardingAutoPlay] = useState(true);
   const [activeTab, setActiveTab] = useState('HOME');
   const [themeKey, setThemeKey] = useState('MINT'); // 'MINT' | 'MONOCHROME' | 'TERRACOTTA' | 'SKY'
   const [showRewardsModal, setShowRewardsModal] = useState(false);
@@ -116,6 +119,18 @@ export default function App() {
   }, []);
 
   const renderContent = () => {
+    if (!isOnboarded) {
+      return (
+        <OnboardingAuthFlow
+          autoPlayDefault={onboardingAutoPlay}
+          onComplete={() => {
+            setIsOnboarded(true);
+            setActiveTab('HOME');
+          }}
+        />
+      );
+    }
+
     switch (activeTab) {
       case 'HOME':
         return (
@@ -142,6 +157,10 @@ export default function App() {
             onOpenGreenRace={() => setShowGreenRaceModal(true)}
             onOpenRewards={() => setShowRewardsModal(true)}
             onNavigateToMap={() => setActiveTab('MAP')}
+            onLogout={() => {
+              setOnboardingAutoPlay(false);
+              setIsOnboarded(false);
+            }}
           />
         );
       default:
@@ -159,6 +178,21 @@ export default function App() {
           <View style={styles.toolbarBrand}>
             <View style={[styles.statusDot, { backgroundColor: theme.primary }]} />
             <Text style={styles.toolbarTitle}>ECOGO SMART · Thuê xe tự động 24/7 (UTH)</Text>
+            <TouchableOpacity
+              style={[
+                styles.themeChip,
+                { marginLeft: 8, backgroundColor: '#EBFBF5', borderColor: '#0CA678' }
+              ]}
+              onPress={() => {
+                setOnboardingAutoPlay(true);
+                setIsOnboarded(false);
+              }}
+            >
+              <Ionicons name="refresh" size={12} color="#0CA678" />
+              <Text style={[styles.themeChipText, { color: '#0CA678', fontWeight: '700' }]}>
+                Chạy lại Mở App (5 bước)
+              </Text>
+            </TouchableOpacity>
           </View>
 
           {/* 4-Color Live Theme Switcher */}
@@ -248,73 +282,75 @@ export default function App() {
           {/* =========================================================================
               UNIFIED FLOATING GLASS DOCK (5 TABS + CENTER SMART KEY)
              ========================================================================= */}
-          <View style={styles.floatingBottomDock} pointerEvents="box-none">
-            <View style={styles.unifiedGlassDock}>
-              {DOCK_TABS.map((tab) => {
-                const isActive = activeTab === tab.id;
+          {isOnboarded && (
+            <View style={styles.floatingBottomDock} pointerEvents="box-none">
+              <View style={styles.unifiedGlassDock}>
+                {DOCK_TABS.map((tab) => {
+                  const isActive = activeTab === tab.id;
 
-                if (tab.isCenterKey) {
+                  if (tab.isCenterKey) {
+                    return (
+                      <TouchableOpacity
+                        key={tab.id}
+                        style={styles.centerKeySlot}
+                        activeOpacity={0.88}
+                        onPress={() => setActiveTab('KEY')}
+                      >
+                        <View
+                          style={[
+                            styles.centerKeyCircle,
+                            { backgroundColor: '#1D1D1F', shadowColor: '#000000' },
+                            isActive && { backgroundColor: theme.primary, borderColor: '#FFFFFF' }
+                          ]}
+                        >
+                          <Ionicons name="key" size={20} color="#FFFFFF" />
+                        </View>
+                        <Text
+                          style={[
+                            styles.dockTabLabel,
+                            { marginTop: 3 },
+                            isActive && { color: '#1D1D1F', fontWeight: '700' }
+                          ]}
+                        >
+                          {tab.label}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  }
+
                   return (
                     <TouchableOpacity
                       key={tab.id}
-                      style={styles.centerKeySlot}
-                      activeOpacity={0.88}
-                      onPress={() => setActiveTab('KEY')}
+                      style={styles.dockTabBtn}
+                      activeOpacity={0.8}
+                      onPress={() => setActiveTab(tab.id)}
                     >
                       <View
                         style={[
-                          styles.centerKeyCircle,
-                          { backgroundColor: '#1D1D1F', shadowColor: '#000000' },
-                          isActive && { backgroundColor: theme.primary, borderColor: '#FFFFFF' }
+                          styles.dockIconPill,
+                          isActive && { backgroundColor: theme.primarySoft }
                         ]}
                       >
-                        <Ionicons name="key" size={20} color="#FFFFFF" />
+                        <Ionicons
+                          name={isActive ? tab.activeIcon : tab.icon}
+                          size={20}
+                          color={isActive ? theme.primary : '#64748B'}
+                        />
                       </View>
                       <Text
                         style={[
                           styles.dockTabLabel,
-                          { marginTop: 3 },
-                          isActive && { color: '#1D1D1F', fontWeight: '700' }
+                          isActive && { color: theme.primary, fontWeight: '800' }
                         ]}
                       >
                         {tab.label}
                       </Text>
                     </TouchableOpacity>
                   );
-                }
-
-                return (
-                  <TouchableOpacity
-                    key={tab.id}
-                    style={styles.dockTabBtn}
-                    activeOpacity={0.8}
-                    onPress={() => setActiveTab(tab.id)}
-                  >
-                    <View
-                      style={[
-                        styles.dockIconPill,
-                        isActive && { backgroundColor: theme.primarySoft }
-                      ]}
-                    >
-                      <Ionicons
-                        name={isActive ? tab.activeIcon : tab.icon}
-                        size={20}
-                        color={isActive ? theme.primary : '#64748B'}
-                      />
-                    </View>
-                    <Text
-                      style={[
-                        styles.dockTabLabel,
-                        isActive && { color: theme.primary, fontWeight: '800' }
-                      ]}
-                    >
-                      {tab.label}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })}
+                })}
+              </View>
             </View>
-          </View>
+          )}
         </SafeAreaView>
       </View>
 

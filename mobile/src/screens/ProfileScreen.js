@@ -12,7 +12,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { FONTS, THEME_PRESETS } from '../styles/theme';
 
-export default function ProfileScreen({ onOpenGreenRace, theme = THEME_PRESETS.MINT }) {
+export default function ProfileScreen({ onOpenGreenRace, onLogout, theme = THEME_PRESETS.MINT }) {
   const [user] = useState({
     fullName: 'Minh Tài',
     phone: '+84386726647',
@@ -313,9 +313,9 @@ export default function ProfileScreen({ onOpenGreenRace, theme = THEME_PRESETS.M
 
         {/* Logout & Version + Bộ Công Thương Badges */}
         <View style={styles.footerVersionBlock}>
-          <TouchableOpacity style={styles.logoutRow}>
+          <TouchableOpacity style={styles.logoutRow} onPress={onLogout}>
             <Ionicons name="log-out-outline" size={20} color="#1A1D1F" />
-            <Text style={styles.logoutText}>Đăng xuất</Text>
+            <Text style={styles.logoutText}>Đăng xuất (Chạy lại màn hình mở App)</Text>
           </TouchableOpacity>
           <Text style={styles.versionText}>EcoGo Smart - v2.4.0 • Ứng dụng di chuyển xanh & Thuê xe 24/7</Text>
 

@@ -37,10 +37,10 @@ class ApiService {
   }
 
   // Auth endpoints
-  async requestOtp(phone) {
+  async requestOtp(phone, channel = 'ZALO') {
     return this.request('/auth/request-otp', {
       method: 'POST',
-      body: JSON.stringify({ phone })
+      body: JSON.stringify({ phone, channel })
     });
   }
 

@@ -1,23 +1,48 @@
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 const { JWT_SECRET } = require('../config');
+const SmsService = require('../services/smsService');
 
-// In-memory OTP storage for rapid demonstration
+// In-memory OTP storage with expiration
+// Key: normalized phone, Value: { code, expiresAt, attempts }
 const otpStorage = new Map();
 
-exports.requestOtp = (req, res) => {
-  const { phone } = req.body;
+exports.requestOtp = async (req, res) => {
+  const { phone, channel = 'ZALO' } = req.body;
   if (!phone) {
     return res.status(400).json({ success: false, message: 'Số điện thoại không được để trống' });
   }
 
-  // Pre-set OTP 8888 for easy testing and evaluation
-  const otpCode = '8888';
-  otpStorage.set(phone, otpCode);
+  const cleanPhone = phone.trim().replace(/\s+/g, '');
+  if (cleanPhone.length < 8) {
+    return res.status(400).json({ success: false, message: 'Số điện thoại không hợp lệ' });
+  }
+
+  // Generate dynamic random 4-digit OTP
+  const randomOtp = Math.floor(1000 + Math.random() * 9000).toString();
+  const expiresAt = Date.now() + 60 * 1000; // 60 seconds TTL
+
+  otpStorage.set(cleanPhone, {
+    code: randomOtp,
+    channel,
+    expiresAt,
+    attempts: 0
+  });
+
+  // Dispatch via SMS / Zalo / Telegram / Webhook provider
+  const dispatchResult = await SmsService.sendOtp({
+    phone: cleanPhone,
+    otp: randomOtp,
+    channel
+  });
 
   return res.json({
     success: true,
-    message: `Mã OTP xác thực đã được gửi tới ${phone} qua tin nhắn Zalo/SMS`,
-    demoOtp: otpCode // convenient for testing
+    message: dispatchResult.message,
+    phone: cleanPhone,
+    channel,
+    expiresInSec: 60,
+    generatedOtp: randomOtp // Returned to facilitate live in-app push simulation while also dispatching
   });
 };
 
@@ -27,15 +52,48 @@ exports.verifyOtp = (req, res) => {
     return res.status(400).json({ success: false, message: 'Thiếu số điện thoại hoặc mã OTP' });
   }
 
-  const expectedOtp = otpStorage.get(phone) || '8888';
-  if (otp !== expectedOtp && otp !== '8888') {
-    return res.status(400).json({ success: false, message: 'Mã OTP không chính xác. Thử lại với 8888.' });
+  const cleanPhone = phone.trim().replace(/\s+/g, '');
+  const record = otpStorage.get(cleanPhone);
+
+  if (!record) {
+    return res.status(400).json({
+      success: false,
+      message: 'Chưa có yêu cầu gửi mã OTP cho số điện thoại này hoặc mã đã hết hạn. Vui lòng bấm gửi lại mã.'
+    });
   }
 
+  if (Date.now() > record.expiresAt) {
+    otpStorage.delete(cleanPhone);
+    return res.status(400).json({
+      success: false,
+      message: 'Mã OTP đã hết hiệu lực (quá 60 giây). Vui lòng yêu cầu mã mới.'
+    });
+  }
+
+  if (record.attempts >= 5) {
+    otpStorage.delete(cleanPhone);
+    return res.status(400).json({
+      success: false,
+      message: 'Bạn đã nhập sai quá 5 lần. Vui lòng yêu cầu mã OTP mới.'
+    });
+  }
+
+  const inputOtp = otp.toString().trim();
+  if (inputOtp !== record.code) {
+    record.attempts += 1;
+    return res.status(400).json({
+      success: false,
+      message: `Mã OTP không chính xác. Bạn còn ${5 - record.attempts} lần thử.`
+    });
+  }
+
+  // OTP Verified successfully! Clean up record
+  otpStorage.delete(cleanPhone);
+
   const user = {
-    id: `usr_${phone.slice(-4)}`,
-    fullName: phone === '0901234567' ? 'Nguyễn Văn An' : 'Người Dùng ITS',
-    phone,
+    id: `usr_${cleanPhone.slice(-4)}`,
+    fullName: 'Minh Tài',
+    phone: cleanPhone.startsWith('+84') ? cleanPhone : `+84${cleanPhone.replace(/^0+/, '')}`,
     avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
     isEkycVerified: true,
     drivingLicense: 'GPLX Hạng B2 - 790123456789',
@@ -50,7 +108,7 @@ exports.verifyOtp = (req, res) => {
 
   return res.json({
     success: true,
-    message: 'Đăng nhập thành công',
+    message: 'Đăng nhập thành công! Chào mừng bạn đến với Green SM / EcoGo.',
     token,
     user
   });
