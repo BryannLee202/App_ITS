@@ -462,3 +462,88 @@ exports.completeTrip = (req, res) => {
     eco
   });
 };
+
+exports.cancelRental = (req, res) => {
+  const { tripId, reason } = req.body;
+  const userId = req.user ? req.user.id : 'usr_demo_01';
+
+  // Find active trip by id or active trip of user
+  let trip = null;
+  if (tripId) {
+    trip = rentals.find(r => r.id === tripId && r.status === 'ACTIVE');
+  }
+  if (!trip) {
+    trip = rentals.find(r => r.userId === userId && r.status === 'ACTIVE');
+  }
+
+  if (!trip) {
+    return res.status(404).json({
+      success: false,
+      message: 'Không tìm thấy chuyến đi đang hoạt động để hủy.'
+    });
+  }
+
+  const vehicle = telematicsService.getVehicleById(trip.vehicleId);
+
+  // Calculate elapsed time since booking/start
+  const bookedAt = new Date(trip.paidAt || trip.startTime || Date.now()).getTime();
+  const elapsedMinutes = Math.max(0, Math.floor((Date.now() - bookedAt) / (1000 * 60)));
+
+  // Cancellation Policy Calculation
+  let penaltyRate = 0;
+  let penaltyReason = 'Miễn phí hủy trong 10 phút đầu sau khi đặt (Bảo hiểm hủy chuyến)';
+
+  if (elapsedMinutes <= 10 || (trip.distanceTraveledKm || 0) < 0.2) {
+    penaltyRate = 0;
+    penaltyReason = 'Miễn phí hủy trong 10 phút đầu (Hoàn tiền 100%)';
+  } else if (elapsedMinutes <= 60) {
+    penaltyRate = 0.30;
+    penaltyReason = 'Hủy sau 10 phút (Thu 30% phí chuẩn bị xe)';
+  } else {
+    penaltyRate = 0.50;
+    penaltyReason = 'Hủy sát giờ khởi hành (Thu 50% phí giữ xe)';
+  }
+
+  const baseRentalFee = trip.rentalSubtotal || trip.baseRentalFee || 529000;
+  const cancellationFee = Math.round(baseRentalFee * penaltyRate);
+  const rentalRefund = Math.max(0, baseRentalFee - cancellationFee);
+  const depositRefund = Number(trip.depositAmount) || 0;
+  const totalRefund = rentalRefund + depositRefund;
+
+  const refundCode = `REFUND-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+
+  // Stop vehicle simulation & free vehicle back to AVAILABLE
+  telematicsService.stopTripSimulation(trip.id);
+  if (vehicle) {
+    vehicle.status = 'AVAILABLE';
+    vehicle.telematics.speedKmh = 0;
+    vehicle.telematics.isEngineOn = false;
+    vehicle.telematics.isLocked = true;
+  }
+
+  // Update trip record
+  trip.status = 'CANCELLED';
+  trip.endTime = new Date().toISOString();
+  trip.cancelledAt = new Date().toISOString();
+  trip.cancellationReason = reason || 'Kế hoạch cá nhân thay đổi';
+  trip.refundDetails = {
+    refundCode,
+    cancellationFee,
+    penaltyRate: `${penaltyRate * 100}%`,
+    penaltyReason,
+    rentalRefund,
+    depositRefund,
+    totalRefund,
+    refundMethod: 'Napas 24/7 / VietQR về tài khoản nguồn',
+    estimatedTime: '5 - 15 phút',
+    voucherRestored: trip.voucherCode || 'Đã hoàn trả',
+    ecoCoinsRestored: trip.ecoCoinsUsed || 0
+  };
+
+  return res.json({
+    success: true,
+    message: `Hủy đặt xe và khởi tạo lệnh hoàn tiền ${totalRefund.toLocaleString('vi-VN')}đ thành công!`,
+    trip,
+    refundDetails: trip.refundDetails
+  });
+};

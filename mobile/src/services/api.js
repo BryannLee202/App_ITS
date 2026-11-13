@@ -241,6 +241,13 @@ class ApiService {
     });
   }
 
+  async cancelRental(tripId, reason) {
+    return this.request('/rentals/cancel', {
+      method: 'POST',
+      body: JSON.stringify({ tripId, reason })
+    });
+  }
+
   async getTripHistory() {
     return this.request('/rentals/history');
   }

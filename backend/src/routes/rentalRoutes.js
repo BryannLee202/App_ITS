@@ -10,5 +10,6 @@ router.get('/active', authMiddleware, rentalController.getActiveTrip);
 router.get('/history', authMiddleware, rentalController.getTripHistory);
 router.post('/control', authMiddleware, rentalController.controlVehicle);
 router.post('/complete', authMiddleware, rentalController.completeTrip);
+router.post('/cancel', authMiddleware, rentalController.cancelRental);
 
 module.exports = router;

@@ -12,6 +12,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { io } from 'socket.io-client';
 import { FONTS, THEME_PRESETS } from '../styles/theme';
 import CO2Widget from '../components/CO2Widget';
+import CancelTripModal from '../components/CancelTripModal';
 import ApiService from '../services/api';
 
 const SOCKET_URL = 'http://localhost:5000';
@@ -25,6 +26,7 @@ export default function DigitalKeyScreen({ theme = THEME_PRESETS.MINT, onNavigat
   const [commandLoading, setCommandLoading] = useState(false);
   const [statusToast, setStatusToast] = useState('Đã kết nối Bluetooth Low Energy 5.2');
   const [activeQuickCommand, setActiveQuickCommand] = useState(null);
+  const [showCancelModal, setShowCancelModal] = useState(false);
 
   useEffect(() => {
     loadActiveTrip();
@@ -415,18 +417,42 @@ export default function DigitalKeyScreen({ theme = THEME_PRESETS.MINT, onNavigat
       {/* 5. CO2 Green Footprint Impact Widget */}
       <CO2Widget eco={eco} accentColor="#6F4E37" softBg="#F5EFEB" />
 
-      {/* 6. End Rental & Return Vehicle CTA */}
-      <TouchableOpacity
-        style={styles.returnBtn}
-        activeOpacity={0.88}
-        onPress={handleCompleteTrip}
-      >
-        <Ionicons name="checkmark-done-circle" size={18} color="#D4AF37" />
-        <Text style={styles.returnBtnText}>Kết thúc chuyến & Trả xe tại trạm UTH</Text>
-      </TouchableOpacity>
+      {/* 6. End Rental & Return Vehicle CTA or Cancel Booking */}
+      <View style={styles.actionButtonGroup}>
+        <TouchableOpacity
+          style={styles.returnBtn}
+          activeOpacity={0.88}
+          onPress={handleCompleteTrip}
+        >
+          <Ionicons name="checkmark-done-circle" size={18} color="#D4AF37" />
+          <Text style={styles.returnBtnText}>Kết thúc chuyến & Trả xe tại trạm UTH</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.cancelBookingBtn}
+          activeOpacity={0.85}
+          onPress={() => setShowCancelModal(true)}
+        >
+          <Ionicons name="close-circle-outline" size={17} color="#6F4E37" />
+          <Text style={styles.cancelBookingBtnText}>Hủy Đặt Xe & Yêu Cầu Hoàn Tiền (100% Cọc)</Text>
+        </TouchableOpacity>
+      </View>
 
       {/* Safety Spacing for Bottom Tab Bar */}
       <View style={{ height: 130 }} />
+
+      {/* Modal Cancel Trip & Auto Refund */}
+      <CancelTripModal
+        visible={showCancelModal}
+        trip={activeTrip}
+        vehicle={vehicle}
+        onClose={() => setShowCancelModal(false)}
+        onCancelSuccess={() => {
+          setShowCancelModal(false);
+          loadActiveTrip();
+          if (onNavigateHome) onNavigateHome();
+        }}
+      />
     </ScrollView>
   );
 }
@@ -916,7 +942,10 @@ const styles = StyleSheet.create({
     color: '#8C7A6B'
   },
 
-  /* Return Vehicle CTA */
+  /* Action Button Group (Return & Cancel) */
+  actionButtonGroup: {
+    marginTop: 10
+  },
   returnBtn: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -924,7 +953,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#4E3322',
     paddingVertical: 14,
     borderRadius: 16,
-    marginTop: 10,
     shadowColor: '#2B180D',
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.2,
@@ -936,5 +964,22 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '800',
     marginLeft: 8
+  },
+  cancelBookingBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#F5EFEB',
+    borderRadius: 16,
+    paddingVertical: 12,
+    marginTop: 8,
+    borderWidth: 1,
+    borderColor: '#EBE3D7'
+  },
+  cancelBookingBtnText: {
+    fontSize: 12,
+    fontWeight: '800',
+    color: '#6F4E37',
+    marginLeft: 6
   }
 });
