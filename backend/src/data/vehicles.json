@@ -34,7 +34,12 @@
       "isLocked": true,
       "isEngineOn": false,
       "odometerKm": 12450,
-      "tirePressurePsi": { "fl": 34, "fr": 34, "rl": 33, "rr": 34 },
+      "tirePressurePsi": {
+        "fl": 34,
+        "fr": 34,
+        "rl": 33,
+        "rr": 34
+      },
       "lastPing": "2026-10-26T15:00:00Z"
     },
     "features": [
@@ -79,7 +84,12 @@
       "isLocked": true,
       "isEngineOn": false,
       "odometerKm": 9820,
-      "tirePressurePsi": { "fl": 33, "fr": 33, "rl": 33, "rr": 33 },
+      "tirePressurePsi": {
+        "fl": 33,
+        "fr": 33,
+        "rl": 33,
+        "rr": 33
+      },
       "lastPing": "2026-10-26T15:01:00Z"
     },
     "features": [
@@ -123,7 +133,12 @@
       "isLocked": true,
       "isEngineOn": false,
       "odometerKm": 16400,
-      "tirePressurePsi": { "fl": 33, "fr": 33, "rl": 33, "rr": 33 },
+      "tirePressurePsi": {
+        "fl": 33,
+        "fr": 33,
+        "rl": 33,
+        "rr": 33
+      },
       "lastPing": "2026-10-26T15:02:00Z"
     },
     "features": [
@@ -167,7 +182,12 @@
       "isLocked": true,
       "isEngineOn": false,
       "odometerKm": 8200,
-      "tirePressurePsi": { "fl": 34, "fr": 34, "rl": 34, "rr": 34 },
+      "tirePressurePsi": {
+        "fl": 34,
+        "fr": 34,
+        "rl": 34,
+        "rr": 34
+      },
       "lastPing": "2026-10-26T15:00:30Z"
     },
     "features": [
@@ -202,8 +222,8 @@
     "status": "AVAILABLE",
     "stationId": "hub-uth-01",
     "telematics": {
-      "latitude": 10.8020,
-      "longitude": 106.7140,
+      "latitude": 10.802,
+      "longitude": 106.714,
       "speedKmh": 0,
       "heading": 0,
       "batteryLevelPct": 90,
@@ -211,7 +231,12 @@
       "isLocked": true,
       "isEngineOn": false,
       "odometerKm": 4350,
-      "tirePressurePsi": { "fl": 29, "fr": 0, "rl": 32, "rr": 0 },
+      "tirePressurePsi": {
+        "fl": 29,
+        "fr": 0,
+        "rl": 32,
+        "rr": 0
+      },
       "lastPing": "2026-10-26T15:03:00Z"
     },
     "features": [
@@ -247,7 +272,7 @@
     "stationId": "hub-metro-01",
     "telematics": {
       "latitude": 10.7715,
-      "longitude": 106.6980,
+      "longitude": 106.698,
       "speedKmh": 0,
       "heading": 120,
       "batteryLevelPct": 88,
@@ -255,7 +280,12 @@
       "isLocked": true,
       "isEngineOn": false,
       "odometerKm": 5120,
-      "tirePressurePsi": { "fl": 29, "fr": 0, "rl": 32, "rr": 0 },
+      "tirePressurePsi": {
+        "fl": 29,
+        "fr": 0,
+        "rl": 32,
+        "rr": 0
+      },
       "lastPing": "2026-10-26T15:02:40Z"
     },
     "features": [
@@ -299,7 +329,12 @@
       "isLocked": true,
       "isEngineOn": false,
       "odometerKm": 32500,
-      "tirePressurePsi": { "fl": 33, "fr": 33, "rl": 33, "rr": 33 },
+      "tirePressurePsi": {
+        "fl": 33,
+        "fr": 33,
+        "rl": 33,
+        "rr": 33
+      },
       "lastPing": "2026-10-26T15:00:10Z"
     },
     "features": [
@@ -307,6 +342,398 @@
       "Ghế da thương gia chỉnh điện ngả lưng",
       "Tự động nhận diện biển báo giao thông ITS",
       "Khóa số thông minh EcoGo Digital Key"
+    ]
+  },
+  {
+    "id": "veh-vf8-008",
+    "name": "VinFast VF 8 Plus Luxury",
+    "brand": "VinFast",
+    "model": "VF 8 Plus",
+    "year": 2024,
+    "plateNumber": "51K-912.84",
+    "category": "CAR",
+    "powerType": "ELECTRIC",
+    "seats": 5,
+    "transmission": "AUTOMATIC",
+    "hourlyPrice": 115000,
+    "dailyPrice": 1100000,
+    "depositAmount": 0,
+    "noDeposit": true,
+    "rangeKm": 420,
+    "thumbnail": "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=800&q=80"
+    ],
+    "rating": 4.95,
+    "totalTrips": 189,
+    "status": "AVAILABLE",
+    "stationId": "hub-uth-03",
+    "telematics": {
+      "latitude": 10.852,
+      "longitude": 106.619,
+      "speedKmh": 0,
+      "heading": 90,
+      "batteryLevelPct": 92,
+      "fuelLevelPct": null,
+      "isLocked": true,
+      "isEngineOn": false,
+      "odometerKm": 8400,
+      "tirePressurePsi": {
+        "fl": 34,
+        "fr": 34,
+        "rl": 34,
+        "rr": 34
+      },
+      "lastPing": "2026-11-13T15:26:48.733Z"
+    },
+    "features": [
+      "Trợ lý ảo thông minh tiếng Việt Vivi",
+      "Công nghệ tự lái ADAS cấp độ 2",
+      "Khóa điện tử Digital Key 24/7",
+      "Đỗ tại Campus UTH Cơ sở 3 Tô Ký"
+    ]
+  },
+  {
+    "id": "veh-feliz-009",
+    "name": "VinFast Feliz S Smart Scooter",
+    "brand": "VinFast",
+    "model": "Feliz S",
+    "year": 2024,
+    "plateNumber": "59-MD 334.12",
+    "category": "MOTORBIKE",
+    "powerType": "ELECTRIC",
+    "seats": 2,
+    "transmission": "AUTOMATIC",
+    "hourlyPrice": 20000,
+    "dailyPrice": 120000,
+    "depositAmount": 0,
+    "noDeposit": true,
+    "rangeKm": 198,
+    "thumbnail": "https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=800&q=80"
+    ],
+    "rating": 4.9,
+    "totalTrips": 312,
+    "status": "AVAILABLE",
+    "stationId": "hub-uth-03",
+    "telematics": {
+      "latitude": 10.8522,
+      "longitude": 106.6192,
+      "speedKmh": 0,
+      "heading": 0,
+      "batteryLevelPct": 95,
+      "fuelLevelPct": null,
+      "isLocked": true,
+      "isEngineOn": false,
+      "odometerKm": 3200,
+      "tirePressurePsi": {
+        "fl": 29,
+        "fr": 0,
+        "rl": 32,
+        "rr": 0
+      },
+      "lastPing": "2026-11-13T15:26:48.734Z"
+    },
+    "features": [
+      "Pin LFP an toàn cháy nổ tuyệt đối",
+      "Chống nước chuẩn IP67 lội nước 0.5m",
+      "Cốp rộng 25L đựng tài liệu laptop",
+      "Ưu đãi sinh viên UTH giảm 50k"
+    ]
+  },
+  {
+    "id": "veh-vf6-010",
+    "name": "VinFast VF 6 Plus Urban SUV",
+    "brand": "VinFast",
+    "model": "VF 6 Plus",
+    "year": 2024,
+    "plateNumber": "51K-673.28",
+    "category": "CAR",
+    "powerType": "ELECTRIC",
+    "seats": 5,
+    "transmission": "AUTOMATIC",
+    "hourlyPrice": 95000,
+    "dailyPrice": 900000,
+    "depositAmount": 0,
+    "noDeposit": true,
+    "rangeKm": 399,
+    "thumbnail": "https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=800&q=80"
+    ],
+    "rating": 4.94,
+    "totalTrips": 156,
+    "status": "AVAILABLE",
+    "stationId": "hub-chuvanan-01",
+    "telematics": {
+      "latitude": 10.8116,
+      "longitude": 106.7094,
+      "speedKmh": 0,
+      "heading": 270,
+      "batteryLevelPct": 88,
+      "fuelLevelPct": null,
+      "isLocked": true,
+      "isEngineOn": false,
+      "odometerKm": 7600,
+      "tirePressurePsi": {
+        "fl": 33,
+        "fr": 33,
+        "rl": 33,
+        "rr": 33
+      },
+      "lastPing": "2026-11-13T15:26:48.734Z"
+    },
+    "features": [
+      "Thiết kế Torino Design thời thượng",
+      "Định vị GPS chống trộm 24/7",
+      "Sạc siêu nhanh tại trạm Chu Văn An",
+      "Giao xe tận nơi miễn phí 5km"
+    ]
+  },
+  {
+    "id": "veh-klara-011",
+    "name": "VinFast Klara S Đổi Pin",
+    "brand": "VinFast",
+    "model": "Klara S",
+    "year": 2024,
+    "plateNumber": "59-MD 552.19",
+    "category": "MOTORBIKE",
+    "powerType": "ELECTRIC",
+    "seats": 2,
+    "transmission": "AUTOMATIC",
+    "hourlyPrice": 19000,
+    "dailyPrice": 110000,
+    "depositAmount": 0,
+    "noDeposit": true,
+    "rangeKm": 194,
+    "thumbnail": "https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=800&q=80"
+    ],
+    "rating": 4.92,
+    "totalTrips": 420,
+    "status": "AVAILABLE",
+    "stationId": "hub-dhdhqg-01",
+    "telematics": {
+      "latitude": 10.878,
+      "longitude": 106.806,
+      "speedKmh": 0,
+      "heading": 180,
+      "batteryLevelPct": 96,
+      "fuelLevelPct": null,
+      "isLocked": true,
+      "isEngineOn": false,
+      "odometerKm": 6100,
+      "tirePressurePsi": {
+        "fl": 29,
+        "fr": 0,
+        "rl": 32,
+        "rr": 0
+      },
+      "lastPing": "2026-11-13T15:26:48.734Z"
+    },
+    "features": [
+      "Tủ đổi pin tự động tại KTX Khu B",
+      "Đổi pin nhanh trong 20 giây",
+      "Đồng hồ LCD hiển thị thông minh",
+      "Không cần đặt cọc tiền mặt"
+    ]
+  },
+  {
+    "id": "veh-vfe34-012",
+    "name": "VinFast VF e34 Smart C-SUV",
+    "brand": "VinFast",
+    "model": "VF e34",
+    "year": 2024,
+    "plateNumber": "51K-419.05",
+    "category": "CAR",
+    "powerType": "ELECTRIC",
+    "seats": 5,
+    "transmission": "AUTOMATIC",
+    "hourlyPrice": 90000,
+    "dailyPrice": 850000,
+    "depositAmount": 0,
+    "noDeposit": true,
+    "rangeKm": 318,
+    "thumbnail": "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=800&q=80"
+    ],
+    "rating": 4.91,
+    "totalTrips": 205,
+    "status": "AVAILABLE",
+    "stationId": "hub-dhdhqg-01",
+    "telematics": {
+      "latitude": 10.8782,
+      "longitude": 106.8062,
+      "speedKmh": 0,
+      "heading": 90,
+      "batteryLevelPct": 90,
+      "fuelLevelPct": null,
+      "isLocked": true,
+      "isEngineOn": false,
+      "odometerKm": 14200,
+      "tirePressurePsi": {
+        "fl": 33,
+        "fr": 33,
+        "rl": 33,
+        "rr": 33
+      },
+      "lastPing": "2026-11-13T15:26:48.734Z"
+    },
+    "features": [
+      "Khoang cabin rộng rãi tiện nghi",
+      "Cảnh báo chệch làn đường thông minh",
+      "Trạm sạc nhanh ngay KTX ĐHQG",
+      "Hỗ trợ hợp đồng sinh viên 24/7"
+    ]
+  },
+  {
+    "id": "veh-vf9-013",
+    "name": "VinFast VF 9 Plus Flagship 7 Chỗ",
+    "brand": "VinFast",
+    "model": "VF 9 Plus",
+    "year": 2024,
+    "plateNumber": "51K-999.88",
+    "category": "CAR",
+    "powerType": "ELECTRIC",
+    "seats": 7,
+    "transmission": "AUTOMATIC",
+    "hourlyPrice": 195000,
+    "dailyPrice": 1900000,
+    "depositAmount": 0,
+    "noDeposit": true,
+    "rangeKm": 602,
+    "thumbnail": "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=800&q=80"
+    ],
+    "rating": 4.99,
+    "totalTrips": 88,
+    "status": "AVAILABLE",
+    "stationId": "hub-thuthiem-01",
+    "telematics": {
+      "latitude": 10.7725,
+      "longitude": 106.723,
+      "speedKmh": 0,
+      "heading": 45,
+      "batteryLevelPct": 98,
+      "fuelLevelPct": null,
+      "isLocked": true,
+      "isEngineOn": false,
+      "odometerKm": 5200,
+      "tirePressurePsi": {
+        "fl": 35,
+        "fr": 35,
+        "rl": 35,
+        "rr": 35
+      },
+      "lastPing": "2026-11-13T15:26:48.734Z"
+    },
+    "features": [
+      "Ghế cơ trưởng Captain Seat massage sưởi",
+      "Màn hình giải trí 15.6 inch sắc nét",
+      "Hệ thống treo khí nén êm ái tối đa",
+      "Trạm đỗ Sala Thủ Thiêm sang trọng"
+    ]
+  },
+  {
+    "id": "veh-vf5-014",
+    "name": "VinFast VF 5 Plus Urban City",
+    "brand": "VinFast",
+    "model": "VF 5 Plus",
+    "year": 2024,
+    "plateNumber": "51K-338.92",
+    "category": "CAR",
+    "powerType": "ELECTRIC",
+    "seats": 5,
+    "transmission": "AUTOMATIC",
+    "hourlyPrice": 75000,
+    "dailyPrice": 700000,
+    "depositAmount": 0,
+    "noDeposit": true,
+    "rangeKm": 326,
+    "thumbnail": "https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=800&q=80"
+    ],
+    "rating": 4.93,
+    "totalTrips": 260,
+    "status": "AVAILABLE",
+    "stationId": "hub-nguyenhue-01",
+    "telematics": {
+      "latitude": 10.7748,
+      "longitude": 106.7032,
+      "speedKmh": 0,
+      "heading": 135,
+      "batteryLevelPct": 91,
+      "fuelLevelPct": null,
+      "isLocked": true,
+      "isEngineOn": false,
+      "odometerKm": 11200,
+      "tirePressurePsi": {
+        "fl": 32,
+        "fr": 32,
+        "rl": 32,
+        "rr": 32
+      },
+      "lastPing": "2026-11-13T15:26:48.734Z"
+    },
+    "features": [
+      "Kích thước nhỏ gọn luồn lách phố đi bộ Q.1",
+      "Đèn LED ban ngày thời trang nổi bật",
+      "Camera lùi và cảm biến sau an toàn",
+      "Giá siêu tiết kiệm chỉ 75.000đ/giờ"
+    ]
+  },
+  {
+    "id": "veh-kona-015",
+    "name": "Hyundai Kona Electric Luxury",
+    "brand": "Hyundai",
+    "model": "Kona EV",
+    "year": 2024,
+    "plateNumber": "51K-721.46",
+    "category": "CAR",
+    "powerType": "ELECTRIC",
+    "seats": 5,
+    "transmission": "AUTOMATIC",
+    "hourlyPrice": 105000,
+    "dailyPrice": 990000,
+    "depositAmount": 0,
+    "noDeposit": true,
+    "rangeKm": 415,
+    "thumbnail": "https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=800&q=80"
+    ],
+    "rating": 4.94,
+    "totalTrips": 172,
+    "status": "AVAILABLE",
+    "stationId": "charger-thaodien-01",
+    "telematics": {
+      "latitude": 10.8035,
+      "longitude": 106.7328,
+      "speedKmh": 0,
+      "heading": 0,
+      "batteryLevelPct": 93,
+      "fuelLevelPct": null,
+      "isLocked": true,
+      "isEngineOn": false,
+      "odometerKm": 8900,
+      "tirePressurePsi": {
+        "fl": 33,
+        "fr": 33,
+        "rl": 33,
+        "rr": 33
+      },
+      "lastPing": "2026-11-13T15:26:48.734Z"
+    },
+    "features": [
+      "Gói an toàn cao cấp Hyundai SmartSense",
+      "Ghế sưởi và làm mát thông gió",
+      "Trạm sạc nhanh Thảo Điền Pearl",
+      "Digital Key mở khóa không chạm"
     ]
   }
 ]

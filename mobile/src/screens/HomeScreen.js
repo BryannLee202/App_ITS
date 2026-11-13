@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -315,7 +315,9 @@ export default function HomeScreen({
   const [spinDegree, setSpinDegree] = useState(0);
   const [spinResult, setSpinResult] = useState(null);
 
-  // Modals & Filters
+  // Modals, Filters & Scrolling
+  const mainScrollRef = useRef(null);
+  const [filterByStation, setFilterByStation] = useState(false);
   const [showDestinationModal, setShowDestinationModal] = useState(false);
   const [vehicleSearchQuery, setVehicleSearchQuery] = useState('');
   const [stationSearchQuery, setStationSearchQuery] = useState('');
@@ -482,6 +484,11 @@ export default function HomeScreen({
   };
 
   const filteredVehicles = vehicles.filter((v) => {
+    if (filterByStation && selectedPlace) {
+      const matchStation = v.stationId === selectedPlace.id;
+      const anyMatchInStation = vehicles.some((item) => item.stationId === selectedPlace.id);
+      if (anyMatchInStation && !matchStation) return false;
+    }
     if (!vehicleSearchQuery.trim()) return true;
     const q = vehicleSearchQuery.toLowerCase();
     return (
@@ -509,6 +516,7 @@ export default function HomeScreen({
   return (
     <View style={styles.container}>
       <ScrollView
+        ref={mainScrollRef}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
         refreshControl={
@@ -938,6 +946,26 @@ export default function HomeScreen({
             </TouchableOpacity>
           </View>
 
+          {/* Active Station Filter Banner */}
+          {filterByStation && selectedPlace && (
+            <View style={styles.stationFilterBanner}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flex: 1 }}>
+                <Ionicons name="location" size={15} color="#6F4E37" />
+                <Text style={styles.stationFilterBannerText} numberOfLines={1}>
+                  Xe tại: <Text style={{ fontWeight: '800', color: '#2B180D' }}>{selectedPlace.shortName}</Text> ({filteredVehicles.length} xe)
+                </Text>
+              </View>
+              <TouchableOpacity
+                style={styles.clearStationFilterBtn}
+                activeOpacity={0.8}
+                onPress={() => setFilterByStation(false)}
+              >
+                <Text style={styles.clearStationFilterText}>Xem tất cả trạm</Text>
+                <Ionicons name="close-circle" size={14} color="#8C6239" />
+              </TouchableOpacity>
+            </View>
+          )}
+
           {/* Clean Category Filter Pills */}
           <View style={styles.catFilterRow}>
             {CATEGORIES.map((cat) => {
@@ -1064,11 +1092,15 @@ export default function HomeScreen({
                     activeOpacity={0.88}
                     onPress={() => {
                       setSelectedPlace(place);
+                      setFilterByStation(true);
                       setShowDestinationModal(false);
                       setBookingToast({
                         title: `📍 Đã chọn: ${place.shortName}`,
                         message: `${place.availableCars} ô tô & ${place.availableBikes} xe máy sẵn sàng phục vụ bạn.`
                       });
+                      setTimeout(() => {
+                        mainScrollRef.current?.scrollTo({ y: 350, animated: true });
+                      }, 250);
                       setTimeout(() => setBookingToast(null), 3000);
                     }}
                   >
@@ -1125,11 +1157,15 @@ export default function HomeScreen({
                       activeOpacity={0.8}
                       onPress={() => {
                         setSelectedPlace(place);
+                        setFilterByStation(true);
                         setShowDestinationModal(false);
                         setBookingToast({
                           title: `📍 Trạm: ${place.shortName}`,
-                          message: `Đang hiển thị ${place.availableVehicles || 8} xe sẵn sàng đón bạn tại trạm này.`
+                          message: `Đang hiển thị xe sẵn sàng đón bạn tại trạm này.`
                         });
+                        setTimeout(() => {
+                          mainScrollRef.current?.scrollTo({ y: 350, animated: true });
+                        }, 250);
                         setTimeout(() => setBookingToast(null), 3000);
                       }}
                     >
@@ -1144,6 +1180,7 @@ export default function HomeScreen({
                       activeOpacity={0.85}
                       onPress={() => {
                         setSelectedPlace(place);
+                        setFilterByStation(true);
                         setShowDestinationModal(false);
                         const bestVeh = vehicles.find((v) => v.stationId === place.id) || vehicles[0];
                         if (bestVeh) {
@@ -1617,6 +1654,41 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     gap: 8,
     marginBottom: 12
+  },
+  stationFilterBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#F5EFEB',
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 9,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#E8E0D5',
+    gap: 8
+  },
+  stationFilterBannerText: {
+    fontFamily: FONTS.family,
+    fontSize: 12,
+    color: '#6F4E37'
+  },
+  clearStationFilterBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 9,
+    paddingVertical: 5,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#E8E0D5'
+  },
+  clearStationFilterText: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#8C6239'
   },
   catPill: {
     paddingHorizontal: 14,
