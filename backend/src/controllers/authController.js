@@ -126,7 +126,7 @@ exports.verifyOtp = (req, res) => {
       id: `usr_${cleanPhone.slice(-4)}_${Date.now().toString().slice(-4)}`,
       phone: formattedPhone,
       fullName: `Khách hàng ${cleanPhone.slice(-4)}`,
-      email: `${cleanPhone.slice(-4)}@uth.edu.vn`,
+      email: `user.${cleanPhone.slice(-4)}@ecogo.vn`,
       avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
       isEkycVerified: true,
       drivingLicense: 'GPLX B2 - 790123456789',
@@ -134,7 +134,7 @@ exports.verifyOtp = (req, res) => {
       drivingLicenseExpiry: '15/08/2032',
       cccdNumber: '079201018891',
       memberRank: 'Eco Elite Ambassador',
-      membershipId: `ESG-ITS-2026-${cleanPhone.slice(-4)}`,
+      membershipId: `ESG-ECOGO-2026-${cleanPhone.slice(-4)}`,
       walletBalance: 1500000,
       ecoPoints: 340,
       ecoCoins: 180,
@@ -235,7 +235,7 @@ exports.updateEkyc = (req, res) => {
 
   return res.json({
     success: true,
-    message: 'Hồ sơ GPLX và CCCD gắn chip đã được xác thực tự động và lưu trữ an toàn trong CSDL UTH',
+    message: 'Hồ sơ GPLX và CCCD gắn chip đã được xác thực tự động và lưu trữ an toàn trong CSDL EcoGo Mobility',
     ekycData: {
       status: 'VERIFIED',
       fullName: fullName || (users[userIndex] ? users[userIndex].fullName : req.user.fullName),

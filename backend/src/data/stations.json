@@ -40,15 +40,15 @@
     "nearbyTransit": ["Đinh Bộ Lĩnh - Chu Văn An", "Cầu Bình Triệu (900m)"]
   },
   {
-    "id": "hub-uth-01",
-    "name": "EcoGo Hub & Trạm Sạc - ĐH GTVT (UTH Bình Thạnh)",
-    "address": "Số 2 Võ Oanh, Phường 25, Quận Bình Thạnh, TP.HCM",
+    "id": "hub-landmark-01",
+    "name": "EcoGo Hub Landmark - Điện Biên Phủ, Bình Thạnh",
+    "address": "Số 208 Nguyễn Hữu Cảnh / Điện Biên Phủ, Quận Bình Thạnh, TP.HCM",
     "coordinates": {
       "latitude": 10.8018,
       "longitude": 106.7142
     },
     "category": "BOTH",
-    "type": "CAMPUS_HUB",
+    "type": "CENTRAL_HUB",
     "capacity": 20,
     "availableVehicles": 8,
     "hasFastCharger": true,
@@ -60,15 +60,15 @@
     "nearbyTransit": ["Bus 08", "Bus 14", "Ga Metro Văn Thánh (800m)"]
   },
   {
-    "id": "hub-uth-03",
-    "name": "EcoGo Campus Hub - ĐH GTVT (UTH Cơ sở 3 Tô Ký)",
-    "address": "Hẻm 70 Tô Ký, Phường Tân Chánh Hiệp, Quận 12, TP.HCM",
+    "id": "hub-tech-03",
+    "name": "EcoGo Hub Tech - Khu Công Nghệ Cao, TP. Thủ Đức",
+    "address": "Đường D1, Khu Công Nghệ Cao, Tăng Nhơn Phú B, TP. Thủ Đức, TP.HCM",
     "coordinates": {
       "latitude": 10.8605,
       "longitude": 106.6183
     },
     "category": "BOTH",
-    "type": "CAMPUS_HUB",
+    "type": "TECH_HUB",
     "capacity": 16,
     "availableVehicles": 6,
     "hasFastCharger": true,

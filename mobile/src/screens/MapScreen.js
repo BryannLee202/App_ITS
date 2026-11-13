@@ -64,9 +64,9 @@ const INITIAL_SAIGON_STATIONS = [
     distanceKm: 0.42
   },
   {
-    id: 'hub-uth-01',
-    name: 'EcoGo Hub & Trạm Sạc - ĐH GTVT (UTH Bình Thạnh)',
-    address: 'Số 2 Võ Oanh, Phường 25, Quận Bình Thạnh, TP.HCM',
+    id: 'hub-landmark-01',
+    name: 'EcoGo Hub Landmark - Điện Biên Phủ, Bình Thạnh',
+    address: 'Số 208 Nguyễn Hữu Cảnh / Điện Biên Phủ, Quận Bình Thạnh, TP.HCM',
     coordinates: { latitude: 10.8018, longitude: 106.7142 },
     category: 'BOTH',
     type: 'CAMPUS_HUB',
@@ -153,8 +153,8 @@ const SAIGON_QUICK_AREAS = [
     lng: 106.7088
   },
   {
-    id: 'area-uth',
-    name: 'ĐH GTVT (UTH) - Số 2 Võ Oanh, Q. Bình Thạnh',
+    id: 'area-landmark',
+    name: 'EcoGo Central Hub - Điện Biên Phủ, Q. Bình Thạnh',
     lat: 10.8018,
     lng: 106.7142
   },

@@ -15,8 +15,8 @@ import ApiService from '../services/api';
 
 const DEFAULT_SEED_TRIPS = [
   {
-    id: 'trip-uth-001',
-    contractNumber: 'HĐ-UTH-2026-0891',
+    id: 'trip-ecogo-001',
+    contractNumber: 'HĐ-ECOGO-2026-0891',
     status: 'COMPLETED',
     vehicle: {
       name: 'Hyundai Ioniq 5 Prestige',
@@ -29,11 +29,11 @@ const DEFAULT_SEED_TRIPS = [
     estimatedTotal: 240000,
     startTime: '10:00 24/10/2026',
     endTime: '14:00 24/10/2026',
-    route: 'Trạm ĐH GTVT Cơ sở 1 Bình Thạnh → Trạm Cơ sở 3 Quận 9'
+    route: 'EcoGo Hub Landmark Bình Thạnh → EcoGo Hub Tech Thủ Đức'
   },
   {
-    id: 'trip-uth-002',
-    contractNumber: 'HĐ-UTH-2026-0542',
+    id: 'trip-ecogo-002',
+    contractNumber: 'HĐ-ECOGO-2026-0542',
     status: 'COMPLETED',
     vehicle: {
       name: 'VinFast VF 8 Plus',
@@ -46,7 +46,7 @@ const DEFAULT_SEED_TRIPS = [
     estimatedTotal: 350000,
     startTime: '08:30 20/10/2026',
     endTime: '13:30 20/10/2026',
-    route: 'Trạm Cơ sở 1 Bình Thạnh → KĐT Sala Thủ Thiêm'
+    route: 'EcoGo Hub Landmark Bình Thạnh → KĐT Sala Thủ Thiêm'
   }
 ];
 
@@ -73,7 +73,7 @@ export default function TripsHistoryScreen({
       if (res && res.trips && res.trips.length > 0) {
         setTrips(res.trips);
       } else {
-        // Đồng bộ dữ liệu lịch sử mặc định của tài khoản UTH
+        // Đồng bộ dữ liệu lịch sử mặc định của tài khoản EcoGo
         setTrips(DEFAULT_SEED_TRIPS);
       }
     } catch (err) {
@@ -116,11 +116,11 @@ export default function TripsHistoryScreen({
             <View style={[styles.ecoBadgeMint, { backgroundColor: theme.primarySoft }]}>
               <Ionicons name="car-sport" size={13} color={theme.primary} />
               <Text style={[styles.ecoBadgeMintText, { color: theme.primary }]}>
-                Tổng kết hành trình UTH
+                Tổng kết hành trình EcoGo
               </Text>
             </View>
 
-            <Text style={styles.ecoVerifyCode}>EcoGo UTH · 2026</Text>
+            <Text style={styles.ecoVerifyCode}>EcoGo Prime · 2026</Text>
           </View>
 
           <View style={[styles.ecoRow, { backgroundColor: theme.beigeSoft }]}>
@@ -356,7 +356,7 @@ export default function TripsHistoryScreen({
             <View style={[styles.signatureBox, { backgroundColor: theme.primarySoft }]}>
               <Ionicons name="shield-checkmark" size={16} color={theme.primary} />
               <Text style={[styles.signatureText, { color: theme.primaryDark }]}>
-                Đã xác thực chữ ký điện tử EcoGo Smart · ĐH GTVT TP.HCM (UTH)
+                Đã xác thực chữ ký điện tử EcoGo Smart · Bảo mật EcoGo Mobility Corp
               </Text>
             </View>
 
@@ -427,7 +427,7 @@ export default function TripsHistoryScreen({
               <View style={styles.formulaBox}>
                 <Text style={styles.formulaBoxLabel}>4. Điểm thưởng & Quyền lợi:</Text>
                 <Text style={styles.formulaBoxDesc}>
-                  Mỗi km di chuyển = 2.4 Điểm thưởng (Eco Xu). Điểm dùng để đổi voucher thuê xe, cộng điểm rèn luyện UTH và miễn cọc 15.000.000đ.
+                  Mỗi km di chuyển = 2.4 Điểm thưởng (Eco Xu). Điểm dùng để đổi voucher thuê xe, nâng hạng hội viên EcoGo VIP và miễn cọc 15.000.000đ.
                 </Text>
               </View>
             </ScrollView>

@@ -12,7 +12,7 @@ export const initSocket = (onTelemetryUpdate, onControlAck) => {
     });
 
     socket.on('connect', () => {
-      console.log('[Socket.io] Connected to ITS Fleet Telematics server');
+      console.log('[Socket.io] Connected to EcoGo Fleet Telematics server');
     });
 
     socket.on('trip:telemetry', (data) => {

@@ -34,14 +34,14 @@ const SORT_OPTIONS = [
 const HERO_PROMOS = [
   {
     id: 'promo-1',
-    title: 'Đồng Hành Sinh Viên UTH',
-    subtitle: 'Trợ giá 50.000đ khi xuất phát từ các trạm ĐH GTVT TP.HCM',
-    tag: '🎓 CHUYÊN ĐỀ UTH',
-    voucherCode: 'UTH50K',
-    btnText: 'Nhận trợ giá',
+    title: 'Đặc Quyền Hội Viên Prime',
+    subtitle: 'Trợ giá 50.000đ khi xuất phát từ hệ thống trạm EcoGo Hub toàn thành phố',
+    tag: '⭐ ĐẶC QUYỀN PRIME',
+    voucherCode: 'PRIME50K',
+    btnText: 'Nhận ưu đãi',
     bgColor: '#6F4E37',     // Nâu Cà Phê Warm Coffee
     accentColor: '#F6EFE9', // Be Sữa Foam
-    icon: 'school'
+    icon: 'star'
   },
   {
     id: 'promo-2',
@@ -100,10 +100,10 @@ const HOT_VOUCHERS = [
     expiry: 'Còn 5 ngày'
   },
   {
-    code: 'UTH50K',
-    title: 'Giảm 50K Trạm ĐH GTVT',
-    desc: 'Dành riêng SV & Giảng viên trường UTH',
-    tag: 'ĐỘC QUYỀN UTH',
+    code: 'PRIME50K',
+    title: 'Giảm 50K Thành Viên Prime',
+    desc: 'Đặc quyền cho khách hàng thân thiết EcoGo Mobility',
+    tag: 'ĐẶC QUYỀN PRIME',
     tagBg: '#EFF6FF',
     tagColor: '#2563EB',
     claimedPct: 65,
@@ -152,7 +152,7 @@ const DEFAULT_CHECKIN_DAYS = [
 ];
 
 const LUCKY_WHEEL_SECTORS = [
-  { label: 'Giảm 50K UTH', code: 'UTH50K', type: 'VOUCHER', color: '#6F4E37' },
+  { label: 'Giảm 50K Prime', code: 'PRIME50K', type: 'VOUCHER', color: '#6F4E37' },
   { label: '+50 Xu Eco', coins: 50, type: 'COIN', color: '#D97706' },
   { label: 'Giảm 20%', code: 'ECOGO20', type: 'VOUCHER', color: '#8C6239' },
   { label: '+100 Xu Eco', coins: 100, type: 'COIN', color: '#4E3322' },
@@ -162,23 +162,23 @@ const LUCKY_WHEEL_SECTORS = [
 
 const SAVED_PLACES = [
   {
-    id: 'hub-uth-01',
-    shortName: 'UTH · Cơ sở 1 Võ Oanh',
-    name: 'ĐH Giao Thông Vận Tải (UTH) - Cơ sở 1 Bình Thạnh',
-    address: 'Số 2 Võ Oanh, Phường 25, Quận Bình Thạnh, TP.HCM',
+    id: 'hub-landmark-01',
+    shortName: 'EcoGo · Hub Landmark',
+    name: 'EcoGo Hub Landmark - Điện Biên Phủ, Bình Thạnh',
+    address: 'Số 208 Nguyễn Hữu Cảnh / Điện Biên Phủ, Quận Bình Thạnh, TP.HCM',
     distance: '0,4 km',
     availableVehicles: 8,
     availableCars: 5,
     availableBikes: 3,
     hasCharger: 'Sạc nhanh 150kW + Đổi pin 24/7',
     category: 'CAMPUS',
-    icon: 'school-outline'
+    icon: 'business-outline'
   },
   {
-    id: 'hub-uth-03',
-    shortName: 'UTH · Cơ sở 3 Tô Ký (Q.12)',
-    name: 'ĐH Giao Thông Vận Tải (UTH) - Cơ sở 3 Tân Triều',
-    address: 'Hẻm 70 Tô Ký, Phường Tân Chánh Hiệp, Quận 12, TP.HCM',
+    id: 'hub-tech-03',
+    shortName: 'EcoGo · Hub Khu Công Nghệ',
+    name: 'EcoGo Hub Tech - Khu Công Nghệ Cao, TP. Thủ Đức',
+    address: 'Đường D1, Khu Công Nghệ Cao, Tăng Nhơn Phú B, TP. Thủ Đức, TP.HCM',
     distance: '7,2 km',
     availableVehicles: 6,
     availableCars: 3,
@@ -315,7 +315,7 @@ export default function HomeScreen({
   const [refreshing, setRefreshing] = useState(false);
 
   // Gamification, Vouchers & Event states
-  const [savedVouchers, setSavedVouchers] = useState(['BANMOI30', 'ECOGO20', 'UTH50K']);
+  const [savedVouchers, setSavedVouchers] = useState(['BANMOI30', 'ECOGO20', 'PRIME50K']);
   const [selectedVoucherForBooking, setSelectedVoucherForBooking] = useState('BANMOI30');
   const [activePromoIdx, setActivePromoIdx] = useState(0);
   const [ecoCoins, setEcoCoins] = useState(180);
@@ -787,7 +787,7 @@ export default function HomeScreen({
               </View>
 
               <Text style={styles.stationMainTitleText} numberOfLines={2}>
-                {selectedPlace?.name || 'ĐH Giao Thông Vận Tải (UTH) - Cơ sở 1 Bình Thạnh'}
+                {selectedPlace?.name || 'EcoGo Hub Landmark - Điện Biên Phủ, Bình Thạnh'}
               </Text>
 
               <View style={styles.stationMetaRow}>
@@ -1117,7 +1117,7 @@ export default function HomeScreen({
           <View style={styles.stationCategoryScroll}>
             {[
               { id: 'ALL', label: 'Tất cả (10)' },
-              { id: 'CAMPUS', label: 'Trường ĐH & UTH' },
+              { id: 'CAMPUS', label: 'Trạm Đô Thị & Hub' },
               { id: 'CENTRAL', label: 'Trung tâm & Q.1' },
               { id: 'AIRPORT', label: 'Sân bay & Thủ Đức' }
             ].map((cat) => {
@@ -1504,7 +1504,7 @@ export default function HomeScreen({
       </Modal>
 
       {/* ============================================================
-          MODAL: ITS GLOSA GREEN WAVE AI TELEMATICS (LÀN SÓNG XANH)
+          MODAL: ECOGO SMARTWAVE GREEN WAVE AI TELEMATICS (LÀN SÓNG XANH)
          ============================================================ */}
       <Modal
         visible={showGlosaModal}
@@ -1521,7 +1521,7 @@ export default function HomeScreen({
                   <Ionicons name="speedometer" size={18} color="#6F4E37" />
                 </View>
                 <View>
-                  <Text style={styles.modalCardTitle}>AI Làn Sóng Xanh ITS GLOSA</Text>
+                  <Text style={styles.modalCardTitle}>EcoGo SmartWave (Làn Sóng Xanh AI)</Text>
                   <Text style={styles.modalCardSub}>Cố vấn tốc độ & định vị nút giao thời gian thực</Text>
                 </View>
               </View>

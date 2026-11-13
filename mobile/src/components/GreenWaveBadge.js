@@ -14,7 +14,7 @@ export default function GreenWaveBadge({ glosa }) {
       <View style={styles.headerRow}>
         <View style={styles.titleWithIcon}>
           <Ionicons name="git-network-outline" size={18} color={COLORS.secondary} />
-          <Text style={styles.badgeTitle}>HỆ THỐNG LÀN SÓNG XANH (GLOSA - ITS)</Text>
+          <Text style={styles.badgeTitle}>ECOGO SMARTWAVE (LÀN SÓNG XANH AI)</Text>
         </View>
         <View style={[styles.signalPill, { backgroundColor: signalColor + '20' }]}>
           <View style={[styles.signalDot, { backgroundColor: signalColor }]} />

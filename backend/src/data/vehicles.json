@@ -23,7 +23,7 @@
     "rating": 4.96,
     "totalTrips": 168,
     "status": "AVAILABLE",
-    "stationId": "hub-uth-01",
+    "stationId": "hub-landmark-01",
     "telematics": {
       "latitude": 10.8021,
       "longitude": 106.7145,
@@ -45,7 +45,7 @@
     "features": [
       "Khóa thông minh EcoGo BLE 5.2 (Digital Key)",
       "Tự nhận xe 24/7 không cần thế chấp",
-      "Hệ thống Làn sóng xanh ITS GLOSA",
+      "Hệ thống Làn sóng xanh EcoGo SmartWave",
       "Sạc siêu nhanh 800V (10-80% trong 18 phút)",
       "Cửa sổ trời toàn cảnh Vision Roof"
     ]
@@ -73,7 +73,7 @@
     "rating": 4.92,
     "totalTrips": 245,
     "status": "AVAILABLE",
-    "stationId": "hub-uth-01",
+    "stationId": "hub-landmark-01",
     "telematics": {
       "latitude": 10.8015,
       "longitude": 106.7139,
@@ -220,7 +220,7 @@
     "rating": 4.93,
     "totalTrips": 340,
     "status": "AVAILABLE",
-    "stationId": "hub-uth-01",
+    "stationId": "hub-landmark-01",
     "telematics": {
       "latitude": 10.802,
       "longitude": 106.714,
@@ -243,7 +243,7 @@
       "Động cơ điện YIPU 2 êm ái chính hãng Yamaha",
       "Cốp rộng 27 lít chứa 2 mũ bảo hiểm",
       "Mở khóa 1 chạm bằng Bluetooth EcoGo",
-      "Phù hợp sinh viên UTH di chuyển nội đô"
+      "Phù hợp di chuyển nội đô linh hoạt & tiết kiệm"
     ]
   },
   {
@@ -340,7 +340,7 @@
     "features": [
       "Động cơ Hybrid êm ái, tiết kiệm 4.4L/100km",
       "Ghế da thương gia chỉnh điện ngả lưng",
-      "Tự động nhận diện biển báo giao thông ITS",
+      "Tự động nhận diện biển báo giao thông AI",
       "Khóa số thông minh EcoGo Digital Key"
     ]
   },
@@ -367,7 +367,7 @@
     "rating": 4.95,
     "totalTrips": 189,
     "status": "AVAILABLE",
-    "stationId": "hub-uth-03",
+    "stationId": "hub-tech-03",
     "telematics": {
       "latitude": 10.852,
       "longitude": 106.619,
@@ -390,7 +390,7 @@
       "Trợ lý ảo thông minh tiếng Việt Vivi",
       "Công nghệ tự lái ADAS cấp độ 2",
       "Khóa điện tử Digital Key 24/7",
-      "Đỗ tại Campus UTH Cơ sở 3 Tô Ký"
+      "Đỗ tại EcoGo Hub Tech - Khu Công Nghệ Cao"
     ]
   },
   {
@@ -416,7 +416,7 @@
     "rating": 4.9,
     "totalTrips": 312,
     "status": "AVAILABLE",
-    "stationId": "hub-uth-03",
+    "stationId": "hub-tech-03",
     "telematics": {
       "latitude": 10.8522,
       "longitude": 106.6192,
@@ -439,7 +439,7 @@
       "Pin LFP an toàn cháy nổ tuyệt đối",
       "Chống nước chuẩn IP67 lội nước 0.5m",
       "Cốp rộng 25L đựng tài liệu laptop",
-      "Ưu đãi sinh viên UTH giảm 50k"
+      "Ưu đãi hội viên EcoGo Prime giảm 50k"
     ]
   },
   {

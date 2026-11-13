@@ -37,10 +37,10 @@ export default function ProfileScreen({
   const user = {
     fullName: activeUser.fullName || 'Minh Tài',
     phone: activeUser.phone || '+84386726647',
-    email: activeUser.email || 'minhtai@uth.edu.vn',
+    email: activeUser.email || 'minhtai@ecogo.vn',
     licenseNumber: activeUser.licenseNumber || activeUser.drivingLicense || '790123456789',
     memberRank: activeUser.memberRank || 'Eco Elite Ambassador',
-    membershipId: activeUser.membershipId || 'ESG-ITS-2026-8891',
+    membershipId: activeUser.membershipId || 'ESG-ECOGO-2026-8891',
     co2KgSaved: activeUser.totalCo2SavedKg || 42.8,
     co2TreesPerDay: 2.1,
     glosaKmSaved: 38,
@@ -118,10 +118,10 @@ export default function ProfileScreen({
       badge: 'Đã duyệt ✓'
     },
     {
-      id: 'ekyc_uth',
+      id: 'ekyc_prime',
       icon: 'card',
-      title: 'Hồ sơ GPLX Ô tô B2 & eKYC UTH',
-      desc: 'Đã đối soát CSDL giao thông • Miễn tiền cọc 15.000.000đ dành riêng cho sinh viên & GV UTH',
+      title: 'Hồ sơ GPLX Ô tô B2 & EcoGo Prime',
+      desc: 'Đã đối soát CSDL giao thông • Miễn tiền cọc 15.000.000đ đặc quyền thành viên EcoGo',
       badge: 'Hợp lệ ✓'
     },
     {
@@ -286,7 +286,7 @@ export default function ProfileScreen({
                 </View>
               </View>
               <Text style={styles.contractBannerSub}>
-                Hợp đồng điện tử UTH ITS, quy chế tự lái & hoàn cọc minh bạch
+                Hợp đồng điện tử EcoGo Mobility, quy chế tự lái & hoàn cọc minh bạch
               </Text>
             </View>
             <Ionicons name="chevron-forward" size={18} color="#9A9FA5" />
@@ -404,13 +404,13 @@ export default function ProfileScreen({
         <View style={styles.menuListGroup}>
           <TouchableOpacity style={styles.menuListRow} onPress={handleOpenSurvey}>
             <Ionicons name="id-card-outline" size={20} color="#6F767E" />
-            <Text style={styles.menuListText}>Khảo sát chất lượng dịch vụ ITS (UTH)</Text>
+            <Text style={styles.menuListText}>Đóng góp ý kiến dịch vụ EcoGo Mobility</Text>
             <Ionicons name="chevron-forward" size={18} color="#9A9FA5" />
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.menuListRow}>
             <Ionicons name="map-outline" size={20} color="#6F767E" />
-            <Text style={styles.menuListText}>Đóng góp bản đồ trạm ITS Hub</Text>
+            <Text style={styles.menuListText}>Đề xuất mở trạm EcoGo Hub mới</Text>
             <Ionicons name="chevron-forward" size={18} color="#9A9FA5" />
           </TouchableOpacity>
 
@@ -509,7 +509,7 @@ export default function ProfileScreen({
               </TouchableOpacity>
               <View style={{ flex: 1, alignItems: 'center' }}>
                 <Text style={styles.contractTopTitle}>Hợp Đồng Dịch Vụ Nền Tảng</Text>
-                <Text style={styles.contractTopSub}>Số: HĐ-ITS/ECOGO-2026</Text>
+                <Text style={styles.contractTopSub}>Số: HĐ-ECOGO-2026-8891</Text>
               </View>
               <View style={styles.contractActiveTag}>
                 <Ionicons name="shield-checkmark" size={12} color="#15803D" />
@@ -521,14 +521,14 @@ export default function ProfileScreen({
             <View style={styles.gsmTurquoiseBanner}>
               <View style={styles.gsmLogoBox}>
                 <Ionicons name="ribbon" size={24} color="#D4AF37" />
-                <Text style={styles.gsmLogoText}>UTH · ITS</Text>
+                <Text style={styles.gsmLogoText}>ECO · SMART</Text>
               </View>
               <View style={{ flex: 1 }}>
                 <Text style={styles.gsmCompanyTitle}>
                   CÔNG TY CỔ PHẦN DI CHUYỂN THÔNG MINH ECOGO
                 </Text>
                 <Text style={styles.gsmCompanySub}>
-                  Hệ thống ITS & Dịch vụ Xe điện Tự lái 24/7 · ĐH Giao thông Vận tải UTH
+                  Nền tảng Tự lái EcoGo AI & Hệ thống Di chuyển Thông minh 24/7
                 </Text>
               </View>
             </View>
@@ -538,7 +538,7 @@ export default function ProfileScreen({
               <View style={styles.contractWhiteBox}>
                 <View style={styles.boxTitleRow}>
                   <View style={[styles.boxTitleBar, { backgroundColor: theme.primary }]} />
-                  <Text style={styles.contractBoxHeading}>I. ĐƠN VỊ VẬN HÀNH DỊCH VỤ ITS</Text>
+                  <Text style={styles.contractBoxHeading}>I. ĐƠN VỊ VẬN HÀNH ECOGO MOBILITY</Text>
                 </View>
 
                 <Text style={styles.contractFieldLabel}>Tên đơn vị vận hành</Text>
@@ -560,9 +560,9 @@ export default function ProfileScreen({
 
                 <View style={styles.contractDivider} />
 
-                <Text style={styles.contractFieldLabel}>Hạ tầng trạm kết nối ITS</Text>
+                <Text style={styles.contractFieldLabel}>Hạ tầng trạm kết nối EcoGo Hub</Text>
                 <Text style={styles.contractFieldValue}>
-                  Campus 1 Bình Thạnh & Campus 3 Quận 9 · ĐH GTVT TP.HCM (UTH)
+                  Hệ thống Hub Trung Tâm: Bình Thạnh · Thủ Thiêm · Khu Công Nghệ Cao
                 </Text>
 
                 <View style={styles.contractDivider} />
@@ -608,7 +608,7 @@ export default function ProfileScreen({
               <View style={styles.contractVerifyStampBox}>
                 <Ionicons name="shield-checkmark" size={16} color="#15803D" />
                 <Text style={styles.contractVerifyStampText}>
-                  Đã chứng thực chữ ký số điện tử EcoGo Smart · Đối soát CSDL ĐH GTVT TP.HCM (UTH)
+                  Đã chứng thực chữ ký số điện tử EcoGo Smart · Bảo mật đối soát CSDL EcoGo Mobility Corp
                 </Text>
               </View>
 
@@ -629,7 +629,7 @@ export default function ProfileScreen({
       </Modal>
 
       {/* ============================================================
-          MODAL: TRUNG TÂM XÁC THỰC EMAIL & HỒ SƠ GPLX B2 (eKYC ITS)
+          MODAL: TRUNG TÂM XÁC THỰC EMAIL & HỒ SƠ GPLX B2 (ECOGO VERIFY)
          ============================================================ */}
       <Modal
         visible={showVerificationModal}
@@ -650,7 +650,7 @@ export default function ProfileScreen({
             </TouchableOpacity>
             <View style={{ flex: 1, alignItems: 'center' }}>
               <Text style={styles.verifyModalHeaderTitle}>Hồ sơ Lái xe & Định danh eKYC</Text>
-              <Text style={styles.verifyModalHeaderSub}>Hệ thống ITS Đại học Giao thông Vận tải UTH</Text>
+              <Text style={styles.verifyModalHeaderSub}>Hệ thống Xác thực Nền tảng EcoGo Mobility Corp</Text>
             </View>
             <TouchableOpacity
               style={styles.editProfileBtnHeader}
@@ -683,7 +683,7 @@ export default function ProfileScreen({
                 </View>
                 <Text style={styles.verifyHeroTitle}>Đủ điều kiện thuê tự lái 24/7</Text>
                 <Text style={styles.verifyHeroDesc}>
-                  Tài khoản đã hoàn tất kiểm tra hồ sơ thực địa và liên kết với Trung tâm điều hành ITS UTH. Miễn thế chấp 15.000.000đ khi nhận xe.
+                  Tài khoản đã hoàn tất kiểm tra hồ sơ thực địa và kết nối Trung tâm điều hành EcoGo Mobility. Miễn thế chấp 15.000.000đ khi nhận xe.
                 </Text>
               </View>
             </View>
@@ -764,7 +764,7 @@ export default function ProfileScreen({
               <TouchableOpacity
                 style={styles.reUploadBtn}
                 activeOpacity={0.8}
-                onPress={() => Alert.alert('Cập nhật GPLX', 'Hệ thống eKYC ITS: Vui lòng chuẩn bị bản gốc GPLX B2 để quét ảnh mới khi bạn gia hạn hoặc đổi phôi bằng lái.')}
+                onPress={() => Alert.alert('Cập nhật GPLX', 'Hệ thống EcoGo eKYC: Vui lòng chuẩn bị bản gốc GPLX B2 để quét ảnh mới khi bạn gia hạn hoặc đổi phôi bằng lái.')}
               >
                 <Ionicons name="camera-reverse-outline" size={16} color={theme.primary} />
                 <Text style={[styles.reUploadBtnText, { color: theme.primary }]}>Quét lại ảnh GPLX mới</Text>
@@ -793,7 +793,7 @@ export default function ProfileScreen({
                   <Text style={styles.emailDisplayText}>{user.email}</Text>
                 </View>
                 <View style={styles.uthBadgePill}>
-                  <Text style={styles.uthBadgePillText}>Cán bộ / SV UTH</Text>
+                  <Text style={styles.uthBadgePillText}>Hội Viên Tiên Phong</Text>
                 </View>
               </View>
 
@@ -921,7 +921,7 @@ export default function ProfileScreen({
                 style={styles.editInput}
                 value={formEmail}
                 onChangeText={setFormEmail}
-                placeholder="example@uth.edu.vn"
+                placeholder="example@ecogo.vn"
                 placeholderTextColor="#9A9FA5"
                 keyboardType="email-address"
                 autoCapitalize="none"

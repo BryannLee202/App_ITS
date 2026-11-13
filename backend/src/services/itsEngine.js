@@ -1,5 +1,5 @@
 /**
- * ITS ENGINE - Chuyên đề Hệ thống Giao thông Thông minh (UTH)
+ * EcoGo Mobility Telematics Engine - Hệ thống Giao thông Thông minh (EcoGo AI)
  * Mathematical Models based on:
  * - TS. Văn Hồng Tấn - "Hệ thống Giao thông Thông minh"
  * - Lighthill-Whitham-Richards (LWR) Traffic Shockwave Theory
@@ -36,7 +36,7 @@ class ITSEngine {
   /**
    * Thuật toán GLOSA (Green Light Optimal Speed Advisory)
    * Khuyến nghị vận tốc tối ưu để xe đón đúng pha đèn xanh (Làn sóng xanh - Green Wave)
-   * Tránh dừng đèn đỏ, tiết kiệm 15-22% tiêu hao pin/nhiên liệu (theo Chương 4 Tài liệu UTH)
+   * Tránh dừng đèn đỏ, tiết kiệm 15-22% tiêu hao pin/nhiên liệu (theo Tiêu chuẩn Di chuyển Xanh)
    * 
    * @param {number} distanceToIntersectionMeters - Khoảng cách tới nút đèn tiếp theo (m)
    * @param {number} currentSpeedKmh - Vận tốc hiện tại của xe (km/h)
@@ -251,8 +251,8 @@ class ITSEngine {
     },
     {
       id: 'int-d1-dbp',
-      name: 'Nút giao D1 - Điện Biên Phủ (Cổng UTH)',
-      fullAddress: 'Số 2 Võ Oanh - Điện Biên Phủ, P.25, Bình Thạnh',
+      name: 'Nút giao D1 - Điện Biên Phủ (EcoGo Hub Landmark)',
+      fullAddress: 'Số 208 Nguyễn Hữu Cảnh / Điện Biên Phủ, P.25, Bình Thạnh',
       streetName: 'Đường Võ Oanh',
       lat: 10.8018,
       lng: 106.7142,
@@ -347,7 +347,7 @@ class ITSEngine {
     },
     {
       id: 'int-to-ky-q12',
-      name: 'Nút giao Tô Ký - Trung Mỹ Tây (UTH Cơ sở 3)',
+      name: 'Nút giao Tô Ký - Trung Mỹ Tây (EcoGo Hub Tech)',
       fullAddress: 'Tô Ký × Trung Mỹ Tây, P. Tân Chánh Hiệp, Q.12',
       streetName: 'Đường Tô Ký',
       lat: 10.8580,

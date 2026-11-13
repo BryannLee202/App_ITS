@@ -33,10 +33,10 @@ const DAILY_PROMOS = [
     claimedPct: 76
   },
   {
-    code: 'UTH50K',
-    title: 'Độc Quyền SV & Giảng Viên UTH',
-    desc: 'Giảm trực tiếp 50.000đ khi nhận xe tại Trạm Cơ sở 1 & 3 ĐH GTVT',
-    tag: 'ĐỘC QUYỀN UTH',
+    code: 'PRIME50K',
+    title: 'Đặc Quyền Thành Viên Prime',
+    desc: 'Giảm trực tiếp 50.000đ khi nhận xe tại hệ thống EcoGo Hub toàn thành phố',
+    tag: 'ĐẶC QUYỀN PRIME',
     tagBg: '#EFF6FF',
     tagColor: '#1D4ED8',
     expiry: 'Hết tháng 11',
@@ -124,7 +124,7 @@ export default function VoucherWalletModal({
   initialTab = 'AVAILABLE',
   ecoCoins = 180,
   onDeductCoins,
-  savedVouchers = ['BANMOI30', 'ECOGO20', 'UTH50K'],
+  savedVouchers = ['BANMOI30', 'ECOGO20', 'PRIME50K'],
   onSaveVoucher,
   onApplyVoucher
 }) {

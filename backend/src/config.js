@@ -5,7 +5,7 @@ module.exports = {
   JWT_SECRET: process.env.JWT_SECRET || 'its_smart_vehicle_rental_secret_key_2026',
   CORS_ORIGIN: '*',
   
-  // ITS & Telematics Parameters (Chuyên đề ITS - UTH)
+  // EcoGo Telematics & SmartWave Parameters
   ITS_CONFIG: {
     // Green Wave Speed Advisory baseline (km/h)
     DEFAULT_CYCLE_LENGTH_SEC: 90, // Chu kỳ đèn tín hiệu C (s)

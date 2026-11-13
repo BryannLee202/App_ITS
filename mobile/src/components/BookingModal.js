@@ -26,7 +26,7 @@ const INSURANCE_PLANS = [
   },
   {
     id: 'STANDARD',
-    name: 'Bảo Vệ Tiêu Chuẩn ITS',
+    name: 'Bảo Vệ Tiêu Chuẩn EcoGo',
     priceHour: 25000,
     priceDay: 85000,
     badge: 'Khuyên dùng',
@@ -45,9 +45,9 @@ const INSURANCE_PLANS = [
 const DEPOSIT_OPTIONS = [
   {
     id: 'VERIFIED_WAIVER_0D',
-    title: '0đ Cọc Bảo Chứng (eKYC / SV UTH)',
+    title: '0đ Cọc Bảo Chứng (Định Danh eKYC)',
     badge: 'Miễn cọc 100%',
-    desc: 'Miễn thế chấp nhờ đã định danh CCCD gắn chip & liên kết tài khoản Sinh viên UTH.',
+    desc: 'Miễn thế chấp nhờ đã định danh CCCD gắn chip & xác thực tài khoản EcoGo Prime.',
     carFee: 0,
     bikeFee: 0,
     icon: 'shield-checkmark'
@@ -65,7 +65,7 @@ const DEPOSIT_OPTIONS = [
     id: 'ASSET_BIKE',
     title: 'Thế Chấp Xe Máy Cá Nhân + Cavet Gốc',
     badge: '0đ Tiền mặt',
-    desc: 'Gửi xe máy cá nhân và bản gốc đăng ký xe tại bãi đỗ Trạm Hub UTH trong suốt chuyến đi.',
+    desc: 'Gửi xe máy cá nhân và bản gốc đăng ký xe tại bãi đỗ trạm EcoGo Hub trong suốt chuyến đi.',
     carFee: 0,
     bikeFee: 0,
     icon: 'bicycle-outline'
@@ -199,7 +199,7 @@ export default function BookingModal({
         discountAmount = Math.min(Math.round(baseRentalFee * 0.2), 120000);
       } else if (code === 'GIOVANG25') {
         discountAmount = 25000;
-      } else if (code === 'UTH50K') {
+      } else if (code === 'PRIME50K' || code === 'UTH50K') {
         discountAmount = 50000;
       } else if (code === 'THUENGAY200' || code === 'CUOITUAN200') {
         discountAmount = rentalType === 'DAILY' ? 200000 : 100000;
@@ -217,7 +217,7 @@ export default function BookingModal({
             : '1.500.000đ (Hoàn trả sau 24h)'
           : depositOption === 'ASSET_BIKE'
           ? 'Thế chấp xe máy cá nhân + Cavet (0đ tiền mặt)'
-          : 'Miễn cọc bảo chứng (eKYC / SV UTH)';
+          : 'Miễn cọc bảo chứng (Định danh eKYC)';
 
       const rentalSubtotal = Math.max(
         0,
@@ -645,7 +645,7 @@ export default function BookingModal({
                           size={16}
                           color={deliveryMode === 'STATION' ? '#6F4E37' : '#A89F91'}
                         />
-                        <Text style={styles.deliveryTitle}>Tự nhận tại Hub ITS</Text>
+                        <Text style={styles.deliveryTitle}>Tự nhận tại EcoGo Hub</Text>
                       </View>
                       <Text style={styles.deliverySub}>Miễn phí • Mở khóa 24/7</Text>
                     </TouchableOpacity>
@@ -762,11 +762,11 @@ export default function BookingModal({
                       style={styles.voucherInput}
                       value={voucherCode}
                       onChangeText={setVoucherCode}
-                      placeholder="Nhập mã (BANMOI30, UTH50K, ECOGO20)"
+                      placeholder="Nhập mã (BANMOI30, PRIME50K, ECOGO20)"
                       placeholderTextColor="#A89F91"
                     />
                     <View style={styles.quickVoucherRow}>
-                      {['BANMOI30', 'ECOGO20', 'UTH50K', 'FREESHIP'].map((code) => (
+                      {['BANMOI30', 'ECOGO20', 'PRIME50K', 'FREESHIP'].map((code) => (
                         <TouchableOpacity
                           key={code}
                           style={[
@@ -808,7 +808,7 @@ export default function BookingModal({
                       </View>
 
                       <View style={styles.priceRow}>
-                        <Text style={styles.priceRowLabel}>Phí dịch vụ & Telematics ITS (5%)</Text>
+                        <Text style={styles.priceRowLabel}>Phí nền tảng & Telematics EcoGo (5%)</Text>
                         <Text style={styles.priceRowVal}>{quote.platformServiceFee.toLocaleString('vi-VN')}đ</Text>
                       </View>
 
@@ -909,9 +909,9 @@ export default function BookingModal({
                   </View>
                   <Text style={styles.partyName}>CÔNG TY CỔ PHẦN DỊCH VỤ DI CHUYỂN THÔNG MINH ECOGO</Text>
                   <Text style={styles.partyDetail}>
-                    • Trụ sở vận hành: Trạm Hub ĐH Giao Thông Vận Tải (UTH) - Số 2 Võ Oanh, P.25, Q. Bình Thạnh, TP.HCM
+                    • Trụ sở vận hành: EcoGo Central Hub - Số 208 Nguyễn Hữu Cảnh / Điện Biên Phủ, Bình Thạnh, TP.HCM
                   </Text>
-                  <Text style={styles.partyDetail}>• Đại diện: Hệ thống Điều hành Giao thông Thông minh ITS EcoGo</Text>
+                  <Text style={styles.partyDetail}>• Đại diện: Trung Tâm Điều Hành Di Chuyển Thông Minh EcoGo Mobility</Text>
                   <Text style={styles.partyDetail}>• Hotline hỗ trợ kỹ thuật & Cứu hộ 24/7: 1900 6868</Text>
                 </View>
 
@@ -953,7 +953,7 @@ export default function BookingModal({
                   </View>
                   <View style={styles.vehSpecRow}>
                     <Text style={styles.specKey}>Địa điểm nhận xe:</Text>
-                    <Text style={styles.specValBold}>Trạm Hub UTH - Cơ sở 1 Bình Thạnh</Text>
+                    <Text style={styles.specValBold}>EcoGo Hub Landmark - Điện Biên Phủ, Bình Thạnh</Text>
                   </View>
                 </View>
 
@@ -968,7 +968,7 @@ export default function BookingModal({
                   <Text style={styles.clauseItem}>
                     <Text style={styles.clauseBold}>Điều 2 (Trách nhiệm vi phạm giao thông): </Text>
                     Bên B chịu trách nhiệm 100% trước pháp luật về mọi lỗi vi phạm Luật Giao thông Đường bộ (bao gồm cả phạt
-                    nguội qua hệ thống camera ITS tra cứu sau chuyến đi) phát sinh trong suốt thời gian nhận bàn giao xe.
+                    nguội qua hệ thống camera giao thông tra cứu sau chuyến đi) phát sinh trong suốt thời gian nhận bàn giao xe.
                   </Text>
                   <Text style={styles.clauseItem}>
                     <Text style={styles.clauseBold}>Điều 3 (Quy định trả xe trễ hạn): </Text>
@@ -1404,7 +1404,7 @@ export default function BookingModal({
                   </View>
                   <View style={styles.receiptRow}>
                     <Text style={styles.receiptKey}>Điểm nhận xe:</Text>
-                    <Text style={styles.receiptValBold}>Trạm Hub UTH - Cơ sở 1 Bình Thạnh</Text>
+                    <Text style={styles.receiptValBold}>EcoGo Hub Landmark - Điện Biên Phủ, Bình Thạnh</Text>
                   </View>
                   <View style={styles.receiptRow}>
                     <Text style={styles.receiptKey}>Phương thức:</Text>

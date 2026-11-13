@@ -77,7 +77,7 @@ exports.getCorridors = (req, res) => {
     },
     {
       id: 'corridor-dien-bien-phu',
-      name: 'Hành Lang ĐH GTVT (UTH) - Cầu Sài Gòn - Xa Lộ Hà Nội',
+      name: 'Hành Lang EcoGo Hub Landmark - Cầu Sài Gòn - Xa Lộ Hà Nội',
       lengthMeters: 3600,
       intersectionsCount: 5,
       designSpeedKmh: 45,

@@ -40,7 +40,7 @@ app.use('/api/rewards', rewardRoutes);
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'ONLINE',
-    system: 'ITS Smart Vehicle Rental System (Chuyên đề UTH)',
+    system: 'EcoGo Smart Mobility Platform',
     version: '1.0.0-PROD',
     telematicsOnline: true,
     activeVehicles: telematicsService.getAllVehicles().length,

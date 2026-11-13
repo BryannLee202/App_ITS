@@ -134,7 +134,7 @@ class TelematicsService {
 
   /**
    * Starts a real-time GPS driving simulation for an active trip
-   * Simulates moving along the UTH -> Mai Chí Thọ corridor with ITS Green Wave telemetry
+   * Simulates moving along the EcoGo Landmark -> Mai Chí Thọ corridor with EcoGo SmartWave telemetry
    */
   startTripSimulation(vehicleId, tripId) {
     if (this.activeSimulations.has(tripId)) {
@@ -144,9 +144,9 @@ class TelematicsService {
     const vehicle = this.getVehicleById(vehicleId);
     if (!vehicle) return;
 
-    // Route coordinates: From UTH Campus -> Điện Biên Phủ -> Cầu Sài Gòn -> Mai Chí Thọ (Green Wave corridor)
+    // Route coordinates: From EcoGo Landmark Hub -> Điện Biên Phủ -> Cầu Sài Gòn -> Mai Chí Thọ (Green Wave corridor)
     const waypoints = [
-      { lat: 10.8018, lng: 106.7142 }, // UTH
+      { lat: 10.8018, lng: 106.7142 }, // EcoGo Landmark Hub
       { lat: 10.7985, lng: 106.7175 }, // Ngã 4 Hàng Xanh
       { lat: 10.7952, lng: 106.7218 }, // Landmark 81 / Cầu Sài Gòn
       { lat: 10.7895, lng: 106.7270 }, // Trục Xa Lộ Hà Nội

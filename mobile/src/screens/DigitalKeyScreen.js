@@ -379,7 +379,7 @@ export default function DigitalKeyScreen({ theme = THEME_PRESETS.MINT, onNavigat
         </View>
       </View>
 
-      {/* 4. ITS GLOSA Green Wave Telematics Advisory Card */}
+      {/* 4. EcoGo SmartWave Green Wave Telematics Advisory Card */}
       {glosa && (
         <View style={styles.glosaCard}>
           <View style={styles.glosaTopRow}>
@@ -425,7 +425,7 @@ export default function DigitalKeyScreen({ theme = THEME_PRESETS.MINT, onNavigat
           onPress={handleCompleteTrip}
         >
           <Ionicons name="checkmark-done-circle" size={18} color="#D4AF37" />
-          <Text style={styles.returnBtnText}>Kết thúc chuyến & Trả xe tại trạm UTH</Text>
+          <Text style={styles.returnBtnText}>Kết thúc chuyến & Trả xe tại trạm EcoGo Hub</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -867,7 +867,7 @@ const styles = StyleSheet.create({
     marginTop: 1
   },
 
-  /* ITS GLOSA Smart Wave Card */
+  /* EcoGo SmartWave Card */
   glosaCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: 20,

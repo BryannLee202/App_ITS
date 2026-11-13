@@ -7,7 +7,7 @@ const REWARD_TIERS = [
   { day: 1, label: 'Thứ 2', coins: 15, voucher: null, title: 'Khởi động xanh', reward: '+15 Xu' },
   { day: 2, label: 'Thứ 3', coins: 20, voucher: null, title: 'Thói quen xanh', reward: '+20 Xu' },
   { day: 3, label: 'Thứ 4', coins: 25, voucher: 'ECOGO20', title: 'Cột mốc 3 ngày', reward: 'Voucher 20%' },
-  { day: 4, label: 'Thứ 5', coins: 30, voucher: 'UTH50K', title: 'Sinh viên UTH', reward: '+30 Xu & 50K' },
+  { day: 4, label: 'Thứ 5', coins: 30, voucher: 'PRIME50K', title: 'Đặc quyền Prime', reward: '+30 Xu & 50K' },
   { day: 5, label: 'Thứ 6', coins: 40, voucher: null, title: 'Bứt phá xanh', reward: '+50 Xu' },
   { day: 6, label: 'Thứ 7', coins: 50, voucher: 'FREESHIP', title: 'Chuẩn bị cuối tuần', reward: 'Free Ship' },
   { day: 7, label: 'CN', coins: 100, voucher: 'CUOITUAN200', title: 'Đại Tiệc Xanh', isGrand: true, reward: '🎁 100K' }

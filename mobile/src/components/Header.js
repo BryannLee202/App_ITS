@@ -23,7 +23,7 @@ export default function Header({ user, onNotificationPress }) {
           </View>
           <View style={styles.locationRow}>
             <Ionicons name="location-outline" size={12} color="#00A896" />
-            <Text style={styles.locationText}>Khu vực: TP. Hồ Chí Minh • Trục UTH Bình Thạnh</Text>
+            <Text style={styles.locationText}>Khu vực: TP. Hồ Chí Minh • EcoGo Central Hub</Text>
           </View>
         </View>
       </View>

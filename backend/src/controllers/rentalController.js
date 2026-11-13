@@ -8,7 +8,7 @@ let rentals = [
     id: 'trip_demo_101',
     userId: 'usr_demo_01',
     vehicleId: 'veh-ioniq5-001',
-    pickupStationId: 'hub-uth-01',
+    pickupStationId: 'hub-landmark-01',
     returnStationId: 'hub-thuthiem-01',
     rentalType: 'HOURLY',
     startTime: new Date(Date.now() - 45 * 60 * 1000).toISOString(), // 45 mins ago
@@ -28,8 +28,8 @@ let rentals = [
     id: 'trip_demo_102',
     userId: 'usr_demo_01',
     vehicleId: 'veh-ioniq5-001',
-    pickupStationId: 'hub-uth-01',
-    returnStationId: 'hub-uth-03',
+    pickupStationId: 'hub-landmark-01',
+    returnStationId: 'hub-tech-03',
     rentalType: 'HOURLY',
     startTime: '2026-10-24T10:00:00.000Z',
     endTime: '2026-10-24T14:00:00.000Z',
@@ -42,13 +42,13 @@ let rentals = [
     ecoPointsEarned: 196,
     digitalKeyActivated: false,
     eContractSigned: true,
-    contractNumber: 'HĐ-UTH-2026-0891'
+    contractNumber: 'HĐ-ECOGO-2026-0891'
   },
   {
     id: 'trip_demo_103',
     userId: 'usr_demo_01',
     vehicleId: 'veh-vf8-001',
-    pickupStationId: 'hub-uth-01',
+    pickupStationId: 'hub-landmark-01',
     returnStationId: 'hub-thuthiem-01',
     rentalType: 'HOURLY',
     startTime: '2026-10-20T08:30:00.000Z',
@@ -62,7 +62,7 @@ let rentals = [
     ecoPointsEarned: 144,
     digitalKeyActivated: false,
     eContractSigned: true,
-    contractNumber: 'HĐ-UTH-2026-0542'
+    contractNumber: 'HĐ-ECOGO-2026-0542'
   }
 ];
 
@@ -127,13 +127,13 @@ const VOUCHERS = [
     expiry: 'Hôm nay'
   },
   {
-    code: 'UTH50K',
-    title: 'Ưu Đãi Độc Quyền Sinh Viên UTH',
-    description: 'Giảm trực tiếp 50.000đ khi nhận xe tại Trạm Hub ĐH Giao Thông Vận Tải TP.HCM',
+    code: 'PRIME50K',
+    title: 'Đặc Quyền Thành Viên Prime',
+    description: 'Giảm trực tiếp 50.000đ khi nhận xe tại hệ thống EcoGo Hub toàn thành phố',
     discountType: 'FIXED',
     discountValue: 50000,
     maxDiscount: 50000,
-    tag: 'UTH CHUYÊN ĐỀ',
+    tag: 'ĐẶC QUYỀN PRIME',
     claimedPct: 65,
     expiry: 'Hết tháng 11'
   },
@@ -247,7 +247,7 @@ exports.getBookingQuote = (req, res) => {
 
   const isCar = vehicle.type === 'CAR';
   let depositAmount = 0;
-  let depositLabel = 'Miễn cọc bảo chứng (eKYC / SV UTH)';
+  let depositLabel = 'Miễn cọc bảo chứng (Định danh eKYC)';
   if (depositOption === 'CASH_TRANSFER') {
     depositAmount = isCar ? 5000000 : 1500000;
     depositLabel = isCar ? '5.000.000đ (Hoàn trả sau 24h trả xe)' : '1.500.000đ (Hoàn trả sau 24h trả xe)';
@@ -496,7 +496,7 @@ exports.completeTrip = (req, res) => {
 
   return res.json({
     success: true,
-    message: 'Trả xe thành công! Cảm ơn bạn đã đồng hành cùng giao thông xanh ITS.',
+    message: 'Trả xe thành công! Cảm ơn bạn đã đồng hành cùng EcoGo Smart Mobility.',
     trip,
     geofenceResult,
     eco
