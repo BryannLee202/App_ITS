@@ -25,8 +25,13 @@ export default function ProfileScreen({
     phone: '+84386726647',
     email: 'minhtai@uth.edu.vn',
     licenseNumber: 'GPLX B2 - 790123456789',
-    co2TreesPerDay: 2,
-    greenFundContribution: '125.000 VNĐ',
+    memberRank: 'Eco Elite Ambassador',
+    membershipId: 'ESG-ITS-2026-8891',
+    co2KgSaved: 42.8,
+    co2TreesPerDay: 2.1,
+    glosaKmSaved: 38,
+    ecoCoins: 180,
+    greenFundContribution: '125.000đ',
     totalKm: 142,
     year2026Km: 142
   });
@@ -92,67 +97,81 @@ export default function ProfileScreen({
         </View>
 
         {/* ============================================================
-            3. GREEN RACE HERO CARD (EXACT REPLICA OF 18:57 SCREENSHOT)
+            3. DIGITAL ESG MOBILITY PASS (QUIET LUXURY EXECUTIVE METALLIC CARD)
            ============================================================ */}
         <TouchableOpacity
-          style={[
-            styles.greenRaceCard,
-            { backgroundColor: theme.primarySoft, borderColor: theme.primaryBorder }
-          ]}
-          activeOpacity={0.93}
+          style={styles.greenRaceCard}
+          activeOpacity={0.92}
           onPress={onOpenGreenRace}
         >
-          {/* Top Ribbon "ECOGO RACE" & "Xem tiến trình >" */}
+          {/* Top Bar: Pass Category Badge & Navigation Link */}
           <View style={styles.greenRaceTopBar}>
-            <View style={styles.greenRaceRibbon}>
-              <Text style={styles.greenRaceRibbonText}>ECOGO RACE</Text>
+            <View style={styles.esgPassBadge}>
+              <Ionicons name="shield-checkmark" size={13} color="#D4AF37" />
+              <Text style={styles.esgPassBadgeText}>DIGITAL ESG MOBILITY PASS</Text>
             </View>
 
-            <TouchableOpacity style={styles.progressBtnPill} onPress={onOpenGreenRace}>
-              <Text style={[styles.progressBtnText, { color: theme.primary }]}>Xem tiến trình</Text>
-              <Ionicons name="chevron-forward" size={13} color={theme.primary} />
+            <TouchableOpacity style={styles.progressBtnPill} onPress={onOpenGreenRace} activeOpacity={0.8}>
+              <Text style={styles.progressBtnText}>Báo cáo ESG</Text>
+              <Ionicons name="chevron-forward" size={13} color="#D4AF37" />
             </TouchableOpacity>
           </View>
 
-          {/* Center Body: Left Hexagon Leaf Emblem | Right CO2 Counter */}
+          {/* Center Body: Metallic Emblem & Scientific Energy Telemetry */}
           <View style={styles.greenRaceBodyRow}>
+            {/* Left Column: 3D Damped Gold Emblem & Member Title */}
             <View style={styles.emblemCol}>
-              <View style={styles.hexOuterBronze}>
-                <View style={styles.hexInnerWhite}>
-                  <Ionicons name="leaf" size={28} color="#689F38" />
+              <View style={styles.goldEmblemOuter}>
+                <View style={styles.goldEmblemInner}>
+                  <Ionicons name="ribbon" size={26} color="#D4AF37" />
                 </View>
               </View>
-              <View style={styles.seedlingPill}>
-                <Text style={styles.seedlingPillText}>Người Ươm Mầm</Text>
+              <View style={styles.rankTitlePill}>
+                <Text style={styles.rankTitleText}>{user.memberRank}</Text>
               </View>
+              <Text style={styles.memberIdText}>{user.membershipId}</Text>
             </View>
 
+            {/* Right Column: Precise CO2 & GLOSA Telematics */}
             <View style={styles.co2CounterCol}>
-              <Text style={styles.co2HeaderLabel}>Đã giảm lượng CO₂ tương đương</Text>
-              <View style={styles.amberCounterPill}>
-                <Text style={styles.amberCounterNumber}>{user.co2TreesPerDay}</Text>
+              <Text style={styles.co2HeaderLabel}>Chỉ số Giảm Phát Thải CO₂</Text>
+              <View style={styles.co2ValueRow}>
+                <Text style={styles.co2BigNumber}>{user.co2KgSaved}</Text>
+                <Text style={styles.co2UnitText}>kg CO₂</Text>
               </View>
-              <Text style={styles.co2SubLabel}>cây xanh quang hợp/ngày</Text>
+              <Text style={styles.co2SubLabel}>≈ {user.co2TreesPerDay} cây xanh quang hợp/năm</Text>
+
+              <View style={styles.glosaGreenWaveTag}>
+                <Ionicons name="speedometer" size={12} color="#81C784" />
+                <Text style={styles.glosaGreenWaveText}>
+                  {user.glosaKmSaved} km Làn Sóng Xanh ITS
+                </Text>
+              </View>
             </View>
           </View>
 
-          {/* Bottom 3-Column Metrics Box */}
+          {/* Bottom 3-Column Metrics Glass Bar */}
           <View style={styles.greenRaceMetricsBox}>
             <View style={styles.grMetricCol}>
-              <Text style={styles.grMetricLabel}>
-                Đã đóng góp quỹ Vì Tương{'\n'}Lai Xanh
-              </Text>
-              <Text style={[styles.grMetricVal, { color: theme.primary }]}>{user.greenFundContribution}</Text>
+              <Text style={styles.grMetricLabel}>Eco Coins{'\n'}tích luỹ</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3, marginTop: 4 }}>
+                <Text style={{ fontSize: 13 }}>🪙</Text>
+                <Text style={[styles.grMetricVal, { color: '#D4AF37' }]}>{user.ecoCoins} Xu</Text>
+              </View>
             </View>
 
-            <View style={styles.grMetricCol}>
-              <Text style={styles.grMetricLabel}>Tổng KM{'\n'}đã đi</Text>
-              <Text style={[styles.grMetricVal, { color: theme.primary }]}>{user.totalKm}</Text>
-            </View>
+            <View style={styles.grMetricDivider} />
 
             <View style={styles.grMetricCol}>
-              <Text style={styles.grMetricLabel}>KM tích luỹ{'\n'}năm 2026</Text>
-              <Text style={[styles.grMetricVal, { color: theme.primary }]}>{user.year2026Km}</Text>
+              <Text style={styles.grMetricLabel}>Hành trình{'\n'}xanh đã đi</Text>
+              <Text style={styles.grMetricVal}>{user.totalKm} km</Text>
+            </View>
+
+            <View style={styles.grMetricDivider} />
+
+            <View style={styles.grMetricCol}>
+              <Text style={styles.grMetricLabel}>Tài trợ Quỹ{'\n'}Xanh UTH</Text>
+              <Text style={[styles.grMetricVal, { color: '#E8D09B' }]}>{user.greenFundContribution}</Text>
             </View>
           </View>
         </TouchableOpacity>
@@ -591,153 +610,209 @@ const styles = StyleSheet.create({
     backgroundColor: '#0CA678'
   },
   greenRaceCard: {
-    backgroundColor: '#EBFBF5',
-    borderRadius: 20,
+    backgroundColor: '#2B180D',
+    borderRadius: 22,
     overflow: 'hidden',
     borderWidth: 1.5,
-    borderColor: '#C3FAE8',
-    marginBottom: 16
+    borderColor: '#D4AF37',
+    marginBottom: 16,
+    shadowColor: '#2B180D',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+    elevation: 6
   },
   greenRaceTopBar: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingRight: 12
+    paddingHorizontal: 14,
+    paddingTop: 12,
+    paddingBottom: 6
   },
-  greenRaceRibbon: {
-    backgroundColor: '#C3FAE8',
-    paddingHorizontal: 16,
-    paddingVertical: 7,
-    borderBottomRightRadius: 18
+  esgPassBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(212, 175, 55, 0.15)',
+    paddingHorizontal: 10,
+    paddingVertical: 4.5,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(212, 175, 55, 0.35)',
+    gap: 5
   },
-  greenRaceRibbonText: {
+  esgPassBadgeText: {
     fontFamily: FONTS.family,
-    fontSize: 13,
-    fontWeight: '700',
-    color: '#087F5B'
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#D4AF37',
+    letterSpacing: 0.6
   },
   progressBtnPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    backgroundColor: 'rgba(250, 247, 242, 0.12)',
     paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 99,
-    marginTop: 6,
-    gap: 2
+    paddingVertical: 4.5,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(235, 227, 215, 0.25)',
+    gap: 3
   },
   progressBtnText: {
     fontFamily: FONTS.family,
-    fontSize: 11,
-    fontWeight: '600',
-    color: '#0CA678'
+    fontSize: 10.5,
+    fontWeight: '700',
+    color: '#FAF7F2'
   },
   greenRaceBodyRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 14,
-    paddingVertical: 14
+    paddingHorizontal: 16,
+    paddingVertical: 12
   },
   emblemCol: {
     alignItems: 'center',
-    width: 124
+    width: 130
   },
-  hexOuterBronze: {
-    width: 72,
-    height: 72,
-    borderRadius: 22,
-    backgroundColor: '#D97706',
-    borderWidth: 3,
-    borderColor: '#F59E0B',
+  goldEmblemOuter: {
+    width: 66,
+    height: 66,
+    borderRadius: 33,
+    backgroundColor: '#1E110A',
+    borderWidth: 2.5,
+    borderColor: '#D4AF37',
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#B45309',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 6
+    shadowColor: '#D4AF37',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.35,
+    shadowRadius: 6,
+    elevation: 4
   },
-  hexInnerWhite: {
-    width: 54,
-    height: 54,
-    borderRadius: 16,
-    backgroundColor: '#FFFFFF',
+  goldEmblemInner: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: '#3E2515',
+    borderWidth: 1,
+    borderColor: '#E8D09B',
     alignItems: 'center',
     justifyContent: 'center'
   },
-  seedlingPill: {
-    backgroundColor: '#558B2F',
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 99,
-    marginTop: 8
+  rankTitlePill: {
+    backgroundColor: 'rgba(212, 175, 55, 0.2)',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+    marginTop: 6,
+    borderWidth: 1,
+    borderColor: 'rgba(212, 175, 55, 0.4)'
   },
-  seedlingPillText: {
+  rankTitleText: {
     fontFamily: FONTS.family,
-    color: '#FFFFFF',
-    fontSize: 11,
-    fontWeight: '700'
+    color: '#FAF7F2',
+    fontSize: 10,
+    fontWeight: '800',
+    letterSpacing: 0.2
+  },
+  memberIdText: {
+    fontFamily: FONTS.family,
+    color: '#A89F91',
+    fontSize: 9,
+    fontWeight: '700',
+    marginTop: 3,
+    letterSpacing: 0.5
   },
   co2CounterCol: {
     flex: 1,
-    alignItems: 'flex-end'
+    alignItems: 'flex-end',
+    paddingLeft: 8
   },
   co2HeaderLabel: {
     fontFamily: FONTS.family,
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '700',
-    color: '#087F5B',
+    color: '#DCD4C7',
     textAlign: 'right'
   },
-  amberCounterPill: {
-    backgroundColor: '#FDE68A',
-    width: 110,
-    paddingVertical: 4,
-    borderRadius: 99,
-    alignItems: 'center',
-    marginVertical: 6,
-    borderWidth: 1,
-    borderColor: '#FCD34D'
+  co2ValueRow: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    marginVertical: 2
   },
-  amberCounterNumber: {
+  co2BigNumber: {
     fontFamily: FONTS.family,
-    fontSize: 20,
+    fontSize: 28,
+    fontWeight: '900',
+    color: '#FAF7F2',
+    letterSpacing: -0.5
+  },
+  co2UnitText: {
+    fontFamily: FONTS.family,
+    fontSize: 12.5,
     fontWeight: '800',
-    color: '#B45309'
+    color: '#D4AF37',
+    marginLeft: 4
   },
   co2SubLabel: {
     fontFamily: FONTS.family,
-    fontSize: 12,
+    fontSize: 10.5,
+    color: '#BDB3A7',
+    textAlign: 'right',
+    marginBottom: 6
+  },
+  glosaGreenWaveTag: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(129, 199, 132, 0.15)',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: 'rgba(129, 199, 132, 0.35)',
+    gap: 4
+  },
+  glosaGreenWaveText: {
+    fontFamily: FONTS.family,
+    fontSize: 10,
     fontWeight: '700',
-    color: '#087F5B'
+    color: '#81C784'
   },
   greenRaceMetricsBox: {
     flexDirection: 'row',
-    backgroundColor: 'rgba(255, 255, 255, 0.75)',
-    marginHorizontal: 10,
-    marginBottom: 10,
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.07)',
+    marginHorizontal: 12,
+    marginBottom: 12,
     borderRadius: 14,
     paddingVertical: 10,
-    paddingHorizontal: 6,
+    paddingHorizontal: 8,
     borderWidth: 1,
-    borderColor: '#FFFFFF'
+    borderColor: 'rgba(212, 175, 55, 0.2)'
   },
   grMetricCol: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'space-between'
+    justifyContent: 'center'
+  },
+  grMetricDivider: {
+    width: 1,
+    height: 24,
+    backgroundColor: 'rgba(235, 227, 215, 0.2)'
   },
   grMetricLabel: {
     fontFamily: FONTS.family,
     fontSize: 10,
-    color: '#1D1D1F',
+    color: '#BDB3A7',
     textAlign: 'center',
     lineHeight: 13
   },
   grMetricVal: {
     fontFamily: FONTS.family,
-    fontSize: 15,
+    fontSize: 13.5,
     fontWeight: '800',
-    color: '#0CA678',
+    color: '#FAF7F2',
     marginTop: 4
   },
   dualAccountCardsRow: {
