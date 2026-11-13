@@ -11,6 +11,7 @@ import {
   ActivityIndicator
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { FONTS, COLORS } from '../styles/theme';
 import ApiService from '../services/api';
 
 const INSURANCE_PLANS = [
@@ -218,27 +219,35 @@ export default function BookingModal({
                 </View>
               </View>
 
-              {/* 4 Key Telemetry & Hardware Specs */}
+              {/* 4 Key Telemetry & Hardware Specs (Refined Capsule Cards) */}
               <View style={styles.specsGrid4}>
                 <View style={styles.specBox}>
-                  <Ionicons name="people-outline" size={16} color="#6F4E37" />
+                  <View style={styles.specIconBadge}>
+                    <Ionicons name="people-outline" size={15} color="#6F4E37" />
+                  </View>
                   <Text style={styles.specBoxVal}>{vehicle.seats} chỗ</Text>
                   <Text style={styles.specBoxLbl}>Nội thất</Text>
                 </View>
                 <View style={styles.specBox}>
-                  <Ionicons name="battery-charging-outline" size={16} color="#6F4E37" />
+                  <View style={styles.specIconBadge}>
+                    <Ionicons name="battery-charging-outline" size={15} color="#6F4E37" />
+                  </View>
                   <Text style={styles.specBoxVal}>{vehicle.rangeKm} km</Text>
                   <Text style={styles.specBoxLbl}>Quãng đường</Text>
                 </View>
                 <View style={styles.specBox}>
-                  <Ionicons name="disc-outline" size={16} color="#6F4E37" />
+                  <View style={styles.specIconBadge}>
+                    <Ionicons name="disc-outline" size={15} color="#6F4E37" />
+                  </View>
                   <Text style={styles.specBoxVal}>
                     {vehicle.telematics?.tirePressurePsi?.fl || 34} PSI
                   </Text>
                   <Text style={styles.specBoxLbl}>Áp suất lốp</Text>
                 </View>
                 <View style={styles.specBox}>
-                  <Ionicons name="speedometer-outline" size={16} color="#6F4E37" />
+                  <View style={styles.specIconBadge}>
+                    <Ionicons name="speedometer-outline" size={15} color="#6F4E37" />
+                  </View>
                   <Text style={styles.specBoxVal}>GLOSA</Text>
                   <Text style={styles.specBoxLbl}>Làn sóng xanh</Text>
                 </View>
@@ -246,15 +255,17 @@ export default function BookingModal({
 
               {/* Pre-Trip IoT 4-Tire & Safety Check Box */}
               <View style={styles.safetyBox}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                  <Ionicons name="shield-checkmark" size={15} color="#6F4E37" />
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7 }}>
+                  <Ionicons name="shield-checkmark" size={15} color="#D4AF37" />
                   <Text style={styles.safetyBoxTitle}>
-                    Đã kiểm định an toàn trước chuyến đi
+                    Đã kiểm định an toàn EcoSafe
                   </Text>
                 </View>
-                <Text style={styles.safetyBoxMeta}>
-                  4 Lốp OK · Pin {batteryPct}%
-                </Text>
+                <View style={styles.safetyMetaBadge}>
+                  <Text style={styles.safetyBoxMeta}>
+                    4 Lốp OK · Pin {batteryPct}%
+                  </Text>
+                </View>
               </View>
             </View>
 
@@ -559,7 +570,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     shadowColor: '#2B180D',
     shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.18,
+    shadowOpacity: 0.15,
     shadowRadius: 16,
     elevation: 10
   },
@@ -568,7 +579,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
-    paddingVertical: 14,
+    paddingVertical: 13,
     backgroundColor: '#FFFFFF',
     borderBottomWidth: 1,
     borderBottomColor: '#EFE8DE'
@@ -577,7 +588,9 @@ const styles = StyleSheet.create({
     width: 34,
     height: 34,
     borderRadius: 17,
-    backgroundColor: '#F5EFEB',
+    backgroundColor: '#FAF7F2',
+    borderWidth: 1,
+    borderColor: '#EFE8DE',
     alignItems: 'center',
     justifyContent: 'center'
   },
@@ -585,30 +598,33 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   topTitle: {
+    fontFamily: FONTS.family,
     fontSize: 15,
-    fontWeight: '800',
+    fontWeight: '700',
     color: '#2B180D'
   },
   topSubtitle: {
-    fontSize: 10,
+    fontFamily: FONTS.family,
+    fontSize: 11,
     color: '#8C6239',
     fontWeight: '500',
-    marginTop: 1
+    marginTop: 2
   },
   verifiedChip: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F5EFEB',
+    backgroundColor: '#FAF7F2',
     borderWidth: 1,
     borderColor: '#E8DFD8',
-    paddingHorizontal: 9,
+    paddingHorizontal: 10,
     paddingVertical: 5,
-    borderRadius: 99,
+    borderRadius: 20,
     gap: 4
   },
   verifiedChipText: {
-    fontSize: 10,
-    fontWeight: '800',
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    fontWeight: '700',
     color: '#6F4E37'
   },
   scrollBody: {
@@ -619,13 +635,14 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     overflow: 'hidden',
     height: 220,
-    backgroundColor: '#EAE4DC',
+    backgroundColor: '#1C1917',
     marginBottom: 12,
     position: 'relative'
   },
   heroImage: {
     width: '100%',
-    height: '100%'
+    height: '100%',
+    resizeMode: 'cover'
   },
   imageFloatingBadges: {
     position: 'absolute',
@@ -639,31 +656,35 @@ const styles = StyleSheet.create({
   coffeeBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(43, 24, 13, 0.88)',
+    backgroundColor: 'rgba(35, 23, 16, 0.82)',
     borderWidth: 1,
-    borderColor: 'rgba(212, 175, 55, 0.4)',
+    borderColor: 'rgba(212, 175, 55, 0.45)',
     paddingHorizontal: 10,
     paddingVertical: 5,
-    borderRadius: 99,
-    gap: 4
+    borderRadius: 20,
+    gap: 5
   },
   coffeeBadgeText: {
+    fontFamily: FONTS.family,
     color: '#FAF7F2',
     fontSize: 10,
-    fontWeight: '800'
+    fontWeight: '700',
+    letterSpacing: 0.3
   },
   plateFloating: {
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    backgroundColor: 'rgba(255, 255, 255, 0.94)',
     borderWidth: 1,
     borderColor: '#EFE8DE',
     paddingHorizontal: 10,
     paddingVertical: 5,
-    borderRadius: 8
+    borderRadius: 10
   },
   plateFloatingText: {
+    fontFamily: FONTS.family,
     color: '#2B180D',
     fontSize: 11,
-    fontWeight: '800'
+    fontWeight: '700',
+    letterSpacing: 0.5
   },
   sectionCard: {
     backgroundColor: '#FFFFFF',
@@ -689,9 +710,11 @@ const styles = StyleSheet.create({
     marginBottom: 12
   },
   vehTitle: {
+    fontFamily: FONTS.family,
     fontSize: 17,
-    fontWeight: '900',
-    color: '#2B180D'
+    fontWeight: '700',
+    color: '#2B180D',
+    letterSpacing: -0.2
   },
   ratingRow: {
     flexDirection: 'row',
@@ -700,11 +723,13 @@ const styles = StyleSheet.create({
     marginTop: 4
   },
   ratingBold: {
+    fontFamily: FONTS.family,
     fontSize: 12,
-    fontWeight: '800',
+    fontWeight: '700',
     color: '#2B180D'
   },
   ratingCount: {
+    fontFamily: FONTS.family,
     fontSize: 11,
     color: '#8C6239'
   },
@@ -718,11 +743,13 @@ const styles = StyleSheet.create({
     borderColor: '#E8DFD8'
   },
   priceBig: {
+    fontFamily: FONTS.family,
     fontSize: 16,
-    fontWeight: '900',
+    fontWeight: '700',
     color: '#6F4E37'
   },
   priceUnitText: {
+    fontFamily: FONTS.family,
     fontSize: 10,
     color: '#8C6239',
     fontWeight: '600'
@@ -731,31 +758,46 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     backgroundColor: '#FAF7F2',
-    borderRadius: 14,
+    borderRadius: 16,
     padding: 10,
     borderWidth: 1,
-    borderColor: '#EFE8DE'
+    borderColor: '#EFE8DE',
+    gap: 6
   },
   specBox: {
     flex: 1,
     alignItems: 'center'
   },
+  specIconBadge: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#F5EFEB',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 4,
+    borderWidth: 1,
+    borderColor: '#EFE8DE'
+  },
   specBoxVal: {
+    fontFamily: FONTS.family,
     fontSize: 12,
-    fontWeight: '800',
-    color: '#2B180D',
-    marginTop: 3
+    fontWeight: '700',
+    color: '#2B180D'
   },
   specBoxLbl: {
-    fontSize: 9,
+    fontFamily: FONTS.family,
+    fontSize: 10,
     color: '#8C6239',
+    fontWeight: '500',
     marginTop: 1
   },
   safetyBox: {
     marginTop: 10,
     backgroundColor: '#F5EFEB',
     borderRadius: 12,
-    padding: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 9,
     borderWidth: 1,
     borderColor: '#E8DFD8',
     flexDirection: 'row',
@@ -763,25 +805,37 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between'
   },
   safetyBoxTitle: {
-    fontSize: 11,
+    fontFamily: FONTS.family,
+    fontSize: 12,
     fontWeight: '700',
     color: '#2B180D'
   },
+  safetyMetaBadge: {
+    backgroundColor: '#FAF7F2',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#E8DFD8'
+  },
   safetyBoxMeta: {
+    fontFamily: FONTS.family,
     fontSize: 10,
     fontWeight: '700',
     color: '#6F4E37'
   },
   sectionTitle: {
+    fontFamily: FONTS.family,
     fontSize: 13,
-    fontWeight: '800',
+    fontWeight: '700',
     color: '#2B180D',
-    marginBottom: 10
+    marginBottom: 10,
+    letterSpacing: -0.1
   },
   modeSwitchRow: {
     flexDirection: 'row',
-    backgroundColor: '#FAF7F2',
-    borderRadius: 12,
+    backgroundColor: '#F5EFEB',
+    borderRadius: 14,
     padding: 3,
     marginBottom: 10,
     borderWidth: 1,
@@ -792,26 +846,27 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 8,
-    borderRadius: 10,
-    gap: 5
+    paddingVertical: 9,
+    borderRadius: 11,
+    gap: 6
   },
   modeTabActive: {
-    backgroundColor: '#6F4E37',
+    backgroundColor: '#4E3322',
     shadowColor: '#2B180D',
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
+    shadowOpacity: 0.12,
+    shadowRadius: 3,
     elevation: 2
   },
   modeTabText: {
+    fontFamily: FONTS.family,
     fontSize: 11,
-    fontWeight: '700',
+    fontWeight: '600',
     color: '#8C6239'
   },
   modeTabTextActive: {
     color: '#FFFFFF',
-    fontWeight: '800'
+    fontWeight: '700'
   },
   durationPillsRow: {
     flexDirection: 'row',
@@ -821,24 +876,31 @@ const styles = StyleSheet.create({
   durationChip: {
     flex: 1,
     alignItems: 'center',
+    justifyContent: 'center',
     paddingVertical: 9,
-    borderRadius: 10,
+    borderRadius: 20,
     backgroundColor: '#FAF7F2',
     borderWidth: 1,
     borderColor: '#EFE8DE'
   },
   durationChipActive: {
-    backgroundColor: '#F5EFEB',
-    borderColor: '#6F4E37'
+    backgroundColor: '#4E3322',
+    borderColor: '#4E3322',
+    shadowColor: '#2B180D',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.12,
+    shadowRadius: 2,
+    elevation: 2
   },
   durationChipText: {
+    fontFamily: FONTS.family,
     fontSize: 12,
-    fontWeight: '700',
-    color: '#6E6E73'
+    fontWeight: '600',
+    color: '#6F4E37'
   },
   durationChipTextActive: {
-    color: '#6F4E37',
-    fontWeight: '800'
+    color: '#FFFFFF',
+    fontWeight: '700'
   },
   deliveryRow: {
     flexDirection: 'row',
@@ -846,8 +908,8 @@ const styles = StyleSheet.create({
   },
   deliveryOption: {
     flex: 1,
-    padding: 10,
-    borderRadius: 12,
+    padding: 12,
+    borderRadius: 14,
     backgroundColor: '#FAF7F2',
     borderWidth: 1,
     borderColor: '#EFE8DE'
@@ -862,19 +924,21 @@ const styles = StyleSheet.create({
     gap: 6
   },
   deliveryTitle: {
+    fontFamily: FONTS.family,
     fontSize: 12,
-    fontWeight: '800',
+    fontWeight: '700',
     color: '#2B180D'
   },
   deliverySub: {
+    fontFamily: FONTS.family,
     fontSize: 10,
     color: '#8C6239',
-    marginTop: 3,
+    marginTop: 4,
     marginLeft: 22
   },
   insuranceItem: {
-    padding: 10,
-    borderRadius: 12,
+    padding: 11,
+    borderRadius: 14,
     backgroundColor: '#FAF7F2',
     borderWidth: 1,
     borderColor: '#EFE8DE',
@@ -895,40 +959,45 @@ const styles = StyleSheet.create({
     gap: 6
   },
   insName: {
+    fontFamily: FONTS.family,
     fontSize: 12,
-    fontWeight: '800',
+    fontWeight: '700',
     color: '#2B180D'
   },
   insBadge: {
     backgroundColor: '#FAF7F2',
-    paddingHorizontal: 6,
+    paddingHorizontal: 7,
     paddingVertical: 2,
     borderRadius: 6,
     borderWidth: 1,
     borderColor: '#EFE8DE'
   },
   insBadgeText: {
+    fontFamily: FONTS.family,
     fontSize: 9,
     fontWeight: '700',
     color: '#8C6239'
   },
   insFeeText: {
+    fontFamily: FONTS.family,
     fontSize: 12,
-    fontWeight: '800',
+    fontWeight: '700',
     color: '#6F4E37'
   },
   insDesc: {
+    fontFamily: FONTS.family,
     fontSize: 10,
     color: '#6E6E73',
-    marginTop: 3,
-    marginLeft: 24
+    marginTop: 4,
+    marginLeft: 24,
+    lineHeight: 14
   },
   voucherInputRow: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FAF7F2',
     borderRadius: 12,
-    paddingHorizontal: 10,
+    paddingHorizontal: 11,
     height: 44,
     borderWidth: 1,
     borderColor: '#EFE8DE',
@@ -936,30 +1005,32 @@ const styles = StyleSheet.create({
   },
   voucherInput: {
     flex: 1,
+    fontFamily: FONTS.family,
     fontSize: 12,
-    fontWeight: '700',
+    fontWeight: '600',
     color: '#2B180D'
   },
   quickVoucherRow: {
     flexDirection: 'row',
-    gap: 4,
+    gap: 5,
     flexWrap: 'wrap'
   },
   quickVoucherPill: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
+    paddingHorizontal: 9,
+    paddingVertical: 5,
+    borderRadius: 20,
     backgroundColor: '#F5EFEB',
     borderWidth: 1,
     borderColor: '#E8DFD8'
   },
   quickVoucherPillActive: {
-    backgroundColor: '#6F4E37',
-    borderColor: '#6F4E37'
+    backgroundColor: '#4E3322',
+    borderColor: '#4E3322'
   },
   quickVoucherText: {
+    fontFamily: FONTS.family,
     fontSize: 10,
-    fontWeight: '800',
+    fontWeight: '700',
     color: '#6F4E37'
   },
   quickVoucherTextActive: {
@@ -971,12 +1042,14 @@ const styles = StyleSheet.create({
     marginVertical: 4
   },
   priceRowLabel: {
+    fontFamily: FONTS.family,
     fontSize: 12,
     color: '#6E6E73'
   },
   priceRowVal: {
+    fontFamily: FONTS.family,
     fontSize: 12,
-    fontWeight: '700',
+    fontWeight: '600',
     color: '#2B180D'
   },
   totalDivider: {
@@ -990,13 +1063,15 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   totalLabel: {
+    fontFamily: FONTS.family,
     fontSize: 14,
-    fontWeight: '800',
+    fontWeight: '700',
     color: '#2B180D'
   },
   totalAmount: {
+    fontFamily: FONTS.family,
     fontSize: 18,
-    fontWeight: '900',
+    fontWeight: '700',
     color: '#6F4E37'
   },
   contractAgreeRow: {
@@ -1010,11 +1085,13 @@ const styles = StyleSheet.create({
   },
   contractAgreeText: {
     flex: 1,
+    fontFamily: FONTS.family,
     fontSize: 11,
-    color: '#6E6E73'
+    color: '#6E6E73',
+    lineHeight: 15
   },
   boldText: {
-    fontWeight: '800',
+    fontWeight: '700',
     color: '#2B180D'
   },
   bottomCheckoutBar: {
@@ -1028,32 +1105,36 @@ const styles = StyleSheet.create({
     borderTopColor: '#EFE8DE'
   },
   bottomTotalSub: {
+    fontFamily: FONTS.family,
     fontSize: 10,
     color: '#8C6239',
-    fontWeight: '600'
+    fontWeight: '500'
   },
   bottomTotalVal: {
-    fontSize: 19,
-    fontWeight: '900',
-    color: '#2B180D'
+    fontFamily: FONTS.family,
+    fontSize: 20,
+    fontWeight: '800',
+    color: '#2B180D',
+    marginTop: 1
   },
   confirmBookBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#4E3322',
-    paddingHorizontal: 18,
+    paddingHorizontal: 16,
     paddingVertical: 12,
-    borderRadius: 14,
+    borderRadius: 16,
     gap: 8,
     shadowColor: '#2B180D',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.15,
-    shadowRadius: 4,
+    shadowRadius: 5,
     elevation: 3
   },
   confirmBookBtnText: {
+    fontFamily: FONTS.family,
     color: '#FFFFFF',
     fontSize: 13,
-    fontWeight: '800'
+    fontWeight: '700'
   }
 });
