@@ -31,13 +31,12 @@ const KEYPAD_KEYS = [
 
 export default function OnboardingAuthFlow({ onComplete }) {
   // Steps:
-  // 0: Animated Vector Logo Splash Screen (Video 1 style)
-  // 1: Location Permission (Ảnh 1)
-  // 2: Welcome Orbit Screen (Ảnh 2)
-  // 3: Phone Input Screen with iOS Keypad (Ảnh 3)
-  // 4: OTP Channel Bottom Sheet over Phone Input (Ảnh 4)
-  // 5: OTP 4-Digit Verification + Notification Banner (Ảnh 5)
-  const [step, setStep] = useState(0);
+  // 1: Location Permission (Clean Apple White)
+  // 2: Welcome & Phone Input (Clean Luxury Mobility)
+  // 3: Phone Input Screen with iOS Keypad
+  // 4: OTP Channel Bottom Sheet over Phone Input
+  // 5: OTP 4-Digit Verification + Notification Banner
+  const [step, setStep] = useState(1);
   const [phone, setPhone] = useState(''); // Empty by default for manual entry
   const [otpChannel, setOtpChannel] = useState('ZALO'); // 'ZALO' | 'WHATSAPP' | 'SMS'
   const [otpDigits, setOtpDigits] = useState(['', '', '', '']);
@@ -334,59 +333,90 @@ export default function OnboardingAuthFlow({ onComplete }) {
   }
 
   // ============================================================================
-  // STEP 1: LOCATION PERMISSION DIALOG (IMAGE 1)
+  // STEP 1: LOCATION PERMISSION DIALOG (CLEAN APPLE WHITE NATIVE)
   // ============================================================================
   if (step === 1) {
     return (
       <View style={styles.step1Container}>
+        {/* Top Header with Brand and Instant Skip */}
+        <View style={styles.step1TopBar}>
+          <View style={styles.brandSmallPill}>
+            <View style={styles.brandDotGreen} />
+            <Text style={styles.brandSmallText}>ECOGO MOBILITY</Text>
+          </View>
+
+          {onComplete ? (
+            <TouchableOpacity
+              style={styles.skipTopBtn}
+              activeOpacity={0.7}
+              onPress={() => onComplete({ fullName: 'Minh Tài', phone: '0901234567' })}
+            >
+              <Text style={styles.skipTopText}>Vào app ngay →</Text>
+            </TouchableOpacity>
+          ) : null}
+        </View>
+
         <View style={styles.step1CenterWrap}>
           <View style={styles.locDialogCard}>
-            <View style={styles.locAppIconWrap}>
-              <View style={styles.locBlueSquare}>
-                <Ionicons
-                  name="navigate"
-                  size={28}
-                  color="#FFFFFF"
-                  style={{ transform: [{ rotate: '10deg' }] }}
-                />
+            <View style={styles.locHeaderRow}>
+              <View style={styles.locAppIconWrap}>
+                <View style={styles.locBlueSquare}>
+                  <Ionicons
+                    name="navigate"
+                    size={24}
+                    color="#FFFFFF"
+                    style={{ transform: [{ rotate: '12deg' }] }}
+                  />
+                </View>
+                <View style={styles.locHandBadge}>
+                  <Ionicons name="checkmark" size={11} color="#FFFFFF" />
+                </View>
               </View>
-              <View style={styles.locHandBadge}>
-                <Ionicons name="hand-left" size={12} color="#FFFFFF" />
+
+              <View style={styles.locHeaderMeta}>
+                <Text style={styles.locDialogAppLabel}>ECOGO SMART</Text>
+                <Text style={styles.locDialogSystemTime}>Yêu cầu truy cập vị trí</Text>
               </View>
             </View>
 
             <Text style={styles.locTitle}>
-              Cho phép “EcoGo Smart” sử dụng{'\n'}vị trí của bạn?
+              Cho phép sử dụng vị trí hiện tại của bạn?
             </Text>
             <Text style={styles.locSubtitle}>
-              Giúp bạn tìm trạm xe & trụ sạc gần nhất,{'\n'}và mở khóa xe nhanh chóng qua Bluetooth
+              Để hiển thị các điểm thuê xe tự lái và trạm sạc EV gần nhất quanh khu vực của bạn
             </Text>
 
-            {/* Clean Light Map Vector Preview */}
+            {/* Clean Apple White & Light Map Preview (Like Real Apple Maps) */}
             <View style={styles.locMapPreview}>
-              <View style={[styles.roadLineH, { top: 28, transform: [{ rotate: '6deg' }] }]} />
-              <View style={[styles.roadLineH, { top: 68, transform: [{ rotate: '-4deg' }] }]} />
-              <View style={[styles.roadLineH, { top: 108, transform: [{ rotate: '-28deg' }] }]} />
-              <View style={[styles.roadLineV, { left: 75, transform: [{ rotate: '12deg' }] }]} />
-              <View style={[styles.roadLineV, { left: 155, transform: [{ rotate: '-8deg' }] }]} />
-              <View style={[styles.roadLineV, { left: 225, transform: [{ rotate: '18deg' }] }]} />
+              {/* Soft Parks & Water Features */}
+              <View style={styles.mapParkArea} />
+              <View style={styles.mapRiverArea} />
+
+              {/* Realistic Road Grid */}
+              <View style={[styles.roadLineH, { top: 26, transform: [{ rotate: '4deg' }] }]} />
+              <View style={[styles.roadLineH, { top: 70, transform: [{ rotate: '-3deg' }] }]} />
+              <View style={[styles.roadLineH, { top: 110, transform: [{ rotate: '-16deg' }] }]} />
+              <View style={[styles.roadLineV, { left: 70, transform: [{ rotate: '8deg' }] }]} />
+              <View style={[styles.roadLineV, { left: 160, transform: [{ rotate: '-6deg' }] }]} />
+              <View style={[styles.roadLineV, { left: 240, transform: [{ rotate: '14deg' }] }]} />
 
               <View style={styles.precisePill}>
                 <Ionicons name="navigate" size={11} color="#0CA678" />
-                <Text style={styles.precisePillText}>Chính xác: Bật</Text>
+                <Text style={styles.precisePillText}>Độ chính xác cao: Bật</Text>
               </View>
 
-              <Text style={[styles.streetLabel, { top: 32, left: 18 }]}>CHU VĂN AN</Text>
-              <Text style={[styles.streetLabel, { top: 22, left: 82, fontSize: 7 }]}>ĐINH BỘ LĨNH</Text>
-              <Text style={[styles.streetLabel, { top: 14, right: 32, transform: [{ rotate: '-24deg' }] }]}>
+              <Text style={[styles.streetLabel, { top: 32, left: 14 }]}>CHU VĂN AN</Text>
+              <Text style={[styles.streetLabel, { top: 18, left: 86, fontSize: 7 }]}>ĐINH BỘ LĨNH</Text>
+              <Text style={[styles.streetLabel, { top: 14, right: 28, transform: [{ rotate: '-18deg' }] }]}>
                 ĐIỆN BIÊN PHỦ
               </Text>
-              <Text style={[styles.streetLabel, { bottom: 26, left: 22, transform: [{ rotate: '-32deg' }] }]}>
+              <Text style={[styles.streetLabel, { bottom: 24, left: 20, transform: [{ rotate: '-22deg' }] }]}>
                 BẠCH ĐẰNG
               </Text>
 
+              {/* Location Center Marker with Soft Mint Radar Pulse */}
               <View style={styles.mapCenterTarget}>
-                <Text style={styles.paradiseLabel}>TRẠM ECOGO{'\n'}UTH</Text>
+                <View style={styles.mapRadarPulse} />
                 <View style={styles.blueLocationDot} />
               </View>
 
@@ -394,13 +424,14 @@ export default function OnboardingAuthFlow({ onComplete }) {
                 <View style={styles.landmarkIconCircle}>
                   <Ionicons name="flash" size={8} color="#0CA678" />
                 </View>
-                <Text style={styles.landmarkText}>Trụ sạc VinFast 60kW</Text>
+                <Text style={styles.landmarkText}>Trạm sạc EVN UTH · 0.3 km</Text>
               </View>
             </View>
 
+            {/* Apple Native Clean Action Buttons */}
             <TouchableOpacity
               style={[styles.locPermBtn, styles.locPermBtnPrimary]}
-              activeOpacity={0.85}
+              activeOpacity={0.88}
               onPress={() => handleLocationChoice(true)}
             >
               <Text style={[styles.locPermBtnText, styles.locPermBtnTextPrimary]}>
@@ -418,75 +449,92 @@ export default function OnboardingAuthFlow({ onComplete }) {
 
             <TouchableOpacity
               style={[styles.locPermBtn, styles.locPermBtnCancel]}
-              activeOpacity={0.85}
+              activeOpacity={0.7}
               onPress={() => handleLocationChoice(false)}
             >
               <Text style={[styles.locPermBtnText, styles.locPermBtnTextCancel]}>Để sau / Từ chối</Text>
             </TouchableOpacity>
           </View>
         </View>
+
+        <View style={styles.step1FooterInfo}>
+          <Text style={styles.step1FooterText}>Quyền vị trí giúp tự động tính quãng đường và mở khóa BLE</Text>
+        </View>
       </View>
     );
   }
 
   // ============================================================================
-  // STEP 2: WELCOME ORBIT SCREEN (IMAGE 2)
+  // STEP 2: WELCOME & PHONE LOGIN SCREEN (CLEAN LUXURY MOBILITY)
   // ============================================================================
   if (step === 2) {
     return (
       <View style={styles.step2Container}>
+        {/* Top Header Row with Language & Skip */}
         <View style={styles.step2TopRow}>
-          <TouchableOpacity style={styles.langPill}>
-            <Ionicons name="earth-outline" size={16} color="#1E293B" />
-            <Text style={styles.langPillText}>Việt Nam | VI</Text>
-            <Ionicons name="chevron-down" size={14} color="#1E293B" />
-          </TouchableOpacity>
+          <View style={styles.brandSmallPill}>
+            <View style={styles.brandDotGreen} />
+            <Text style={styles.brandSmallText}>ECOGO MOBILITY</Text>
+          </View>
+
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+            {onComplete ? (
+              <TouchableOpacity
+                style={styles.skipTopBtn}
+                activeOpacity={0.7}
+                onPress={() => onComplete({ fullName: 'Minh Tài', phone: '0901234567' })}
+              >
+                <Text style={styles.skipTopText}>Vào app ngay →</Text>
+              </TouchableOpacity>
+            ) : null}
+
+            <TouchableOpacity style={styles.langPill}>
+              <Ionicons name="globe-outline" size={14} color="#1D1D1F" />
+              <Text style={styles.langPillText}>VI</Text>
+              <Ionicons name="chevron-down" size={12} color="#64748B" />
+            </TouchableOpacity>
+          </View>
         </View>
 
-        <View style={styles.orbitStage}>
-          <View style={styles.orbitCircleOuter} />
-          <View style={styles.orbitCircleInner} />
-
-          <View style={[styles.orbitBadge, { top: 18, left: '41%' }]}>
-            <View style={styles.car3DPill}>
+        {/* Clean Luxury EV Hero Banner (No AI Gimmicks) */}
+        <View style={styles.step2HeroCard}>
+          <View style={styles.step2IconRow}>
+            <View style={styles.step2CarBadge}>
               <Ionicons name="car-sport" size={28} color="#0CA678" />
             </View>
-          </View>
-
-          <View style={[styles.orbitBadge, { top: 44, left: 26 }]}>
-            <View style={styles.scooter3DPill}>
-              <Ionicons name="bicycle" size={22} color="#0CA678" />
+            <View style={styles.step2BadgeDetails}>
+              <View style={styles.step2BadgePill}>
+                <Text style={styles.step2BadgePillText}>100% XE ĐIỆN & NĂNG LƯỢNG SẠCH</Text>
+              </View>
+              <Text style={styles.step2BadgeSub}>Không phát thải · Vận hành êm ái</Text>
             </View>
           </View>
 
-          <View style={[styles.orbitBadge, { top: 112, right: 24 }]}>
-            <View style={styles.food3DPill}>
-              <Text style={{ fontSize: 28 }}>⚡🔋</Text>
-            </View>
-          </View>
+          <Text style={styles.step2MainTitle}>
+            Di chuyển xanh{'\n'}Thuê xe tự động 24/7
+          </Text>
+          <Text style={styles.step2SubTitle}>
+            Đăng nhập để nhận ưu đãi 20% và mở khóa xe không chạm qua Bluetooth tại TP.HCM
+          </Text>
 
-          <View style={[styles.orbitBadge, { bottom: 38, right: 98 }]}>
-            <View style={styles.calendar3DPill}>
-              <Text style={{ fontSize: 22 }}>🕒📅</Text>
+          {/* 3 Luxury Feature Chips */}
+          <View style={styles.featureChipsRow}>
+            <View style={styles.featureChip}>
+              <Ionicons name="key-outline" size={13} color="#0CA678" />
+              <Text style={styles.featureChipText}>Khóa số BLE</Text>
             </View>
-          </View>
-
-          <View style={[styles.orbitBadge, { bottom: 26, left: 48 }]}>
-            <View style={styles.gift3DPill}>
-              <Text style={{ fontSize: 22 }}>🎁</Text>
+            <View style={styles.featureChip}>
+              <Ionicons name="flash-outline" size={13} color="#0284C7" />
+              <Text style={styles.featureChipText}>Trạm sạc 24/7</Text>
             </View>
-          </View>
-
-          <View style={styles.heroTextBlock}>
-            <Text style={styles.heroCyanTitle}>
-              EcoGo Smart{'\n'}Di chuyển xanh 24/7
-            </Text>
-            <Text style={styles.heroSubtitle}>
-              Đăng ký hoặc đăng nhập để bắt đầu{'\n'}hành trình di chuyển thông minh của bạn
-            </Text>
+            <View style={styles.featureChip}>
+              <Ionicons name="shield-checkmark-outline" size={13} color="#D97706" />
+              <Text style={styles.featureChipText}>0đ Đặt cọc</Text>
+            </View>
           </View>
         </View>
 
+        {/* Input & Form Area */}
         <View style={styles.step2FormArea}>
           <TouchableOpacity
             style={styles.phoneInputOuter}
@@ -498,30 +546,27 @@ export default function OnboardingAuthFlow({ onComplete }) {
                 <Text style={styles.vnStar}>★</Text>
               </View>
               <Text style={styles.countryCodeText}>+84</Text>
-              <Ionicons name="caret-down" size={12} color="#1E293B" />
+              <Ionicons name="chevron-down" size={12} color="#1D1D1F" />
             </View>
 
-            <Text style={[styles.phonePlaceholderText, phone ? { color: '#0F172A', fontWeight: '700' } : {}]}>
-              {phone ? phone : 'Số điện thoại'}
+            <Text style={[styles.phonePlaceholderText, phone ? { color: '#1D1D1F', fontWeight: '700' } : {}]}>
+              {phone ? phone : 'Nhập số điện thoại của bạn'}
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[
-              styles.continueBtn,
-              styles.continueBtnTurquoise
-            ]}
-            activeOpacity={0.85}
+            style={[styles.continueBtn, styles.continueBtnPrimary]}
+            activeOpacity={0.88}
             onPress={() => setStep(3)}
           >
-            <Text style={[styles.continueBtnText, styles.continueBtnTextWhite]}>
+            <Text style={styles.continueBtnTextWhite}>
               Tiếp tục
             </Text>
           </TouchableOpacity>
 
           <View style={styles.orDividerRow}>
             <View style={styles.orLine} />
-            <Text style={styles.orText}>Hoặc đăng nhập bằng</Text>
+            <Text style={styles.orText}>Hoặc tiếp tục với</Text>
             <View style={styles.orLine} />
           </View>
 
@@ -531,7 +576,7 @@ export default function OnboardingAuthFlow({ onComplete }) {
               activeOpacity={0.85}
               onPress={() => setStep(3)}
             >
-              <Ionicons name="logo-apple" size={22} color="#FFFFFF" />
+              <Ionicons name="logo-apple" size={20} color="#FFFFFF" />
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -544,8 +589,8 @@ export default function OnboardingAuthFlow({ onComplete }) {
           </View>
 
           <Text style={styles.termsFooterText}>
-            Bằng việc "Tiếp tục", tôi đồng ý với{' '}
-            <Text style={styles.termsLinkCyan}>Điều khoản và Điều kiện</Text> của{'\n'}EcoGo Smart Mobility
+            Bằng việc tiếp tục, tôi đồng ý với{' '}
+            <Text style={styles.termsLinkGreen}>Điều khoản & Chính sách</Text> của{'\n'}EcoGo Smart Mobility
           </Text>
         </View>
       </View>
@@ -1062,7 +1107,53 @@ const styles = StyleSheet.create({
   step1Container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    paddingVertical: 12
+  },
+  step1TopBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 18,
+    paddingTop: 6
+  },
+  brandSmallPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#EBFBF5',
+    borderWidth: 1,
+    borderColor: '#A3EAD2',
+    paddingHorizontal: 9,
+    paddingVertical: 4,
+    borderRadius: 99,
+    gap: 6
+  },
+  brandDotGreen: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#0CA678'
+  },
+  brandSmallText: {
+    fontFamily: FONTS.family,
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#0CA678',
+    letterSpacing: 0.8
+  },
+  skipTopBtn: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 99,
+    backgroundColor: '#F8F9FA',
+    borderWidth: 1,
+    borderColor: '#E5E7EB'
+  },
+  skipTopText: {
+    fontFamily: FONTS.family,
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#475569'
   },
   step1CenterWrap: {
     flex: 1,
@@ -1074,26 +1165,31 @@ const styles = StyleSheet.create({
     width: '100%',
     maxWidth: 340,
     backgroundColor: '#FFFFFF',
-    borderRadius: 26,
+    borderRadius: 24,
     padding: 22,
     borderWidth: 1,
-    borderColor: '#EAEAE8',
+    borderColor: '#EAEAEA',
     shadowColor: '#000000',
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.08,
-    shadowRadius: 26,
+    shadowRadius: 24,
     elevation: 8
   },
-  locAppIconWrap: {
-    width: 52,
-    height: 52,
-    position: 'relative',
+  locHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
     marginBottom: 14
   },
+  locAppIconWrap: {
+    width: 46,
+    height: 46,
+    position: 'relative'
+  },
   locBlueSquare: {
-    width: 48,
-    height: 48,
-    borderRadius: 14,
+    width: 44,
+    height: 44,
+    borderRadius: 13,
     backgroundColor: '#0CA678',
     alignItems: 'center',
     justifyContent: 'center'
@@ -1102,14 +1198,30 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: -2,
     right: -2,
-    width: 20,
-    height: 20,
+    width: 18,
+    height: 18,
     borderRadius: 6,
     backgroundColor: '#1D1D1F',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1.5,
     borderColor: '#FFFFFF'
+  },
+  locHeaderMeta: {
+    flex: 1
+  },
+  locDialogAppLabel: {
+    fontFamily: FONTS.family,
+    fontSize: 12,
+    fontWeight: '800',
+    color: '#0CA678',
+    letterSpacing: 0.5
+  },
+  locDialogSystemTime: {
+    fontFamily: FONTS.family,
+    fontSize: 12,
+    color: '#64748B',
+    marginTop: 1
   },
   locTitle: {
     fontFamily: FONTS.family,
@@ -1125,31 +1237,57 @@ const styles = StyleSheet.create({
     marginTop: 6,
     lineHeight: 18
   },
+
+  /* Clean Apple White & Light Map Preview */
   locMapPreview: {
     width: '100%',
-    height: 138,
+    height: 140,
     borderRadius: 16,
-    backgroundColor: '#F1F5F9',
+    backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: '#E5E7EB',
     marginTop: 14,
     marginBottom: 16,
     overflow: 'hidden',
     position: 'relative'
   },
+  mapParkArea: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    width: 100,
+    height: 80,
+    backgroundColor: '#EBFBF5',
+    borderBottomLeftRadius: 40
+  },
+  mapRiverArea: {
+    position: 'absolute',
+    bottom: -15,
+    left: 42,
+    width: 16,
+    height: 170,
+    backgroundColor: '#E0F2FE',
+    transform: [{ rotate: '36deg' }]
+  },
   roadLineH: {
     position: 'absolute',
     left: -20,
     right: -20,
-    height: 4,
-    backgroundColor: '#FFFFFF'
+    height: 8,
+    backgroundColor: '#F3F4F6',
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
+    borderColor: '#E5E7EB'
   },
   roadLineV: {
     position: 'absolute',
     top: -20,
     bottom: -20,
-    width: 3.5,
-    backgroundColor: '#FFFFFF'
+    width: 7,
+    backgroundColor: '#F3F4F6',
+    borderLeftWidth: 1,
+    borderRightWidth: 1,
+    borderColor: '#E5E7EB'
   },
   precisePill: {
     position: 'absolute',
@@ -1174,42 +1312,51 @@ const styles = StyleSheet.create({
   },
   streetLabel: {
     position: 'absolute',
-    color: '#64748B',
+    color: '#475569',
     fontSize: 8,
     fontWeight: '700',
     letterSpacing: 0.4
   },
   mapCenterTarget: {
     position: 'absolute',
-    top: '44%',
-    left: '44%',
+    top: '42%',
+    left: '42%',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    width: 38,
+    height: 38
   },
-  paradiseLabel: {
-    color: '#0CA678',
-    fontSize: 8,
-    fontWeight: '800',
-    textAlign: 'center',
-    position: 'absolute'
+  mapRadarPulse: {
+    position: 'absolute',
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(12, 166, 120, 0.16)',
+    borderWidth: 1,
+    borderColor: 'rgba(12, 166, 120, 0.35)'
   },
   blueLocationDot: {
-    width: 18,
-    height: 18,
-    borderRadius: 9,
+    width: 16,
+    height: 16,
+    borderRadius: 8,
     backgroundColor: '#0CA678',
     borderWidth: 3,
-    borderColor: '#EBFBF5',
-    opacity: 1
+    borderColor: '#FFFFFF',
+    shadowColor: '#0CA678',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.4,
+    shadowRadius: 4
   },
   landmarkBottomRow: {
     position: 'absolute',
     bottom: 8,
-    left: '30%',
+    left: '20%',
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.92)',
-    paddingHorizontal: 7,
+    backgroundColor: 'rgba(255,255,255,0.95)',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 6,
     gap: 4
@@ -1241,7 +1388,7 @@ const styles = StyleSheet.create({
   locPermBtnSecondary: {
     backgroundColor: '#F8F9FA',
     borderWidth: 1,
-    borderColor: '#E2E8F0'
+    borderColor: '#E5E7EB'
   },
   locPermBtnCancel: {
     backgroundColor: 'transparent'
@@ -1260,120 +1407,114 @@ const styles = StyleSheet.create({
     color: '#8E8E93',
     fontWeight: '500'
   },
+  step1FooterInfo: {
+    paddingHorizontal: 20,
+    alignItems: 'center',
+    paddingBottom: 6
+  },
+  step1FooterText: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    color: '#94A3B8',
+    textAlign: 'center'
+  },
 
   /* STEP 2 */
   step2Container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    paddingVertical: 12
   },
   step2TopRow: {
     flexDirection: 'row',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     paddingHorizontal: 18,
-    paddingTop: 10
+    paddingTop: 6
   },
-  langPill: {
+  step2HeroCard: {
+    paddingHorizontal: 20,
+    marginTop: 10
+  },
+  step2IconRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    borderRadius: 99,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    gap: 6
+    gap: 12,
+    marginBottom: 16
   },
-  langPillText: {
-    fontFamily: FONTS.family,
-    fontSize: 13,
-    fontWeight: '600',
-    color: '#1E293B'
-  },
-  orbitStage: {
-    height: 310,
-    justifyContent: 'center',
-    paddingHorizontal: 26,
-    position: 'relative'
-  },
-  orbitCircleOuter: {
-    position: 'absolute',
-    width: 340,
-    height: 340,
-    borderRadius: 170,
-    borderWidth: 1,
-    borderColor: '#F1F5F9',
-    top: -10,
-    left: -20
-  },
-  orbitCircleInner: {
-    position: 'absolute',
-    width: 265,
-    height: 265,
-    borderRadius: 133,
+  step2CarBadge: {
+    width: 52,
+    height: 52,
+    borderRadius: 16,
+    backgroundColor: '#EBFBF5',
     borderWidth: 1.5,
-    borderColor: '#CCFBF1',
-    top: 26,
-    left: 18
+    borderColor: '#A3EAD2',
+    alignItems: 'center',
+    justifyContent: 'center'
   },
-  orbitBadge: {
-    position: 'absolute',
-    zIndex: 5
+  step2BadgeDetails: {
+    flex: 1
   },
-  car3DPill: {
-    backgroundColor: '#E0F7FA',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 18,
+  step2BadgePill: {
+    backgroundColor: '#EBFBF5',
     borderWidth: 1,
-    borderColor: '#80DEEA',
-    shadowColor: '#00B5AD',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6
+    borderColor: '#A3EAD2',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+    alignSelf: 'flex-start',
+    marginBottom: 4
   },
-  scooter3DPill: {
-    backgroundColor: '#ECFEFF',
-    padding: 8,
-    borderRadius: 16
-  },
-  food3DPill: {
-    backgroundColor: '#FEF3C7',
-    padding: 8,
-    borderRadius: 18,
-    shadowColor: '#F59E0B',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6
-  },
-  calendar3DPill: {
-    backgroundColor: '#E0F2FE',
-    padding: 7,
-    borderRadius: 14
-  },
-  gift3DPill: {
-    backgroundColor: '#E0F7FA',
-    padding: 7,
-    borderRadius: 14
-  },
-  heroTextBlock: {
-    marginTop: 10,
-    zIndex: 10
-  },
-  heroCyanTitle: {
+  step2BadgePillText: {
     fontFamily: FONTS.family,
-    fontSize: 30,
+    fontSize: 9,
     fontWeight: '800',
     color: '#0CA678',
-    lineHeight: 36,
-    letterSpacing: -0.5
+    letterSpacing: 0.6
   },
-  heroSubtitle: {
+  step2BadgeSub: {
     fontFamily: FONTS.family,
-    fontSize: 14,
+    fontSize: 12,
+    color: '#64748B'
+  },
+  step2MainTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 26,
+    fontWeight: '800',
+    color: '#1D1D1F',
+    lineHeight: 32,
+    letterSpacing: -0.5,
+    marginBottom: 8
+  },
+  step2SubTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 13,
     color: '#64748B',
-    marginTop: 8,
-    lineHeight: 20
+    lineHeight: 19,
+    marginBottom: 18
+  },
+  featureChipsRow: {
+    flexDirection: 'row',
+    gap: 8,
+    flexWrap: 'wrap'
+  },
+  featureChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F8F9FA',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 99,
+    gap: 5
+  },
+  featureChipText: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#1D1D1F'
   },
   step2FormArea: {
     paddingHorizontal: 20,
@@ -1426,10 +1567,13 @@ const styles = StyleSheet.create({
   },
   continueBtn: {
     backgroundColor: '#F1F5F9',
-    borderRadius: 12,
+    borderRadius: 14,
     paddingVertical: 15,
     alignItems: 'center',
     justifyContent: 'center'
+  },
+  continueBtnPrimary: {
+    backgroundColor: '#0CA678'
   },
   continueBtnTurquoise: {
     backgroundColor: '#0CA678'
@@ -1441,7 +1585,10 @@ const styles = StyleSheet.create({
     color: '#94A3B8'
   },
   continueBtnTextWhite: {
-    color: '#FFFFFF'
+    color: '#FFFFFF',
+    fontFamily: FONTS.family,
+    fontSize: 16,
+    fontWeight: '700'
   },
   orDividerRow: {
     flexDirection: 'row',
@@ -1499,6 +1646,10 @@ const styles = StyleSheet.create({
   termsLinkCyan: {
     color: '#0CA678',
     fontWeight: '600'
+  },
+  termsLinkGreen: {
+    color: '#0CA678',
+    fontWeight: '700'
   },
 
   /* STEP 3 & 4 */

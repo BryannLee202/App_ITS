@@ -421,10 +421,10 @@ export default function MapScreen({
             width: 100%;
             height: 100%;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: #F6F3EC;
+            background: #FFFFFF;
           }
           .leaflet-tile-pane {
-            filter: saturate(0.92) contrast(0.98) brightness(1.02);
+            filter: saturate(0.95) contrast(1.0) brightness(1.03);
           }
           .user-gps-wrap {
             position: relative;
