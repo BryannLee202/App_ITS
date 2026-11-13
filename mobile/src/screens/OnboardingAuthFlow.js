@@ -257,6 +257,8 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
           style={[
             styles.splashAmbientHalo,
             {
+              backgroundColor: 'rgba(111, 78, 55, 0.08)',
+              shadowColor: theme.primary,
               opacity: splashGlow,
               transform: [{ scale: splashScale }]
             }
@@ -279,8 +281,13 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
           >
             {/* Animated Logo Wing / Leaf Emblem */}
             <View style={styles.splashEmblemWrap}>
-              <View style={styles.splashOuterGlowRing}>
-                <View style={styles.splashInnerShield}>
+              <View
+                style={[
+                  styles.splashOuterGlowRing,
+                  { backgroundColor: theme.primarySoft, borderColor: theme.primaryBorder, shadowColor: theme.primary }
+                ]}
+              >
+                <View style={[styles.splashInnerShield, { backgroundColor: theme.primary, borderColor: theme.primaryDark }]}>
                   <Ionicons
                     name="navigate"
                     size={44}
@@ -291,13 +298,20 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
               </View>
 
               {/* Animated Orbiting Ring Arc */}
-              <View style={styles.splashOrbitRing} />
+              <View style={[styles.splashOrbitRing, { borderColor: theme.primaryBorder }]} />
             </View>
 
             {/* Brand Typography */}
             <Text style={styles.splashBrandTitle}>EcoGo Smart</Text>
-            <View style={styles.splashBadgePill}>
-              <Text style={styles.splashBadgePillText}>DI CHUYỂN XANH THÔNG MINH 24/7</Text>
+            <View
+              style={[
+                styles.splashBadgePill,
+                { backgroundColor: theme.primarySoft, borderColor: theme.primaryBorder }
+              ]}
+            >
+              <Text style={[styles.splashBadgePillText, { color: theme.primary }]}>
+                DI CHUYỂN XANH THÔNG MINH 24/7
+              </Text>
             </View>
 
             <Text style={styles.splashSloganText}>
@@ -310,6 +324,7 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
                 style={[
                   styles.splashDrawingLineFill,
                   {
+                    backgroundColor: theme.primary,
                     width: pathDrawAnim.interpolate({
                       inputRange: [0, 1],
                       outputRange: ['0%', '100%']
@@ -319,8 +334,8 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
               />
             </View>
 
-            <View style={styles.splashSkipPill}>
-              <Text style={styles.splashSkipText}>Chạm để tiếp tục →</Text>
+            <View style={[styles.splashSkipPill, { backgroundColor: theme.beigeSoft, borderColor: theme.beigeBorder }]}>
+              <Text style={[styles.splashSkipText, { color: theme.primary }]}>Chạm để tiếp tục →</Text>
             </View>
           </Animated.View>
         </TouchableOpacity>
@@ -981,10 +996,10 @@ const styles = StyleSheet.create({
     width: 280,
     height: 280,
     borderRadius: 140,
-    backgroundColor: 'rgba(12, 166, 120, 0.08)',
-    shadowColor: '#0CA678',
+    backgroundColor: 'rgba(111, 78, 55, 0.08)',
+    shadowColor: '#6F4E37',
     shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.35,
+    shadowOpacity: 0.25,
     shadowRadius: 50
   },
   splashCenterTouchable: {
@@ -1012,12 +1027,12 @@ const styles = StyleSheet.create({
     width: 96,
     height: 96,
     borderRadius: 48,
-    backgroundColor: '#EBFBF5',
+    backgroundColor: '#F6EFE9',
     borderWidth: 2,
-    borderColor: '#A3EAD2',
+    borderColor: '#E5D6C9',
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#0CA678',
+    shadowColor: '#6F4E37',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 16
@@ -1026,11 +1041,11 @@ const styles = StyleSheet.create({
     width: 76,
     height: 76,
     borderRadius: 22,
-    backgroundColor: '#0CA678',
+    backgroundColor: '#6F4E37',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1.5,
-    borderColor: '#0CA678'
+    borderColor: '#4E3322'
   },
   splashOrbitRing: {
     position: 'absolute',
@@ -1039,7 +1054,7 @@ const styles = StyleSheet.create({
     borderRadius: 58,
     borderWidth: 1,
     borderStyle: 'dashed',
-    borderColor: '#D1FAE5'
+    borderColor: '#E5D6C9'
   },
   splashBrandTitle: {
     fontFamily: FONTS.family,
@@ -1050,9 +1065,9 @@ const styles = StyleSheet.create({
     marginBottom: 4
   },
   splashBadgePill: {
-    backgroundColor: '#EBFBF5',
+    backgroundColor: '#F6EFE9',
     borderWidth: 1,
-    borderColor: '#A3EAD2',
+    borderColor: '#E5D6C9',
     borderRadius: 99,
     paddingHorizontal: 12,
     paddingVertical: 4,
@@ -1062,7 +1077,7 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.family,
     fontSize: 10,
     fontWeight: '800',
-    color: '#0CA678',
+    color: '#6F4E37',
     letterSpacing: 1.2
   },
   splashSloganText: {
@@ -1076,14 +1091,14 @@ const styles = StyleSheet.create({
   splashDrawingLineWrap: {
     width: 180,
     height: 4,
-    backgroundColor: '#E2E8F0',
+    backgroundColor: '#EAE2D5',
     borderRadius: 2,
     overflow: 'hidden',
     marginBottom: 24
   },
   splashDrawingLineFill: {
     height: '100%',
-    backgroundColor: '#0CA678',
+    backgroundColor: '#6F4E37',
     borderRadius: 2
   },
   splashSkipPill: {
@@ -1129,9 +1144,9 @@ const styles = StyleSheet.create({
   brandSmallPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#EBFBF5',
+    backgroundColor: '#F6EFE9',
     borderWidth: 1,
-    borderColor: '#A3EAD2',
+    borderColor: '#E5D6C9',
     paddingHorizontal: 9,
     paddingVertical: 4,
     borderRadius: 99,
@@ -1141,13 +1156,13 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: '#0CA678'
+    backgroundColor: '#6F4E37'
   },
   brandSmallText: {
     fontFamily: FONTS.family,
     fontSize: 10,
     fontWeight: '800',
-    color: '#0CA678',
+    color: '#6F4E37',
     letterSpacing: 0.8
   },
   backTopBtn: {
@@ -1208,7 +1223,7 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 13,
-    backgroundColor: '#0CA678',
+    backgroundColor: '#6F4E37',
     alignItems: 'center',
     justifyContent: 'center'
   },
@@ -1232,7 +1247,7 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.family,
     fontSize: 12,
     fontWeight: '800',
-    color: '#0CA678',
+    color: '#6F4E37',
     letterSpacing: 0.5
   },
   locDialogSystemTime: {
@@ -1324,7 +1339,7 @@ const styles = StyleSheet.create({
   },
   precisePillText: {
     fontFamily: FONTS.family,
-    color: '#0CA678',
+    color: '#6F4E37',
     fontSize: 10,
     fontWeight: '700'
   },
@@ -1349,18 +1364,18 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: 'rgba(12, 166, 120, 0.16)',
+    backgroundColor: 'rgba(111, 78, 55, 0.12)',
     borderWidth: 1,
-    borderColor: 'rgba(12, 166, 120, 0.35)'
+    borderColor: 'rgba(111, 78, 55, 0.25)'
   },
   blueLocationDot: {
     width: 16,
     height: 16,
     borderRadius: 8,
-    backgroundColor: '#0CA678',
+    backgroundColor: '#6F4E37',
     borderWidth: 3,
     borderColor: '#FFFFFF',
-    shadowColor: '#0CA678',
+    shadowColor: '#6F4E37',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.4,
     shadowRadius: 4
@@ -1383,7 +1398,7 @@ const styles = StyleSheet.create({
     width: 14,
     height: 14,
     borderRadius: 7,
-    backgroundColor: '#EBFBF5',
+    backgroundColor: '#F6EFE9',
     alignItems: 'center',
     justifyContent: 'center'
   },
@@ -1401,7 +1416,7 @@ const styles = StyleSheet.create({
     marginTop: 8
   },
   locPermBtnPrimary: {
-    backgroundColor: '#0CA678'
+    backgroundColor: '#6F4E37'
   },
   locPermBtnSecondary: {
     backgroundColor: '#F8F9FA',
@@ -1465,9 +1480,9 @@ const styles = StyleSheet.create({
     width: 52,
     height: 52,
     borderRadius: 16,
-    backgroundColor: '#EBFBF5',
+    backgroundColor: '#F6EFE9',
     borderWidth: 1.5,
-    borderColor: '#A3EAD2',
+    borderColor: '#E5D6C9',
     alignItems: 'center',
     justifyContent: 'center'
   },
@@ -1475,9 +1490,9 @@ const styles = StyleSheet.create({
     flex: 1
   },
   step2BadgePill: {
-    backgroundColor: '#EBFBF5',
+    backgroundColor: '#F6EFE9',
     borderWidth: 1,
-    borderColor: '#A3EAD2',
+    borderColor: '#E5D6C9',
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 6,
@@ -1488,7 +1503,7 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.family,
     fontSize: 9,
     fontWeight: '800',
-    color: '#0CA678',
+    color: '#6F4E37',
     letterSpacing: 0.6
   },
   step2BadgeSub: {
@@ -1591,10 +1606,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   continueBtnPrimary: {
-    backgroundColor: '#0CA678'
+    backgroundColor: '#6F4E37'
   },
   continueBtnTurquoise: {
-    backgroundColor: '#0CA678'
+    backgroundColor: '#6F4E37'
   },
   continueBtnText: {
     fontFamily: FONTS.family,
@@ -1662,11 +1677,11 @@ const styles = StyleSheet.create({
     lineHeight: 16
   },
   termsLinkCyan: {
-    color: '#0CA678',
+    color: '#6F4E37',
     fontWeight: '600'
   },
   termsLinkGreen: {
-    color: '#0CA678',
+    color: '#6F4E37',
     fontWeight: '700'
   },
 
@@ -1838,8 +1853,8 @@ const styles = StyleSheet.create({
     marginRight: 14
   },
   radioOuterSelected: {
-    borderColor: '#0CA678',
-    backgroundColor: '#0CA678'
+    borderColor: '#6F4E37',
+    backgroundColor: '#6F4E37'
   },
   radioInnerDot: {
     width: 8,
@@ -1882,7 +1897,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   sendOtpTurquoiseBtn: {
-    backgroundColor: '#0CA678',
+    backgroundColor: '#6F4E37',
     borderRadius: 12,
     paddingVertical: 15,
     alignItems: 'center',
@@ -1927,7 +1942,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#0CA678',
+    backgroundColor: '#6F4E37',
     alignItems: 'center',
     justifyContent: 'center'
   },
@@ -2009,7 +2024,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: -12,
     right: -12,
-    backgroundColor: '#0CA678',
+    backgroundColor: '#6F4E37',
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 12
@@ -2041,7 +2056,7 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.family,
     fontSize: 14,
     fontWeight: '600',
-    color: '#0CA678'
+    color: '#6F4E37'
   },
   otpBoxesRow: {
     flexDirection: 'row',
@@ -2059,7 +2074,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   otpDigitBoxFocused: {
-    borderColor: '#0CA678',
+    borderColor: '#6F4E37',
     backgroundColor: '#FFFFFF'
   },
   otpDigitText: {
