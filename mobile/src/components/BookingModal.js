@@ -165,21 +165,21 @@ export default function BookingModal({
         <View style={styles.sheet}>
           {/* Top Modal Bar */}
           <View style={styles.topBar}>
-            <TouchableOpacity style={styles.closeBtn} onPress={onClose}>
-              <Ionicons name="close" size={20} color="#111827" />
+            <TouchableOpacity style={styles.closeBtn} onPress={onClose} activeOpacity={0.75}>
+              <Ionicons name="close" size={20} color="#2B180D" />
             </TouchableOpacity>
             <View style={styles.topTitleCenter}>
               <Text style={styles.topTitle}>Chi Tiết & Đặt Thuê Xe</Text>
               <Text style={styles.topSubtitle}>Hợp đồng điện tử • Mở khóa Digital Key 24/7</Text>
             </View>
             <View style={styles.verifiedChip}>
-              <Ionicons name="shield-checkmark" size={12} color="#059669" />
+              <Ionicons name="shield-checkmark" size={13} color="#D4AF37" />
               <Text style={styles.verifiedChipText}>0đ Cọc</Text>
             </View>
           </View>
 
           <ScrollView style={styles.scrollBody} showsVerticalScrollIndicator={false}>
-            {/* 1. Vehicle Showroom Gallery */}
+            {/* 1. Vehicle Showroom Gallery (16:9 Natural Ratio) */}
             <View style={styles.galleryContainer}>
               <Image
                 source={{ uri: photos[activePhotoIdx] || vehicle.thumbnail }}
@@ -187,9 +187,9 @@ export default function BookingModal({
                 resizeMode="cover"
               />
               <View style={styles.imageFloatingBadges}>
-                <View style={styles.mintBadge}>
-                  <Ionicons name="flash" size={11} color="#FFFFFF" />
-                  <Text style={styles.mintBadgeText}>
+                <View style={styles.coffeeBadge}>
+                  <Ionicons name="flash" size={11} color="#D4AF37" />
+                  <Text style={styles.coffeeBadgeText}>
                     {vehicle.powerType === 'ELECTRIC' ? `${batteryPct}% PIN • ${vehicle.rangeKm}KM` : `${vehicle.rangeKm}KM`}
                   </Text>
                 </View>
@@ -202,10 +202,10 @@ export default function BookingModal({
             {/* 2. Vehicle Title & Specs */}
             <View style={styles.sectionCard}>
               <View style={styles.vehHeaderRow}>
-                <View style={{ flex: 1 }}>
+                <View style={{ flex: 1, marginRight: 8 }}>
                   <Text style={styles.vehTitle}>{vehicle.name}</Text>
                   <View style={styles.ratingRow}>
-                    <Ionicons name="star" size={13} color="#F59E0B" />
+                    <Ionicons name="star" size={13} color="#D4AF37" />
                     <Text style={styles.ratingBold}>{vehicle.rating}</Text>
                     <Text style={styles.ratingCount}>({vehicle.totalTrips} chuyến hoàn thành)</Text>
                   </View>
@@ -221,48 +221,38 @@ export default function BookingModal({
               {/* 4 Key Telemetry & Hardware Specs */}
               <View style={styles.specsGrid4}>
                 <View style={styles.specBox}>
-                  <Ionicons name="people-outline" size={16} color="#0CA678" />
+                  <Ionicons name="people-outline" size={16} color="#6F4E37" />
                   <Text style={styles.specBoxVal}>{vehicle.seats} chỗ</Text>
                   <Text style={styles.specBoxLbl}>Nội thất</Text>
                 </View>
                 <View style={styles.specBox}>
-                  <Ionicons name="battery-charging-outline" size={16} color="#0CA678" />
+                  <Ionicons name="battery-charging-outline" size={16} color="#6F4E37" />
                   <Text style={styles.specBoxVal}>{vehicle.rangeKm} km</Text>
                   <Text style={styles.specBoxLbl}>Quãng đường</Text>
                 </View>
                 <View style={styles.specBox}>
-                  <Ionicons name="disc-outline" size={16} color="#0CA678" />
+                  <Ionicons name="disc-outline" size={16} color="#6F4E37" />
                   <Text style={styles.specBoxVal}>
                     {vehicle.telematics?.tirePressurePsi?.fl || 34} PSI
                   </Text>
                   <Text style={styles.specBoxLbl}>Áp suất lốp</Text>
                 </View>
                 <View style={styles.specBox}>
-                  <Ionicons name="speedometer-outline" size={16} color="#0CA678" />
+                  <Ionicons name="speedometer-outline" size={16} color="#6F4E37" />
                   <Text style={styles.specBoxVal}>GLOSA</Text>
                   <Text style={styles.specBoxLbl}>Làn sóng xanh</Text>
                 </View>
               </View>
 
               {/* Pre-Trip IoT 4-Tire & Safety Check Box */}
-              <View style={{
-                marginTop: 10,
-                backgroundColor: '#EBFBF5',
-                borderRadius: 12,
-                padding: 10,
-                borderWidth: 1,
-                borderColor: '#C3FAE8',
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between'
-              }}>
+              <View style={styles.safetyBox}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                  <Ionicons name="shield-checkmark" size={16} color="#0CA678" />
-                  <Text style={{ fontSize: 11, fontWeight: '700', color: '#1D1D1F' }}>
+                  <Ionicons name="shield-checkmark" size={15} color="#6F4E37" />
+                  <Text style={styles.safetyBoxTitle}>
                     Đã kiểm định an toàn trước chuyến đi
                   </Text>
                 </View>
-                <Text style={{ fontSize: 10, fontWeight: '700', color: '#0CA678' }}>
+                <Text style={styles.safetyBoxMeta}>
                   4 Lốp OK · Pin {batteryPct}%
                 </Text>
               </View>
@@ -275,11 +265,12 @@ export default function BookingModal({
                 <TouchableOpacity
                   style={[styles.modeTab, rentalType === 'HOURLY' && styles.modeTabActive]}
                   onPress={() => setRentalType('HOURLY')}
+                  activeOpacity={0.85}
                 >
                   <Ionicons
                     name="time-outline"
                     size={15}
-                    color={rentalType === 'HOURLY' ? '#FFFFFF' : '#4B5563'}
+                    color={rentalType === 'HOURLY' ? '#FFFFFF' : '#8C6239'}
                   />
                   <Text style={[styles.modeTabText, rentalType === 'HOURLY' && styles.modeTabTextActive]}>
                     Thuê theo giờ ({vehicle.hourlyPrice.toLocaleString('vi-VN')}đ/h)
@@ -289,11 +280,12 @@ export default function BookingModal({
                 <TouchableOpacity
                   style={[styles.modeTab, rentalType === 'DAILY' && styles.modeTabActive]}
                   onPress={() => setRentalType('DAILY')}
+                  activeOpacity={0.85}
                 >
                   <Ionicons
                     name="calendar-outline"
                     size={15}
-                    color={rentalType === 'DAILY' ? '#FFFFFF' : '#4B5563'}
+                    color={rentalType === 'DAILY' ? '#FFFFFF' : '#8C6239'}
                   />
                   <Text style={[styles.modeTabText, rentalType === 'DAILY' && styles.modeTabTextActive]}>
                     Thuê theo ngày ({vehicle.dailyPrice.toLocaleString('vi-VN')}đ/ngày)
@@ -308,6 +300,7 @@ export default function BookingModal({
                       key={h}
                       style={[styles.durationChip, durationHours === h && styles.durationChipActive]}
                       onPress={() => setDurationHours(h)}
+                      activeOpacity={0.85}
                     >
                       <Text style={[styles.durationChipText, durationHours === h && styles.durationChipTextActive]}>
                         {h} giờ
@@ -322,6 +315,7 @@ export default function BookingModal({
                       key={d}
                       style={[styles.durationChip, durationDays === d && styles.durationChipActive]}
                       onPress={() => setDurationDays(d)}
+                      activeOpacity={0.85}
                     >
                       <Text style={[styles.durationChipText, durationDays === d && styles.durationChipTextActive]}>
                         {d} ngày
@@ -339,12 +333,13 @@ export default function BookingModal({
                 <TouchableOpacity
                   style={[styles.deliveryOption, deliveryMode === 'STATION' && styles.deliveryOptionActive]}
                   onPress={() => setDeliveryMode('STATION')}
+                  activeOpacity={0.85}
                 >
                   <View style={styles.deliveryRadioRow}>
                     <Ionicons
                       name={deliveryMode === 'STATION' ? 'radio-button-on' : 'radio-button-off'}
                       size={16}
-                      color={deliveryMode === 'STATION' ? '#10B981' : '#9CA3AF'}
+                      color={deliveryMode === 'STATION' ? '#6F4E37' : '#A89F91'}
                     />
                     <Text style={styles.deliveryTitle}>Tự nhận tại Hub ITS</Text>
                   </View>
@@ -354,12 +349,13 @@ export default function BookingModal({
                 <TouchableOpacity
                   style={[styles.deliveryOption, deliveryMode === 'DOORSTEP' && styles.deliveryOptionActive]}
                   onPress={() => setDeliveryMode('DOORSTEP')}
+                  activeOpacity={0.85}
                 >
                   <View style={styles.deliveryRadioRow}>
                     <Ionicons
                       name={deliveryMode === 'DOORSTEP' ? 'radio-button-on' : 'radio-button-off'}
                       size={16}
-                      color={deliveryMode === 'DOORSTEP' ? '#10B981' : '#9CA3AF'}
+                      color={deliveryMode === 'DOORSTEP' ? '#6F4E37' : '#A89F91'}
                     />
                     <Text style={styles.deliveryTitle}>Giao xe tận nơi</Text>
                   </View>
@@ -368,7 +364,7 @@ export default function BookingModal({
               </View>
             </View>
 
-            {/* 5. Protection & Insurance Plan (Mioto / Turo Standard) */}
+            {/* 5. Protection & Insurance Plan */}
             <View style={styles.sectionCard}>
               <Text style={styles.sectionTitle}>3. Gói bảo hiểm chuyến đi</Text>
               {INSURANCE_PLANS.map(plan => {
@@ -379,13 +375,14 @@ export default function BookingModal({
                     key={plan.id}
                     style={[styles.insuranceItem, selected && styles.insuranceItemActive]}
                     onPress={() => setInsuranceTier(plan.id)}
+                    activeOpacity={0.85}
                   >
                     <View style={styles.insTopRow}>
                       <View style={styles.insTitleGroup}>
                         <Ionicons
                           name={selected ? 'checkmark-circle' : 'ellipse-outline'}
                           size={18}
-                          color={selected ? '#10B981' : '#9CA3AF'}
+                          color={selected ? '#6F4E37' : '#A89F91'}
                         />
                         <Text style={styles.insName}>{plan.name}</Text>
                         <View style={styles.insBadge}>
@@ -406,13 +403,13 @@ export default function BookingModal({
             <View style={styles.sectionCard}>
               <Text style={styles.sectionTitle}>4. Mã ưu đãi (Voucher)</Text>
               <View style={styles.voucherInputRow}>
-                <Ionicons name="pricetag-outline" size={16} color="#059669" />
+                <Ionicons name="pricetag-outline" size={16} color="#6F4E37" />
                 <TextInput
                   style={styles.voucherInput}
                   value={voucherCode}
                   onChangeText={setVoucherCode}
                   placeholder="Nhập mã (BANMOI30, UTH50K, ECOGO20)"
-                  placeholderTextColor="#9CA3AF"
+                  placeholderTextColor="#A89F91"
                 />
                 <View style={styles.quickVoucherRow}>
                   {['BANMOI30', 'ECOGO20', 'UTH50K', 'FREESHIP', 'CUOITUAN200', 'GIOVANG25'].map(code => (
@@ -470,10 +467,10 @@ export default function BookingModal({
 
                   {quote.discountAmount > 0 && (
                     <View style={styles.priceRow}>
-                      <Text style={[styles.priceRowLabel, { color: '#059669', fontWeight: '700' }]}>
+                      <Text style={[styles.priceRowLabel, { color: '#B45309', fontWeight: '700' }]}>
                         Khuyến mãi Voucher ({voucherCode.toUpperCase()})
                       </Text>
-                      <Text style={[styles.priceRowVal, { color: '#059669', fontWeight: '800' }]}>
+                      <Text style={[styles.priceRowVal, { color: '#B45309', fontWeight: '800' }]}>
                         -{quote.discountAmount.toLocaleString('vi-VN')}đ
                       </Text>
                     </View>
@@ -481,7 +478,7 @@ export default function BookingModal({
 
                   <View style={styles.priceRow}>
                     <Text style={styles.priceRowLabel}>Tiền thế chấp (Đã xác thực eKYC)</Text>
-                    <Text style={[styles.priceRowVal, { color: '#059669', fontWeight: '800' }]}>0đ (Miễn cọc)</Text>
+                    <Text style={[styles.priceRowVal, { color: '#6F4E37', fontWeight: '800' }]}>0đ (Miễn cọc)</Text>
                   </View>
 
                   <View style={styles.totalDivider} />
@@ -497,11 +494,12 @@ export default function BookingModal({
               <TouchableOpacity
                 style={styles.contractAgreeRow}
                 onPress={() => setAgreedTerms(!agreedTerms)}
+                activeOpacity={0.8}
               >
                 <Ionicons
                   name={agreedTerms ? 'checkbox' : 'square-outline'}
                   size={18}
-                  color="#059669"
+                  color={agreedTerms ? '#6F4E37' : '#A89F91'}
                 />
                 <Text style={styles.contractAgreeText}>
                   Tôi đồng ý ký <Text style={styles.boldText}>Hợp đồng thuê xe điện tử ITS</Text> và nhận chìa khóa số BLE.
@@ -525,13 +523,14 @@ export default function BookingModal({
               style={[styles.confirmBookBtn, (!agreedTerms || submitting) && { opacity: 0.6 }]}
               disabled={!agreedTerms || submitting}
               onPress={handleConfirmBooking}
+              activeOpacity={0.88}
             >
               {submitting ? (
                 <ActivityIndicator size="small" color="#FFFFFF" />
               ) : (
                 <>
-                  <Ionicons name="key" size={16} color="#FFFFFF" />
-                  <Text style={styles.confirmBookBtnText}>Ký Hợp Đồng & Nhận Khóa Số</Text>
+                  <Ionicons name="key" size={16} color="#D4AF37" />
+                  <Text style={styles.confirmBookBtnText}>Ký Hợp Đồng & Nhận Khóa Số →</Text>
                 </>
               )}
             </TouchableOpacity>
@@ -545,15 +544,24 @@ export default function BookingModal({
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(15, 23, 42, 0.5)',
-    justifyContent: 'flex-end'
+    backgroundColor: 'rgba(27, 18, 12, 0.65)',
+    justifyContent: 'flex-end',
+    alignItems: 'center'
   },
   sheet: {
-    backgroundColor: '#F5F5F7',
+    width: '100%',
+    maxWidth: 480,
+    backgroundColor: '#FAF7F2',
     borderTopLeftRadius: 28,
     borderTopRightRadius: 28,
     maxHeight: '92%',
-    overflow: 'hidden'
+    overflow: 'hidden',
+    alignSelf: 'center',
+    shadowColor: '#2B180D',
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.18,
+    shadowRadius: 16,
+    elevation: 10
   },
   topBar: {
     flexDirection: 'row',
@@ -563,13 +571,13 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     backgroundColor: '#FFFFFF',
     borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB'
+    borderBottomColor: '#EFE8DE'
   },
   closeBtn: {
     width: 34,
     height: 34,
     borderRadius: 17,
-    backgroundColor: '#F3F4F6',
+    backgroundColor: '#F5EFEB',
     alignItems: 'center',
     justifyContent: 'center'
   },
@@ -579,18 +587,20 @@ const styles = StyleSheet.create({
   topTitle: {
     fontSize: 15,
     fontWeight: '800',
-    color: '#111827'
+    color: '#2B180D'
   },
   topSubtitle: {
     fontSize: 10,
-    color: '#6B7280',
+    color: '#8C6239',
     fontWeight: '500',
     marginTop: 1
   },
   verifiedChip: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#ECFDF5',
+    backgroundColor: '#F5EFEB',
+    borderWidth: 1,
+    borderColor: '#E8DFD8',
     paddingHorizontal: 9,
     paddingVertical: 5,
     borderRadius: 99,
@@ -599,7 +609,7 @@ const styles = StyleSheet.create({
   verifiedChipText: {
     fontSize: 10,
     fontWeight: '800',
-    color: '#059669'
+    color: '#6F4E37'
   },
   scrollBody: {
     paddingHorizontal: 14,
@@ -608,8 +618,8 @@ const styles = StyleSheet.create({
   galleryContainer: {
     borderRadius: 20,
     overflow: 'hidden',
-    height: 185,
-    backgroundColor: '#E5E7EB',
+    height: 220,
+    backgroundColor: '#EAE4DC',
     marginBottom: 12,
     position: 'relative'
   },
@@ -626,28 +636,32 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center'
   },
-  mintBadge: {
+  coffeeBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#0CA678',
+    backgroundColor: 'rgba(43, 24, 13, 0.88)',
+    borderWidth: 1,
+    borderColor: 'rgba(212, 175, 55, 0.4)',
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 99,
     gap: 4
   },
-  mintBadgeText: {
-    color: '#FFFFFF',
+  coffeeBadgeText: {
+    color: '#FAF7F2',
     fontSize: 10,
     fontWeight: '800'
   },
   plateFloating: {
-    backgroundColor: 'rgba(255, 255, 255, 0.94)',
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    borderWidth: 1,
+    borderColor: '#EFE8DE',
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 8
   },
   plateFloatingText: {
-    color: '#111827',
+    color: '#2B180D',
     fontSize: 11,
     fontWeight: '800'
   },
@@ -657,11 +671,16 @@ const styles = StyleSheet.create({
     padding: 14,
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: '#E5E7EB'
+    borderColor: '#EFE8DE',
+    shadowColor: '#2B180D',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.02,
+    shadowRadius: 2,
+    elevation: 1
   },
   beigeSummaryCard: {
-    backgroundColor: '#F5F2EB',
-    borderColor: '#E5DEC9'
+    backgroundColor: '#FAF7F2',
+    borderColor: '#E8DFD8'
   },
   vehHeaderRow: {
     flexDirection: 'row',
@@ -672,7 +691,7 @@ const styles = StyleSheet.create({
   vehTitle: {
     fontSize: 17,
     fontWeight: '900',
-    color: '#111827'
+    color: '#2B180D'
   },
   ratingRow: {
     flexDirection: 'row',
@@ -683,37 +702,39 @@ const styles = StyleSheet.create({
   ratingBold: {
     fontSize: 12,
     fontWeight: '800',
-    color: '#111827'
+    color: '#2B180D'
   },
   ratingCount: {
     fontSize: 11,
-    color: '#6B7280'
+    color: '#8C6239'
   },
   priceHighlightBox: {
     alignItems: 'flex-end',
-    backgroundColor: '#EBFBF5',
+    backgroundColor: '#F5EFEB',
     paddingHorizontal: 10,
     paddingVertical: 6,
-    borderRadius: 12
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#E8DFD8'
   },
   priceBig: {
     fontSize: 16,
     fontWeight: '900',
-    color: '#0CA678'
+    color: '#6F4E37'
   },
   priceUnitText: {
     fontSize: 10,
-    color: '#0CA678',
+    color: '#8C6239',
     fontWeight: '600'
   },
   specsGrid4: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: '#F8FAFC',
+    backgroundColor: '#FAF7F2',
     borderRadius: 14,
     padding: 10,
     borderWidth: 1,
-    borderColor: '#F1F5F9'
+    borderColor: '#EFE8DE'
   },
   specBox: {
     flex: 1,
@@ -722,26 +743,49 @@ const styles = StyleSheet.create({
   specBoxVal: {
     fontSize: 12,
     fontWeight: '800',
-    color: '#111827',
+    color: '#2B180D',
     marginTop: 3
   },
   specBoxLbl: {
     fontSize: 9,
-    color: '#6B7280',
+    color: '#8C6239',
     marginTop: 1
+  },
+  safetyBox: {
+    marginTop: 10,
+    backgroundColor: '#F5EFEB',
+    borderRadius: 12,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#E8DFD8',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between'
+  },
+  safetyBoxTitle: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#2B180D'
+  },
+  safetyBoxMeta: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#6F4E37'
   },
   sectionTitle: {
     fontSize: 13,
     fontWeight: '800',
-    color: '#111827',
+    color: '#2B180D',
     marginBottom: 10
   },
   modeSwitchRow: {
     flexDirection: 'row',
-    backgroundColor: '#F3F4F6',
+    backgroundColor: '#FAF7F2',
     borderRadius: 12,
     padding: 3,
-    marginBottom: 10
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#EFE8DE'
   },
   modeTab: {
     flex: 1,
@@ -753,12 +797,17 @@ const styles = StyleSheet.create({
     gap: 5
   },
   modeTabActive: {
-    backgroundColor: '#1D1D1F'
+    backgroundColor: '#6F4E37',
+    shadowColor: '#2B180D',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2
   },
   modeTabText: {
     fontSize: 11,
     fontWeight: '700',
-    color: '#4B5563'
+    color: '#8C6239'
   },
   modeTabTextActive: {
     color: '#FFFFFF',
@@ -774,21 +823,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 9,
     borderRadius: 10,
-    backgroundColor: '#F8FAFC',
+    backgroundColor: '#FAF7F2',
     borderWidth: 1,
-    borderColor: '#E5E7EB'
+    borderColor: '#EFE8DE'
   },
   durationChipActive: {
-    backgroundColor: '#EBFBF5',
-    borderColor: '#0CA678'
+    backgroundColor: '#F5EFEB',
+    borderColor: '#6F4E37'
   },
   durationChipText: {
     fontSize: 12,
     fontWeight: '700',
-    color: '#4B5563'
+    color: '#6E6E73'
   },
   durationChipTextActive: {
-    color: '#0CA678',
+    color: '#6F4E37',
     fontWeight: '800'
   },
   deliveryRow: {
@@ -799,13 +848,13 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
     borderRadius: 12,
-    backgroundColor: '#F8FAFC',
+    backgroundColor: '#FAF7F2',
     borderWidth: 1,
-    borderColor: '#E5E7EB'
+    borderColor: '#EFE8DE'
   },
   deliveryOptionActive: {
-    backgroundColor: '#EBFBF5',
-    borderColor: '#0CA678'
+    backgroundColor: '#F5EFEB',
+    borderColor: '#6F4E37'
   },
   deliveryRadioRow: {
     flexDirection: 'row',
@@ -815,25 +864,25 @@ const styles = StyleSheet.create({
   deliveryTitle: {
     fontSize: 12,
     fontWeight: '800',
-    color: '#111827'
+    color: '#2B180D'
   },
   deliverySub: {
     fontSize: 10,
-    color: '#6B7280',
+    color: '#8C6239',
     marginTop: 3,
     marginLeft: 22
   },
   insuranceItem: {
     padding: 10,
     borderRadius: 12,
-    backgroundColor: '#F8FAFC',
+    backgroundColor: '#FAF7F2',
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: '#EFE8DE',
     marginBottom: 8
   },
   insuranceItemActive: {
-    backgroundColor: '#ECFDF5',
-    borderColor: '#10B981'
+    backgroundColor: '#F5EFEB',
+    borderColor: '#6F4E37'
   },
   insTopRow: {
     flexDirection: 'row',
@@ -848,64 +897,70 @@ const styles = StyleSheet.create({
   insName: {
     fontSize: 12,
     fontWeight: '800',
-    color: '#111827'
+    color: '#2B180D'
   },
   insBadge: {
-    backgroundColor: '#F5F2EB',
+    backgroundColor: '#FAF7F2',
     paddingHorizontal: 6,
     paddingVertical: 2,
-    borderRadius: 6
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#EFE8DE'
   },
   insBadgeText: {
     fontSize: 9,
     fontWeight: '700',
-    color: '#786B59'
+    color: '#8C6239'
   },
   insFeeText: {
     fontSize: 12,
     fontWeight: '800',
-    color: '#059669'
+    color: '#6F4E37'
   },
   insDesc: {
     fontSize: 10,
-    color: '#6B7280',
+    color: '#6E6E73',
     marginTop: 3,
     marginLeft: 24
   },
   voucherInputRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F8FAFC',
+    backgroundColor: '#FAF7F2',
     borderRadius: 12,
     paddingHorizontal: 10,
     height: 44,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: '#EFE8DE',
     gap: 8
   },
   voucherInput: {
     flex: 1,
     fontSize: 12,
     fontWeight: '700',
-    color: '#111827'
+    color: '#2B180D'
   },
   quickVoucherRow: {
     flexDirection: 'row',
-    gap: 4
+    gap: 4,
+    flexWrap: 'wrap'
   },
   quickVoucherPill: {
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 6,
-    backgroundColor: '#E5E7EB'
+    backgroundColor: '#F5EFEB',
+    borderWidth: 1,
+    borderColor: '#E8DFD8'
   },
   quickVoucherPillActive: {
-    backgroundColor: '#10B981'
+    backgroundColor: '#6F4E37',
+    borderColor: '#6F4E37'
   },
   quickVoucherText: {
     fontSize: 10,
     fontWeight: '800',
-    color: '#374151'
+    color: '#6F4E37'
   },
   quickVoucherTextActive: {
     color: '#FFFFFF'
@@ -917,16 +972,16 @@ const styles = StyleSheet.create({
   },
   priceRowLabel: {
     fontSize: 12,
-    color: '#4B5563'
+    color: '#6E6E73'
   },
   priceRowVal: {
     fontSize: 12,
     fontWeight: '700',
-    color: '#111827'
+    color: '#2B180D'
   },
   totalDivider: {
     height: 1,
-    backgroundColor: '#E5DEC9',
+    backgroundColor: '#E8DFD8',
     marginVertical: 8
   },
   totalRow: {
@@ -937,12 +992,12 @@ const styles = StyleSheet.create({
   totalLabel: {
     fontSize: 14,
     fontWeight: '800',
-    color: '#111827'
+    color: '#2B180D'
   },
   totalAmount: {
     fontSize: 18,
     fontWeight: '900',
-    color: '#059669'
+    color: '#6F4E37'
   },
   contractAgreeRow: {
     flexDirection: 'row',
@@ -951,16 +1006,16 @@ const styles = StyleSheet.create({
     marginTop: 10,
     paddingTop: 8,
     borderTopWidth: 1,
-    borderTopColor: '#E5DEC9'
+    borderTopColor: '#E8DFD8'
   },
   contractAgreeText: {
     flex: 1,
     fontSize: 11,
-    color: '#4B5563'
+    color: '#6E6E73'
   },
   boldText: {
     fontWeight: '800',
-    color: '#111827'
+    color: '#2B180D'
   },
   bottomCheckoutBar: {
     flexDirection: 'row',
@@ -970,26 +1025,31 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     backgroundColor: '#FFFFFF',
     borderTopWidth: 1,
-    borderTopColor: '#E5E7EB'
+    borderTopColor: '#EFE8DE'
   },
   bottomTotalSub: {
     fontSize: 10,
-    color: '#6B7280',
+    color: '#8C6239',
     fontWeight: '600'
   },
   bottomTotalVal: {
-    fontSize: 18,
+    fontSize: 19,
     fontWeight: '900',
-    color: '#059669'
+    color: '#2B180D'
   },
   confirmBookBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1D1D1F',
+    backgroundColor: '#4E3322',
     paddingHorizontal: 18,
     paddingVertical: 12,
     borderRadius: 14,
-    gap: 8
+    gap: 8,
+    shadowColor: '#2B180D',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 3
   },
   confirmBookBtnText: {
     color: '#FFFFFF',
