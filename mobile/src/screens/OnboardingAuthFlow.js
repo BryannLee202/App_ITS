@@ -11,7 +11,7 @@ import {
   Easing
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { FONTS } from '../styles/theme';
+import { FONTS, THEME_PRESETS } from '../styles/theme';
 import ApiService from '../services/api';
 
 const KEYPAD_KEYS = [
@@ -29,7 +29,7 @@ const KEYPAD_KEYS = [
   { num: 'DEL', sub: '', isDelete: true }
 ];
 
-export default function OnboardingAuthFlow({ onComplete }) {
+export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.SAGE }) {
   // Steps:
   // 1: Location Permission (Clean Apple White)
   // 2: Welcome & Phone Input (Clean Luxury Mobility)
@@ -340,9 +340,9 @@ export default function OnboardingAuthFlow({ onComplete }) {
       <View style={styles.step1Container}>
         {/* Top Header with Brand and Instant Skip */}
         <View style={styles.step1TopBar}>
-          <View style={styles.brandSmallPill}>
-            <View style={styles.brandDotGreen} />
-            <Text style={styles.brandSmallText}>ECOGO MOBILITY</Text>
+          <View style={[styles.brandSmallPill, { backgroundColor: theme.primarySoft, borderColor: theme.primaryBorder }]}>
+            <View style={[styles.brandDotGreen, { backgroundColor: theme.primary }]} />
+            <Text style={[styles.brandSmallText, { color: theme.primary }]}>ECOGO MOBILITY</Text>
           </View>
 
           {onComplete ? (
@@ -360,7 +360,7 @@ export default function OnboardingAuthFlow({ onComplete }) {
           <View style={styles.locDialogCard}>
             <View style={styles.locHeaderRow}>
               <View style={styles.locAppIconWrap}>
-                <View style={styles.locBlueSquare}>
+                <View style={[styles.locBlueSquare, { backgroundColor: theme.primary }]}>
                   <Ionicons
                     name="navigate"
                     size={24}
@@ -374,7 +374,7 @@ export default function OnboardingAuthFlow({ onComplete }) {
               </View>
 
               <View style={styles.locHeaderMeta}>
-                <Text style={styles.locDialogAppLabel}>ECOGO SMART</Text>
+                <Text style={[styles.locDialogAppLabel, { color: theme.primary }]}>ECOGO SMART</Text>
                 <Text style={styles.locDialogSystemTime}>Yêu cầu truy cập vị trí</Text>
               </View>
             </View>
@@ -401,8 +401,8 @@ export default function OnboardingAuthFlow({ onComplete }) {
               <View style={[styles.roadLineV, { left: 240, transform: [{ rotate: '14deg' }] }]} />
 
               <View style={styles.precisePill}>
-                <Ionicons name="navigate" size={11} color="#0CA678" />
-                <Text style={styles.precisePillText}>Độ chính xác cao: Bật</Text>
+                <Ionicons name="navigate" size={11} color={theme.primary} />
+                <Text style={[styles.precisePillText, { color: theme.primary }]}>Độ chính xác cao: Bật</Text>
               </View>
 
               <Text style={[styles.streetLabel, { top: 32, left: 14 }]}>CHU VĂN AN</Text>
@@ -416,13 +416,13 @@ export default function OnboardingAuthFlow({ onComplete }) {
 
               {/* Location Center Marker with Soft Mint Radar Pulse */}
               <View style={styles.mapCenterTarget}>
-                <View style={styles.mapRadarPulse} />
-                <View style={styles.blueLocationDot} />
+                <View style={[styles.mapRadarPulse, { backgroundColor: theme.primarySoft, borderColor: theme.primaryBorder }]} />
+                <View style={[styles.blueLocationDot, { backgroundColor: theme.primary }]} />
               </View>
 
               <View style={styles.landmarkBottomRow}>
-                <View style={styles.landmarkIconCircle}>
-                  <Ionicons name="flash" size={8} color="#0CA678" />
+                <View style={[styles.landmarkIconCircle, { backgroundColor: theme.primarySoft }]}>
+                  <Ionicons name="flash" size={8} color={theme.primary} />
                 </View>
                 <Text style={styles.landmarkText}>Trạm sạc EVN UTH · 0.3 km</Text>
               </View>
@@ -430,7 +430,7 @@ export default function OnboardingAuthFlow({ onComplete }) {
 
             {/* Apple Native Clean Action Buttons */}
             <TouchableOpacity
-              style={[styles.locPermBtn, styles.locPermBtnPrimary]}
+              style={[styles.locPermBtn, styles.locPermBtnPrimary, { backgroundColor: theme.primary }]}
               activeOpacity={0.88}
               onPress={() => handleLocationChoice(true)}
             >
@@ -472,9 +472,9 @@ export default function OnboardingAuthFlow({ onComplete }) {
       <View style={styles.step2Container}>
         {/* Top Header Row with Language & Skip */}
         <View style={styles.step2TopRow}>
-          <View style={styles.brandSmallPill}>
-            <View style={styles.brandDotGreen} />
-            <Text style={styles.brandSmallText}>ECOGO MOBILITY</Text>
+          <View style={[styles.brandSmallPill, { backgroundColor: theme.primarySoft, borderColor: theme.primaryBorder }]}>
+            <View style={[styles.brandDotGreen, { backgroundColor: theme.primary }]} />
+            <Text style={[styles.brandSmallText, { color: theme.primary }]}>ECOGO MOBILITY</Text>
           </View>
 
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
@@ -499,12 +499,12 @@ export default function OnboardingAuthFlow({ onComplete }) {
         {/* Clean Luxury EV Hero Banner (No AI Gimmicks) */}
         <View style={styles.step2HeroCard}>
           <View style={styles.step2IconRow}>
-            <View style={styles.step2CarBadge}>
-              <Ionicons name="car-sport" size={28} color="#0CA678" />
+            <View style={[styles.step2CarBadge, { backgroundColor: theme.primarySoft, borderColor: theme.primaryBorder }]}>
+              <Ionicons name="car-sport" size={28} color={theme.primary} />
             </View>
             <View style={styles.step2BadgeDetails}>
-              <View style={styles.step2BadgePill}>
-                <Text style={styles.step2BadgePillText}>100% XE ĐIỆN & NĂNG LƯỢNG SẠCH</Text>
+              <View style={[styles.step2BadgePill, { backgroundColor: theme.primarySoft, borderColor: theme.primaryBorder }]}>
+                <Text style={[styles.step2BadgePillText, { color: theme.primary }]}>100% XE ĐIỆN & NĂNG LƯỢNG SẠCH</Text>
               </View>
               <Text style={styles.step2BadgeSub}>Không phát thải · Vận hành êm ái</Text>
             </View>
@@ -520,7 +520,7 @@ export default function OnboardingAuthFlow({ onComplete }) {
           {/* 3 Luxury Feature Chips */}
           <View style={styles.featureChipsRow}>
             <View style={styles.featureChip}>
-              <Ionicons name="key-outline" size={13} color="#0CA678" />
+              <Ionicons name="key-outline" size={13} color={theme.primary} />
               <Text style={styles.featureChipText}>Khóa số BLE</Text>
             </View>
             <View style={styles.featureChip}>
@@ -555,7 +555,7 @@ export default function OnboardingAuthFlow({ onComplete }) {
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[styles.continueBtn, styles.continueBtnPrimary]}
+            style={[styles.continueBtn, styles.continueBtnPrimary, { backgroundColor: theme.primary }]}
             activeOpacity={0.88}
             onPress={() => setStep(3)}
           >
@@ -590,7 +590,7 @@ export default function OnboardingAuthFlow({ onComplete }) {
 
           <Text style={styles.termsFooterText}>
             Bằng việc tiếp tục, tôi đồng ý với{' '}
-            <Text style={styles.termsLinkGreen}>Điều khoản & Chính sách</Text> của{'\n'}EcoGo Smart Mobility
+            <Text style={[styles.termsLinkGreen, { color: theme.primary }]}>Điều khoản & Chính sách</Text> của{'\n'}EcoGo Smart Mobility
           </Text>
         </View>
       </View>

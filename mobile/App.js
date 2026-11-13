@@ -81,7 +81,7 @@ export default function App() {
   const [isOnboarded, setIsOnboarded] = useState(false);
   const [onboardingAutoPlay, setOnboardingAutoPlay] = useState(true);
   const [activeTab, setActiveTab] = useState('HOME');
-  const [themeKey, setThemeKey] = useState('MINT'); // 'MINT' | 'MONOCHROME' | 'TERRACOTTA' | 'SKY'
+  const [themeKey, setThemeKey] = useState('SAGE'); // 'SAGE' | 'TAUPE' | 'LILAC' | 'STEEL' | 'TERRACOTTA'
   const [showRewardsModal, setShowRewardsModal] = useState(false);
   const [showGreenRaceModal, setShowGreenRaceModal] = useState(false);
   const [showGreenRaceTerms, setShowGreenRaceTerms] = useState(false);
@@ -89,7 +89,7 @@ export default function App() {
   const [copiedCode, setCopiedCode] = useState(null);
   const [viewMode, setViewMode] = useState('PHONE'); // 'PHONE' | 'WIDE'
 
-  const theme = THEME_PRESETS[themeKey] || THEME_PRESETS.MINT;
+  const theme = THEME_PRESETS[themeKey] || THEME_PRESETS.SAGE;
 
   const { width: windowWidth } = useWindowDimensions();
   const isDesktopBrowser = Platform.OS === 'web' && windowWidth >= 768;
@@ -123,6 +123,7 @@ export default function App() {
       return (
         <OnboardingAuthFlow
           autoPlayDefault={onboardingAutoPlay}
+          theme={theme}
           onComplete={() => {
             setIsOnboarded(true);
             setActiveTab('HOME');
@@ -277,6 +278,66 @@ export default function App() {
         ]}
       >
         <SafeAreaView style={styles.safeArea}>
+          {/* =========================================================================
+              INTERACTIVE PASTEL THEME PICKER TAB BAR (ALWAYS VISIBLE IN-APP)
+             ========================================================================= */}
+          <View style={styles.inAppPastelContainer}>
+            <View style={styles.inAppPastelHeader}>
+              <View style={styles.inAppPastelTitleWrap}>
+                <Ionicons name="color-palette" size={14} color={theme.primary} />
+                <Text style={styles.inAppPastelTitle}>MÀU PASTEL TRẢI NGHIỆM:</Text>
+              </View>
+              <View
+                style={[
+                  styles.inAppPastelActiveTag,
+                  { backgroundColor: theme.primarySoft, borderColor: theme.primaryBorder }
+                ]}
+              >
+                <Text style={[styles.inAppPastelActiveTagText, { color: theme.primary }]}>
+                  {theme.tag || theme.name}
+                </Text>
+              </View>
+            </View>
+
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.inAppPastelScroll}
+            >
+              {Object.values(THEME_PRESETS)
+                .filter((p) => p.id !== 'MINT')
+                .map((preset) => {
+                  const isSelected = theme.id === preset.id;
+                  return (
+                    <TouchableOpacity
+                      key={preset.id}
+                      activeOpacity={0.8}
+                      style={[
+                        styles.inAppPastelChip,
+                        isSelected && {
+                          backgroundColor: preset.primarySoft,
+                          borderColor: preset.primary
+                        }
+                      ]}
+                      onPress={() => setThemeKey(preset.id)}
+                    >
+                      <View style={[styles.inAppColorDot, { backgroundColor: preset.primary }]}>
+                        {isSelected && <Ionicons name="checkmark" size={9} color="#FFFFFF" />}
+                      </View>
+                      <Text
+                        style={[
+                          styles.inAppPastelChipText,
+                          isSelected && { color: preset.primary, fontWeight: '800' }
+                        ]}
+                      >
+                        {preset.name}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+            </ScrollView>
+          </View>
+
           <View style={styles.mainContentArea}>{renderContent()}</View>
 
           {/* =========================================================================
@@ -620,6 +681,73 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
+  inAppPastelContainer: {
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#EDEBE6',
+    paddingTop: 8,
+    paddingBottom: 8,
+    zIndex: 20
+  },
+  inAppPastelHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    marginBottom: 6
+  },
+  inAppPastelTitleWrap: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6
+  },
+  inAppPastelTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    fontWeight: '800',
+    color: '#1D1D1F',
+    letterSpacing: 0.3
+  },
+  inAppPastelActiveTag: {
+    borderWidth: 1,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 99
+  },
+  inAppPastelActiveTagText: {
+    fontFamily: FONTS.family,
+    fontSize: 10,
+    fontWeight: '800'
+  },
+  inAppPastelScroll: {
+    paddingHorizontal: 12,
+    gap: 7,
+    alignItems: 'center'
+  },
+  inAppPastelChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 99,
+    borderWidth: 1.5,
+    borderColor: '#EAE7E1',
+    backgroundColor: '#F9F8F5',
+    gap: 5
+  },
+  inAppColorDot: {
+    width: 13,
+    height: 13,
+    borderRadius: 7,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  inAppPastelChipText: {
+    fontFamily: FONTS.family,
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#475569'
+  },
   outerViewport: {
     flex: 1,
     backgroundColor: '#EFEEEA',
