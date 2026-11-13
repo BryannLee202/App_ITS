@@ -23,6 +23,13 @@ const CATEGORIES = [
   { id: 'MOTORBIKE', label: 'Xe máy điện' }
 ];
 
+const SORT_OPTIONS = [
+  { id: 'PRICE_ASC', label: 'Giá thấp → cao', shortLabel: 'Giá thấp nhất', icon: 'trending-up-outline' },
+  { id: 'PRICE_DESC', label: 'Giá cao → thấp', shortLabel: 'Giá cao nhất', icon: 'trending-down-outline' },
+  { id: 'RANGE_DESC', label: 'Pin / Tầm xa nhất', shortLabel: 'Pin xa nhất', icon: 'battery-charging-outline' },
+  { id: 'RATING_DESC', label: 'Đánh giá cao nhất', shortLabel: 'Đánh giá cao', icon: 'star-outline' }
+];
+
 const HERO_PROMOS = [
   {
     id: 'promo-1',
@@ -340,6 +347,7 @@ export default function HomeScreen({
   const [catalogBrand, setCatalogBrand] = useState('ALL');
   const [catalogSortBy, setCatalogSortBy] = useState('PRICE_ASC'); // 'PRICE_ASC' | 'PRICE_DESC' | 'RANGE_DESC' | 'RATING_DESC'
   const [catalogSearch, setCatalogSearch] = useState('');
+  const [showSortModal, setShowSortModal] = useState(false);
 
   // Handle external voucher application from Wallet Modal
   useEffect(() => {
@@ -791,16 +799,12 @@ export default function HomeScreen({
             </View>
           </View>
 
-          {/* 3. Brand Filter Scroll */}
-          <View style={styles.catFilterGroup}>
-            <View style={styles.catFilterHeader}>
-              <Ionicons name="filter-outline" size={14} color="#6F4E37" />
-              <Text style={styles.catFilterGroupTitle}>Hãng sản xuất:</Text>
-            </View>
+          {/* 3. Compact Single-Line Brand Filter Bar (No Bulky Headers) */}
+          <View style={styles.catBrandBarWrapper}>
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.catBrandScroll}
+              contentContainerStyle={styles.catBrandScrollCompact}
             >
               {availableBrands.map((brand) => {
                 const active = catalogBrand === brand;
@@ -812,82 +816,60 @@ export default function HomeScreen({
                   <TouchableOpacity
                     key={brand}
                     style={[
-                      styles.catBrandChip,
-                      active && styles.catBrandChipActive
+                      styles.catBrandChipCompact,
+                      active && styles.catBrandChipCompactActive
                     ]}
                     activeOpacity={0.8}
                     onPress={() => setCatalogBrand(brand)}
                   >
-                    <Text style={[styles.catBrandText, active && styles.catBrandTextActive]}>
-                      {brand === 'ALL' ? 'Tất cả' : brand} ({count})
+                    <Text style={[styles.catBrandTextCompact, active && styles.catBrandTextCompactActive]}>
+                      {brand === 'ALL' ? 'Tất cả' : brand}
                     </Text>
+                    <View style={[styles.catBrandCountBadge, active && styles.catBrandCountBadgeActive]}>
+                      <Text style={[styles.catBrandCountText, active && styles.catBrandCountTextActive]}>
+                        {count}
+                      </Text>
+                    </View>
                   </TouchableOpacity>
                 );
               })}
             </ScrollView>
           </View>
 
-          {/* 4. Sort By Pills */}
-          <View style={styles.catFilterGroup}>
-            <View style={styles.catFilterHeader}>
-              <Ionicons name="swap-vertical-outline" size={14} color="#6F4E37" />
-              <Text style={styles.catFilterGroupTitle}>Sắp xếp theo:</Text>
+          {/* 4. Streamlined Meta Row: Vehicle Counter & Sort Dropdown Pill */}
+          <View style={styles.catMetaRowCompact}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+              <Text style={styles.catCountTextCompact}>
+                <Text style={{ fontWeight: '800', color: '#2B180D' }}>{catalogVehicles.length}</Text> xe sẵn sàng
+              </Text>
+              {(catalogBrand !== 'ALL' || catalogSearch.trim().length > 0 || catalogSortBy !== 'PRICE_ASC') && (
+                <TouchableOpacity
+                  style={styles.catResetBtnCompact}
+                  activeOpacity={0.7}
+                  onPress={() => {
+                    setCatalogBrand('ALL');
+                    setCatalogSearch('');
+                    setCatalogSortBy('PRICE_ASC');
+                  }}
+                >
+                  <Ionicons name="refresh" size={11} color="#8C6239" />
+                  <Text style={styles.catResetBtnTextCompact}>Đặt lại</Text>
+                </TouchableOpacity>
+              )}
             </View>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.catSortScroll}
-            >
-              {[
-                { id: 'PRICE_ASC', label: 'Giá thấp → cao', icon: 'trending-up-outline' },
-                { id: 'PRICE_DESC', label: 'Giá cao → thấp', icon: 'trending-down-outline' },
-                { id: 'RANGE_DESC', label: 'Pin / Tầm xa nhất', icon: 'battery-charging-outline' },
-                { id: 'RATING_DESC', label: 'Đánh giá cao nhất', icon: 'star-outline' }
-              ].map((sortItem) => {
-                const active = catalogSortBy === sortItem.id;
-                return (
-                  <TouchableOpacity
-                    key={sortItem.id}
-                    style={[
-                      styles.catSortChip,
-                      active && styles.catSortChipActive
-                    ]}
-                    activeOpacity={0.8}
-                    onPress={() => setCatalogSortBy(sortItem.id)}
-                  >
-                    <Ionicons
-                      name={sortItem.icon}
-                      size={14}
-                      color={active ? '#FFFFFF' : '#6F4E37'}
-                    />
-                    <Text style={[styles.catSortText, active && styles.catSortTextActive]}>
-                      {sortItem.label}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </ScrollView>
-          </View>
 
-          {/* 5. Result Count & Reset Action */}
-          <View style={styles.catResultMetaRow}>
-            <Text style={styles.catResultMetaText}>
-              Tìm thấy <Text style={{ fontWeight: '800', color: '#2B180D' }}>{catalogVehicles.length}</Text> xe sẵn sàng phục vụ
-            </Text>
-            {(catalogBrand !== 'ALL' || catalogSearch.trim().length > 0 || catalogSortBy !== 'PRICE_ASC') && (
-              <TouchableOpacity
-                style={styles.catResetBtn}
-                activeOpacity={0.7}
-                onPress={() => {
-                  setCatalogBrand('ALL');
-                  setCatalogSearch('');
-                  setCatalogSortBy('PRICE_ASC');
-                }}
-              >
-                <Ionicons name="refresh" size={12} color="#8C6239" />
-                <Text style={styles.catResetBtnText}>Đặt lại bộ lọc</Text>
-              </TouchableOpacity>
-            )}
+            {/* Sort Pill Dropdown Button */}
+            <TouchableOpacity
+              style={styles.catSortDropdownPill}
+              activeOpacity={0.8}
+              onPress={() => setShowSortModal(true)}
+            >
+              <Ionicons name="swap-vertical" size={12} color="#6F4E37" />
+              <Text style={styles.catSortDropdownText}>
+                {SORT_OPTIONS.find((s) => s.id === catalogSortBy)?.shortLabel || 'Giá thấp nhất'}
+              </Text>
+              <Ionicons name="chevron-down" size={12} color="#8C6239" />
+            </TouchableOpacity>
           </View>
 
           {/* 6. Vehicle Cards List */}
@@ -1532,9 +1514,9 @@ export default function HomeScreen({
             }}
           >
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-              <Ionicons name="options" size={15} color="#6F4E37" />
+              <Ionicons name="filter" size={14} color="#6F4E37" />
               <Text style={styles.catOpenDedicatedText}>
-                Mở chuyên trang & Bộ lọc chi tiết ({selectedCategory === 'MOTORBIKE' ? 'Xe máy điện' : 'Ô tô tự lái'})
+                Xem danh mục đầy đủ & Bộ lọc hãng xe ({selectedCategory === 'MOTORBIKE' ? 'Xe máy điện' : 'Ô tô tự lái'})
               </Text>
             </View>
             <Ionicons name="arrow-forward" size={14} color="#6F4E37" />
@@ -2193,6 +2175,72 @@ export default function HomeScreen({
             </View>
           </View>
         </View>
+      </Modal>
+
+      {/* ============================================================
+          MODAL: QUIET LUXURY SORT SELECTOR SHEET
+         ============================================================ */}
+      <Modal
+        visible={showSortModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowSortModal(false)}
+      >
+        <TouchableOpacity
+          style={styles.modalBackdrop}
+          activeOpacity={1}
+          onPress={() => setShowSortModal(false)}
+        >
+          <View style={styles.sortModalSheet} onStartShouldSetResponder={() => true}>
+            <View style={styles.sortModalHeader}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                <Ionicons name="swap-vertical" size={16} color="#4E3322" />
+                <Text style={styles.sortModalTitle}>Sắp xếp danh sách xe</Text>
+              </View>
+              <TouchableOpacity onPress={() => setShowSortModal(false)}>
+                <Ionicons name="close" size={18} color="#2B180D" />
+              </TouchableOpacity>
+            </View>
+
+            <View style={{ gap: 8, marginVertical: 10 }}>
+              {SORT_OPTIONS.map((opt) => {
+                const isSelected = catalogSortBy === opt.id;
+                return (
+                  <TouchableOpacity
+                    key={opt.id}
+                    style={[
+                      styles.sortOptionRow,
+                      isSelected && styles.sortOptionRowSelected
+                    ]}
+                    activeOpacity={0.8}
+                    onPress={() => {
+                      setCatalogSortBy(opt.id);
+                      setShowSortModal(false);
+                    }}
+                  >
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                      <View style={[styles.sortOptionIconBox, isSelected && styles.sortOptionIconBoxSelected]}>
+                        <Ionicons
+                          name={opt.icon}
+                          size={16}
+                          color={isSelected ? '#4E3322' : '#8C6239'}
+                        />
+                      </View>
+                      <Text style={[styles.sortOptionLabel, isSelected && styles.sortOptionLabelSelected]}>
+                        {opt.label}
+                      </Text>
+                    </View>
+                    <Ionicons
+                      name={isSelected ? 'radio-button-on' : 'radio-button-off'}
+                      size={18}
+                      color={isSelected ? '#4E3322' : '#C7BAAE'}
+                    />
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          </View>
+        </TouchableOpacity>
       </Modal>
 
       {/* Multi-Step Booking Modal */}
@@ -4268,5 +4316,177 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.family,
     fontSize: 10,
     fontWeight: '700'
+  },
+
+  /* ============================================================
+     COMPACT SMART FILTER & SORT MODAL STYLES
+     ============================================================ */
+  catBrandBarWrapper: {
+    marginBottom: 8
+  },
+  catBrandScrollCompact: {
+    gap: 8,
+    paddingRight: 10,
+    paddingVertical: 2
+  },
+  catBrandChipCompact: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 14,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#EFE8DE'
+  },
+  catBrandChipCompactActive: {
+    backgroundColor: '#4E3322',
+    borderColor: '#4E3322'
+  },
+  catBrandTextCompact: {
+    fontFamily: FONTS.family,
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#6F4E37'
+  },
+  catBrandTextCompactActive: {
+    color: '#FFFFFF',
+    fontWeight: '700'
+  },
+  catBrandCountBadge: {
+    backgroundColor: '#FAF7F2',
+    paddingHorizontal: 5,
+    paddingVertical: 1,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#EFE8DE'
+  },
+  catBrandCountBadgeActive: {
+    backgroundColor: 'rgba(255,255,255,0.22)',
+    borderColor: 'rgba(255,255,255,0.3)'
+  },
+  catBrandCountText: {
+    fontFamily: FONTS.family,
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#8C6239'
+  },
+  catBrandCountTextActive: {
+    color: '#FFFFFF'
+  },
+  catMetaRowCompact: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 6,
+    paddingHorizontal: 2,
+    marginBottom: 8
+  },
+  catCountTextCompact: {
+    fontFamily: FONTS.family,
+    fontSize: 12,
+    color: '#6F4E37'
+  },
+  catResetBtnCompact: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+    paddingVertical: 3,
+    paddingHorizontal: 7,
+    borderRadius: 8,
+    backgroundColor: '#F5EFEB',
+    borderWidth: 1,
+    borderColor: '#E8DFD8'
+  },
+  catResetBtnTextCompact: {
+    fontFamily: FONTS.family,
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#8C6239'
+  },
+  catSortDropdownPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#EFE8DE',
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 12
+  },
+  catSortDropdownText: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#4E3322'
+  },
+  sortModalSheet: {
+    width: '100%',
+    maxWidth: 360,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 22,
+    padding: 18,
+    borderWidth: 1,
+    borderColor: '#EFE8DE',
+    shadowColor: '#2B180D',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.16,
+    shadowRadius: 16,
+    elevation: 8
+  },
+  sortModalHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#EFE8DE'
+  },
+  sortModalTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#2B180D'
+  },
+  sortOptionRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderRadius: 12,
+    backgroundColor: '#FAF7F2',
+    borderWidth: 1,
+    borderColor: '#EFE8DE'
+  },
+  sortOptionRowSelected: {
+    backgroundColor: '#F5EFEB',
+    borderColor: '#4E3322'
+  },
+  sortOptionIconBox: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#EFE8DE'
+  },
+  sortOptionIconBoxSelected: {
+    backgroundColor: '#FAF7F2',
+    borderColor: '#4E3322'
+  },
+  sortOptionLabel: {
+    fontFamily: FONTS.family,
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#6F4E37'
+  },
+  sortOptionLabelSelected: {
+    fontWeight: '800',
+    color: '#2B180D'
   }
 });
