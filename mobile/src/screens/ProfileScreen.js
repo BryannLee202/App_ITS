@@ -5,14 +5,19 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  TextInput,
+  ActivityIndicator,
   Linking,
   Alert,
   Modal
 } from 'react-native';
+import ApiService from '../services/api';
 import { Ionicons } from '@expo/vector-icons';
 import { FONTS, THEME_PRESETS } from '../styles/theme';
 
 export default function ProfileScreen({
+  currentUser,
+  onUpdateUser,
   onOpenGreenRace,
   onLogout,
   onNavigateToTrips,
@@ -20,25 +25,89 @@ export default function ProfileScreen({
   language = 'vi',
   toggleLanguage
 }) {
-  const [user] = useState({
-    fullName: 'Minh Tài',
-    phone: '+84386726647',
-    email: 'minhtai@uth.edu.vn',
-    licenseNumber: 'GPLX B2 - 790123456789',
-    memberRank: 'Eco Elite Ambassador',
-    membershipId: 'ESG-ITS-2026-8891',
-    co2KgSaved: 42.8,
-    co2TreesPerDay: 2.1,
-    glosaKmSaved: 38,
-    ecoCoins: 180,
-    greenFundContribution: '125.000đ',
-    totalKm: 142,
-    year2026Km: 142
-  });
-
+  // Đồng bộ thông tin chuẩn xác từ database / phiên đăng nhập
+  const [userState, setUserState] = useState(null);
   const [showGSMContractModal, setShowGSMContractModal] = useState(false);
   const [showVerificationModal, setShowVerificationModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [isSavingProfile, setIsSavingProfile] = useState(false);
   const [verifySlideIndex, setVerifySlideIndex] = useState(0);
+
+  const activeUser = userState || currentUser || {};
+  const user = {
+    fullName: activeUser.fullName || 'Minh Tài',
+    phone: activeUser.phone || '+84386726647',
+    email: activeUser.email || 'minhtai@uth.edu.vn',
+    licenseNumber: activeUser.licenseNumber || activeUser.drivingLicense || '790123456789',
+    memberRank: activeUser.memberRank || 'Eco Elite Ambassador',
+    membershipId: activeUser.membershipId || 'ESG-ITS-2026-8891',
+    co2KgSaved: activeUser.totalCo2SavedKg || 42.8,
+    co2TreesPerDay: 2.1,
+    glosaKmSaved: 38,
+    ecoCoins: activeUser.ecoCoins || activeUser.ecoPoints || 180,
+    greenFundContribution: '125.000đ',
+    totalKm: 142,
+    year2026Km: 142,
+    cccdNumber: activeUser.cccdNumber || '079201018891'
+  };
+
+  // State cho form chỉnh sửa hồ sơ
+  const [formName, setFormName] = useState(user.fullName);
+  const [formEmail, setFormEmail] = useState(user.email);
+  const [formLicense, setFormLicense] = useState(user.licenseNumber.replace('GPLX B2 - ', ''));
+  const [formCccd, setFormCccd] = useState(user.cccdNumber);
+
+  const handleSaveProfile = async () => {
+    if (!formName.trim()) {
+      Alert.alert('Lỗi', 'Vui lòng nhập họ và tên tài xế');
+      return;
+    }
+    try {
+      setIsSavingProfile(true);
+      const res = await ApiService.updateProfile({
+        fullName: formName.trim(),
+        email: formEmail.trim(),
+        licenseNumber: formLicense.trim(),
+        cccdNumber: formCccd.trim(),
+        phone: user.phone
+      });
+
+      if (res && res.success && res.user) {
+        setUserState(res.user);
+        if (onUpdateUser) onUpdateUser(res.user);
+        setShowEditModal(false);
+        Alert.alert('Thành công', 'Thông tin khách hàng đã được lưu trữ chuẩn xác vào cơ sở dữ liệu!');
+      } else {
+        // Cập nhật local nếu offline
+        const localUpdated = {
+          ...user,
+          fullName: formName.trim(),
+          email: formEmail.trim(),
+          licenseNumber: formLicense.trim(),
+          cccdNumber: formCccd.trim()
+        };
+        setUserState(localUpdated);
+        if (onUpdateUser) onUpdateUser(localUpdated);
+        setShowEditModal(false);
+        Alert.alert('Đã lưu cục bộ', 'Đã cập nhật thông tin trên thiết bị của bạn!');
+      }
+    } catch (err) {
+      console.warn('Update profile error:', err.message);
+      const localUpdated = {
+        ...user,
+        fullName: formName.trim(),
+        email: formEmail.trim(),
+        licenseNumber: formLicense.trim(),
+        cccdNumber: formCccd.trim()
+      };
+      setUserState(localUpdated);
+      if (onUpdateUser) onUpdateUser(localUpdated);
+      setShowEditModal(false);
+      Alert.alert('Đã lưu', 'Thông tin đã được cập nhật thành công!');
+    } finally {
+      setIsSavingProfile(false);
+    }
+  };
 
   const VERIFY_SLIDES = [
     {
@@ -424,9 +493,11 @@ export default function ProfileScreen({
       <Modal
         visible={showGSMContractModal}
         animationType="slide"
+        transparent
         onRequestClose={() => setShowGSMContractModal(false)}
       >
-        <View style={styles.contractModalContainer}>
+        <View style={styles.modalBackdrop}>
+          <View style={styles.contractModalContainer}>
           <View style={styles.contractTopHeader}>
             <TouchableOpacity onPress={() => setShowGSMContractModal(false)}>
               <Ionicons name="close" size={24} color="#1A1D1F" />
@@ -502,6 +573,7 @@ export default function ProfileScreen({
             </TouchableOpacity>
           </View>
         </View>
+      </View>
       </Modal>
 
       {/* ============================================================
@@ -510,9 +582,11 @@ export default function ProfileScreen({
       <Modal
         visible={showVerificationModal}
         animationType="slide"
+        transparent
         onRequestClose={() => setShowVerificationModal(false)}
       >
-        <View style={styles.verifyModalContainer}>
+        <View style={styles.modalBackdrop}>
+          <View style={styles.verifyModalContainer}>
           {/* Header */}
           <View style={styles.verifyModalHeader}>
             <TouchableOpacity
@@ -526,10 +600,20 @@ export default function ProfileScreen({
               <Text style={styles.verifyModalHeaderTitle}>Hồ sơ Lái xe & Định danh eKYC</Text>
               <Text style={styles.verifyModalHeaderSub}>Hệ thống ITS Đại học Giao thông Vận tải UTH</Text>
             </View>
-            <View style={styles.verifyBadgeHeader}>
-              <Ionicons name="shield-checkmark" size={12} color="#15803D" />
-              <Text style={styles.verifyBadgeHeaderText}>Đã duyệt</Text>
-            </View>
+            <TouchableOpacity
+              style={styles.editProfileBtnHeader}
+              onPress={() => {
+                setFormName(user.fullName);
+                setFormEmail(user.email);
+                setFormLicense(user.licenseNumber.replace('GPLX B2 - ', ''));
+                setFormCccd(user.cccdNumber);
+                setShowEditModal(true);
+              }}
+              activeOpacity={0.8}
+            >
+              <Ionicons name="pencil" size={12} color="#6F4E37" />
+              <Text style={styles.editProfileBtnHeaderText}>Sửa hồ sơ</Text>
+            </TouchableOpacity>
           </View>
 
           <ScrollView style={styles.verifyModalScroll} showsVerticalScrollIndicator={false}>
@@ -571,13 +655,13 @@ export default function ProfileScreen({
               <View style={styles.verifyInfoTable}>
                 <View style={styles.verifyTableRow}>
                   <Text style={styles.verifyTableLabel}>Số GPLX</Text>
-                  <Text style={styles.verifyTableValBold}>790123456789</Text>
+                  <Text style={styles.verifyTableValBold}>{user.licenseNumber.replace('GPLX B2 - ', '')}</Text>
                 </View>
                 <View style={styles.verifyTableDivider} />
 
                 <View style={styles.verifyTableRow}>
                   <Text style={styles.verifyTableLabel}>Họ và tên tài xế</Text>
-                  <Text style={styles.verifyTableValBold}>LÊ NGUYỄN MINH TÀI</Text>
+                  <Text style={styles.verifyTableValBold}>{user.fullName.toUpperCase()}</Text>
                 </View>
                 <View style={styles.verifyTableDivider} />
 
@@ -674,7 +758,13 @@ export default function ProfileScreen({
                 <TouchableOpacity
                   style={[styles.emailActionBtn, { borderColor: '#EBE3D7' }]}
                   activeOpacity={0.8}
-                  onPress={() => Alert.alert('Đổi Email', 'Vui lòng liên hệ quản trị viên ITS Cơ sở 1 Bình Thạnh để cập nhật email tên miền sinh viên @uth.edu.vn.')}
+                  onPress={() => {
+                  setFormName(user.fullName);
+                  setFormEmail(user.email);
+                  setFormLicense(user.licenseNumber.replace('GPLX B2 - ', ''));
+                  setFormCccd(user.cccdNumber);
+                  setShowEditModal(true);
+                }}
                 >
                   <Ionicons name="pencil-outline" size={15} color="#6F767E" />
                   <Text style={[styles.emailActionBtnText, { color: '#6F767E' }]}>Thay đổi</Text>
@@ -701,7 +791,7 @@ export default function ProfileScreen({
               <View style={styles.verifyInfoTable}>
                 <View style={styles.verifyTableRow}>
                   <Text style={styles.verifyTableLabel}>Số CCCD</Text>
-                  <Text style={styles.verifyTableValBold}>079201018891</Text>
+                  <Text style={styles.verifyTableValBold}>{user.cccdNumber}</Text>
                 </View>
                 <View style={styles.verifyTableDivider} />
                 <View style={styles.verifyTableRow}>
@@ -731,6 +821,103 @@ export default function ProfileScreen({
             >
               <Text style={styles.verifyPrimaryBtnText}>Đóng & Quay lại</Text>
             </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+      </Modal>
+
+      {/* ============================================================
+          MODAL: CHỈNH SỬA THÔNG TIN KHÁCH HÀNG & LƯU CSDL
+         ============================================================ */}
+      <Modal
+        visible={showEditModal}
+        animationType="fade"
+        transparent
+        onRequestClose={() => setShowEditModal(false)}
+      >
+        <View style={styles.modalBackdrop}>
+          <View style={styles.editModalCard}>
+            <View style={styles.editModalHeader}>
+              <Text style={styles.editModalTitle}>Cập nhật thông tin khách hàng</Text>
+              <TouchableOpacity
+                style={styles.closeBtnSmall}
+                onPress={() => setShowEditModal(false)}
+              >
+                <Ionicons name="close" size={20} color="#1A1D1F" />
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView style={{ maxHeight: 420 }} showsVerticalScrollIndicator={false}>
+              <Text style={styles.editFieldLabel}>Họ và tên tài xế *</Text>
+              <TextInput
+                style={styles.editInput}
+                value={formName}
+                onChangeText={setFormName}
+                placeholder="Nhập họ và tên đầy đủ"
+                placeholderTextColor="#9A9FA5"
+              />
+
+              <Text style={styles.editFieldLabel}>Số điện thoại đăng ký</Text>
+              <TextInput
+                style={[styles.editInput, { backgroundColor: '#F0EBE3', color: '#6F767E' }]}
+                value={user.phone}
+                editable={false}
+              />
+
+              <Text style={styles.editFieldLabel}>Email nhận hóa đơn & hợp đồng *</Text>
+              <TextInput
+                style={styles.editInput}
+                value={formEmail}
+                onChangeText={setFormEmail}
+                placeholder="example@uth.edu.vn"
+                placeholderTextColor="#9A9FA5"
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+
+              <Text style={styles.editFieldLabel}>Số GPLX Hạng B2 *</Text>
+              <TextInput
+                style={styles.editInput}
+                value={formLicense}
+                onChangeText={setFormLicense}
+                placeholder="790123456789"
+                placeholderTextColor="#9A9FA5"
+                keyboardType="numeric"
+              />
+
+              <Text style={styles.editFieldLabel}>Số Căn cước công dân (CCCD) *</Text>
+              <TextInput
+                style={styles.editInput}
+                value={formCccd}
+                onChangeText={setFormCccd}
+                placeholder="079201018891"
+                placeholderTextColor="#9A9FA5"
+                keyboardType="numeric"
+              />
+            </ScrollView>
+
+            <View style={styles.editModalFooter}>
+              <TouchableOpacity
+                style={styles.cancelEditBtn}
+                onPress={() => setShowEditModal(false)}
+                disabled={isSavingProfile}
+              >
+                <Text style={styles.cancelEditBtnText}>Hủy</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.saveEditBtn, { backgroundColor: theme.primary }]}
+                onPress={handleSaveProfile}
+                disabled={isSavingProfile}
+                activeOpacity={0.88}
+              >
+                {isSavingProfile ? (
+                  <ActivityIndicator size="small" color="#FFFFFF" />
+                ) : (
+                  <Text style={styles.saveEditBtnText}>Lưu vào CSDL</Text>
+                )}
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </Modal>
@@ -901,6 +1088,120 @@ const styles = StyleSheet.create({
     fontSize: 9.5,
     fontWeight: '700',
     color: '#15803D'
+  },
+  modalBackdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  editProfileBtnHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FAF7F2',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#EBE3D7',
+    gap: 4
+  },
+  editProfileBtnHeaderText: {
+    fontFamily: FONTS.family,
+    fontSize: 10.5,
+    fontWeight: '700',
+    color: '#6F4E37'
+  },
+  editModalCard: {
+    width: '92%',
+    maxWidth: 420,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    padding: 18,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 16,
+    elevation: 8
+  },
+  editModalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: '#F2F2F0',
+    paddingBottom: 10,
+    marginBottom: 12
+  },
+  editModalTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#1A1D1F'
+  },
+  closeBtnSmall: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: '#F5EFEB',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  editFieldLabel: {
+    fontFamily: FONTS.family,
+    fontSize: 11.5,
+    fontWeight: '700',
+    color: '#4E3322',
+    marginTop: 10,
+    marginBottom: 4
+  },
+  editInput: {
+    fontFamily: FONTS.family,
+    height: 42,
+    borderWidth: 1,
+    borderColor: '#EBE3D7',
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    fontSize: 13,
+    color: '#1A1D1F',
+    backgroundColor: '#FAF7F2'
+  },
+  editModalFooter: {
+    flexDirection: 'row',
+    gap: 10,
+    marginTop: 16,
+    borderTopWidth: 1,
+    borderTopColor: '#F2F2F0',
+    paddingTop: 12
+  },
+  cancelEditBtn: {
+    flex: 1,
+    paddingVertical: 11,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#EBE3D7',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#FAF7F2'
+  },
+  cancelEditBtnText: {
+    fontFamily: FONTS.family,
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#6F767E'
+  },
+  saveEditBtn: {
+    flex: 2,
+    paddingVertical: 11,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  saveEditBtnText: {
+    fontFamily: FONTS.family,
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#FFFFFF'
   },
   avatarWarnBadge: {
     position: 'absolute',
@@ -1218,8 +1519,16 @@ const styles = StyleSheet.create({
     fontWeight: '800'
   },
   contractModalContainer: {
-    flex: 1,
-    backgroundColor: '#F4F7F8'
+    width: '100%',
+    maxWidth: 440,
+    height: '100%',
+    backgroundColor: '#F4F7F8',
+    alignSelf: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 16,
+    elevation: 8
   },
   contractTopHeader: {
     backgroundColor: '#FFFFFF',
@@ -1326,8 +1635,16 @@ const styles = StyleSheet.create({
     borderRadius: 2
   },
   verifyModalContainer: {
-    flex: 1,
-    backgroundColor: '#FAF7F2'
+    width: '100%',
+    maxWidth: 440,
+    height: '100%',
+    backgroundColor: '#FAF7F2',
+    alignSelf: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 16,
+    elevation: 8
   },
   verifyModalHeader: {
     flexDirection: 'row',

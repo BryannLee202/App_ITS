@@ -1,0 +1,22 @@
+[
+  {
+    "id": "usr_demo_01",
+    "phone": "+84386726647",
+    "fullName": "Minh Tài",
+    "email": "minhtai@uth.edu.vn",
+    "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80",
+    "isEkycVerified": true,
+    "drivingLicense": "GPLX B2 - 790123456789",
+    "licenseNumber": "790123456789",
+    "drivingLicenseExpiry": "15/08/2032",
+    "cccdNumber": "079201018891",
+    "memberRank": "Eco Elite Ambassador",
+    "membershipId": "ESG-ITS-2026-8891",
+    "walletBalance": 1500000,
+    "ecoPoints": 340,
+    "ecoCoins": 180,
+    "totalCo2SavedKg": 42.8,
+    "memberTier": "DIAMOND_GREEN",
+    "createdAt": "2026-10-15T08:00:00.000Z"
+  }
+]

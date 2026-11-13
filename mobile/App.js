@@ -240,6 +240,11 @@ function AppContent() {
             theme={theme}
             language={language}
             toggleLanguage={toggleLanguage}
+            currentUser={currentUser}
+            onUpdateUser={(updated) => {
+              setCurrentUser(updated);
+              ApiService.saveSession(null, updated);
+            }}
             onOpenGreenRace={() => setShowGreenRaceModal(true)}
             onOpenRewards={() => setShowRewardsModal(true)}
             onNavigateToMap={() => setActiveTab('MAP')}

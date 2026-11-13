@@ -252,6 +252,20 @@ class ApiService {
     return this.request('/rentals/history');
   }
 
+  async updateProfile(profileData) {
+    return this.request('/auth/update-profile', {
+      method: 'POST',
+      body: JSON.stringify(profileData)
+    });
+  }
+
+  async updateEkyc(ekycData) {
+    return this.request('/auth/ekyc-verify', {
+      method: 'POST',
+      body: JSON.stringify(ekycData)
+    });
+  }
+
   // Rewards & 7-Day Daily Check-in
   async getCheckInStatus(userId = 'user-001') {
     return this.request(`/rewards/checkin-status?userId=${userId}`);
