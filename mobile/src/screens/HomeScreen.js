@@ -15,6 +15,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { FONTS, THEME_PRESETS } from '../styles/theme';
 import VehicleCard from '../components/VehicleCard';
 import BookingModal from '../components/BookingModal';
+import VoucherWalletModal from '../components/VoucherWalletModal';
 import ApiService from '../services/api';
 
 const CATEGORIES = [
@@ -340,6 +341,8 @@ export default function HomeScreen({
   const [bookingVehicle, setBookingVehicle] = useState(null);
   const [bookingDeliveryMode, setBookingDeliveryMode] = useState('STATION'); // 'STATION' | 'DOORSTEP'
   const [showBookingModal, setShowBookingModal] = useState(false);
+  const [showVoucherWalletModal, setShowVoucherWalletModal] = useState(false);
+  const [walletInitialTab, setWalletInitialTab] = useState('AVAILABLE');
   const [bookingToast, setBookingToast] = useState(null);
 
   // Dedicated Fleet Catalog View State ('CAR' | 'MOTORBIKE' | null)
@@ -1027,7 +1030,10 @@ export default function HomeScreen({
               <TouchableOpacity
                 style={styles.coinPill}
                 activeOpacity={0.85}
-                onPress={() => setShowLuckySpinModal(true)}
+                onPress={() => {
+                  setWalletInitialTab('SHOP');
+                  setShowVoucherWalletModal(true);
+                }}
               >
                 <Text style={styles.coinPillEmoji}>🪙</Text>
                 <Text style={styles.coinPillText}>{ecoCoins} Xu</Text>
@@ -1036,7 +1042,10 @@ export default function HomeScreen({
               <TouchableOpacity
                 style={styles.headerVoucherPill}
                 activeOpacity={0.85}
-                onPress={onOpenRewards}
+                onPress={() => {
+                  setWalletInitialTab('AVAILABLE');
+                  setShowVoucherWalletModal(true);
+                }}
               >
                 <Ionicons name="ticket" size={14} color="#6F4E37" />
                 <Text style={styles.headerVoucherPillText}>Ví ưu đãi ({savedVouchers.length})</Text>
@@ -1285,87 +1294,6 @@ export default function HomeScreen({
               </View>
             </TouchableOpacity>
           </View>
-        </View>
-
-        {/* ============================================================
-            VOUCHER HOT TRONG NGÀY (LƯU MÃ TRONG 1 CHẠM)
-           ============================================================ */}
-        <View style={styles.vouchersHubSection}>
-          <View style={styles.sectionHeaderRow}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-              <Ionicons name="pricetags" size={18} color={theme.primary} />
-              <Text style={styles.sectionMainTitle}>Voucher Hot Hôm Nay</Text>
-              <View style={styles.hotFlameBadge}>
-                <Text style={styles.hotFlameText}>🔥 HOT</Text>
-              </View>
-            </View>
-            <TouchableOpacity onPress={onOpenRewards}>
-              <Text style={[styles.seeMapLink, { color: theme.primary }]}>
-                Ví ưu đãi ({savedVouchers.length})
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.vouchersScrollContent}
-          >
-            {HOT_VOUCHERS.map((v) => {
-              const isSaved = savedVouchers.includes(v.code);
-              return (
-                <View key={v.code} style={styles.voucherTicketCard}>
-                  {/* Left Ticket Header & Badge */}
-                  <View style={styles.vTicketTop}>
-                    <View style={[styles.vTagBadge, { backgroundColor: v.tagBg }]}>
-                      <Text style={[styles.vTagText, { color: v.tagColor }]}>{v.tag}</Text>
-                    </View>
-                    <Text style={styles.vExpiryText}>{v.expiry}</Text>
-                  </View>
-
-                  <Text style={styles.vTicketTitle}>{v.title}</Text>
-                  <Text style={styles.vTicketDesc} numberOfLines={2}>{v.desc}</Text>
-
-                  {/* Progress bar */}
-                  <View style={styles.vProgressRow}>
-                    <View style={styles.vProgressBarOuter}>
-                      <View style={[styles.vProgressBarInner, { width: `${v.claimedPct}%` }]} />
-                    </View>
-                    <Text style={styles.vProgressText}>Đã nhận {v.claimedPct}%</Text>
-                  </View>
-
-                  {/* Action row */}
-                  <View style={styles.vTicketBottomRow}>
-                    <TouchableOpacity
-                      style={[
-                        styles.vSaveBtn,
-                        isSaved && styles.vSaveBtnSaved
-                      ]}
-                      activeOpacity={0.85}
-                      onPress={() => handleSaveVoucher(v.code)}
-                    >
-                      <Ionicons
-                        name={isSaved ? 'checkmark-circle' : 'bookmark-outline'}
-                        size={13}
-                        color={isSaved ? '#FFFFFF' : theme.primary}
-                      />
-                      <Text style={[styles.vSaveBtnText, isSaved && styles.vSaveBtnTextSaved]}>
-                        {isSaved ? 'Đã lưu' : 'Lưu mã'}
-                      </Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                      style={styles.vUseNowBtn}
-                      activeOpacity={0.85}
-                      onPress={() => handleUseVoucher(v.code)}
-                    >
-                      <Text style={styles.vUseNowText}>Dùng ngay</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              );
-            })}
-          </ScrollView>
         </View>
 
         {/* ============================================================
@@ -2257,6 +2185,36 @@ export default function HomeScreen({
         onSwitchVehicle={() => {
           setShowBookingModal(false);
           setCatalogMode('CAR');
+        }}
+      />
+
+      {/* Unified Voucher & Eco Coins Redemption Wallet Modal */}
+      <VoucherWalletModal
+        visible={showVoucherWalletModal}
+        initialTab={walletInitialTab}
+        ecoCoins={ecoCoins}
+        savedVouchers={savedVouchers}
+        onClose={() => setShowVoucherWalletModal(false)}
+        onDeductCoins={(amount) => {
+          setEcoCoins((prev) => Math.max(0, prev - amount));
+        }}
+        onSaveVoucher={(code) => {
+          if (!savedVouchers.includes(code)) {
+            setSavedVouchers((prev) => [...prev, code]);
+          }
+        }}
+        onApplyVoucher={(code) => {
+          setSelectedVoucherForBooking(code);
+          const targetVehicle = filteredVehicles[0] || vehicles[0];
+          if (targetVehicle) {
+            setBookingVehicle(targetVehicle);
+            setShowBookingModal(true);
+          }
+          setBookingToast({
+            title: `🏷️ Đã chọn mã ${code}`,
+            message: `Mã ưu đãi ${code} đã sẵn sàng trong đơn thuê xe!`
+          });
+          setTimeout(() => setBookingToast(null), 3000);
         }}
       />
     </View>
