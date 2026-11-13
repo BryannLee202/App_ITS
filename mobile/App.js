@@ -100,6 +100,7 @@ function AppContent() {
   const [showGreenRaceTerms, setShowGreenRaceTerms] = useState(false);
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [copiedCode, setCopiedCode] = useState(null);
+  const [appliedVoucherFromWallet, setAppliedVoucherFromWallet] = useState(null);
 
   const theme = THEME_PRESETS[themeKey] || THEME_PRESETS.BE_SUA_CAFE;
 
@@ -193,6 +194,8 @@ function AppContent() {
             onNavigateToProfile={() => setActiveTab('PROFILE')}
             onOpenRewards={() => setShowRewardsModal(true)}
             onOpenGreenRace={() => setShowGreenRaceModal(true)}
+            appliedVoucherCode={appliedVoucherFromWallet}
+            onClearAppliedVoucher={() => setAppliedVoucherFromWallet(null)}
           />
         );
       case 'MAP':
@@ -529,7 +532,7 @@ function AppContent() {
       </Modal>
 
       {/* =========================================================================
-          MODAL 2: VOUCHERS & PROMOTIONS MODAL
+          MODAL 2: VOUCHERS & PROMOTIONS WALLET MODAL
          ========================================================================= */}
       <Modal
         visible={showRewardsModal}
@@ -540,58 +543,112 @@ function AppContent() {
         <View style={styles.modalOverlay}>
           <View style={styles.rewardsModalCard}>
             <View style={styles.rewardsHeader}>
-              <View>
-                <Text style={styles.rewardsTitle}>Ví Ưu Đãi EcoGo Smart</Text>
-                <Text style={styles.rewardsSub}>Áp dụng cho Thuê theo giờ, Thuê theo ngày & Liên tỉnh</Text>
+              <View style={{ flex: 1, marginRight: 10 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <Ionicons name="ticket" size={20} color={theme.primary} />
+                  <Text style={styles.rewardsTitle}>Ví Ưu Đãi EcoGo Smart</Text>
+                </View>
+                <Text style={styles.rewardsSub}>Chạm "Dùng ngay" để tự động áp dụng khi thuê xe</Text>
               </View>
               <TouchableOpacity
                 style={styles.closeModalBtn}
                 onPress={() => setShowRewardsModal(false)}
               >
-                <Ionicons name="close" size={18} color="#0F172A" />
+                <Ionicons name="close" size={18} color="#2B180D" />
               </TouchableOpacity>
             </View>
 
-            {[
-              {
-                code: 'XANH20',
-                title: 'Giảm 20% chuyến xe EcoGo (Tối đa 120.000đ)',
-                desc: 'Áp dụng cho Hyundai Ioniq 5, Toyota Cross HEV, Mazda CX-5 & Honda CR-V'
-              },
-              {
-                code: 'UTH50K',
-                title: 'Giảm 50.000đ tại Trạm ĐH GTVT (UTH)',
-                desc: 'Ưu đãi dành cho sinh viên và giảng viên trường ĐH GTVT TP.HCM'
-              },
-              {
-                code: 'FREEDELIVERY',
-                title: 'Miễn phí giao nhận xe tận nơi',
-                desc: 'Miễn 100% phí giao xe trong bán kính 5km quanh trạm EcoGo Hub'
-              }
-            ].map((item) => (
-              <View
-                key={item.code}
-                style={[
-                  styles.voucherCard,
-                  { backgroundColor: theme.primarySoft, borderColor: theme.primaryBorder }
-                ]}
-              >
-                <View style={{ flex: 1, marginRight: 12 }}>
-                  <Text style={[styles.voucherCodeText, { color: theme.primary }]}>{item.code}</Text>
-                  <Text style={styles.voucherItemTitle}>{item.title}</Text>
-                  <Text style={styles.voucherItemDesc}>{item.desc}</Text>
-                </View>
-
-                <TouchableOpacity
-                  style={[styles.copyVoucherBtn, { backgroundColor: theme.primary }]}
-                  onPress={() => setCopiedCode(item.code)}
+            <ScrollView style={{ maxHeight: 380 }} showsVerticalScrollIndicator={false}>
+              {[
+                {
+                  code: 'BANMOI30',
+                  title: 'Gói Chào Bạn Mới - Giảm 30%',
+                  desc: 'Giảm 30% chuyến đầu tiên cho tài khoản mới (tối đa 80.000đ)',
+                  tag: 'BẠN MỚI',
+                  tagBg: '#ECFDF5',
+                  tagColor: '#047857'
+                },
+                {
+                  code: 'ECOGO20',
+                  title: 'Hành Trình Xanh - Giảm 20%',
+                  desc: 'Áp dụng cho mọi dòng ô tô tự lái & xe máy điện (tối đa 120.000đ)',
+                  tag: 'HOT',
+                  tagBg: '#FEF3C7',
+                  tagColor: '#B45309'
+                },
+                {
+                  code: 'UTH50K',
+                  title: 'Độc Quyền SV & Giảng Viên UTH',
+                  desc: 'Giảm trực tiếp 50.000đ khi nhận xe tại Trạm Cơ sở 1 & 3 ĐH GTVT',
+                  tag: 'ĐỘC QUYỀN UTH',
+                  tagBg: '#EFF6FF',
+                  tagColor: '#1D4ED8'
+                },
+                {
+                  code: 'FREESHIP',
+                  title: 'Giao Nhận Xe Tận Nhà 0đ',
+                  desc: 'Miễn 100% phí giao nhận xe trong bán kính 5km quanh trạm Hub',
+                  tag: 'TIỆN LỢI',
+                  tagBg: '#F3E8FF',
+                  tagColor: '#7E22CE'
+                },
+                {
+                  code: 'CUOITUAN200',
+                  title: 'Dã Ngoại Cuối Tuần - Giảm 200K',
+                  desc: 'Giảm ngay 200.000đ cho gói thuê ô tô 24h Thứ 7 & Chủ Nhật',
+                  tag: 'CUỐI TUẦN',
+                  tagBg: '#FFF1F2',
+                  tagColor: '#BE123C'
+                },
+                {
+                  code: 'GIOVANG25',
+                  title: 'Flash Sale Giờ Vàng - Giảm 25K',
+                  desc: 'Áp dụng khung giờ cao điểm 11h-13h & 17h-19h hàng ngày',
+                  tag: 'GIỜ VÀNG',
+                  tagBg: '#FEF9C3',
+                  tagColor: '#854D0E'
+                }
+              ].map((item) => (
+                <View
+                  key={item.code}
+                  style={[
+                    styles.voucherCard,
+                    { backgroundColor: theme.primarySoft, borderColor: theme.primaryBorder }
+                  ]}
                 >
-                  <Text style={styles.copyVoucherText}>
-                    {copiedCode === item.code ? 'Đã lưu' : 'Dùng ngay'}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            ))}
+                  <View style={{ flex: 1, marginRight: 10 }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+                      <Text style={[styles.voucherCodeText, { color: theme.primary }]}>{item.code}</Text>
+                      <View style={[styles.voucherTagMini, { backgroundColor: item.tagBg }]}>
+                        <Text style={[styles.voucherTagMiniText, { color: item.tagColor }]}>{item.tag}</Text>
+                      </View>
+                    </View>
+                    <Text style={styles.voucherItemTitle}>{item.title}</Text>
+                    <Text style={styles.voucherItemDesc}>{item.desc}</Text>
+                  </View>
+
+                  <TouchableOpacity
+                    style={[styles.copyVoucherBtn, { backgroundColor: theme.primary }]}
+                    activeOpacity={0.85}
+                    onPress={() => {
+                      setCopiedCode(item.code);
+                      setAppliedVoucherFromWallet(item.code);
+                      setShowRewardsModal(false);
+                      setActiveTab('HOME');
+                    }}
+                  >
+                    <Text style={styles.copyVoucherText}>Dùng ngay</Text>
+                  </TouchableOpacity>
+                </View>
+              ))}
+            </ScrollView>
+
+            <View style={styles.walletFooterTip}>
+              <Ionicons name="information-circle-outline" size={14} color="#8C6239" />
+              <Text style={styles.walletFooterTipText}>
+                Chạm "Dùng ngay" để tự động áp dụng mã và giảm giá trực tiếp trên đơn đặt xe.
+              </Text>
+            </View>
           </View>
         </View>
       </Modal>
@@ -1147,5 +1204,33 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '700',
     color: '#FFFFFF'
+  },
+  voucherTagMini: {
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 5
+  },
+  voucherTagMiniText: {
+    fontFamily: FONTS.family,
+    fontSize: 9,
+    fontWeight: '800'
+  },
+  walletFooterTip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: '#FAF7F2',
+    borderWidth: 1,
+    borderColor: '#EFE8DE',
+    padding: 10,
+    borderRadius: 10,
+    marginTop: 8
+  },
+  walletFooterTipText: {
+    flex: 1,
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    color: '#8C6239',
+    lineHeight: 15
   }
 });

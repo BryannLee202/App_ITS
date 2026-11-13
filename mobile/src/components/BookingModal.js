@@ -99,17 +99,17 @@ export default function BookingModal({
       
       const code = voucherCode.trim().toUpperCase();
       let discountAmount = 0;
-      if (code === 'CHAOXANH') {
+      if (code === 'CHAOXANH' || code === 'BANMOI30') {
         discountAmount = Math.min(Math.round(baseRentalFee * 0.3), 80000);
-      } else if (code === 'XANH20') {
+      } else if (code === 'XANH20' || code === 'ECOGO20') {
         discountAmount = Math.min(Math.round(baseRentalFee * 0.2), 120000);
       } else if (code === 'GIOVANG25') {
         discountAmount = 25000;
       } else if (code === 'UTH50K') {
         discountAmount = 50000;
-      } else if (code === 'THUENGAY200') {
+      } else if (code === 'THUENGAY200' || code === 'CUOITUAN200') {
         discountAmount = rentalType === 'DAILY' ? 200000 : 100000;
-      } else if (code === 'FREESHIP5KM' || code === 'FREEDELIVERY') {
+      } else if (code === 'FREESHIP5KM' || code === 'FREEDELIVERY' || code === 'FREESHIP') {
         discountAmount = deliveryFee > 0 ? deliveryFee : 50000;
       }
 
@@ -411,11 +411,11 @@ export default function BookingModal({
                   style={styles.voucherInput}
                   value={voucherCode}
                   onChangeText={setVoucherCode}
-                  placeholder="Nhập mã (XANH20, UTH50K)"
+                  placeholder="Nhập mã (BANMOI30, UTH50K, ECOGO20)"
                   placeholderTextColor="#9CA3AF"
                 />
                 <View style={styles.quickVoucherRow}>
-                  {['CHAOXANH', 'XANH20', 'GIOVANG25', 'UTH50K', 'THUENGAY200', 'FREESHIP5KM'].map(code => (
+                  {['BANMOI30', 'ECOGO20', 'UTH50K', 'FREESHIP', 'CUOITUAN200', 'GIOVANG25'].map(code => (
                     <TouchableOpacity
                       key={code}
                       style={[

@@ -32,6 +32,17 @@ telematicsService.startTripSimulation('veh-ioniq5-001', 'trip_demo_101');
 // Available Promo Vouchers & Events
 const VOUCHERS = [
   {
+    code: 'BANMOI30',
+    title: 'Gói Quà Bạn Mới - Giảm 30%',
+    description: 'Giảm 30% chuyến đầu tiên cho tài khoản mới (tối đa 80.000đ)',
+    discountType: 'PERCENT',
+    discountValue: 30,
+    maxDiscount: 80000,
+    tag: 'BẠN MỚI',
+    claimedPct: 88,
+    expiry: 'Còn 3 ngày'
+  },
+  {
     code: 'CHAOXANH',
     title: 'Gói Quà Bạn Mới - Giảm 30%',
     description: 'Giảm 30% chuyến đầu tiên cho tài khoản mới (tối đa 80.000đ)',
@@ -43,9 +54,20 @@ const VOUCHERS = [
     expiry: 'Còn 3 ngày'
   },
   {
+    code: 'ECOGO20',
+    title: 'Hành Trình Xanh EcoGo - Giảm 20%',
+    description: 'Áp dụng cho mọi dòng xe ô tô tự lái & xe máy điện (tối đa 120.000đ)',
+    discountType: 'PERCENT',
+    discountValue: 20,
+    maxDiscount: 120000,
+    tag: 'HOT',
+    claimedPct: 76,
+    expiry: 'Còn 5 ngày'
+  },
+  {
     code: 'XANH20',
     title: 'Giảm 20% Thuê Xe Xanh EcoGo',
-    description: 'Áp dụng cho mọi dòng xe Hyundai, Toyota, Mazda, Honda & Yamaha (tối đa 120.000đ)',
+    description: 'Áp dụng cho mọi dòng xe ô tô tự lái & xe máy điện (tối đa 120.000đ)',
     discountType: 'PERCENT',
     discountValue: 20,
     maxDiscount: 120000,
@@ -76,6 +98,17 @@ const VOUCHERS = [
     expiry: 'Hết tháng 11'
   },
   {
+    code: 'CUOITUAN200',
+    title: 'Dã Ngoại Cuối Tuần - Giảm 200K',
+    description: 'Giảm ngay 200.000đ khi thuê ô tô tự lái theo ngày dịp cuối tuần',
+    discountType: 'FIXED',
+    discountValue: 200000,
+    maxDiscount: 200000,
+    tag: 'CUỐI TUẦN',
+    claimedPct: 54,
+    expiry: 'Cuối tuần'
+  },
+  {
     code: 'THUENGAY200',
     title: 'Gói Dã Ngoại 24H - Giảm 200K',
     description: 'Giảm ngay 200.000đ khi thuê ô tô tự lái theo ngày dịp cuối tuần',
@@ -85,6 +118,17 @@ const VOUCHERS = [
     tag: 'CUỐI TUẦN',
     claimedPct: 54,
     expiry: 'Cuối tuần'
+  },
+  {
+    code: 'FREESHIP',
+    title: 'Miễn Phí Giao Xe Tận Nơi 5KM',
+    description: 'Miễn 100% phí giao nhận xe tận cửa nhà trong bán kính 5km quanh trạm EcoGo Hub',
+    discountType: 'DELIVERY_FREE',
+    discountValue: 50000,
+    maxDiscount: 50000,
+    tag: 'TIỆN LỢI',
+    claimedPct: 83,
+    expiry: 'Còn 7 ngày'
   },
   {
     code: 'FREESHIP5KM',

@@ -36,10 +36,10 @@ const HERO_PROMOS = [
   },
   {
     id: 'promo-2',
-    title: 'Thứ 4 Ngày Xanh: Giảm 50%',
-    subtitle: 'Mọi dòng xe máy điện & ô tô tự lái tiết kiệm nửa giá hôm nay',
+    title: 'Hành Trình Xanh: Giảm 20%',
+    subtitle: 'Mọi dòng xe máy điện & ô tô tự lái tiết kiệm chi phí hôm nay',
     tag: '⚡ HÀNH TRÌNH XANH',
-    voucherCode: 'XANH20',
+    voucherCode: 'ECOGO20',
     btnText: 'Lưu mã ngay',
     bgColor: '#4E3322',     // Deep Roasted Espresso
     accentColor: '#FAF7F2', // Warm Vanilla Milk
@@ -47,13 +47,13 @@ const HERO_PROMOS = [
   },
   {
     id: 'promo-3',
-    title: 'Gói Quà Bạn Mới 500.000đ',
-    subtitle: 'Tặng combo 5 voucher cho các chuyến đi xanh đầu tiên',
+    title: 'Gói Quà Bạn Mới: Giảm 30%',
+    subtitle: 'Ưu đãi chuyến đi đầu tiên cho thành viên mới gia nhập EcoGo',
     tag: '🎁 BẠN MỚI',
-    voucherCode: 'CHAOXANH',
-    btnText: 'Nhận 500K',
-    bgColor: '#52735E',     // Organic Muted Matcha
-    accentColor: '#EEF5F0', // Matcha Milk Cream
+    voucherCode: 'BANMOI30',
+    btnText: 'Nhận ưu đãi',
+    bgColor: '#8C6239',     // Warm Roasted Latte
+    accentColor: '#FAF7F2',
     icon: 'gift'
   },
   {
@@ -61,7 +61,7 @@ const HERO_PROMOS = [
     title: 'Dã Ngoại Cuối Tuần: Giảm 200K',
     subtitle: 'Thuê ô tô tự lái theo ngày - Tự do khám phá không lo tiền cọc',
     tag: '🏖️ CUỐI TUẦN',
-    voucherCode: 'THUENGAY200',
+    voucherCode: 'CUOITUAN200',
     btnText: 'Đặt xe ngay',
     bgColor: '#5D4037',     // Roasted Mocha
     accentColor: '#F6EFE9', // Be Sữa
@@ -71,7 +71,7 @@ const HERO_PROMOS = [
 
 const HOT_VOUCHERS = [
   {
-    code: 'CHAOXANH',
+    code: 'BANMOI30',
     title: 'Giảm 30% chuyến đầu tiên',
     desc: 'Tối đa 80.000đ • Mọi dòng xe ô tô & xe máy',
     tag: 'BẠN MỚI',
@@ -81,7 +81,7 @@ const HOT_VOUCHERS = [
     expiry: 'Còn 3 ngày'
   },
   {
-    code: 'XANH20',
+    code: 'ECOGO20',
     title: 'Giảm 20% Toàn Hệ Thống',
     desc: 'Tối đa 120.000đ • Áp dụng thuê giờ & ngày',
     tag: 'HOT NHẤT',
@@ -89,16 +89,6 @@ const HOT_VOUCHERS = [
     tagColor: '#DC2626',
     claimedPct: 76,
     expiry: 'Còn 5 ngày'
-  },
-  {
-    code: 'GIOVANG25',
-    title: 'Flash Sale: Giảm 25.000đ',
-    desc: 'Khung giờ vàng 11h-13h & 17h-19h hàng ngày',
-    tag: 'GIỜ VÀNG',
-    tagBg: '#FFFBEB',
-    tagColor: '#D97706',
-    claimedPct: 94,
-    expiry: 'Hôm nay'
   },
   {
     code: 'UTH50K',
@@ -111,7 +101,17 @@ const HOT_VOUCHERS = [
     expiry: 'Hết tháng 11'
   },
   {
-    code: 'THUENGAY200',
+    code: 'FREESHIP',
+    title: 'Miễn Phí Giao Xe Tận Nhà',
+    desc: 'Giao nhanh 20 phút bán kính 5km quanh Hub',
+    tag: '0Đ GIAO XE',
+    tagBg: '#F0FDF4',
+    tagColor: '#16A34A',
+    claimedPct: 82,
+    expiry: 'Còn 7 ngày'
+  },
+  {
+    code: 'CUOITUAN200',
     title: 'Giảm 200K Thuê Ngày 24H',
     desc: 'Áp dụng cho gói thuê ô tô dịp cuối tuần',
     tag: 'DÃ NGOẠI',
@@ -121,14 +121,14 @@ const HOT_VOUCHERS = [
     expiry: 'Cuối tuần'
   },
   {
-    code: 'FREESHIP5KM',
-    title: 'Miễn Phí Giao Xe Tận Nhà',
-    desc: 'Giao nhanh 20 phút bán kính 5km quanh Hub',
-    tag: '0Đ GIAO XE',
-    tagBg: '#F0FDF4',
-    tagColor: '#16A34A',
-    claimedPct: 82,
-    expiry: 'Còn 7 ngày'
+    code: 'GIOVANG25',
+    title: 'Flash Sale: Giảm 25.000đ',
+    desc: 'Khung giờ vàng 11h-13h & 17h-19h hàng ngày',
+    tag: 'GIỜ VÀNG',
+    tagBg: '#FFFBEB',
+    tagColor: '#D97706',
+    claimedPct: 94,
+    expiry: 'Hôm nay'
   }
 ];
 
@@ -143,12 +143,12 @@ const WEEKLY_CHECKIN_DAYS = [
 ];
 
 const LUCKY_WHEEL_SECTORS = [
-  { label: 'Giảm 50%', code: 'XANH50', type: 'VOUCHER', color: '#10B981' },
-  { label: '+50 Xu Eco', coins: 50, type: 'COIN', color: '#3B82F6' },
-  { label: 'Giảm 20%', code: 'XANH20', type: 'VOUCHER', color: '#F59E0B' },
-  { label: '+100 Xu Eco', coins: 100, type: 'COIN', color: '#8B5CF6' },
-  { label: 'Free Ship 5KM', code: 'FREESHIP5KM', type: 'VOUCHER', color: '#06B6D4' },
-  { label: 'Xe 0 Đồng', code: 'CHAOXANH', type: 'VOUCHER', color: '#EF4444' }
+  { label: 'Giảm 50K UTH', code: 'UTH50K', type: 'VOUCHER', color: '#6F4E37' },
+  { label: '+50 Xu Eco', coins: 50, type: 'COIN', color: '#D97706' },
+  { label: 'Giảm 20%', code: 'ECOGO20', type: 'VOUCHER', color: '#8C6239' },
+  { label: '+100 Xu Eco', coins: 100, type: 'COIN', color: '#4E3322' },
+  { label: 'Free Ship 5KM', code: 'FREESHIP', type: 'VOUCHER', color: '#7C3AED' },
+  { label: 'Bạn Mới 30%', code: 'BANMOI30', type: 'VOUCHER', color: '#059669' }
 ];
 
 const SAVED_PLACES = [
@@ -292,7 +292,9 @@ export default function HomeScreen({
   onNavigateToTrips,
   onNavigateToProfile,
   onOpenRewards,
-  onOpenGreenRace
+  onOpenGreenRace,
+  appliedVoucherCode,
+  onClearAppliedVoucher
 }) {
   const [vehicles, setVehicles] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('ALL');
@@ -302,8 +304,8 @@ export default function HomeScreen({
   const [refreshing, setRefreshing] = useState(false);
 
   // Gamification, Vouchers & Event states
-  const [savedVouchers, setSavedVouchers] = useState(['CHAOXANH', 'XANH20']);
-  const [selectedVoucherForBooking, setSelectedVoucherForBooking] = useState('CHAOXANH');
+  const [savedVouchers, setSavedVouchers] = useState(['BANMOI30', 'ECOGO20', 'UTH50K']);
+  const [selectedVoucherForBooking, setSelectedVoucherForBooking] = useState('BANMOI30');
   const [activePromoIdx, setActivePromoIdx] = useState(0);
   const [ecoCoins, setEcoCoins] = useState(180);
   const [ecoStreak, setEcoStreak] = useState(3);
@@ -322,6 +324,27 @@ export default function HomeScreen({
   const [bookingVehicle, setBookingVehicle] = useState(null);
   const [showBookingModal, setShowBookingModal] = useState(false);
   const [bookingToast, setBookingToast] = useState(null);
+
+  // Handle external voucher application from Wallet Modal
+  useEffect(() => {
+    if (appliedVoucherCode) {
+      if (!savedVouchers.includes(appliedVoucherCode)) {
+        setSavedVouchers((prev) => [...prev, appliedVoucherCode]);
+      }
+      setSelectedVoucherForBooking(appliedVoucherCode);
+      const targetVehicle = filteredVehicles[0] || vehicles[0];
+      if (targetVehicle) {
+        setBookingVehicle(targetVehicle);
+        setShowBookingModal(true);
+      }
+      setBookingToast({
+        title: `🎉 Đã kích hoạt mã ${appliedVoucherCode}!`,
+        message: 'Mã ưu đãi đã được áp dụng trực tiếp vào đơn đặt xe của bạn.'
+      });
+      setTimeout(() => setBookingToast(null), 2500);
+      if (onClearAppliedVoucher) onClearAppliedVoucher();
+    }
+  }, [appliedVoucherCode, vehicles]);
 
   // Dynamic realistic pickup & return times
   const formatTimeRange = (tab) => {
@@ -378,7 +401,7 @@ export default function HomeScreen({
         title: 'Đã kích hoạt mã ' + code,
         message: 'Vui lòng chọn dòng xe bạn thích bên dưới để đặt xe và nhận giảm giá.'
       });
-      setTimeout(() => setBookingToast(null), 3000);
+      setTimeout(() => setBookingToast(null), 2500);
     }
   };
 
@@ -386,14 +409,14 @@ export default function HomeScreen({
     if (checkedInToday) return;
     setCheckedInToday(true);
     setEcoCoins((prev) => prev + 25);
-    if (!savedVouchers.includes('XANH20')) {
-      setSavedVouchers((prev) => [...prev, 'XANH20']);
+    if (!savedVouchers.includes('ECOGO20')) {
+      setSavedVouchers((prev) => [...prev, 'ECOGO20']);
     }
     setBookingToast({
       title: '🌟 Điểm danh thành công! (+25 Xu Eco)',
-      message: 'Chuỗi 3 ngày liên tiếp. Mở khóa thêm Voucher giảm 20%!'
+      message: 'Chuỗi 3 ngày liên tiếp. Mở khóa thêm Voucher giảm 20% ECOGO20!'
     });
-    setTimeout(() => setBookingToast(null), 3500);
+    setTimeout(() => setBookingToast(null), 2500);
   };
 
   const handleSpinWheel = () => {
@@ -524,16 +547,12 @@ export default function HomeScreen({
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={styles.headerCircleBtn}
+                style={styles.headerVoucherPill}
                 activeOpacity={0.85}
                 onPress={onOpenRewards}
               >
-                <Ionicons name="pricetag-outline" size={16} color="#1D1D1F" />
-                {savedVouchers.length > 0 && (
-                  <View style={styles.savedVoucherBadge}>
-                    <Text style={styles.savedVoucherBadgeText}>{savedVouchers.length}</Text>
-                  </View>
-                )}
+                <Ionicons name="ticket" size={14} color="#6F4E37" />
+                <Text style={styles.headerVoucherPillText}>Ví ưu đãi ({savedVouchers.length})</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
@@ -635,14 +654,21 @@ export default function HomeScreen({
           </View>
         </View>
 
-        {/* Booking Toast */}
+        {/* Booking Toast with Close Action */}
         {bookingToast && (
-          <View style={[styles.toastBanner, { backgroundColor: '#1D1D1F' }]}>
-            <Ionicons name="checkmark-circle" size={20} color={theme.primaryLight} />
-            <View style={{ flex: 1 }}>
+          <View style={[styles.toastBanner, { backgroundColor: '#2B180D' }]}>
+            <Ionicons name="checkmark-circle" size={18} color="#D4AF37" />
+            <View style={{ flex: 1, marginHorizontal: 8 }}>
               <Text style={styles.toastTitle}>{bookingToast.title}</Text>
               <Text style={styles.toastMsg}>{bookingToast.message}</Text>
             </View>
+            <TouchableOpacity
+              onPress={() => setBookingToast(null)}
+              style={styles.toastCloseBtn}
+              activeOpacity={0.7}
+            >
+              <Ionicons name="close" size={16} color="#A89F91" />
+            </TouchableOpacity>
           </View>
         )}
 
@@ -1869,21 +1895,27 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#B45309'
   },
-  savedVoucherBadge: {
-    position: 'absolute',
-    top: -3,
-    right: -3,
-    backgroundColor: '#EF4444',
-    borderRadius: 10,
-    width: 16,
-    height: 16,
+  headerVoucherPill: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center'
+    backgroundColor: '#FAF7F2',
+    borderWidth: 1,
+    borderColor: '#EFE8DE',
+    borderRadius: 20,
+    paddingHorizontal: 9,
+    paddingVertical: 5,
+    gap: 4
   },
-  savedVoucherBadgeText: {
-    color: '#FFFFFF',
-    fontSize: 9,
-    fontWeight: '800'
+  headerVoucherPillText: {
+    fontFamily: FONTS.family,
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#6F4E37'
+  },
+  toastCloseBtn: {
+    padding: 4,
+    borderRadius: 12,
+    backgroundColor: 'rgba(255,255,255,0.1)'
   },
 
   /* ============================================================
