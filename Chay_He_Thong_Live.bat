@@ -1,53 +1,25 @@
 @echo off
 chcp 65001 >nul
-title EcoGo Smart - Khởi Động Hệ Thống
+title EcoGo Smart - Khởi Động
 
-echo ===================================================================
-echo             ECOGO SMART - HỆ THỐNG ITS THUÊ XE TỰ ĐỘNG
-echo ===================================================================
-echo.
-
-echo [1/4] Đang dọn sạch các tiến trình cũ và giải phóng cổng 5000 & 8081...
-for /f "tokens=5" %%a in ('netstat -aon ^| findstr :5000 ^| findstr LISTENING 2^>nul') do (
-    taskkill /f /pid %%a >nul 2>&1
+:: Tự động ẩn / thu nhỏ cửa sổ ngay khi mở
+if not "%1"=="min" (
+    start /min "" cmd /c "%~f0" min
+    exit /b
 )
-for /f "tokens=5" %%a in ('netstat -aon ^| findstr :8081 ^| findstr LISTENING 2^>nul') do (
-    taskkill /f /pid %%a >nul 2>&1
+
+:: 1. Giải phóng cổng 5000 & 8081 nếu còn tiến trình cũ
+for %%p in (5000 8081) do (
+    for /f "tokens=5" %%a in ('netstat -aon ^| findstr :%%p ^| findstr LISTENING 2^>nul') do taskkill /f /pid %%a >nul 2>&1
 )
-timeout /t 1 >nul
 
-echo [2/4] Đang khởi động Backend API & Socket.IO (Port 5000 - Auto Watch)...
-start "EcoGo Backend API (Port 5000)" cmd /k "title EcoGo Backend API && cd /d %~dp0backend && node --watch src/server.js"
+:: 2. Khởi động Backend & Mobile ngầm (thu nhỏ, không chiếm màn hình)
+start /min "EcoGo-Backend" cmd /k "cd /d %~dp0backend && node --watch src/server.js"
+start /min "EcoGo-Mobile" cmd /k "cd /d %~dp0mobile && npx expo start --web --port 8081"
 
-echo [3/4] Đang khởi động Giao diện Web Mobile (Port 8081 - Hot Reload)...
-start "EcoGo Mobile Web (Port 8081)" cmd /k "title EcoGo Mobile Web && cd /d %~dp0mobile && npx expo start --web --port 8081"
-
-echo.
-echo [4/4] Đang chờ hệ thống Metro & Web App sẵn sàng (thường mất 8-12 giây)...
+:: 3. Chờ Web sẵn sàng (HTTP 200) rồi tự động mở trình duyệt
 powershell -NoProfile -Command ^
-  "$maxWait = 30; $i = 0; while ($i -lt $maxWait) { " ^
-  "  try { " ^
-  "    $r = Invoke-WebRequest -Uri 'http://localhost:8081' -UseBasicParsing -TimeoutSec 2; " ^
-  "    if ($r.StatusCode -eq 200) { " ^
-  "      Write-Host '   -> Web App da san sang 100%%!' -ForegroundColor Green; " ^
-  "      exit 0; " ^
-  "    } " ^
-  "  } catch {} " ^
-  "  Start-Sleep -Seconds 1; $i++; " ^
-  "  Write-Host ('.' * $i) -NoNewline; " ^
-  "}; " ^
-  "Write-Host ''; Write-Host '   -> He thong dang tiep tuc khoi dong...' -ForegroundColor Yellow"
+  "$t=35; while($t -gt 0){ try{ if((Invoke-WebRequest 'http://localhost:8081' -UseBasicParsing -TimeoutSec 1).StatusCode -eq 200){ break } }catch{}; Start-Sleep 1; $t-- }; Start-Process 'http://localhost:8081'"
 
-echo.
-echo ===================================================================
-echo   HỆ THỐNG ĐÃ SẴN SÀNG! ĐANG MỞ TRÌNH DUYỆT CHROME/EDGE...
-echo   - Giao diện Web: http://localhost:8081
-echo   - Backend API  : http://localhost:5000/api/health
-echo ===================================================================
-start http://localhost:8081
-
-echo.
-echo * Luu y: Khi sua doi code o mobile hoac backend, he thong se TU DONG
-echo   cap nhat (Hot Reload) ma khong can khoi dong lai!
-echo.
-pause
+:: 4. Tự động đóng terminal khởi động
+exit /b 0
