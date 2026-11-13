@@ -37,6 +37,32 @@ export default function ProfileScreen({
   });
 
   const [showGSMContractModal, setShowGSMContractModal] = useState(false);
+  const [showVerificationModal, setShowVerificationModal] = useState(false);
+  const [verifySlideIndex, setVerifySlideIndex] = useState(0);
+
+  const VERIFY_SLIDES = [
+    {
+      id: 'email_gplx',
+      icon: 'mail-open',
+      title: 'Xác thực Email & GPLX B2',
+      desc: 'Xác thực email để nhận hóa đơn, hợp đồng thuê xe tự lái và khôi phục tài khoản khi cần thiết',
+      badge: 'Đã duyệt ✓'
+    },
+    {
+      id: 'ekyc_uth',
+      icon: 'card',
+      title: 'Hồ sơ GPLX Ô tô B2 & eKYC UTH',
+      desc: 'Đã đối soát CSDL giao thông • Miễn tiền cọc 15.000.000đ dành riêng cho sinh viên & GV UTH',
+      badge: 'Hợp lệ ✓'
+    },
+    {
+      id: 'vneid_sync',
+      icon: 'shield-checkmark',
+      title: 'Định danh số VNeID Mức 2',
+      desc: 'Tích hợp CCCD gắn chip, mở khóa ô tô tự lái bằng bảo mật sinh trắc học và chữ ký số OTP',
+      badge: 'Đã liên kết ✓'
+    }
+  ];
 
   const handleOpenSurvey = () => {
     const surveyUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSfq1tFb8DmWn5QNuS5tkb6U5QXKND7s4JFDFg3F_8oXnberlA/viewform';
@@ -81,37 +107,62 @@ export default function ProfileScreen({
             <View style={styles.userSubRow}>
               <Text style={styles.userPhoneText}>{user.phone}</Text>
               <Text style={styles.userSubDot}>•</Text>
-              <View style={styles.gplxVerifiedPill}>
+              <TouchableOpacity
+                style={styles.gplxVerifiedPill}
+                onPress={() => setShowVerificationModal(true)}
+                activeOpacity={0.75}
+              >
                 <Ionicons name="checkmark-circle" size={12} color="#15803D" />
                 <Text style={styles.gplxVerifiedText}>GPLX B2 Đã duyệt</Text>
-              </View>
+                <Ionicons name="chevron-forward" size={10} color="#15803D" />
+              </TouchableOpacity>
             </View>
           </View>
         </View>
 
         {/* ============================================================
-            2. EMAIL / eKYC VERIFICATION BANNER CARD
+            2. EMAIL / eKYC VERIFICATION BANNER CARD (INTERACTIVE LIKE REAL APPS)
            ============================================================ */}
-        <View style={styles.emailVerifyCard}>
-          <View style={styles.envelope3DBox}>
-            <Ionicons name="mail-open" size={24} color={theme.primary} />
+        <TouchableOpacity
+          style={styles.emailVerifyCard}
+          activeOpacity={0.88}
+          onPress={() => setShowVerificationModal(true)}
+        >
+          <View style={[styles.envelope3DBox, { backgroundColor: theme.primarySoft || '#F5EFEB' }]}>
+            <Ionicons name={VERIFY_SLIDES[verifySlideIndex].icon} size={24} color={theme.primary} />
             <View style={styles.shieldCyanBadge}>
-              <Ionicons name="shield-checkmark" size={13} color={theme.primary} />
+              <Ionicons name="shield-checkmark" size={13} color="#15803D" />
             </View>
           </View>
           <View style={{ flex: 1 }}>
-            <Text style={styles.emailVerifyTitle}>Xác thực Email & GPLX B2</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+              <Text style={styles.emailVerifyTitle}>{VERIFY_SLIDES[verifySlideIndex].title}</Text>
+              <View style={styles.verifySlideBadge}>
+                <Text style={styles.verifySlideBadgeText}>{VERIFY_SLIDES[verifySlideIndex].badge}</Text>
+              </View>
+            </View>
             <Text style={styles.emailVerifyDesc}>
-              Xác thực email để nhận hóa đơn, hợp đồng thuê xe tự lái và khôi phục tài khoản khi cần thiết
+              {VERIFY_SLIDES[verifySlideIndex].desc}
             </Text>
           </View>
-        </View>
+          <Ionicons name="chevron-forward" size={18} color="#9A9FA5" />
+        </TouchableOpacity>
 
         {/* Carousel Pagination Dots */}
         <View style={styles.carouselDotsRow}>
-          <View style={styles.dotInactive} />
-          <View style={styles.dotActiveCyan} />
-          <View style={styles.dotInactive} />
+          {VERIFY_SLIDES.map((slide, idx) => (
+            <TouchableOpacity
+              key={slide.id}
+              onPress={() => setVerifySlideIndex(idx)}
+              activeOpacity={0.7}
+              style={[
+                styles.dotBase,
+                verifySlideIndex === idx
+                  ? [styles.dotActiveCyan, { backgroundColor: theme.primary }]
+                  : styles.dotInactive
+              ]}
+            />
+          ))}
         </View>
 
         {/* ============================================================
@@ -448,6 +499,237 @@ export default function ProfileScreen({
               onPress={() => setShowGSMContractModal(false)}
             >
               <Text style={styles.understandBtnText}>Tôi đã hiểu</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      {/* ============================================================
+          MODAL: TRUNG TÂM XÁC THỰC EMAIL & HỒ SƠ GPLX B2 (eKYC ITS)
+         ============================================================ */}
+      <Modal
+        visible={showVerificationModal}
+        animationType="slide"
+        onRequestClose={() => setShowVerificationModal(false)}
+      >
+        <View style={styles.verifyModalContainer}>
+          {/* Header */}
+          <View style={styles.verifyModalHeader}>
+            <TouchableOpacity
+              onPress={() => setShowVerificationModal(false)}
+              style={styles.verifyCloseBtn}
+              activeOpacity={0.7}
+            >
+              <Ionicons name="close" size={22} color="#1A1D1F" />
+            </TouchableOpacity>
+            <View style={{ flex: 1, alignItems: 'center' }}>
+              <Text style={styles.verifyModalHeaderTitle}>Hồ sơ Lái xe & Định danh eKYC</Text>
+              <Text style={styles.verifyModalHeaderSub}>Hệ thống ITS Đại học Giao thông Vận tải UTH</Text>
+            </View>
+            <View style={styles.verifyBadgeHeader}>
+              <Ionicons name="shield-checkmark" size={12} color="#15803D" />
+              <Text style={styles.verifyBadgeHeaderText}>Đã duyệt</Text>
+            </View>
+          </View>
+
+          <ScrollView style={styles.verifyModalScroll} showsVerticalScrollIndicator={false}>
+            {/* Status Executive Hero Card */}
+            <View style={styles.verifyHeroCard}>
+              <View style={styles.verifyHeroCircle}>
+                <Ionicons name="car-sport" size={26} color="#D4AF37" />
+              </View>
+              <View style={{ flex: 1 }}>
+                <View style={styles.verifyLevelRow}>
+                  <Text style={styles.verifyLevelLabel}>CẤP ĐỘ PHÊ DUYỆT</Text>
+                  <View style={styles.levelPill}>
+                    <Text style={styles.levelPillText}>CẤP 2 - CAO NHẤT</Text>
+                  </View>
+                </View>
+                <Text style={styles.verifyHeroTitle}>Đủ điều kiện thuê tự lái 24/7</Text>
+                <Text style={styles.verifyHeroDesc}>
+                  Tài khoản đã hoàn tất kiểm tra hồ sơ thực địa và liên kết với Trung tâm điều hành ITS UTH. Miễn thế chấp 15.000.000đ khi nhận xe.
+                </Text>
+              </View>
+            </View>
+
+            {/* Mục 1: Giấy phép lái xe ô tô (GPLX B2) */}
+            <View style={styles.verifySectionCard}>
+              <View style={styles.sectionHeaderRow}>
+                <View style={[styles.sectionIconBox, { backgroundColor: theme.primarySoft || '#F5EFEB' }]}>
+                  <Ionicons name="card" size={18} color={theme.primary} />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.sectionHeading}>Giấy phép lái xe (GPLX)</Text>
+                  <Text style={styles.sectionSubHeading}>Đã xác thực và đối soát với cơ sở dữ liệu Bộ GTVT</Text>
+                </View>
+                <View style={styles.verifiedTagGreen}>
+                  <Ionicons name="checkmark" size={11} color="#15803D" />
+                  <Text style={styles.verifiedTagGreenText}>Hợp lệ</Text>
+                </View>
+              </View>
+
+              <View style={styles.verifyInfoTable}>
+                <View style={styles.verifyTableRow}>
+                  <Text style={styles.verifyTableLabel}>Số GPLX</Text>
+                  <Text style={styles.verifyTableValBold}>790123456789</Text>
+                </View>
+                <View style={styles.verifyTableDivider} />
+
+                <View style={styles.verifyTableRow}>
+                  <Text style={styles.verifyTableLabel}>Họ và tên tài xế</Text>
+                  <Text style={styles.verifyTableValBold}>LÊ NGUYỄN MINH TÀI</Text>
+                </View>
+                <View style={styles.verifyTableDivider} />
+
+                <View style={styles.verifyTableRow}>
+                  <Text style={styles.verifyTableLabel}>Hạng xe được phép</Text>
+                  <Text style={styles.verifyTableVal}>Hạng B2 (Ô tô tự lái dưới 9 chỗ)</Text>
+                </View>
+                <View style={styles.verifyTableDivider} />
+
+                <View style={styles.verifyTableRow}>
+                  <Text style={styles.verifyTableLabel}>Ngày cấp - Hết hạn</Text>
+                  <Text style={styles.verifyTableVal}>15/08/2022 - 15/08/2032 (Còn 6 năm)</Text>
+                </View>
+                <View style={styles.verifyTableDivider} />
+
+                <View style={styles.verifyTableRow}>
+                  <Text style={styles.verifyTableLabel}>Nơi cấp</Text>
+                  <Text style={styles.verifyTableVal}>Sở Giao thông Vận tải TP.HCM</Text>
+                </View>
+              </View>
+
+              {/* Photos of Driving License Preview */}
+              <Text style={styles.subCardTitle}>Hình ảnh hồ sơ đã lưu trữ (OCR AI):</Text>
+              <View style={styles.idPhotoPairRow}>
+                <View style={styles.idPhotoCard}>
+                  <View style={styles.idPhotoPlaceholder}>
+                    <Ionicons name="image-outline" size={24} color="#6F4E37" />
+                    <Text style={styles.idPhotoLabel}>Mặt trước GPLX</Text>
+                    <View style={styles.ocrScannedPill}>
+                      <Ionicons name="scan-outline" size={10} color="#15803D" />
+                      <Text style={styles.ocrScannedText}>AI Scanned</Text>
+                    </View>
+                  </View>
+                </View>
+
+                <View style={styles.idPhotoCard}>
+                  <View style={styles.idPhotoPlaceholder}>
+                    <Ionicons name="qr-code-outline" size={24} color="#6F4E37" />
+                    <Text style={styles.idPhotoLabel}>Mặt sau (QR Code)</Text>
+                    <View style={styles.ocrScannedPill}>
+                      <Ionicons name="checkmark-done" size={10} color="#15803D" />
+                      <Text style={styles.ocrScannedText}>Verified</Text>
+                    </View>
+                  </View>
+                </View>
+              </View>
+
+              <TouchableOpacity
+                style={styles.reUploadBtn}
+                activeOpacity={0.8}
+                onPress={() => Alert.alert('Cập nhật GPLX', 'Hệ thống eKYC ITS: Vui lòng chuẩn bị bản gốc GPLX B2 để quét ảnh mới khi bạn gia hạn hoặc đổi phôi bằng lái.')}
+              >
+                <Ionicons name="camera-reverse-outline" size={16} color={theme.primary} />
+                <Text style={[styles.reUploadBtnText, { color: theme.primary }]}>Quét lại ảnh GPLX mới</Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Mục 2: Xác thực Email nhận Hóa đơn & Hợp đồng */}
+            <View style={styles.verifySectionCard}>
+              <View style={styles.sectionHeaderRow}>
+                <View style={[styles.sectionIconBox, { backgroundColor: theme.primarySoft || '#F5EFEB' }]}>
+                  <Ionicons name="mail" size={18} color={theme.primary} />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.sectionHeading}>Email nhận Hóa đơn & Hợp đồng</Text>
+                  <Text style={styles.sectionSubHeading}>Tự động gửi PDF hợp đồng thuê và hóa đơn VAT</Text>
+                </View>
+                <View style={styles.verifiedTagGreen}>
+                  <Ionicons name="checkmark" size={11} color="#15803D" />
+                  <Text style={styles.verifiedTagGreenText}>Đã xác thực</Text>
+                </View>
+              </View>
+
+              <View style={styles.emailDisplayBox}>
+                <View style={styles.emailLeftRow}>
+                  <Ionicons name="at-outline" size={18} color="#6F767E" />
+                  <Text style={styles.emailDisplayText}>{user.email}</Text>
+                </View>
+                <View style={styles.uthBadgePill}>
+                  <Text style={styles.uthBadgePillText}>Cán bộ / SV UTH</Text>
+                </View>
+              </View>
+
+              <View style={styles.emailActionsRow}>
+                <TouchableOpacity
+                  style={styles.emailActionBtn}
+                  activeOpacity={0.8}
+                  onPress={() => Alert.alert('Kiểm tra Email', 'Hệ thống đã gửi một thư kiểm tra đến ' + user.email + '. Vui lòng kiểm tra hộp thư đến hoặc mục Spam.')}
+                >
+                  <Ionicons name="paper-plane-outline" size={15} color={theme.primary} />
+                  <Text style={[styles.emailActionBtnText, { color: theme.primary }]}>Gửi thử email xác nhận</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={[styles.emailActionBtn, { borderColor: '#EBE3D7' }]}
+                  activeOpacity={0.8}
+                  onPress={() => Alert.alert('Đổi Email', 'Vui lòng liên hệ quản trị viên ITS Cơ sở 1 Bình Thạnh để cập nhật email tên miền sinh viên @uth.edu.vn.')}
+                >
+                  <Ionicons name="pencil-outline" size={15} color="#6F767E" />
+                  <Text style={[styles.emailActionBtnText, { color: '#6F767E' }]}>Thay đổi</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            {/* Mục 3: Căn cước công dân & Định danh VNeID */}
+            <View style={styles.verifySectionCard}>
+              <View style={styles.sectionHeaderRow}>
+                <View style={[styles.sectionIconBox, { backgroundColor: theme.primarySoft || '#F5EFEB' }]}>
+                  <Ionicons name="finger-print" size={18} color={theme.primary} />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.sectionHeading}>Định danh điện tử VNeID</Text>
+                  <Text style={styles.sectionSubHeading}>Liên kết Bộ Công An & Căn cước công dân gắn chip</Text>
+                </View>
+                <View style={styles.verifiedTagGreen}>
+                  <Ionicons name="checkmark" size={11} color="#15803D" />
+                  <Text style={styles.verifiedTagGreenText}>Mức 2</Text>
+                </View>
+              </View>
+
+              <View style={styles.verifyInfoTable}>
+                <View style={styles.verifyTableRow}>
+                  <Text style={styles.verifyTableLabel}>Số CCCD</Text>
+                  <Text style={styles.verifyTableValBold}>079201018891</Text>
+                </View>
+                <View style={styles.verifyTableDivider} />
+                <View style={styles.verifyTableRow}>
+                  <Text style={styles.verifyTableLabel}>Trạng thái VNeID</Text>
+                  <Text style={[styles.verifyTableVal, { color: '#15803D', fontWeight: '700' }]}>Đã tích hợp sinh trắc học</Text>
+                </View>
+              </View>
+            </View>
+
+            {/* Security note */}
+            <View style={styles.securityNoteBox}>
+              <Ionicons name="lock-closed" size={14} color="#8C6239" />
+              <Text style={styles.securityNoteText}>
+                Hồ sơ định danh được mã hóa AES-256 bit và chỉ sử dụng cho mục đích bảo hiểm chuyến đi và nhận xe tự lái theo quy định pháp luật.
+              </Text>
+            </View>
+
+            <View style={{ height: 30 }} />
+          </ScrollView>
+
+          {/* Bottom Bar */}
+          <View style={styles.verifyModalBottomBar}>
+            <TouchableOpacity
+              style={[styles.verifyPrimaryBtn, { backgroundColor: theme.primary }]}
+              onPress={() => setShowVerificationModal(false)}
+              activeOpacity={0.88}
+            >
+              <Text style={styles.verifyPrimaryBtnText}>Đóng & Quay lại</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -1026,6 +1308,386 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     paddingVertical: 14,
     alignItems: 'center'
+  },
+  verifySlideBadge: {
+    backgroundColor: '#E8F5E9',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 6
+  },
+  verifySlideBadgeText: {
+    fontFamily: FONTS.family,
+    fontSize: 9.5,
+    fontWeight: '700',
+    color: '#15803D'
+  },
+  dotBase: {
+    height: 4,
+    borderRadius: 2
+  },
+  verifyModalContainer: {
+    flex: 1,
+    backgroundColor: '#FAF7F2'
+  },
+  verifyModalHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 14,
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#EBE3D7',
+    gap: 10
+  },
+  verifyCloseBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#F5EFEB',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  verifyModalHeaderTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#1A1D1F'
+  },
+  verifyModalHeaderSub: {
+    fontFamily: FONTS.family,
+    fontSize: 10.5,
+    color: '#6F767E',
+    marginTop: 1
+  },
+  verifyBadgeHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#E8F5E9',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+    gap: 3
+  },
+  verifyBadgeHeaderText: {
+    fontFamily: FONTS.family,
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#15803D'
+  },
+  verifyModalScroll: {
+    flex: 1,
+    paddingHorizontal: 16,
+    paddingTop: 14
+  },
+  verifyHeroCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#2B180D',
+    borderRadius: 18,
+    padding: 16,
+    marginBottom: 14,
+    borderWidth: 1.5,
+    borderColor: '#D4AF37',
+    gap: 14,
+    shadowColor: '#2B180D',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 4
+  },
+  verifyHeroCircle: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    backgroundColor: '#3E2515',
+    borderWidth: 1.5,
+    borderColor: '#D4AF37',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  verifyLevelRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: 4
+  },
+  verifyLevelLabel: {
+    fontFamily: FONTS.family,
+    fontSize: 9.5,
+    color: '#BDB3A7',
+    letterSpacing: 0.5
+  },
+  levelPill: {
+    backgroundColor: 'rgba(212, 175, 55, 0.2)',
+    paddingHorizontal: 6,
+    paddingVertical: 1.5,
+    borderRadius: 4,
+    borderWidth: 0.5,
+    borderColor: '#D4AF37'
+  },
+  levelPillText: {
+    fontFamily: FONTS.family,
+    fontSize: 9,
+    fontWeight: '800',
+    color: '#FAF7F2'
+  },
+  verifyHeroTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 15,
+    fontWeight: '800',
+    color: '#FAF7F2',
+    marginBottom: 3
+  },
+  verifyHeroDesc: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    color: '#DCD4C7',
+    lineHeight: 16
+  },
+  verifySectionCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 18,
+    padding: 14,
+    marginBottom: 14,
+    borderWidth: 1,
+    borderColor: '#EBE3D7',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.03,
+    shadowRadius: 6,
+    elevation: 2
+  },
+  sectionHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    marginBottom: 12
+  },
+  sectionIconBox: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  sectionHeading: {
+    fontFamily: FONTS.family,
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#1A1D1F'
+  },
+  sectionSubHeading: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    color: '#6F767E',
+    marginTop: 1
+  },
+  verifiedTagGreen: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#E8F5E9',
+    paddingHorizontal: 7,
+    paddingVertical: 3,
+    borderRadius: 6,
+    gap: 3
+  },
+  verifiedTagGreenText: {
+    fontFamily: FONTS.family,
+    fontSize: 10.5,
+    fontWeight: '700',
+    color: '#15803D'
+  },
+  verifyInfoTable: {
+    backgroundColor: '#FAF7F2',
+    borderRadius: 12,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#F0E8DC'
+  },
+  verifyTableRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 4
+  },
+  verifyTableLabel: {
+    fontFamily: FONTS.family,
+    fontSize: 11.5,
+    color: '#6F767E'
+  },
+  verifyTableVal: {
+    fontFamily: FONTS.family,
+    fontSize: 11.5,
+    color: '#1A1D1F',
+    fontWeight: '600'
+  },
+  verifyTableValBold: {
+    fontFamily: FONTS.family,
+    fontSize: 12.5,
+    color: '#1A1D1F',
+    fontWeight: '800'
+  },
+  verifyTableDivider: {
+    height: 1,
+    backgroundColor: '#EBE3D7',
+    marginVertical: 4
+  },
+  subCardTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 11.5,
+    fontWeight: '700',
+    color: '#4E3322',
+    marginTop: 12,
+    marginBottom: 8
+  },
+  idPhotoPairRow: {
+    flexDirection: 'row',
+    gap: 10,
+    marginBottom: 10
+  },
+  idPhotoCard: {
+    flex: 1,
+    backgroundColor: '#F5EFEB',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#EBE3D7',
+    padding: 10,
+    alignItems: 'center'
+  },
+  idPhotoPlaceholder: {
+    alignItems: 'center',
+    gap: 4
+  },
+  idPhotoLabel: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#1A1D1F'
+  },
+  ocrScannedPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#E8F5E9',
+    paddingHorizontal: 6,
+    paddingVertical: 1.5,
+    borderRadius: 4,
+    gap: 2
+  },
+  ocrScannedText: {
+    fontFamily: FONTS.family,
+    fontSize: 9,
+    fontWeight: '700',
+    color: '#15803D'
+  },
+  reUploadBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 9,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#EBE3D7',
+    backgroundColor: '#FAF7F2',
+    gap: 6
+  },
+  reUploadBtnText: {
+    fontFamily: FONTS.family,
+    fontSize: 11.5,
+    fontWeight: '700'
+  },
+  emailDisplayBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#FAF7F2',
+    borderRadius: 12,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#F0E8DC',
+    marginBottom: 10
+  },
+  emailLeftRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6
+  },
+  emailDisplayText: {
+    fontFamily: FONTS.family,
+    fontSize: 12.5,
+    fontWeight: '700',
+    color: '#1A1D1F'
+  },
+  uthBadgePill: {
+    backgroundColor: 'rgba(111, 78, 55, 0.1)',
+    paddingHorizontal: 7,
+    paddingVertical: 2,
+    borderRadius: 5
+  },
+  uthBadgePillText: {
+    fontFamily: FONTS.family,
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#6F4E37'
+  },
+  emailActionsRow: {
+    flexDirection: 'row',
+    gap: 8
+  },
+  emailActionBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 8,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#EBE3D7',
+    backgroundColor: '#FFFFFF',
+    gap: 5
+  },
+  emailActionBtnText: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    fontWeight: '700'
+  },
+  securityNoteBox: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    backgroundColor: '#F5EFEB',
+    borderRadius: 12,
+    padding: 12,
+    gap: 8,
+    borderWidth: 1,
+    borderColor: '#EBE3D7',
+    marginBottom: 10
+  },
+  securityNoteText: {
+    flex: 1,
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    color: '#6F767E',
+    lineHeight: 16
+  },
+  verifyModalBottomBar: {
+    paddingHorizontal: 16,
+    paddingTop: 12,
+    paddingBottom: 24,
+    backgroundColor: '#FFFFFF',
+    borderTopWidth: 1,
+    borderTopColor: '#EBE3D7'
+  },
+  verifyPrimaryBtn: {
+    paddingVertical: 14,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  verifyPrimaryBtnText: {
+    fontFamily: FONTS.family,
+    color: '#FFFFFF',
+    fontSize: 14.5,
+    fontWeight: '700'
   },
   understandBtnText: {
     fontFamily: FONTS.family,
