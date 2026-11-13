@@ -673,72 +673,6 @@ export default function HomeScreen({
         )}
 
         {/* ============================================================
-            PROMO BANNER CAROUSEL (SỰ KIỆN & FLASH SALE HOT)
-           ============================================================ */}
-        <View style={styles.promoCarouselContainer}>
-          {(() => {
-            const promo = HERO_PROMOS[activePromoIdx];
-            return (
-              <View style={[styles.heroPromoCard, { backgroundColor: promo.bgColor }]}>
-                <View style={styles.promoLeftCol}>
-                  <View style={[styles.promoTagBadge, { backgroundColor: promo.accentColor }]}>
-                    <Text style={styles.promoTagText}>{promo.tag}</Text>
-                  </View>
-                  <Text style={styles.promoTitle}>{promo.title}</Text>
-                  <Text style={styles.promoSub} numberOfLines={2}>{promo.subtitle}</Text>
-                  
-                  <View style={styles.promoActionRow}>
-                    <TouchableOpacity
-                      style={styles.promoCtaBtn}
-                      activeOpacity={0.85}
-                      onPress={() => handleSaveVoucher(promo.voucherCode)}
-                    >
-                      <Ionicons
-                        name={savedVouchers.includes(promo.voucherCode) ? 'checkmark-circle' : 'gift-outline'}
-                        size={14}
-                        color="#0F172A"
-                      />
-                      <Text style={styles.promoCtaText}>
-                        {savedVouchers.includes(promo.voucherCode) ? 'Đã lưu' : promo.btnText}
-                      </Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                      style={styles.promoQuickApplyBtn}
-                      activeOpacity={0.85}
-                      onPress={() => handleUseVoucher(promo.voucherCode)}
-                    >
-                      <Text style={styles.promoQuickApplyText}>Dùng ngay →</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-
-                <View style={styles.promoRightGraphic}>
-                  <View style={[styles.promoIconHalo, { backgroundColor: 'rgba(255,255,255,0.18)' }]}>
-                    <Ionicons name={promo.icon} size={36} color="#FFFFFF" />
-                  </View>
-                  <Text style={styles.promoCodePillText}>Mã: {promo.voucherCode}</Text>
-                </View>
-              </View>
-            );
-          })()}
-
-          {/* Dots Indicator */}
-          <View style={styles.promoDotsRow}>
-            {HERO_PROMOS.map((p, idx) => (
-              <TouchableOpacity
-                key={p.id}
-                onPress={() => setActivePromoIdx(idx)}
-                style={[
-                  styles.promoDot,
-                  activePromoIdx === idx ? styles.promoDotActive : styles.promoDotInactive
-                ]}
-              />
-            ))}
-          </View>
-        </View>
-
-        {/* ============================================================
             2. SPACIOUS 2x2 QUICK FEATURE GRID (NO CRAMPED PHOTOS/TEXT)
            ============================================================ */}
         <View style={styles.featuresSection}>
@@ -1051,7 +985,8 @@ export default function HomeScreen({
         animationType="slide"
         onRequestClose={() => setShowDestinationModal(false)}
       >
-        <View style={styles.destModalContainer}>
+        <View style={styles.destModalOverlay}>
+          <View style={styles.destModalContainer}>
           {/* Top Navigation Bar */}
           <View style={styles.destHeaderBar}>
             <TouchableOpacity
@@ -1118,63 +1053,110 @@ export default function HomeScreen({
             {filteredStations.map((place) => {
               const isSelected = selectedPlace?.id === place.id;
               return (
-                <TouchableOpacity
+                <View
                   key={place.id}
                   style={[
                     styles.stationItemCard,
                     isSelected && [styles.stationItemCardActive, { borderColor: theme.primary, backgroundColor: theme.beigeSoft }]
                   ]}
-                  onPress={() => {
-                    setSelectedPlace(place);
-                    setShowDestinationModal(false);
-                  }}
-                  activeOpacity={0.88}
                 >
-                  <View style={styles.stCardTopRow}>
-                    <View style={[styles.placeIconCircle, { backgroundColor: theme.primarySoft }]}>
-                      <Ionicons name={place.icon} size={18} color={theme.primary} />
-                    </View>
+                  <TouchableOpacity
+                    activeOpacity={0.88}
+                    onPress={() => {
+                      setSelectedPlace(place);
+                      setShowDestinationModal(false);
+                      setBookingToast({
+                        title: `📍 Đã chọn: ${place.shortName}`,
+                        message: `${place.availableCars} ô tô & ${place.availableBikes} xe máy sẵn sàng phục vụ bạn.`
+                      });
+                      setTimeout(() => setBookingToast(null), 3000);
+                    }}
+                  >
+                    <View style={styles.stCardTopRow}>
+                      <View style={[styles.placeIconCircle, { backgroundColor: theme.primarySoft }]}>
+                        <Ionicons name={place.icon} size={18} color={theme.primary} />
+                      </View>
 
-                    <View style={{ flex: 1, marginHorizontal: 10 }}>
-                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-                        <Text style={styles.placeNameText} numberOfLines={1}>
-                          {place.shortName}
+                      <View style={{ flex: 1, marginHorizontal: 10 }}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                          <Text style={styles.placeNameText} numberOfLines={1}>
+                            {place.shortName}
+                          </Text>
+                          {isSelected && (
+                            <View style={[styles.selectedPillBadge, { backgroundColor: theme.primary }]}>
+                              <Text style={styles.selectedPillText}>Đang chọn</Text>
+                            </View>
+                          )}
+                        </View>
+                        <Text style={styles.placeAddrText} numberOfLines={2}>
+                          {place.address}
                         </Text>
-                        {isSelected && (
-                          <View style={[styles.selectedPillBadge, { backgroundColor: theme.primary }]}>
-                            <Text style={styles.selectedPillText}>Đang chọn</Text>
-                          </View>
-                        )}
                       </View>
-                      <Text style={styles.placeAddrText} numberOfLines={2}>
-                        {place.address}
+
+                      <View style={styles.stDistBadge}>
+                        <Ionicons name="navigate-outline" size={11} color="#6F4E37" />
+                        <Text style={styles.stDistText}>{place.distance}</Text>
+                      </View>
+                    </View>
+
+                    {/* Realtime Vehicle & Charging Badges */}
+                    <View style={styles.stTagsRow}>
+                      <View style={styles.stTagVehicle}>
+                        <Ionicons name="car-outline" size={12} color="#4E3322" />
+                        <Text style={styles.stTagVehicleText}>{place.availableCars} ô tô</Text>
+                      </View>
+                      <View style={styles.stTagVehicle}>
+                        <Ionicons name="bicycle-outline" size={12} color="#8C6239" />
+                        <Text style={styles.stTagVehicleText}>{place.availableBikes} xe máy</Text>
+                      </View>
+                      {place.hasCharger ? (
+                        <View style={styles.stTagCharger}>
+                          <Ionicons name="flash" size={11} color="#B45309" />
+                          <Text style={styles.stTagChargerText}>{place.hasCharger}</Text>
+                        </View>
+                      ) : null}
+                    </View>
+                  </TouchableOpacity>
+
+                  {/* 2 Direct 1-Touch Action Buttons */}
+                  <View style={styles.stActionBtnRow}>
+                    <TouchableOpacity
+                      style={styles.stViewVehiclesBtn}
+                      activeOpacity={0.8}
+                      onPress={() => {
+                        setSelectedPlace(place);
+                        setShowDestinationModal(false);
+                        setBookingToast({
+                          title: `📍 Trạm: ${place.shortName}`,
+                          message: `Đang hiển thị ${place.availableVehicles || 8} xe sẵn sàng đón bạn tại trạm này.`
+                        });
+                        setTimeout(() => setBookingToast(null), 3000);
+                      }}
+                    >
+                      <Ionicons name="eye-outline" size={13} color="#4E3322" />
+                      <Text style={styles.stViewVehiclesText}>
+                        Xem xe tại trạm ({place.availableVehicles || 8})
                       </Text>
-                    </View>
+                    </TouchableOpacity>
 
-                    <View style={styles.stDistBadge}>
-                      <Ionicons name="navigate-outline" size={11} color="#6F4E37" />
-                      <Text style={styles.stDistText}>{place.distance}</Text>
-                    </View>
+                    <TouchableOpacity
+                      style={styles.stQuickBookBtn}
+                      activeOpacity={0.85}
+                      onPress={() => {
+                        setSelectedPlace(place);
+                        setShowDestinationModal(false);
+                        const bestVeh = vehicles.find((v) => v.stationId === place.id) || vehicles[0];
+                        if (bestVeh) {
+                          setBookingVehicle(bestVeh);
+                          setShowBookingModal(true);
+                        }
+                      }}
+                    >
+                      <Ionicons name="key" size={12} color="#D4AF37" />
+                      <Text style={styles.stQuickBookText}>Thuê nhanh →</Text>
+                    </TouchableOpacity>
                   </View>
-
-                  {/* Realtime Vehicle & Charging Badges */}
-                  <View style={styles.stTagsRow}>
-                    <View style={styles.stTagVehicle}>
-                      <Ionicons name="car-outline" size={12} color="#4E3322" />
-                      <Text style={styles.stTagVehicleText}>{place.availableCars} ô tô</Text>
-                    </View>
-                    <View style={styles.stTagVehicle}>
-                      <Ionicons name="bicycle-outline" size={12} color="#8C6239" />
-                      <Text style={styles.stTagVehicleText}>{place.availableBikes} xe máy</Text>
-                    </View>
-                    {place.hasCharger ? (
-                      <View style={styles.stTagCharger}>
-                        <Ionicons name="flash" size={11} color="#B45309" />
-                        <Text style={styles.stTagChargerText}>{place.hasCharger}</Text>
-                      </View>
-                    ) : null}
-                  </View>
-                </TouchableOpacity>
+                </View>
               );
             })}
 
@@ -1187,6 +1169,7 @@ export default function HomeScreen({
             </View>
             <View style={{ height: 40 }} />
           </ScrollView>
+        </View>
         </View>
       </Modal>
 
@@ -1657,10 +1640,18 @@ const styles = StyleSheet.create({
   /* ============================================================
      MODAL STYLES
      ============================================================ */
+  destModalOverlay: {
+    flex: 1,
+    backgroundColor: '#FAF7F2',
+    alignItems: 'center'
+  },
   destModalContainer: {
     flex: 1,
     backgroundColor: '#FAF7F2',
-    paddingTop: 14
+    paddingTop: 14,
+    width: '100%',
+    maxWidth: 480,
+    alignSelf: 'center'
   },
   destHeaderBar: {
     flexDirection: 'row',
@@ -1853,6 +1844,50 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '600',
     color: '#B45309'
+  },
+  stActionBtnRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginTop: 10,
+    paddingTop: 10,
+    borderTopWidth: 1,
+    borderTopColor: '#F0EAE1'
+  },
+  stViewVehiclesBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 5,
+    paddingVertical: 7,
+    paddingHorizontal: 10,
+    borderRadius: 8,
+    backgroundColor: '#FAF7F2',
+    borderWidth: 1,
+    borderColor: '#E8E0D5'
+  },
+  stViewVehiclesText: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#4E3322'
+  },
+  stQuickBookBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 5,
+    paddingVertical: 7,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    backgroundColor: '#4E3322'
+  },
+  stQuickBookText: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#FFFFFF'
   },
   demoNoticeBox: {
     flexDirection: 'row',
