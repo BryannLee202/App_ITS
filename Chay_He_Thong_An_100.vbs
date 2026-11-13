@@ -1,3 +1,4 @@
-' Khởi động EcoGo Smart hoàn toàn ngầm không hiện cửa sổ terminal
+' Khoi dong EcoGo Smart hoan toan an 100% khong hien bat ky cua so nao
 Set WshShell = CreateObject("WScript.Shell")
-WshShell.Run "cmd /c """ & CreateObject("Scripting.FileSystemObject").GetParentFolderName(WScript.ScriptFullName) & "\Chay_He_Thong_Live.bat"" min", 0, False
+strDir = CreateObject("Scripting.FileSystemObject").GetParentFolderName(WScript.ScriptFullName)
+WshShell.Run "powershell -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File """ & strDir & "\scripts\start-live.ps1""", 0, False
