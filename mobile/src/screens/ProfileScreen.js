@@ -52,22 +52,40 @@ export default function ProfileScreen({
         showsVerticalScrollIndicator={false}
       >
         {/* ============================================================
-            1. TOP PROFILE HEADER ("Minh Tài >" + "+84386726647")
+            1. TOP PROFILE HEADER ("Minh Tài" + Rank Badge + "+84386726647")
            ============================================================ */}
         <View style={styles.topUserRow}>
           <View style={[styles.avatarCyanCircle, { backgroundColor: theme.primary }]}>
-            <Ionicons name="person" size={30} color="#FFFFFF" />
-            <View style={styles.avatarWarnBadge}>
-              <Text style={styles.avatarWarnText}>!</Text>
+            <Ionicons name="person" size={28} color="#FFFFFF" />
+            <View style={styles.avatarVerifiedBadge}>
+              <Ionicons name="shield-checkmark" size={11} color="#FFFFFF" />
             </View>
           </View>
 
           <View style={styles.userInfoCol}>
             <View style={styles.userNameRow}>
               <Text style={styles.userNameText}>{user.fullName}</Text>
-              <Ionicons name="chevron-forward" size={18} color="#6F767E" />
+              <TouchableOpacity
+                style={styles.headerRankBadge}
+                onPress={onOpenGreenRace}
+                activeOpacity={0.8}
+              >
+                <Ionicons name="ribbon" size={11} color="#D4AF37" />
+                <Text style={styles.headerRankText}>{user.memberRank}</Text>
+                <Text style={styles.headerRankDivider}>•</Text>
+                <Text style={styles.headerRankCoins}>{user.ecoCoins} Xu</Text>
+                <Ionicons name="chevron-forward" size={10} color="#D4AF37" />
+              </TouchableOpacity>
             </View>
-            <Text style={styles.userPhoneText}>{user.phone}</Text>
+
+            <View style={styles.userSubRow}>
+              <Text style={styles.userPhoneText}>{user.phone}</Text>
+              <Text style={styles.userSubDot}>•</Text>
+              <View style={styles.gplxVerifiedPill}>
+                <Ionicons name="checkmark-circle" size={12} color="#15803D" />
+                <Text style={styles.gplxVerifiedText}>GPLX B2 Đã duyệt</Text>
+              </View>
+            </View>
           </View>
         </View>
 
@@ -76,9 +94,9 @@ export default function ProfileScreen({
            ============================================================ */}
         <View style={styles.emailVerifyCard}>
           <View style={styles.envelope3DBox}>
-            <Ionicons name="mail-open" size={26} color={theme.primary} />
+            <Ionicons name="mail-open" size={24} color={theme.primary} />
             <View style={styles.shieldCyanBadge}>
-              <Ionicons name="shield-checkmark" size={14} color={theme.primary} />
+              <Ionicons name="shield-checkmark" size={13} color={theme.primary} />
             </View>
           </View>
           <View style={{ flex: 1 }}>
@@ -97,84 +115,63 @@ export default function ProfileScreen({
         </View>
 
         {/* ============================================================
-            3. DIGITAL ESG MOBILITY PASS (QUIET LUXURY EXECUTIVE METALLIC CARD)
+            3. QUẢN LÝ CHUYẾN ĐI & HỢP ĐỒNG ĐIỆN TỬ (ĐẨY LÊN TRÊN CÙNG)
            ============================================================ */}
-        <TouchableOpacity
-          style={styles.greenRaceCard}
-          activeOpacity={0.92}
-          onPress={onOpenGreenRace}
-        >
-          {/* Top Bar: Pass Category Badge & Navigation Link */}
-          <View style={styles.greenRaceTopBar}>
-            <View style={styles.esgPassBadge}>
-              <Ionicons name="shield-checkmark" size={13} color="#D4AF37" />
-              <Text style={styles.esgPassBadgeText}>DIGITAL ESG MOBILITY PASS</Text>
-            </View>
-
-            <TouchableOpacity style={styles.progressBtnPill} onPress={onOpenGreenRace} activeOpacity={0.8}>
-              <Text style={styles.progressBtnText}>Báo cáo ESG</Text>
-              <Ionicons name="chevron-forward" size={13} color="#D4AF37" />
-            </TouchableOpacity>
-          </View>
-
-          {/* Center Body: Metallic Emblem & Scientific Energy Telemetry */}
-          <View style={styles.greenRaceBodyRow}>
-            {/* Left Column: 3D Damped Gold Emblem & Member Title */}
-            <View style={styles.emblemCol}>
-              <View style={styles.goldEmblemOuter}>
-                <View style={styles.goldEmblemInner}>
-                  <Ionicons name="ribbon" size={26} color="#D4AF37" />
+        <View style={styles.quickActionsContainer}>
+          {onNavigateToTrips && (
+            <TouchableOpacity
+              style={[
+                styles.tripHistoryBanner,
+                { backgroundColor: theme.primarySoft, borderColor: theme.primaryBorder }
+              ]}
+              activeOpacity={0.88}
+              onPress={onNavigateToTrips}
+            >
+              <View style={[styles.tripBannerIcon, { backgroundColor: theme.primary }]}>
+                <Ionicons name="car-sport" size={18} color="#FFFFFF" />
+              </View>
+              <View style={{ flex: 1 }}>
+                <View style={styles.tripBannerHeaderRow}>
+                  <Text style={[styles.tripBannerTitle, { color: theme.primaryDark || theme.primary }]}>
+                    Lịch sử chuyến đi
+                  </Text>
+                  <View style={styles.tripKmPill}>
+                    <Text style={styles.tripKmText}>142 km đã đi</Text>
+                  </View>
                 </View>
-              </View>
-              <View style={styles.rankTitlePill}>
-                <Text style={styles.rankTitleText}>{user.memberRank}</Text>
-              </View>
-              <Text style={styles.memberIdText}>{user.membershipId}</Text>
-            </View>
-
-            {/* Right Column: Precise CO2 & GLOSA Telematics */}
-            <View style={styles.co2CounterCol}>
-              <Text style={styles.co2HeaderLabel}>Chỉ số Giảm Phát Thải CO₂</Text>
-              <View style={styles.co2ValueRow}>
-                <Text style={styles.co2BigNumber}>{user.co2KgSaved}</Text>
-                <Text style={styles.co2UnitText}>kg CO₂</Text>
-              </View>
-              <Text style={styles.co2SubLabel}>≈ {user.co2TreesPerDay} cây xanh quang hợp/năm</Text>
-
-              <View style={styles.glosaGreenWaveTag}>
-                <Ionicons name="speedometer" size={12} color="#81C784" />
-                <Text style={styles.glosaGreenWaveText}>
-                  {user.glosaKmSaved} km Làn Sóng Xanh ITS
+                <Text style={styles.tripBannerSub}>
+                  Chi tiết hành trình ô tô tự lái, hóa đơn điện tử & giảm 42.8kg CO₂
                 </Text>
               </View>
-            </View>
-          </View>
+              <Ionicons name="chevron-forward" size={18} color={theme.primary} />
+            </TouchableOpacity>
+          )}
 
-          {/* Bottom 3-Column Metrics Glass Bar */}
-          <View style={styles.greenRaceMetricsBox}>
-            <View style={styles.grMetricCol}>
-              <Text style={styles.grMetricLabel}>Eco Coins{'\n'}tích luỹ</Text>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3, marginTop: 4 }}>
-                <Text style={{ fontSize: 13 }}>🪙</Text>
-                <Text style={[styles.grMetricVal, { color: '#D4AF37' }]}>{user.ecoCoins} Xu</Text>
+          <TouchableOpacity
+            style={styles.contractBanner}
+            activeOpacity={0.88}
+            onPress={() => setShowGSMContractModal(true)}
+          >
+            <View style={[styles.contractBannerIcon, { backgroundColor: theme.beigeSoft || '#F5EFEB' }]}>
+              <Ionicons name="document-text" size={18} color={theme.primary} />
+            </View>
+            <View style={{ flex: 1 }}>
+              <View style={styles.tripBannerHeaderRow}>
+                <Text style={styles.contractBannerTitle}>
+                  Hợp đồng thuê xe & Hóa đơn VAT
+                </Text>
+                <View style={styles.activeContractBadge}>
+                  <Ionicons name="shield-checkmark" size={10} color="#15803D" />
+                  <Text style={styles.activeContractBadgeText}>Hợp lệ</Text>
+                </View>
               </View>
+              <Text style={styles.contractBannerSub}>
+                Hợp đồng điện tử UTH ITS, quy chế tự lái & hoàn cọc minh bạch
+              </Text>
             </View>
-
-            <View style={styles.grMetricDivider} />
-
-            <View style={styles.grMetricCol}>
-              <Text style={styles.grMetricLabel}>Hành trình{'\n'}xanh đã đi</Text>
-              <Text style={styles.grMetricVal}>{user.totalKm} km</Text>
-            </View>
-
-            <View style={styles.grMetricDivider} />
-
-            <View style={styles.grMetricCol}>
-              <Text style={styles.grMetricLabel}>Tài trợ Quỹ{'\n'}Xanh UTH</Text>
-              <Text style={[styles.grMetricVal, { color: '#E8D09B' }]}>{user.greenFundContribution}</Text>
-            </View>
-          </View>
-        </TouchableOpacity>
+            <Ionicons name="chevron-forward" size={18} color="#9A9FA5" />
+          </TouchableOpacity>
+        </View>
 
         {/* ============================================================
             4. "GIA ĐÌNH" & "DOANH NGHIỆP" 3D CARDS
@@ -199,31 +196,6 @@ export default function ProfileScreen({
             </View>
           </TouchableOpacity>
         </View>
-
-        {/* Lịch Sử Chuyến Đi Banner */}
-        {onNavigateToTrips && (
-          <TouchableOpacity
-            style={[
-              styles.tripHistoryBanner,
-              { backgroundColor: theme.primarySoft, borderColor: theme.primaryBorder }
-            ]}
-            activeOpacity={0.88}
-            onPress={onNavigateToTrips}
-          >
-            <View style={[styles.tripBannerIcon, { backgroundColor: theme.primary }]}>
-              <Ionicons name="calendar" size={18} color="#FFFFFF" />
-            </View>
-            <View style={{ flex: 1 }}>
-              <Text style={[styles.tripBannerTitle, { color: theme.primaryDark || theme.primary }]}>
-                Lịch sử chuyến đi
-              </Text>
-              <Text style={styles.tripBannerSub}>
-                Xem chi tiết hành trình, hóa đơn điện tử & chứng nhận CO₂
-              </Text>
-            </View>
-            <Ionicons name="chevron-forward" size={18} color={theme.primary} />
-          </TouchableOpacity>
-        )}
 
         {/* ============================================================
             5. "TÁC VỤ" (2x2 GRID)
@@ -509,6 +481,145 @@ const styles = StyleSheet.create({
     borderColor: '#FFFFFF',
     position: 'relative'
   },
+  avatarVerifiedBadge: {
+    position: 'absolute',
+    bottom: -2,
+    right: -2,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: '#15803D',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: '#FFFFFF'
+  },
+  headerRankBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#2B180D',
+    paddingHorizontal: 8,
+    paddingVertical: 3.5,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#D4AF37',
+    gap: 4
+  },
+  headerRankText: {
+    fontFamily: FONTS.family,
+    color: '#FAF7F2',
+    fontSize: 9.5,
+    fontWeight: '800',
+    letterSpacing: 0.2
+  },
+  headerRankDivider: {
+    fontFamily: FONTS.family,
+    color: 'rgba(212, 175, 55, 0.5)',
+    fontSize: 9
+  },
+  headerRankCoins: {
+    fontFamily: FONTS.family,
+    color: '#D4AF37',
+    fontSize: 9.5,
+    fontWeight: '800'
+  },
+  userSubRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 4,
+    gap: 6
+  },
+  userSubDot: {
+    fontFamily: FONTS.family,
+    color: '#C4C4C4',
+    fontSize: 11
+  },
+  gplxVerifiedPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#E8F5E9',
+    paddingHorizontal: 6,
+    paddingVertical: 1.5,
+    borderRadius: 6,
+    gap: 3
+  },
+  gplxVerifiedText: {
+    fontFamily: FONTS.family,
+    fontSize: 10.5,
+    fontWeight: '700',
+    color: '#15803D'
+  },
+  quickActionsContainer: {
+    gap: 10,
+    marginBottom: 16
+  },
+  tripBannerHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 2
+  },
+  tripKmPill: {
+    backgroundColor: 'rgba(111, 78, 55, 0.1)',
+    paddingHorizontal: 7,
+    paddingVertical: 2,
+    borderRadius: 6
+  },
+  tripKmText: {
+    fontFamily: FONTS.family,
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#6F4E37'
+  },
+  contractBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 18,
+    padding: 13,
+    borderWidth: 1,
+    borderColor: '#EBE3D7',
+    gap: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1.5 },
+    shadowOpacity: 0.03,
+    shadowRadius: 6,
+    elevation: 2
+  },
+  contractBannerIcon: {
+    width: 38,
+    height: 38,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  contractBannerTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 13.5,
+    fontWeight: '700',
+    color: '#1A1D1F'
+  },
+  contractBannerSub: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    color: '#6F767E',
+    marginTop: 1
+  },
+  activeContractBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#E8F5E9',
+    paddingHorizontal: 6,
+    paddingVertical: 1.5,
+    borderRadius: 5,
+    gap: 2
+  },
+  activeContractBadgeText: {
+    fontFamily: FONTS.family,
+    fontSize: 9.5,
+    fontWeight: '700',
+    color: '#15803D'
+  },
   avatarWarnBadge: {
     position: 'absolute',
     bottom: -2,
@@ -608,212 +719,6 @@ const styles = StyleSheet.create({
     height: 4,
     borderRadius: 2,
     backgroundColor: '#0CA678'
-  },
-  greenRaceCard: {
-    backgroundColor: '#2B180D',
-    borderRadius: 22,
-    overflow: 'hidden',
-    borderWidth: 1.5,
-    borderColor: '#D4AF37',
-    marginBottom: 16,
-    shadowColor: '#2B180D',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 10,
-    elevation: 6
-  },
-  greenRaceTopBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 14,
-    paddingTop: 12,
-    paddingBottom: 6
-  },
-  esgPassBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(212, 175, 55, 0.15)',
-    paddingHorizontal: 10,
-    paddingVertical: 4.5,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: 'rgba(212, 175, 55, 0.35)',
-    gap: 5
-  },
-  esgPassBadgeText: {
-    fontFamily: FONTS.family,
-    fontSize: 10,
-    fontWeight: '800',
-    color: '#D4AF37',
-    letterSpacing: 0.6
-  },
-  progressBtnPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(250, 247, 242, 0.12)',
-    paddingHorizontal: 10,
-    paddingVertical: 4.5,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: 'rgba(235, 227, 215, 0.25)',
-    gap: 3
-  },
-  progressBtnText: {
-    fontFamily: FONTS.family,
-    fontSize: 10.5,
-    fontWeight: '700',
-    color: '#FAF7F2'
-  },
-  greenRaceBodyRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 12
-  },
-  emblemCol: {
-    alignItems: 'center',
-    width: 130
-  },
-  goldEmblemOuter: {
-    width: 66,
-    height: 66,
-    borderRadius: 33,
-    backgroundColor: '#1E110A',
-    borderWidth: 2.5,
-    borderColor: '#D4AF37',
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#D4AF37',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.35,
-    shadowRadius: 6,
-    elevation: 4
-  },
-  goldEmblemInner: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: '#3E2515',
-    borderWidth: 1,
-    borderColor: '#E8D09B',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  rankTitlePill: {
-    backgroundColor: 'rgba(212, 175, 55, 0.2)',
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 6,
-    marginTop: 6,
-    borderWidth: 1,
-    borderColor: 'rgba(212, 175, 55, 0.4)'
-  },
-  rankTitleText: {
-    fontFamily: FONTS.family,
-    color: '#FAF7F2',
-    fontSize: 10,
-    fontWeight: '800',
-    letterSpacing: 0.2
-  },
-  memberIdText: {
-    fontFamily: FONTS.family,
-    color: '#A89F91',
-    fontSize: 9,
-    fontWeight: '700',
-    marginTop: 3,
-    letterSpacing: 0.5
-  },
-  co2CounterCol: {
-    flex: 1,
-    alignItems: 'flex-end',
-    paddingLeft: 8
-  },
-  co2HeaderLabel: {
-    fontFamily: FONTS.family,
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#DCD4C7',
-    textAlign: 'right'
-  },
-  co2ValueRow: {
-    flexDirection: 'row',
-    alignItems: 'baseline',
-    marginVertical: 2
-  },
-  co2BigNumber: {
-    fontFamily: FONTS.family,
-    fontSize: 28,
-    fontWeight: '900',
-    color: '#FAF7F2',
-    letterSpacing: -0.5
-  },
-  co2UnitText: {
-    fontFamily: FONTS.family,
-    fontSize: 12.5,
-    fontWeight: '800',
-    color: '#D4AF37',
-    marginLeft: 4
-  },
-  co2SubLabel: {
-    fontFamily: FONTS.family,
-    fontSize: 10.5,
-    color: '#BDB3A7',
-    textAlign: 'right',
-    marginBottom: 6
-  },
-  glosaGreenWaveTag: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(129, 199, 132, 0.15)',
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: 'rgba(129, 199, 132, 0.35)',
-    gap: 4
-  },
-  glosaGreenWaveText: {
-    fontFamily: FONTS.family,
-    fontSize: 10,
-    fontWeight: '700',
-    color: '#81C784'
-  },
-  greenRaceMetricsBox: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.07)',
-    marginHorizontal: 12,
-    marginBottom: 12,
-    borderRadius: 14,
-    paddingVertical: 10,
-    paddingHorizontal: 8,
-    borderWidth: 1,
-    borderColor: 'rgba(212, 175, 55, 0.2)'
-  },
-  grMetricCol: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  grMetricDivider: {
-    width: 1,
-    height: 24,
-    backgroundColor: 'rgba(235, 227, 215, 0.2)'
-  },
-  grMetricLabel: {
-    fontFamily: FONTS.family,
-    fontSize: 10,
-    color: '#BDB3A7',
-    textAlign: 'center',
-    lineHeight: 13
-  },
-  grMetricVal: {
-    fontFamily: FONTS.family,
-    fontSize: 13.5,
-    fontWeight: '800',
-    color: '#FAF7F2',
-    marginTop: 4
   },
   dualAccountCardsRow: {
     flexDirection: 'row',
@@ -1132,9 +1037,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderRadius: 18,
-    padding: 14,
+    padding: 13,
     borderWidth: 1,
-    marginBottom: 18,
     gap: 12
   },
   tripBannerIcon: {
