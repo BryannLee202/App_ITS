@@ -8,6 +8,7 @@ const authRoutes = require('./routes/authRoutes');
 const vehicleRoutes = require('./routes/vehicleRoutes');
 const rentalRoutes = require('./routes/rentalRoutes');
 const itsRoutes = require('./routes/itsRoutes');
+const rewardRoutes = require('./routes/rewardRoutes');
 const telematicsService = require('./services/telematicsService');
 
 const app = express();
@@ -33,6 +34,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/vehicles', vehicleRoutes);
 app.use('/api/rentals', rentalRoutes);
 app.use('/api/its', itsRoutes);
+app.use('/api/rewards', rewardRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

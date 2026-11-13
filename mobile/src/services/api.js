@@ -245,6 +245,18 @@ class ApiService {
     return this.request('/rentals/history');
   }
 
+  // Rewards & 7-Day Daily Check-in
+  async getCheckInStatus(userId = 'user-001') {
+    return this.request(`/rewards/checkin-status?userId=${userId}`);
+  }
+
+  async executeCheckIn(userId = 'user-001') {
+    return this.request('/rewards/checkin', {
+      method: 'POST',
+      body: JSON.stringify({ userId })
+    });
+  }
+
   // ITS Advisory & Traffic Analytics
   async getGreenWaveAdvisory(distanceMeters = 300, currentSpeedKmh = 40) {
     return this.request(`/its/green-wave?distanceMeters=${distanceMeters}&currentSpeedKmh=${currentSpeedKmh}`);

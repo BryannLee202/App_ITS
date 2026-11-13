@@ -132,11 +132,11 @@ const HOT_VOUCHERS = [
   }
 ];
 
-const WEEKLY_CHECKIN_DAYS = [
-  { day: 1, label: 'Thứ 2', reward: '+10 Xu', done: true },
-  { day: 2, label: 'Thứ 3', reward: '+20 Xu', done: true },
-  { day: 3, label: 'Thứ 4', reward: 'Voucher 15%', isToday: true, current: true },
-  { day: 4, label: 'Thứ 5', reward: '+30 Xu' },
+const DEFAULT_CHECKIN_DAYS = [
+  { day: 1, label: 'Thứ 2', reward: '+15 Xu' },
+  { day: 2, label: 'Thứ 3', reward: '+20 Xu' },
+  { day: 3, label: 'Thứ 4', reward: 'Voucher 20%' },
+  { day: 4, label: 'Thứ 5', reward: '+30 Xu & 50K' },
   { day: 5, label: 'Thứ 6', reward: '+50 Xu' },
   { day: 6, label: 'Thứ 7', reward: 'Free Ship' },
   { day: 7, label: 'CN', reward: '🎁 100K', isGrand: true }
@@ -308,8 +308,11 @@ export default function HomeScreen({
   const [selectedVoucherForBooking, setSelectedVoucherForBooking] = useState('BANMOI30');
   const [activePromoIdx, setActivePromoIdx] = useState(0);
   const [ecoCoins, setEcoCoins] = useState(180);
-  const [ecoStreak, setEcoStreak] = useState(3);
+  const [ecoStreak, setEcoStreak] = useState(2);
   const [checkedInToday, setCheckedInToday] = useState(false);
+  const [checkinDays, setCheckinDays] = useState(DEFAULT_CHECKIN_DAYS);
+  const [checkinLoading, setCheckinLoading] = useState(false);
+  const [nextReward, setNextReward] = useState(null);
   const [showLuckySpinModal, setShowLuckySpinModal] = useState(false);
   const [isSpinning, setIsSpinning] = useState(false);
   const [spinDegree, setSpinDegree] = useState(0);
@@ -407,18 +410,35 @@ export default function HomeScreen({
     }
   };
 
-  const handleCheckin = () => {
-    if (checkedInToday) return;
-    setCheckedInToday(true);
-    setEcoCoins((prev) => prev + 25);
-    if (!savedVouchers.includes('ECOGO20')) {
-      setSavedVouchers((prev) => [...prev, 'ECOGO20']);
+  const handleCheckin = async () => {
+    if (checkedInToday || checkinLoading) return;
+    try {
+      setCheckinLoading(true);
+      const res = await ApiService.executeCheckIn('user-001');
+      if (res.success) {
+        setCheckedInToday(true);
+        if (res.user) {
+          setEcoStreak(res.user.currentStreak);
+          setEcoCoins(res.user.ecoCoins);
+        }
+        if (res.cycleDays) setCheckinDays(res.cycleDays);
+        if (res.reward && res.reward.voucher) {
+          setSavedVouchers((prev) => Array.from(new Set([...prev, res.reward.voucher])));
+        }
+        setBookingToast({
+          title: `🌟 Điểm danh Ngày ${res.reward.day} thành công!`,
+          message: res.message
+        });
+      }
+    } catch (err) {
+      setBookingToast({
+        title: 'Thông báo',
+        message: err.message || 'Hôm nay bạn đã hoàn thành điểm danh rồi!'
+      });
+    } finally {
+      setCheckinLoading(false);
+      setTimeout(() => setBookingToast(null), 3500);
     }
-    setBookingToast({
-      title: '🌟 Điểm danh thành công! (+25 Xu Eco)',
-      message: 'Chuỗi 3 ngày liên tiếp. Mở khóa thêm Voucher giảm 20% ECOGO20!'
-    });
-    setTimeout(() => setBookingToast(null), 2500);
   };
 
   const handleSpinWheel = () => {
@@ -451,12 +471,23 @@ export default function HomeScreen({
   const loadInitialData = async () => {
     try {
       setLoading(true);
-      const [vehRes, glosaRes] = await Promise.all([
+      const [vehRes, glosaRes, checkinRes] = await Promise.all([
         ApiService.getVehicles(selectedCategory),
-        ApiService.getGreenWaveAdvisory(300, 42)
+        ApiService.getGreenWaveAdvisory(300, 42),
+        ApiService.getCheckInStatus('user-001').catch(() => null)
       ]);
       setVehicles(vehRes.vehicles || []);
       setGlosaAdvisory(glosaRes.data || null);
+      if (checkinRes && checkinRes.success) {
+        if (checkinRes.cycleDays) setCheckinDays(checkinRes.cycleDays);
+        setCheckedInToday(checkinRes.checkedInToday);
+        setEcoStreak(checkinRes.currentStreak);
+        setNextReward(checkinRes.nextReward);
+        if (checkinRes.ecoCoins != null) setEcoCoins(checkinRes.ecoCoins);
+        if (checkinRes.vouchers && checkinRes.vouchers.length > 0) {
+          setSavedVouchers((prev) => Array.from(new Set([...prev, ...checkinRes.vouchers])));
+        }
+      }
     } catch (err) {
       console.warn('Error loading home data:', err.message);
     } finally {
@@ -880,8 +911,8 @@ export default function HomeScreen({
 
             {/* 7 Day Pills */}
             <View style={styles.checkinDaysRow}>
-              {WEEKLY_CHECKIN_DAYS.map((d) => {
-                const isClaimed = d.done || (d.isToday && checkedInToday);
+              {checkinDays.map((d) => {
+                const isClaimed = d.done;
                 return (
                   <View
                     key={d.day}
@@ -897,7 +928,7 @@ export default function HomeScreen({
                     </Text>
                     <View style={styles.dayIconWrap}>
                       {isClaimed ? (
-                        <Ionicons name="checkmark-circle" size={18} color={theme.primary} />
+                        <Ionicons name="checkmark-circle" size={18} color="#6F4E37" />
                       ) : (
                         <Text style={[styles.dayRewardText, d.isGrand && { color: '#D97706', fontWeight: '800' }]}>
                           {d.reward}
@@ -916,18 +947,18 @@ export default function HomeScreen({
                 checkedInToday && styles.checkinCtaBtnDone
               ]}
               activeOpacity={0.85}
-              disabled={checkedInToday}
+              disabled={checkedInToday || checkinLoading}
               onPress={handleCheckin}
             >
               <Ionicons
                 name={checkedInToday ? 'checkmark-circle' : 'calendar'}
                 size={16}
-                color="#FFFFFF"
+                color={checkedInToday ? '#8C6239' : '#FFFFFF'}
               />
-              <Text style={styles.checkinCtaText}>
+              <Text style={[styles.checkinCtaText, checkedInToday && { color: '#8C6239' }]}>
                 {checkedInToday
-                  ? 'Đã điểm danh hôm nay (+25 Xu Eco)'
-                  : 'Điểm danh nhận quà ngay (+25 Xu Eco)'}
+                  ? 'Đã điểm danh hôm nay (Quay lại ngày mai)'
+                  : (checkinLoading ? 'Đang xác thực điểm danh...' : `Điểm danh nhận quà ngay (+${nextReward?.coins || 25} Xu Eco)`)}
               </Text>
             </TouchableOpacity>
           </View>
@@ -2351,7 +2382,7 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.family,
     fontSize: 11,
     fontWeight: '700',
-    color: '#1D4ED8'
+    color: '#6F4E37'
   },
   checkinDaysRow: {
     flexDirection: 'row',
@@ -2362,34 +2393,35 @@ const styles = StyleSheet.create({
   dayBox: {
     flex: 1,
     alignItems: 'center',
-    backgroundColor: '#F8FAFC',
+    backgroundColor: '#FAF7F2',
     borderRadius: 10,
     paddingVertical: 7,
     borderWidth: 1,
-    borderColor: '#F1F5F9'
+    borderColor: '#EFE8DE'
   },
   dayBoxToday: {
-    borderColor: '#3B82F6',
-    backgroundColor: '#EFF6FF'
+    borderColor: '#6F4E37',
+    backgroundColor: '#F5EFEB',
+    borderWidth: 1.5
   },
   dayBoxClaimed: {
-    backgroundColor: '#F0FDF4',
-    borderColor: '#BBF7D0'
+    backgroundColor: '#F5EFEB',
+    borderColor: '#E8DFD8'
   },
   dayBoxGrand: {
-    backgroundColor: '#FEF3C7',
+    backgroundColor: '#FFFBEB',
     borderColor: '#FDE68A'
   },
   dayLabel: {
     fontFamily: FONTS.family,
     fontSize: 10,
-    color: '#64748B',
+    color: '#8C6239',
     fontWeight: '600',
     marginBottom: 4
   },
   dayLabelToday: {
-    color: '#1D4ED8',
-    fontWeight: '700'
+    color: '#4E3322',
+    fontWeight: '800'
   },
   dayIconWrap: {
     height: 20,
@@ -2400,19 +2432,21 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.family,
     fontSize: 8,
     fontWeight: '700',
-    color: '#334155'
+    color: '#6F4E37'
   },
   checkinCtaBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#6F4E37',
+    backgroundColor: '#4E3322',
     borderRadius: 12,
     paddingVertical: 10,
     gap: 6
   },
   checkinCtaBtnDone: {
-    backgroundColor: '#64748B'
+    backgroundColor: '#EFE8DE',
+    borderWidth: 1,
+    borderColor: '#E8DFD8'
   },
   checkinCtaText: {
     fontFamily: FONTS.family,
