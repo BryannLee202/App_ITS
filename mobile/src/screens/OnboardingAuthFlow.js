@@ -255,19 +255,6 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
   if (step === 0) {
     return (
       <View style={styles.splashContainer}>
-        {/* Ambient Glowing Radial Halo */}
-        <Animated.View
-          style={[
-            styles.splashAmbientHalo,
-            {
-              backgroundColor: 'rgba(111, 78, 55, 0.08)',
-              shadowColor: theme.primary,
-              opacity: splashGlow,
-              transform: [{ scale: splashScale }]
-            }
-          ]}
-        />
-
         <TouchableOpacity
           style={styles.splashCenterTouchable}
           activeOpacity={1}
@@ -282,12 +269,12 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
               }
             ]}
           >
-            {/* Brand Logo Master - Luxury Automotive Squircle */}
+            {/* Hero Brand Logo Master - Luxury Automotive Squircle */}
             <View style={styles.splashEmblemWrap}>
               <View
                 style={[
                   styles.splashOuterGlowRing,
-                  { backgroundColor: theme.primarySoft, borderColor: theme.primaryBorder, shadowColor: theme.primary }
+                  { shadowColor: theme.primary }
                 ]}
               >
                 <Image
@@ -309,18 +296,18 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
                 { backgroundColor: theme.primarySoft, borderColor: theme.primaryBorder }
               ]}
             >
-              <Ionicons name="flash" size={11} color={theme.primary} style={{ marginRight: 4 }} />
+              <Ionicons name="car-sport" size={13} color={theme.primary} style={{ marginRight: 5 }} />
               <Text style={[styles.splashBadgePillText, { color: theme.primary }]}>
-                THUÊ XE TỰ LÁI & ĐỔI PIN 24/7
+                NỀN TẢNG THUÊ XE TỰ LÁI ĐA DẠNG 24/7
               </Text>
             </View>
 
-            {/* High-impact Slogan */}
+            {/* High-impact Slogan for Multi-Vehicle Rental */}
             <Text style={[styles.splashSloganMain, { color: theme.primary }]}>
               Chạm Là Mở · Lướt Là Đi
             </Text>
             <Text style={styles.splashSloganSub}>
-              Hệ thống thuê xe điện tự lái & trạm sạc không chạm 24/7{'\n'}Hành trình xanh bảo vệ môi trường
+              Thuê ô tô, xe máy tự lái đa dạng dòng xe · Giao nhận 24/7{'\n'}Mở khóa kỹ thuật số không chạm · Tự do mọi hành trình
             </Text>
 
             {/* Animated Vector Drawing Path Line */}
@@ -988,23 +975,11 @@ const styles = StyleSheet.create({
      ============================================================ */
   splashContainer: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#FAF7F2',
     justifyContent: 'space-between',
     alignItems: 'center',
     position: 'relative',
     overflow: 'hidden'
-  },
-  splashAmbientHalo: {
-    position: 'absolute',
-    top: '25%',
-    width: 280,
-    height: 280,
-    borderRadius: 140,
-    backgroundColor: 'rgba(111, 78, 55, 0.08)',
-    shadowColor: '#6F4E37',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.25,
-    shadowRadius: 50
   },
   splashCenterTouchable: {
     flex: 1,
@@ -1017,44 +992,45 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
-    maxWidth: 320
+    maxWidth: 340
   },
   splashEmblemWrap: {
-    width: 108,
-    height: 108,
+    width: 154,
+    height: 154,
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
-    marginBottom: 20
+    marginBottom: 26
   },
   splashOuterGlowRing: {
-    width: 104,
-    height: 104,
-    borderRadius: 28,
-    backgroundColor: '#F6EFE9',
-    borderWidth: 2,
-    borderColor: '#E5D6C9',
+    width: 140,
+    height: 140,
+    borderRadius: 36,
+    backgroundColor: '#352115',
+    borderWidth: 2.5,
+    borderColor: '#D4AF37',
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#6F4E37',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.22,
-    shadowRadius: 20,
+    shadowColor: '#2B180D',
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.35,
+    shadowRadius: 26,
+    elevation: 12,
     overflow: 'hidden'
   },
   splashLogoImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 26
+    width: 135,
+    height: 135,
+    borderRadius: 33
   },
   splashOrbitRing: {
     position: 'absolute',
-    width: 128,
-    height: 128,
-    borderRadius: 64,
+    width: 168,
+    height: 168,
+    borderRadius: 84,
     borderWidth: 1.5,
     borderStyle: 'dashed',
-    borderColor: '#E5D6C9'
+    borderColor: 'rgba(111, 78, 55, 0.22)'
   },
   splashBrandTitle: {
     fontFamily: FONTS.family,
