@@ -488,7 +488,7 @@ export default function ProfileScreen({
       </ScrollView>
 
       {/* ============================================================
-          MODAL: ECOGO SMART PLATFORM SERVICE CONTRACT
+          MODAL: ECOGO SMART PLATFORM SERVICE CONTRACT (QUIET LUXURY)
          ============================================================ */}
       <Modal
         visible={showGSMContractModal}
@@ -498,82 +498,134 @@ export default function ProfileScreen({
       >
         <View style={styles.modalBackdrop}>
           <View style={styles.contractModalContainer}>
-          <View style={styles.contractTopHeader}>
-            <TouchableOpacity onPress={() => setShowGSMContractModal(false)}>
-              <Ionicons name="close" size={24} color="#1A1D1F" />
-            </TouchableOpacity>
-            <Text style={styles.contractTopTitle}>Hợp đồng dịch vụ sử dụng nền tảng</Text>
-          </View>
-
-          {/* Turquoise Banner */}
-          <View style={styles.gsmTurquoiseBanner}>
-            <View style={styles.gsmLogoBox}>
-              <Ionicons name="leaf" size={22} color="#F59E0B" />
-              <Text style={styles.gsmLogoText}>ECOGO</Text>
-            </View>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.gsmCompanyTitle}>
-                CÔNG TY CỔ PHẦN DI CHUYỂN THÔNG MINH ECOGO VIỆT NAM
-              </Text>
-              <Text style={styles.gsmCompanySub}>Hợp đồng dịch vụ sử dụng nền tảng EcoGo Smart</Text>
-            </View>
-          </View>
-
-          <ScrollView style={styles.contractScrollBody}>
-            <View style={styles.contractWhiteBox}>
-              <Text style={styles.contractBoxHeading}>Thông tin của EcoGo Smart</Text>
-
-              <Text style={styles.contractFieldLabel}>Tên đơn vị vận hành</Text>
-              <Text style={styles.contractFieldValue}>
-                CÔNG TY CỔ PHẦN DI CHUYỂN THÔNG MINH ECOGO VIỆT NAM
-              </Text>
-
-              <View style={styles.contractDivider} />
-
-              <Text style={styles.contractFieldLabel}>Địa chỉ trụ sở</Text>
-              <Text style={styles.contractFieldValue}>
-                Số 2 Đường Võ Oanh, Phường 25, Quận Bình Thạnh, Thành phố Hồ Chí Minh
-              </Text>
-
-              <View style={styles.contractDivider} />
-
-              <Text style={styles.contractFieldLabel}>Giấy chứng nhận đăng ký doanh nghiệp số</Text>
-              <Text style={styles.contractFieldValue}>0318269068</Text>
-
-              <View style={styles.contractDivider} />
-
-              <Text style={styles.contractFieldLabel}>Tổng đài hỗ trợ 24/7</Text>
-              <Text style={styles.contractFieldValue}>1900 6868</Text>
+            {/* Top Navigation Header */}
+            <View style={styles.contractTopHeader}>
+              <TouchableOpacity
+                onPress={() => setShowGSMContractModal(false)}
+                style={styles.contractCloseBtn}
+                activeOpacity={0.7}
+              >
+                <Ionicons name="close" size={20} color="#1A1D1F" />
+              </TouchableOpacity>
+              <View style={{ flex: 1, alignItems: 'center' }}>
+                <Text style={styles.contractTopTitle}>Hợp Đồng Dịch Vụ Nền Tảng</Text>
+                <Text style={styles.contractTopSub}>Số: HĐ-ITS/ECOGO-2026</Text>
+              </View>
+              <View style={styles.contractActiveTag}>
+                <Ionicons name="shield-checkmark" size={12} color="#15803D" />
+                <Text style={styles.contractActiveTagText}>Hiệu lực</Text>
+              </View>
             </View>
 
-            <View style={styles.contractWhiteBox}>
-              <Text style={styles.contractBoxHeading}>Thông tin của người dùng</Text>
-
-              <Text style={styles.contractFieldLabel}>Họ tên</Text>
-              <Text style={styles.contractFieldValue}>{user.fullName}</Text>
-
-              <View style={styles.contractDivider} />
-
-              <Text style={styles.contractFieldLabel}>Số điện thoại</Text>
-              <Text style={styles.contractFieldValue}>{user.phone}</Text>
-
-              <View style={styles.contractDivider} />
-
-              <Text style={styles.contractFieldLabel}>Thời điểm xác lập và có hiệu lực của Hợp đồng</Text>
-              <Text style={styles.contractFieldValue}>26/10/2026</Text>
+            {/* Quiet Luxury Espresso & Gold Banner */}
+            <View style={styles.gsmTurquoiseBanner}>
+              <View style={styles.gsmLogoBox}>
+                <Ionicons name="ribbon" size={24} color="#D4AF37" />
+                <Text style={styles.gsmLogoText}>UTH · ITS</Text>
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.gsmCompanyTitle}>
+                  CÔNG TY CỔ PHẦN DI CHUYỂN THÔNG MINH ECOGO
+                </Text>
+                <Text style={styles.gsmCompanySub}>
+                  Hệ thống ITS & Dịch vụ Xe điện Tự lái 24/7 · ĐH Giao thông Vận tải UTH
+                </Text>
+              </View>
             </View>
-          </ScrollView>
 
-          <View style={styles.contractBottomBar}>
-            <TouchableOpacity
-              style={styles.understandTurquoiseBtn}
-              onPress={() => setShowGSMContractModal(false)}
-            >
-              <Text style={styles.understandBtnText}>Tôi đã hiểu</Text>
-            </TouchableOpacity>
+            <ScrollView style={styles.contractScrollBody} showsVerticalScrollIndicator={false}>
+              {/* Box 1: Thông tin đơn vị vận hành */}
+              <View style={styles.contractWhiteBox}>
+                <View style={styles.boxTitleRow}>
+                  <View style={[styles.boxTitleBar, { backgroundColor: theme.primary }]} />
+                  <Text style={styles.contractBoxHeading}>I. ĐƠN VỊ VẬN HÀNH DỊCH VỤ ITS</Text>
+                </View>
+
+                <Text style={styles.contractFieldLabel}>Tên đơn vị vận hành</Text>
+                <Text style={styles.contractFieldValue}>
+                  CÔNG TY CP DI CHUYỂN THÔNG MINH ECOGO VIỆT NAM
+                </Text>
+
+                <View style={styles.contractDivider} />
+
+                <Text style={styles.contractFieldLabel}>Địa chỉ trụ sở điều hành</Text>
+                <Text style={styles.contractFieldValue}>
+                  Số 2 Đường Võ Oanh, Phường 25, Quận Bình Thạnh, TP. Hồ Chí Minh
+                </Text>
+
+                <View style={styles.contractDivider} />
+
+                <Text style={styles.contractFieldLabel}>Giấy phép kinh doanh / ĐKKD số</Text>
+                <Text style={styles.contractFieldValue}>0318269068 (Sở KH&ĐT TP.HCM)</Text>
+
+                <View style={styles.contractDivider} />
+
+                <Text style={styles.contractFieldLabel}>Hạ tầng trạm kết nối ITS</Text>
+                <Text style={styles.contractFieldValue}>
+                  Campus 1 Bình Thạnh & Campus 3 Quận 9 · ĐH GTVT TP.HCM (UTH)
+                </Text>
+
+                <View style={styles.contractDivider} />
+
+                <Text style={styles.contractFieldLabel}>Tổng đài điều phối 24/7</Text>
+                <Text style={[styles.contractFieldValue, { color: theme.primary, fontWeight: '800' }]}>1900 6868</Text>
+              </View>
+
+              {/* Box 2: Thông tin khách hàng & Pháp lý */}
+              <View style={styles.contractWhiteBox}>
+                <View style={styles.boxTitleRow}>
+                  <View style={[styles.boxTitleBar, { backgroundColor: '#D4AF37' }]} />
+                  <Text style={styles.contractBoxHeading}>II. THÔNG TIN KHÁCH HÀNG & PHÁP LÝ HỢP ĐỒNG</Text>
+                </View>
+
+                <Text style={styles.contractFieldLabel}>Họ và tên khách hàng</Text>
+                <Text style={styles.contractFieldValueBold}>{user.fullName.toUpperCase()}</Text>
+
+                <View style={styles.contractDivider} />
+
+                <Text style={styles.contractFieldLabel}>Số điện thoại xác thực</Text>
+                <Text style={styles.contractFieldValue}>{user.phone}</Text>
+
+                <View style={styles.contractDivider} />
+
+                <Text style={styles.contractFieldLabel}>Hạng GPLX & Giấy tờ định danh</Text>
+                <Text style={styles.contractFieldValue}>
+                  {user.licenseNumber} · CCCD {user.cccdNumber}
+                </Text>
+
+                <View style={styles.contractDivider} />
+
+                <Text style={styles.contractFieldLabel}>Email nhận hóa đơn VAT & hợp đồng</Text>
+                <Text style={styles.contractFieldValue}>{user.email}</Text>
+
+                <View style={styles.contractDivider} />
+
+                <Text style={styles.contractFieldLabel}>Thời điểm xác lập & Hiệu lực hợp đồng</Text>
+                <Text style={styles.contractFieldValue}>Từ 26/10/2026 · Tự động gia hạn theo từng chuyến thuê</Text>
+              </View>
+
+              {/* Box 3: Chứng thực số */}
+              <View style={styles.contractVerifyStampBox}>
+                <Ionicons name="shield-checkmark" size={16} color="#15803D" />
+                <Text style={styles.contractVerifyStampText}>
+                  Đã chứng thực chữ ký số điện tử EcoGo Smart · Đối soát CSDL ĐH GTVT TP.HCM (UTH)
+                </Text>
+              </View>
+
+              <View style={{ height: 20 }} />
+            </ScrollView>
+
+            <View style={styles.contractBottomBar}>
+              <TouchableOpacity
+                style={[styles.understandTurquoiseBtn, { backgroundColor: theme.primary }]}
+                onPress={() => setShowGSMContractModal(false)}
+                activeOpacity={0.88}
+              >
+                <Text style={styles.understandBtnText}>Tôi đã hiểu & Đồng ý</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
-      </View>
       </Modal>
 
       {/* ============================================================
@@ -1531,92 +1583,190 @@ const styles = StyleSheet.create({
     elevation: 8
   },
   contractTopHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: '#FFFFFF',
     paddingHorizontal: 16,
-    paddingVertical: 14,
+    paddingTop: 16,
+    paddingBottom: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: '#EBE3D7',
     gap: 10
+  },
+  contractCloseBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#F5EFEB',
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   contractTopTitle: {
     fontFamily: FONTS.family,
-    fontSize: 20,
+    fontSize: 15,
+    fontWeight: '800',
+    color: '#1A1D1F',
+    letterSpacing: -0.2
+  },
+  contractTopSub: {
+    fontFamily: FONTS.family,
+    fontSize: 10.5,
+    color: '#8C6239',
+    marginTop: 1,
+    fontWeight: '600'
+  },
+  contractActiveTag: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#E8F5E9',
+    paddingHorizontal: 7,
+    paddingVertical: 3,
+    borderRadius: 6,
+    gap: 3
+  },
+  contractActiveTagText: {
+    fontFamily: FONTS.family,
+    fontSize: 10,
     fontWeight: '700',
-    color: '#1A1D1F'
+    color: '#15803D'
   },
   gsmTurquoiseBanner: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#0CA678',
+    backgroundColor: '#2B180D',
     padding: 16,
-    gap: 14
+    gap: 14,
+    borderBottomWidth: 1.5,
+    borderBottomColor: '#D4AF37'
   },
   gsmLogoBox: {
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    width: 48,
+    height: 48,
+    borderRadius: 12,
+    backgroundColor: '#3E2515',
+    borderWidth: 1,
+    borderColor: '#D4AF37'
   },
   gsmLogoText: {
-    color: '#FFFFFF',
-    fontSize: 10,
-    fontWeight: '900',
-    marginTop: 2
+    fontFamily: FONTS.family,
+    color: '#D4AF37',
+    fontSize: 8.5,
+    fontWeight: '800',
+    marginTop: 2,
+    letterSpacing: 0.5
   },
   gsmCompanyTitle: {
     fontFamily: FONTS.family,
-    color: '#FFFFFF',
-    fontSize: 13,
-    fontWeight: '700',
-    lineHeight: 18
+    color: '#FAF7F2',
+    fontSize: 12.5,
+    fontWeight: '800',
+    lineHeight: 17,
+    letterSpacing: 0.2
   },
   gsmCompanySub: {
     fontFamily: FONTS.family,
-    color: '#EAF6F0',
-    fontSize: 12,
-    marginTop: 4
+    color: '#DCD4C7',
+    fontSize: 11,
+    marginTop: 3,
+    lineHeight: 15
   },
   contractScrollBody: {
-    padding: 16
+    flex: 1,
+    padding: 14
   },
   contractWhiteBox: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 16,
+    borderRadius: 18,
     padding: 16,
-    marginBottom: 14
+    marginBottom: 14,
+    borderWidth: 1,
+    borderColor: '#EBE3D7',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.03,
+    shadowRadius: 6,
+    elevation: 2
+  },
+  boxTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 12
+  },
+  boxTitleBar: {
+    width: 3.5,
+    height: 15,
+    borderRadius: 2
   },
   contractBoxHeading: {
     fontFamily: FONTS.family,
-    fontSize: 15,
-    fontWeight: '700',
-    color: '#1A1D1F',
-    marginBottom: 12
+    fontSize: 12.5,
+    fontWeight: '800',
+    color: '#2B180D',
+    letterSpacing: 0.3
   },
   contractFieldLabel: {
     fontFamily: FONTS.family,
-    fontSize: 12,
-    color: '#6F767E'
+    fontSize: 10.5,
+    fontWeight: '700',
+    color: '#8C6239',
+    textTransform: 'uppercase',
+    letterSpacing: 0.4
   },
   contractFieldValue: {
     fontFamily: FONTS.family,
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '600',
     color: '#1A1D1F',
-    marginTop: 3,
-    lineHeight: 20
+    marginTop: 2,
+    lineHeight: 19
+  },
+  contractFieldValueBold: {
+    fontFamily: FONTS.family,
+    fontSize: 14,
+    fontWeight: '800',
+    color: '#1A1D1F',
+    marginTop: 2
   },
   contractDivider: {
     height: 1,
-    backgroundColor: '#F1F5F9',
-    marginVertical: 10
+    backgroundColor: '#F0EBE3',
+    marginVertical: 9
+  },
+  contractVerifyStampBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#E8F5E9',
+    padding: 12,
+    borderRadius: 12,
+    gap: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(21, 128, 61, 0.25)',
+    marginBottom: 12
+  },
+  contractVerifyStampText: {
+    flex: 1,
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    color: '#15803D',
+    lineHeight: 16,
+    fontWeight: '600'
   },
   contractBottomBar: {
     backgroundColor: '#FFFFFF',
-    padding: 16,
+    paddingHorizontal: 16,
+    paddingTop: 12,
+    paddingBottom: 24,
     borderTopWidth: 1,
-    borderTopColor: '#E2E8F0'
+    borderTopColor: '#EBE3D7'
   },
   understandTurquoiseBtn: {
-    backgroundColor: '#1D1D1F',
-    borderRadius: 12,
+    borderRadius: 14,
     paddingVertical: 14,
-    alignItems: 'center'
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   verifySlideBadge: {
     backgroundColor: '#E8F5E9',
