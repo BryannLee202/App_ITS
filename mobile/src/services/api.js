@@ -262,6 +262,10 @@ class ApiService {
     return this.request(`/its/green-wave?distanceMeters=${distanceMeters}&currentSpeedKmh=${currentSpeedKmh}`);
   }
 
+  async getRealtimeGLOSA(lat = 10.8018, lng = 106.7142, speed = 38) {
+    return this.request(`/its/realtime-glosa?lat=${lat}&lng=${lng}&speed=${speed}`);
+  }
+
   async getCorridors() {
     return this.request('/its/corridors');
   }

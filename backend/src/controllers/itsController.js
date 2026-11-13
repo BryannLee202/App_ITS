@@ -16,6 +16,21 @@ exports.getGreenWaveAdvisory = (req, res) => {
   });
 };
 
+exports.getRealtimeGLOSA = (req, res) => {
+  const { lat = 10.8018, lng = 106.7142, speed = 38 } = req.query;
+
+  const glosaData = ITSEngine.evaluateRealtimeGLOSA(
+    parseFloat(lat),
+    parseFloat(lng),
+    parseFloat(speed)
+  );
+
+  return res.json({
+    success: true,
+    data: glosaData
+  });
+};
+
 exports.calculateShockwave = (req, res) => {
   const { q1 = 1200, k1 = 25, q2 = 600, k2 = 90 } = req.body;
 

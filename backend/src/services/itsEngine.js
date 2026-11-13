@@ -232,6 +232,279 @@ class ITSEngine {
         : `Chưa vào trạm: Khoảng cách hiện tại là ${Math.round(distanceMeters)}m (cần <= ${ITS_CONFIG.GEOFENCE_RADIUS_METERS}m)`
     };
   }
+
+  /* ============================================================
+     TP.HCM INTELLIGENT INTERSECTION KNOWLEDGE BASE (SPaT HUB)
+     ============================================================ */
+  static SMART_INTERSECTIONS = [
+    {
+      id: 'int-hang-xanh',
+      name: 'Ngã tư Hàng Xanh',
+      fullAddress: 'Điện Biên Phủ × Xô Viết Nghệ Tĩnh, Q. Bình Thạnh',
+      streetName: 'Đường Điện Biên Phủ',
+      lat: 10.7985,
+      lng: 106.7175,
+      cycleSec: 90,
+      greenDurationSec: 50,
+      yellowDurationSec: 4,
+      phaseOffsetSec: 0
+    },
+    {
+      id: 'int-d1-dbp',
+      name: 'Nút giao D1 - Điện Biên Phủ (Cổng UTH)',
+      fullAddress: 'Số 2 Võ Oanh - Điện Biên Phủ, P.25, Bình Thạnh',
+      streetName: 'Đường Võ Oanh',
+      lat: 10.8018,
+      lng: 106.7142,
+      cycleSec: 75,
+      greenDurationSec: 40,
+      yellowDurationSec: 3,
+      phaseOffsetSec: 18
+    },
+    {
+      id: 'int-vo-oanh-d2',
+      name: 'Giao lộ Võ Oanh - Nguyễn Gia Trí',
+      fullAddress: 'Võ Oanh × Nguyễn Gia Trí (D2), Bình Thạnh',
+      streetName: 'Đường Võ Oanh',
+      lat: 10.8035,
+      lng: 106.7168,
+      cycleSec: 65,
+      greenDurationSec: 35,
+      yellowDurationSec: 3,
+      phaseOffsetSec: 32
+    },
+    {
+      id: 'int-cau-sai-gon',
+      name: 'Nút giao Cầu Sài Gòn - Thảo Điền',
+      fullAddress: 'Chân cầu Sài Gòn, TP. Thủ Đức',
+      streetName: 'Xa Lộ Hà Nội',
+      lat: 10.7952,
+      lng: 106.7218,
+      cycleSec: 90,
+      greenDurationSec: 52,
+      yellowDurationSec: 4,
+      phaseOffsetSec: 45
+    },
+    {
+      id: 'int-mai-chi-tho-tran-nao',
+      name: 'Giao lộ Mai Chí Thọ - Trần Não',
+      fullAddress: 'Mai Chí Thọ × Trần Não, P. An Phú, TP. Thủ Đức',
+      streetName: 'Đại lộ Mai Chí Thọ',
+      lat: 10.7801,
+      lng: 106.7289,
+      cycleSec: 100,
+      greenDurationSec: 60,
+      yellowDurationSec: 4,
+      phaseOffsetSec: 12
+    },
+    {
+      id: 'int-mai-chi-tho-dong-van-cong',
+      name: 'Nút giao Mai Chí Thọ - Đồng Văn Cống',
+      fullAddress: 'Mai Chí Thọ × Đồng Văn Cống, P. An Phú',
+      streetName: 'Đại lộ Mai Chí Thọ',
+      lat: 10.7758,
+      lng: 106.7450,
+      cycleSec: 100,
+      greenDurationSec: 58,
+      yellowDurationSec: 4,
+      phaseOffsetSec: 38
+    },
+    {
+      id: 'int-pham-van-dong-phan-van-tri',
+      name: 'Ngã tư Phạm Văn Đồng - Phan Văn Trị',
+      fullAddress: 'Phạm Văn Đồng × Phan Văn Trị, Q. Gò Vấp',
+      streetName: 'Đại lộ Phạm Văn Đồng',
+      lat: 10.8235,
+      lng: 106.6912,
+      cycleSec: 90,
+      greenDurationSec: 55,
+      yellowDurationSec: 4,
+      phaseOffsetSec: 10
+    },
+    {
+      id: 'int-pham-van-dong-le-quang-dinh',
+      name: 'Giao lộ Phạm Văn Đồng - Lê Quang Định',
+      fullAddress: 'Phạm Văn Đồng × Lê Quang Định, Q. Bình Thạnh',
+      streetName: 'Đại lộ Phạm Văn Đồng',
+      lat: 10.8190,
+      lng: 106.6995,
+      cycleSec: 90,
+      greenDurationSec: 52,
+      yellowDurationSec: 4,
+      phaseOffsetSec: 28
+    },
+    {
+      id: 'int-nguyen-huu-canh-vinhome',
+      name: 'Ngã tư Nguyễn Hữu Cảnh - Landmark 81',
+      fullAddress: 'Nguyễn Hữu Cảnh × Cổng Tân Cảng, Bình Thạnh',
+      streetName: 'Đường Nguyễn Hữu Cảnh',
+      lat: 10.7932,
+      lng: 106.7205,
+      cycleSec: 80,
+      greenDurationSec: 44,
+      yellowDurationSec: 3,
+      phaseOffsetSec: 15
+    },
+    {
+      id: 'int-to-ky-q12',
+      name: 'Nút giao Tô Ký - Trung Mỹ Tây (UTH Cơ sở 3)',
+      fullAddress: 'Tô Ký × Trung Mỹ Tây, P. Tân Chánh Hiệp, Q.12',
+      streetName: 'Đường Tô Ký',
+      lat: 10.8580,
+      lng: 106.6190,
+      cycleSec: 70,
+      greenDurationSec: 38,
+      yellowDurationSec: 3,
+      phaseOffsetSec: 20
+    }
+  ];
+
+  /**
+   * Tính toán Real-time SPaT cho một nút giao tại thời điểm hiện tại
+   */
+  static getIntersectionSPaT(intersection, currentTimeSec = null) {
+    const t = currentTimeSec !== null ? currentTimeSec : Date.now() / 1000;
+    const progress = (t + intersection.phaseOffsetSec) % intersection.cycleSec;
+    const green = intersection.greenDurationSec;
+    const yellow = intersection.yellowDurationSec;
+
+    let signalState = 'GREEN';
+    let secondsRemaining = 0;
+
+    if (progress < green) {
+      signalState = 'GREEN';
+      secondsRemaining = Math.max(1, Math.round(green - progress));
+    } else if (progress < green + yellow) {
+      signalState = 'YELLOW';
+      secondsRemaining = Math.max(1, Math.round(green + yellow - progress));
+    } else {
+      signalState = 'RED';
+      secondsRemaining = Math.max(1, Math.round(intersection.cycleSec - progress));
+    }
+
+    return {
+      intersectionId: intersection.id,
+      name: intersection.name,
+      streetName: intersection.streetName,
+      fullAddress: intersection.fullAddress,
+      signalState,
+      secondsRemaining,
+      cycleSec: intersection.cycleSec,
+      greenDurationSec: green
+    };
+  }
+
+  /**
+   * AI Dynamic Map-Matching & Real-time GLOSA Engine
+   * Tìm nút giao gần nhất theo tọa độ xe và tính toán khuyến nghị vận tốc tức thì
+   */
+  static evaluateRealtimeGLOSA(userLat = 10.8018, userLng = 106.7142, currentSpeedKmh = 38) {
+    const lat = parseFloat(userLat) || 10.8018;
+    const lng = parseFloat(userLng) || 106.7142;
+    const speed = Math.max(0, parseFloat(currentSpeedKmh) || 38);
+
+    // Tính khoảng cách tới tất cả nút giao thông minh
+    const evaluatedIntersections = this.SMART_INTERSECTIONS.map((inter) => {
+      const dist = this.calculateDistanceMeters(lat, lng, inter.lat, inter.lng);
+      const spat = this.getIntersectionSPaT(inter);
+      return {
+        ...inter,
+        distanceMeters: Math.round(dist),
+        spat
+      };
+    });
+
+    evaluatedIntersections.sort((a, b) => a.distanceMeters - b.distanceMeters);
+    const nearest = evaluatedIntersections[0];
+
+    const distanceM = Math.max(60, Math.min(nearest.distanceMeters, 1500));
+
+    let recommendedSpeedKmh = 42;
+    let advisoryStatus = 'MAINTAIN';
+    let advisoryMessage = '';
+
+    if (nearest.spat.signalState === 'GREEN') {
+      const currentSpeedMs = Math.max(speed, 10) / 3.6;
+      const etaSec = distanceM / currentSpeedMs;
+
+      if (etaSec <= nearest.spat.secondsRemaining) {
+        recommendedSpeedKmh = Math.min(Math.max(speed, 28), 50);
+        advisoryStatus = 'MAINTAIN';
+        advisoryMessage = `Duy trì ${Math.round(recommendedSpeedKmh)} km/h để qua đèn xanh tại ${nearest.name} (còn ${nearest.spat.secondsRemaining}s)`;
+      } else {
+        const requiredSpeedMs = distanceM / nearest.spat.secondsRemaining;
+        const requiredSpeedKmh = requiredSpeedMs * 3.6;
+
+        if (requiredSpeedKmh <= 52) {
+          recommendedSpeedKmh = Math.round(requiredSpeedKmh);
+          advisoryStatus = 'ACCELERATE';
+          advisoryMessage = `Tăng tốc nhẹ lên ${recommendedSpeedKmh} km/h để kịp đèn xanh tại ${nearest.name}`;
+        } else {
+          const timeToNextGreen = nearest.spat.secondsRemaining + (nearest.cycleSec - nearest.greenDurationSec);
+          const cruiseSpeedKmh = Math.max(Math.min((distanceM / (timeToNextGreen + 5)) * 3.6, 45), 25);
+          recommendedSpeedKmh = Math.round(cruiseSpeedKmh);
+          advisoryStatus = 'DECELERATE';
+          advisoryMessage = `Chạy chậm ${recommendedSpeedKmh} km/h để đón đầu nhịp đèn xanh tiếp theo`;
+        }
+      }
+    } else if (nearest.spat.signalState === 'YELLOW') {
+      recommendedSpeedKmh = 25;
+      advisoryStatus = 'DECELERATE';
+      advisoryMessage = `Đèn vàng tại ${nearest.name} (còn ${nearest.spat.secondsRemaining}s) - Giảm tốc an toàn`;
+    } else {
+      // Đèn Đỏ (RED)
+      const targetTimeSec = nearest.spat.secondsRemaining + 2;
+      const targetSpeedMs = distanceM / targetTimeSec;
+      const targetSpeedKmh = targetSpeedMs * 3.6;
+
+      if (targetSpeedKmh >= 25 && targetSpeedKmh <= 50) {
+        recommendedSpeedKmh = Math.round(targetSpeedKmh);
+        advisoryStatus = 'DECELERATE';
+        advisoryMessage = `Duy trì ${recommendedSpeedKmh} km/h để tới ${nearest.name} đúng lúc đèn vừa chuyển xanh`;
+      } else if (targetSpeedKmh < 25) {
+        recommendedSpeedKmh = 25;
+        advisoryStatus = 'DECELERATE';
+        advisoryMessage = `Chạy chậm ${recommendedSpeedKmh} km/h đón nhịp xanh sau ${nearest.spat.secondsRemaining}s`;
+      } else {
+        recommendedSpeedKmh = 45;
+        advisoryStatus = 'MAINTAIN';
+        advisoryMessage = `Duy trì ${recommendedSpeedKmh} km/h trên hành lang sóng xanh`;
+      }
+    }
+
+    return {
+      timestamp: Date.now(),
+      currentStreet: nearest.streetName,
+      nearestIntersection: {
+        id: nearest.id,
+        name: nearest.name,
+        fullAddress: nearest.fullAddress,
+        distanceMeters: distanceM,
+        signalState: nearest.spat.signalState,
+        secondsRemaining: nearest.spat.secondsRemaining,
+        cycleSec: nearest.spat.cycleSec,
+        greenDurationSec: nearest.spat.greenDurationSec
+      },
+      telematics: {
+        currentSpeedKmh: Math.round(speed),
+        recommendedSpeedKmh: Math.round(recommendedSpeedKmh),
+        minSafeSpeedKmh: 25,
+        maxSafeSpeedKmh: 50,
+        advisoryStatus,
+        advisoryMessage,
+        energySavedEstimatePct: 22.5,
+        co2SavedGramsEst: Math.round(distanceM * 0.14)
+      },
+      nearbyIntersections: evaluatedIntersections.slice(0, 4).map((d) => ({
+        id: d.id,
+        name: d.name,
+        streetName: d.streetName,
+        distanceMeters: d.distanceMeters,
+        signalState: d.spat.signalState,
+        secondsRemaining: d.spat.secondsRemaining
+      }))
+    };
+  }
 }
 
 module.exports = ITSEngine;

@@ -248,6 +248,18 @@ class TelematicsService {
         });
       }
     }, 10000);
+
+    // Broadcast live ITS GLOSA AI speed advisory stream every 2 seconds
+    setInterval(() => {
+      if (this.io) {
+        try {
+          const liveGlosa = ITSEngine.evaluateRealtimeGLOSA(10.8018, 106.7142, 38);
+          this.io.emit('its:glosa_live', liveGlosa);
+        } catch (e) {
+          // ignore
+        }
+      }
+    }, 2000);
   }
 }
 

@@ -3,6 +3,7 @@ const router = express.Router();
 const itsController = require('../controllers/itsController');
 
 router.get('/green-wave', itsController.getGreenWaveAdvisory);
+router.get('/realtime-glosa', itsController.getRealtimeGLOSA);
 router.post('/shockwave', itsController.calculateShockwave);
 router.get('/eco-calculator', itsController.calculateEco);
 router.get('/corridors', itsController.getCorridors);
