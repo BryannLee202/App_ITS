@@ -70,7 +70,11 @@ export default function VehiclesScreen({
 
   const availableBrands = useMemo(() => {
     const list = vehicles.filter((v) => v.category === categoryMode && v.brand);
-    const brands = Array.from(new Set(list.map((v) => v.brand)));
+    const brands = Array.from(new Set(list.map((v) => v.brand))).sort((a, b) => {
+      if (a === 'VinFast') return -1;
+      if (b === 'VinFast') return 1;
+      return a.localeCompare(b);
+    });
     return ['ALL', ...brands];
   }, [vehicles, categoryMode]);
 
@@ -356,11 +360,22 @@ export default function VehiclesScreen({
           activeOpacity={1}
           onPress={() => setShowSortModal(false)}
         >
-          <View style={styles.sortModalSheet}>
+          <TouchableOpacity
+            style={styles.sortModalSheet}
+            activeOpacity={1}
+            onPress={(e) => e.stopPropagation && e.stopPropagation()}
+          >
             <View style={styles.sortSheetHeader}>
-              <Text style={styles.sortSheetTitle}>Sắp xếp danh sách xe</Text>
-              <TouchableOpacity onPress={() => setShowSortModal(false)}>
-                <Ionicons name="close" size={20} color="#2B180D" />
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                <Ionicons name="swap-vertical" size={17} color="#6F4E37" />
+                <Text style={styles.sortSheetTitle}>Sắp xếp danh sách xe</Text>
+              </View>
+              <TouchableOpacity
+                style={styles.sortCloseBtn}
+                onPress={() => setShowSortModal(false)}
+                activeOpacity={0.75}
+              >
+                <Ionicons name="close" size={18} color="#2B180D" />
               </TouchableOpacity>
             </View>
             {SORT_OPTIONS.map((opt) => {
@@ -373,6 +388,7 @@ export default function VehiclesScreen({
                     setSortBy(opt.id);
                     setShowSortModal(false);
                   }}
+                  activeOpacity={0.8}
                 >
                   <Text style={[styles.sortOptionLabel, isSelected && styles.sortOptionLabelSelected]}>
                     {opt.label}
@@ -381,7 +397,7 @@ export default function VehiclesScreen({
                 </TouchableOpacity>
               );
             })}
-          </View>
+          </TouchableOpacity>
         </TouchableOpacity>
       </Modal>
 
@@ -679,14 +695,25 @@ const styles = StyleSheet.create({
   sortModalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(27, 18, 12, 0.55)',
-    justifyContent: 'flex-end'
+    justifyContent: 'flex-end',
+    alignItems: 'center'
   },
   sortModalSheet: {
+    width: '100%',
+    maxWidth: 440,
+    alignSelf: 'center',
     backgroundColor: '#FAF7F2',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     padding: 16,
-    paddingBottom: 28
+    paddingBottom: 28,
+    borderWidth: 1,
+    borderColor: '#EBE3D7',
+    shadowColor: '#2B180D',
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 8
   },
   sortSheetHeader: {
     flexDirection: 'row',
@@ -702,6 +729,14 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '800',
     color: '#2B180D'
+  },
+  sortCloseBtn: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: '#F5EFEB',
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   sortOptionItem: {
     flexDirection: 'row',
