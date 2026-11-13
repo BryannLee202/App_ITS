@@ -322,6 +322,8 @@ export default function HomeScreen({
   const mainScrollRef = useRef(null);
   const [filterByStation, setFilterByStation] = useState(false);
   const [showDestinationModal, setShowDestinationModal] = useState(false);
+  const [showDoorstepModal, setShowDoorstepModal] = useState(false);
+  const [showGlosaModal, setShowGlosaModal] = useState(false);
   const [vehicleSearchQuery, setVehicleSearchQuery] = useState('');
   const [stationSearchQuery, setStationSearchQuery] = useState('');
   const [stationCategoryTab, setStationCategoryTab] = useState('ALL');
@@ -720,10 +722,22 @@ export default function HomeScreen({
             <TouchableOpacity
               style={[
                 styles.featureTile,
-                { backgroundColor: theme.primarySoft, borderColor: theme.primaryBorder }
+                selectedCategory === 'CAR'
+                  ? styles.featureTileActive
+                  : { backgroundColor: theme.primarySoft, borderColor: theme.primaryBorder }
               ]}
-              activeOpacity={0.88}
-              onPress={() => setSelectedCategory('CAR')}
+              activeOpacity={0.85}
+              onPress={() => {
+                setSelectedCategory('CAR');
+                setBookingToast({
+                  title: '🚗 Dàn Ô Tô Tự Lái Sẵn Sàng',
+                  message: 'Đang hiển thị xe ô tô tự lái (Ioniq 5, VF 8, VF 6, CX-5...)'
+                });
+                setTimeout(() => {
+                  mainScrollRef.current?.scrollTo({ y: 350, animated: true });
+                }, 200);
+                setTimeout(() => setBookingToast(null), 3000);
+              }}
             >
               <View style={[styles.featureIconBox, { backgroundColor: '#FFFFFF' }]}>
                 <Ionicons name="car-sport-outline" size={20} color={theme.primary} />
@@ -742,10 +756,22 @@ export default function HomeScreen({
             <TouchableOpacity
               style={[
                 styles.featureTile,
-                { backgroundColor: theme.beigeSoft, borderColor: theme.beigeBorder }
+                selectedCategory === 'MOTORBIKE'
+                  ? styles.featureTileActive
+                  : { backgroundColor: theme.beigeSoft, borderColor: theme.beigeBorder }
               ]}
-              activeOpacity={0.88}
-              onPress={() => setSelectedCategory('MOTORBIKE')}
+              activeOpacity={0.85}
+              onPress={() => {
+                setSelectedCategory('MOTORBIKE');
+                setBookingToast({
+                  title: '🛵 Dàn Xe Máy Điện Thông Minh',
+                  message: 'Đang hiển thị xe máy điện đổi pin 24/7 (Feliz S, Klara S, NEO\'s...)'
+                });
+                setTimeout(() => {
+                  mainScrollRef.current?.scrollTo({ y: 350, animated: true });
+                }, 200);
+                setTimeout(() => setBookingToast(null), 3000);
+              }}
             >
               <View style={[styles.featureIconBox, { backgroundColor: '#FFFFFF' }]}>
                 <Ionicons name="bicycle-outline" size={20} color="#8C6239" />
@@ -763,8 +789,8 @@ export default function HomeScreen({
             {/* Tile 3: Doorstep Delivery */}
             <TouchableOpacity
               style={styles.featureTileWhite}
-              activeOpacity={0.88}
-              onPress={() => vehicles[0] && handleOpenBooking(vehicles[0])}
+              activeOpacity={0.85}
+              onPress={() => setShowDoorstepModal(true)}
             >
               <View style={[styles.featureIconBox, { backgroundColor: theme.primarySoft }]}>
                 <Ionicons name="navigate-outline" size={19} color={theme.primary} />
@@ -782,8 +808,8 @@ export default function HomeScreen({
             {/* Tile 4: Green Wave GLOSA Advisory */}
             <TouchableOpacity
               style={styles.featureTileWhite}
-              activeOpacity={0.88}
-              onPress={onNavigateToMap}
+              activeOpacity={0.85}
+              onPress={() => setShowGlosaModal(true)}
             >
               <View style={[styles.featureIconBox, { backgroundColor: theme.beigeSoft }]}>
                 <Ionicons name="speedometer-outline" size={19} color="#8C6239" />
@@ -793,7 +819,7 @@ export default function HomeScreen({
                   Làn sóng xanh
                 </Text>
                 <Text style={[styles.featureSub, { color: theme.primary }]} numberOfLines={1}>
-                  {glosaAdvisory ? `${glosaAdvisory.recommendedSpeedKmh} km/h · Đèn 28s` : '45 km/h · Đèn 28s'}
+                  {glosaAdvisory ? `${glosaAdvisory.recommendedSpeedKmh} km/h · Đèn 28s` : '25 km/h · Đèn 28s'}
                 </Text>
               </View>
             </TouchableOpacity>
@@ -1335,6 +1361,174 @@ export default function HomeScreen({
         </View>
       </Modal>
 
+      {/* ============================================================
+          MODAL: DOORSTEP DELIVERY INFO & BOOKING (GIAO XE TẬN NƠI)
+         ============================================================ */}
+      <Modal
+        visible={showDoorstepModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowDoorstepModal(false)}
+      >
+        <View style={styles.modalBackdrop}>
+          <View style={styles.modalCard480}>
+            {/* Header */}
+            <View style={styles.modalCardHeader}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <View style={[styles.featureIconBox, { backgroundColor: '#F5EFEB' }]}>
+                  <Ionicons name="navigate" size={18} color="#6F4E37" />
+                </View>
+                <View>
+                  <Text style={styles.modalCardTitle}>Giao Xe Tận Nơi EcoGo</Text>
+                  <Text style={styles.modalCardSub}>Miễn phí giao nhận trong bán kính 5km</Text>
+                </View>
+              </View>
+              <TouchableOpacity
+                style={styles.modalCloseBtn}
+                onPress={() => setShowDoorstepModal(false)}
+              >
+                <Ionicons name="close" size={20} color="#2B180D" />
+              </TouchableOpacity>
+            </View>
+
+            {/* 3 Value Pillars */}
+            <View style={styles.doorstepBenefitList}>
+              <View style={styles.doorstepBenefitRow}>
+                <Ionicons name="checkmark-circle" size={18} color="#6F4E37" />
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.doorstepBenefitTitle}>Miễn phí 100% trong 5km</Text>
+                  <Text style={styles.doorstepBenefitSub}>Áp dụng cho mọi đơn thuê xe tự lái xuất phát từ 10 Hub trạm TP.HCM</Text>
+                </View>
+              </View>
+
+              <View style={styles.doorstepBenefitRow}>
+                <Ionicons name="time" size={18} color="#6F4E37" />
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.doorstepBenefitTitle}>Giao nhanh 15 – 30 phút</Text>
+                  <Text style={styles.doorstepBenefitSub}>Nhân viên kỹ thuật đưa xe đến đúng sảnh chung cư, trường học hoặc cơ quan của bạn</Text>
+                </View>
+              </View>
+
+              <View style={styles.doorstepBenefitRow}>
+                <Ionicons name="shield-checkmark" size={18} color="#D4AF37" />
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.doorstepBenefitTitle}>Kiểm định an toàn & Pin đầy đủ</Text>
+                  <Text style={styles.doorstepBenefitSub}>Khử khuẩn sạch sẽ, pin đảm bảo trên 90%, bàn giao Digital Key 24/7</Text>
+                </View>
+              </View>
+            </View>
+
+            {/* CTA Button */}
+            <TouchableOpacity
+              style={styles.modalPrimaryActionBtn}
+              activeOpacity={0.88}
+              onPress={() => {
+                setShowDoorstepModal(false);
+                const targetVeh = filteredVehicles[0] || vehicles[0];
+                if (targetVeh) {
+                  setBookingVehicle(targetVeh);
+                  setSelectedVoucherForBooking('FREESHIP');
+                  setShowBookingModal(true);
+                  setBookingToast({
+                    title: '🚀 Đã kích hoạt Giao xe tận nơi!',
+                    message: 'Mã miễn phí giao nhận FREESHIP đã được áp dụng vào đơn đặt xe.'
+                  });
+                  setTimeout(() => setBookingToast(null), 3000);
+                }
+              }}
+            >
+              <Ionicons name="key" size={15} color="#D4AF37" />
+              <Text style={styles.modalPrimaryActionText}>Chọn Xe & Đặt Giao Tận Nơi Ngay →</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      {/* ============================================================
+          MODAL: ITS GLOSA GREEN WAVE ADVISORY (LÀN SÓNG XANH)
+         ============================================================ */}
+      <Modal
+        visible={showGlosaModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowGlosaModal(false)}
+      >
+        <View style={styles.modalBackdrop}>
+          <View style={styles.modalCard480}>
+            {/* Header */}
+            <View style={styles.modalCardHeader}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <View style={[styles.featureIconBox, { backgroundColor: '#F5EFEB' }]}>
+                  <Ionicons name="speedometer" size={18} color="#6F4E37" />
+                </View>
+                <View>
+                  <Text style={styles.modalCardTitle}>Làn Sóng Xanh ITS GLOSA</Text>
+                  <Text style={styles.modalCardSub}>Khuyến nghị tốc độ tối ưu qua ngã tư đèn xanh</Text>
+                </View>
+              </View>
+              <TouchableOpacity
+                style={styles.modalCloseBtn}
+                onPress={() => setShowGlosaModal(false)}
+              >
+                <Ionicons name="close" size={20} color="#2B180D" />
+              </TouchableOpacity>
+            </View>
+
+            {/* Live Telemetry Display */}
+            <View style={styles.glosaLiveCard}>
+              <View style={styles.glosaSpeedBox}>
+                <Text style={styles.glosaSpeedVal}>
+                  {glosaAdvisory ? glosaAdvisory.recommendedSpeedKmh : '25 - 42'}
+                </Text>
+                <Text style={styles.glosaSpeedUnit}>km/h</Text>
+                <Text style={styles.glosaSpeedLbl}>Vận tốc tối ưu</Text>
+              </View>
+
+              <View style={styles.glosaDividerV} />
+
+              <View style={styles.glosaSignalBox}>
+                <View style={styles.glosaSignalDotRow}>
+                  <View style={[styles.glosaLightDot, { backgroundColor: '#22C55E' }]} />
+                  <Text style={styles.glosaSignalText}>Đèn Xanh</Text>
+                </View>
+                <Text style={styles.glosaCountdownVal}>còn 28 giây</Text>
+                <Text style={styles.glosaSpeedLbl}>Ngã tư tiếp theo (300m)</Text>
+              </View>
+            </View>
+
+            {/* Core Benefits */}
+            <View style={styles.glosaBenefitRow}>
+              <Ionicons name="leaf-outline" size={16} color="#6F4E37" />
+              <Text style={styles.glosaBenefitText}>
+                Tiết kiệm <Text style={{ fontWeight: '700', color: '#2B180D' }}>22% pin</Text> & giảm <Text style={{ fontWeight: '700', color: '#2B180D' }}>30% thời gian</Text> dừng chờ đèn đỏ.
+              </Text>
+            </View>
+
+            {/* CTA Buttons */}
+            <View style={{ flexDirection: 'row', gap: 8, marginTop: 14 }}>
+              <TouchableOpacity
+                style={styles.modalSecondaryActionBtn}
+                onPress={() => setShowGlosaModal(false)}
+              >
+                <Text style={styles.modalSecondaryActionText}>Đóng</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.modalPrimaryActionBtn, { flex: 1, marginTop: 0 }]}
+                activeOpacity={0.88}
+                onPress={() => {
+                  setShowGlosaModal(false);
+                  if (onNavigateToMap) onNavigateToMap();
+                }}
+              >
+                <Ionicons name="map-outline" size={15} color="#FFFFFF" />
+                <Text style={styles.modalPrimaryActionText}>Xem Bản Đồ Lộ Trình →</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
       {/* Multi-Step Booking Modal */}
       <BookingModal
         visible={showBookingModal}
@@ -1612,6 +1806,16 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderWidth: 1,
     gap: 10
+  },
+  featureTileActive: {
+    backgroundColor: '#F5EFEB',
+    borderColor: '#6F4E37',
+    borderWidth: 1.5,
+    shadowColor: '#2B180D',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 2
   },
   featureTileWhite: {
     width: '48.8%',
@@ -2596,5 +2800,195 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: '#FFFFFF',
     letterSpacing: 0.5
+  },
+
+  /* ============================================================
+     DOORSTEP & GLOSA 480PX QUIET LUXURY MODAL STYLES
+     ============================================================ */
+  modalCard480: {
+    width: '100%',
+    maxWidth: 420,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 22,
+    padding: 18,
+    shadowColor: '#2B180D',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.18,
+    shadowRadius: 16,
+    elevation: 8,
+    borderWidth: 1,
+    borderColor: '#EFE8DE'
+  },
+  modalCardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingBottom: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: '#EFE8DE'
+  },
+  modalCardTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#2B180D'
+  },
+  modalCardSub: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    color: '#8C6239',
+    marginTop: 2
+  },
+  modalCloseBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#FAF7F2',
+    borderWidth: 1,
+    borderColor: '#EFE8DE',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  doorstepBenefitList: {
+    marginVertical: 14,
+    gap: 10
+  },
+  doorstepBenefitRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 10,
+    backgroundColor: '#FAF7F2',
+    padding: 10,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#EFE8DE'
+  },
+  doorstepBenefitTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#2B180D'
+  },
+  doorstepBenefitSub: {
+    fontFamily: FONTS.family,
+    fontSize: 10,
+    color: '#6E6E73',
+    marginTop: 2,
+    lineHeight: 14
+  },
+  modalPrimaryActionBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#4E3322',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 14,
+    gap: 7,
+    marginTop: 6
+  },
+  modalPrimaryActionText: {
+    fontFamily: FONTS.family,
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontWeight: '700'
+  },
+  modalSecondaryActionBtn: {
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 14,
+    backgroundColor: '#FAF7F2',
+    borderWidth: 1,
+    borderColor: '#EFE8DE',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  modalSecondaryActionText: {
+    fontFamily: FONTS.family,
+    color: '#6F4E37',
+    fontSize: 12,
+    fontWeight: '700'
+  },
+  glosaLiveCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FAF7F2',
+    borderRadius: 14,
+    padding: 12,
+    marginVertical: 14,
+    borderWidth: 1,
+    borderColor: '#EFE8DE'
+  },
+  glosaSpeedBox: {
+    flex: 1,
+    alignItems: 'center'
+  },
+  glosaSpeedVal: {
+    fontFamily: FONTS.family,
+    fontSize: 22,
+    fontWeight: '800',
+    color: '#2B180D'
+  },
+  glosaSpeedUnit: {
+    fontFamily: FONTS.family,
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#8C6239'
+  },
+  glosaSpeedLbl: {
+    fontFamily: FONTS.family,
+    fontSize: 9,
+    color: '#8C6239',
+    marginTop: 2
+  },
+  glosaDividerV: {
+    width: 1,
+    height: 48,
+    backgroundColor: '#E8DFD8',
+    marginHorizontal: 10
+  },
+  glosaSignalBox: {
+    flex: 1.2,
+    alignItems: 'center'
+  },
+  glosaSignalDotRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5
+  },
+  glosaLightDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4
+  },
+  glosaSignalText: {
+    fontFamily: FONTS.family,
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#15803D'
+  },
+  glosaCountdownVal: {
+    fontFamily: FONTS.family,
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#2B180D',
+    marginTop: 2
+  },
+  glosaBenefitRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: '#F5EFEB',
+    padding: 10,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#E8DFD8'
+  },
+  glosaBenefitText: {
+    flex: 1,
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    color: '#6F4E37',
+    lineHeight: 15
   }
 });
