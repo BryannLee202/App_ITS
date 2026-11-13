@@ -14,6 +14,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { FONTS, THEME_PRESETS } from '../styles/theme';
 import ApiService from '../services/api';
+import { useLanguage } from '../i18n';
 
 const ECOGO_LOGO = require('../../assets/logo.png');
 
@@ -33,6 +34,7 @@ const KEYPAD_KEYS = [
 ];
 
 export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.SAGE }) {
+  const { language, toggleLanguage, setLanguage, t } = useLanguage();
   // Steps:
   // 1: Location Permission (Clean Apple White)
   // 2: Welcome & Phone Input (Clean Luxury Mobility)
@@ -298,16 +300,16 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
             >
               <Ionicons name="car-sport" size={13} color={theme.primary} style={{ marginRight: 5 }} />
               <Text style={[styles.splashBadgePillText, { color: theme.primary }]}>
-                NỀN TẢNG THUÊ XE TỰ LÁI ĐA DẠNG 24/7
+                {t('splash.badge')}
               </Text>
             </View>
 
             {/* High-impact Slogan for Multi-Vehicle Rental */}
             <Text style={[styles.splashSloganMain, { color: theme.primary }]}>
-              Chạm Là Mở · Lướt Là Đi
+              {t('splash.slogan_main')}
             </Text>
             <Text style={styles.splashSloganSub}>
-              Thuê ô tô, xe máy tự lái đa dạng dòng xe · Giao nhận 24/7{'\n'}Mở khóa kỹ thuật số không chạm · Tự do mọi hành trình
+              {t('splash.slogan_sub')}
             </Text>
 
             {/* Animated Vector Drawing Path Line */}
@@ -332,7 +334,7 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
               activeOpacity={0.85}
               onPress={handleProceedFromSplash}
             >
-              <Text style={styles.splashCtaBtnText}>Bắt đầu hành trình</Text>
+              <Text style={styles.splashCtaBtnText}>{t('splash.cta')}</Text>
               <Ionicons name="arrow-forward" size={15} color="#FAF7F2" style={{ marginLeft: 6 }} />
             </TouchableOpacity>
           </Animated.View>
@@ -347,7 +349,7 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
   if (step === 1) {
     return (
       <View style={styles.step1Container}>
-        {/* Top Header with Back Button and Brand */}
+        {/* Top Header with Back Button, Brand and Language Toggle */}
         <View style={styles.step1TopBar}>
           <TouchableOpacity
             style={styles.backTopBtn}
@@ -355,7 +357,7 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
             onPress={() => setStep(0)}
           >
             <Ionicons name="arrow-back" size={16} color="#1D1D1F" />
-            <Text style={styles.backTopText}>Quay lại</Text>
+            <Text style={styles.backTopText}>{t('common.back')}</Text>
           </TouchableOpacity>
 
           <View style={[styles.brandSmallPill, { backgroundColor: theme.primarySoft, borderColor: theme.primaryBorder }]}>
@@ -363,7 +365,11 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
             <Text style={[styles.brandSmallText, { color: theme.primary }]}>ECOGO MOBILITY</Text>
           </View>
 
-          <View style={{ width: 68 }} />
+          <TouchableOpacity style={styles.langPill} activeOpacity={0.7} onPress={toggleLanguage}>
+            <Ionicons name="globe-outline" size={14} color="#1D1D1F" />
+            <Text style={styles.langPillText}>{language.toUpperCase()}</Text>
+            <Ionicons name="chevron-down" size={12} color="#64748B" />
+          </TouchableOpacity>
         </View>
 
         <View style={styles.step1CenterWrap}>
@@ -381,16 +387,16 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
               </View>
 
               <View style={styles.locHeaderMeta}>
-                <Text style={[styles.locDialogAppLabel, { color: theme.primary }]}>ECOGO SMART</Text>
-                <Text style={styles.locDialogSystemTime}>Yêu cầu truy cập vị trí</Text>
+                <Text style={[styles.locDialogAppLabel, { color: theme.primary }]}>{t('step1.app_label')}</Text>
+                <Text style={styles.locDialogSystemTime}>{t('step1.system_time')}</Text>
               </View>
             </View>
 
             <Text style={styles.locTitle}>
-              Cho phép sử dụng vị trí hiện tại của bạn?
+              {t('step1.title')}
             </Text>
             <Text style={styles.locSubtitle}>
-              Để hiển thị các điểm thuê xe tự lái và trạm sạc EV gần nhất quanh khu vực của bạn
+              {t('step1.subtitle')}
             </Text>
 
             {/* Clean Apple White & Light Map Preview (Like Real Apple Maps) */}
@@ -409,7 +415,7 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
 
               <View style={styles.precisePill}>
                 <Ionicons name="navigate" size={11} color={theme.primary} />
-                <Text style={[styles.precisePillText, { color: theme.primary }]}>Độ chính xác cao: Bật</Text>
+                <Text style={[styles.precisePillText, { color: theme.primary }]}>{t('step1.accuracy')}</Text>
               </View>
 
               <Text style={[styles.streetLabel, { top: 32, left: 14 }]}>CHU VĂN AN</Text>
@@ -431,7 +437,7 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
                 <View style={[styles.landmarkIconCircle, { backgroundColor: theme.primarySoft }]}>
                   <Ionicons name="flash" size={8} color={theme.primary} />
                 </View>
-                <Text style={styles.landmarkText}>Trạm sạc EVN UTH · 0.3 km</Text>
+                <Text style={styles.landmarkText}>{t('step1.landmark')}</Text>
               </View>
             </View>
 
@@ -442,7 +448,7 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
               onPress={() => handleLocationChoice(true)}
             >
               <Text style={[styles.locPermBtnText, styles.locPermBtnTextPrimary]}>
-                Cho phép khi dùng ứng dụng
+                {t('step1.allow_always')}
               </Text>
             </TouchableOpacity>
 
@@ -451,7 +457,7 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
               activeOpacity={0.85}
               onPress={() => handleLocationChoice(true)}
             >
-              <Text style={styles.locPermBtnText}>Cho phép một lần</Text>
+              <Text style={styles.locPermBtnText}>{t('step1.allow_once')}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -459,13 +465,13 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
               activeOpacity={0.7}
               onPress={() => handleLocationChoice(false)}
             >
-              <Text style={[styles.locPermBtnText, styles.locPermBtnTextCancel]}>Để sau / Từ chối</Text>
+              <Text style={[styles.locPermBtnText, styles.locPermBtnTextCancel]}>{t('step1.deny')}</Text>
             </TouchableOpacity>
           </View>
         </View>
 
         <View style={styles.step1FooterInfo}>
-          <Text style={styles.step1FooterText}>Quyền vị trí giúp tự động tính quãng đường và mở khóa BLE</Text>
+          <Text style={styles.step1FooterText}>{t('step1.footer')}</Text>
         </View>
       </View>
     );
@@ -485,7 +491,7 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
             onPress={() => setStep(1)}
           >
             <Ionicons name="arrow-back" size={16} color="#1D1D1F" />
-            <Text style={styles.backTopText}>Quay lại</Text>
+            <Text style={styles.backTopText}>{t('common.back')}</Text>
           </TouchableOpacity>
 
           <View style={[styles.brandSmallPill, { backgroundColor: theme.primarySoft, borderColor: theme.primaryBorder }]}>
@@ -494,9 +500,9 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
           </View>
 
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-            <TouchableOpacity style={styles.langPill}>
+            <TouchableOpacity style={styles.langPill} activeOpacity={0.7} onPress={toggleLanguage}>
               <Ionicons name="globe-outline" size={14} color="#1D1D1F" />
-              <Text style={styles.langPillText}>VI</Text>
+              <Text style={styles.langPillText}>{language.toUpperCase()}</Text>
               <Ionicons name="chevron-down" size={12} color="#64748B" />
             </TouchableOpacity>
           </View>
@@ -510,32 +516,32 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
             </View>
             <View style={styles.step2BadgeDetails}>
               <View style={[styles.step2BadgePill, { backgroundColor: theme.primarySoft, borderColor: theme.primaryBorder }]}>
-                <Text style={[styles.step2BadgePillText, { color: theme.primary }]}>100% XE ĐIỆN & NĂNG LƯỢNG SẠCH</Text>
+                <Text style={[styles.step2BadgePillText, { color: theme.primary }]}>{t('step2.badge')}</Text>
               </View>
-              <Text style={styles.step2BadgeSub}>Không phát thải · Vận hành êm ái</Text>
+              <Text style={styles.step2BadgeSub}>{t('step2.badge_sub')}</Text>
             </View>
           </View>
 
           <Text style={styles.step2MainTitle}>
-            Di chuyển xanh{'\n'}Thuê xe tự động 24/7
+            {t('step2.title')}
           </Text>
           <Text style={styles.step2SubTitle}>
-            Đăng nhập để nhận ưu đãi 20% và mở khóa xe không chạm qua Bluetooth tại TP.HCM
+            {t('step2.subtitle')}
           </Text>
 
           {/* 3 Luxury Feature Chips */}
           <View style={styles.featureChipsRow}>
             <View style={styles.featureChip}>
               <Ionicons name="key-outline" size={13} color={theme.primary} />
-              <Text style={styles.featureChipText}>Khóa số BLE</Text>
+              <Text style={styles.featureChipText}>{t('step2.feature_ble')}</Text>
             </View>
             <View style={styles.featureChip}>
               <Ionicons name="flash-outline" size={13} color="#0284C7" />
-              <Text style={styles.featureChipText}>Trạm sạc 24/7</Text>
+              <Text style={styles.featureChipText}>{t('step2.feature_hub')}</Text>
             </View>
             <View style={styles.featureChip}>
               <Ionicons name="shield-checkmark-outline" size={13} color="#D97706" />
-              <Text style={styles.featureChipText}>0đ Đặt cọc</Text>
+              <Text style={styles.featureChipText}>{t('step2.feature_deposit')}</Text>
             </View>
           </View>
         </View>
@@ -556,7 +562,7 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
             </View>
 
             <Text style={[styles.phonePlaceholderText, phone ? { color: '#1D1D1F', fontWeight: '700' } : {}]}>
-              {phone ? phone : 'Nhập số điện thoại của bạn'}
+              {phone ? phone : t('step2.phone_placeholder')}
             </Text>
           </TouchableOpacity>
 
@@ -566,13 +572,13 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
             onPress={() => setStep(3)}
           >
             <Text style={styles.continueBtnTextWhite}>
-              Tiếp tục
+              {t('step2.btn_continue')}
             </Text>
           </TouchableOpacity>
 
           <View style={styles.orDividerRow}>
             <View style={styles.orLine} />
-            <Text style={styles.orText}>Hoặc tiếp tục với</Text>
+            <Text style={styles.orText}>{t('step2.or_continue')}</Text>
             <View style={styles.orLine} />
           </View>
 
@@ -595,8 +601,8 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
           </View>
 
           <Text style={styles.termsFooterText}>
-            Bằng việc tiếp tục, tôi đồng ý với{' '}
-            <Text style={[styles.termsLinkGreen, { color: theme.primary }]}>Điều khoản & Chính sách</Text> của{'\n'}EcoGo Smart Mobility
+            {t('step2.terms_prefix')}{' '}
+            <Text style={[styles.termsLinkGreen, { color: theme.primary }]}>{t('step2.terms_link')}</Text> {t('step2.terms_suffix')}
           </Text>
         </View>
       </View>
@@ -609,14 +615,33 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
   if (step === 3 || step === 4) {
     return (
       <View style={styles.step3Container}>
-        <View style={styles.step3TopContent}>
-          <TouchableOpacity style={styles.backArrowBtn} onPress={() => setStep(2)}>
-            <Ionicons name="arrow-back" size={24} color="#1E293B" />
+        {/* Top Header Row with Back Button, Brand & Language */}
+        <View style={styles.step1TopBar}>
+          <TouchableOpacity
+            style={styles.backTopBtn}
+            activeOpacity={0.7}
+            onPress={() => setStep(2)}
+          >
+            <Ionicons name="arrow-back" size={16} color="#1D1D1F" />
+            <Text style={styles.backTopText}>{t('common.back')}</Text>
           </TouchableOpacity>
 
-          <Text style={styles.step3Title}>Xác nhận số điện thoại của bạn</Text>
+          <View style={[styles.brandSmallPill, { backgroundColor: theme.primarySoft, borderColor: theme.primaryBorder }]}>
+            <View style={[styles.brandDotGreen, { backgroundColor: theme.primary }]} />
+            <Text style={[styles.brandSmallText, { color: theme.primary }]}>ECOGO MOBILITY</Text>
+          </View>
+
+          <TouchableOpacity style={styles.langPill} activeOpacity={0.7} onPress={toggleLanguage}>
+            <Ionicons name="globe-outline" size={14} color="#1D1D1F" />
+            <Text style={styles.langPillText}>{language.toUpperCase()}</Text>
+            <Ionicons name="chevron-down" size={12} color="#64748B" />
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.step3TopContent}>
+          <Text style={styles.step3Title}>{t('step3.title')}</Text>
           <Text style={styles.step3Sub}>
-            Kiểm tra số điện thoại liên kết với tài khoản mạng xã hội của bạn.
+            {t('step3.subtitle')}
           </Text>
 
           {/* User inputs their own real phone number */}
@@ -642,7 +667,7 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
                 setErrorMessage('');
                 setPhone(txt);
               }}
-              placeholder="Nhập số điện thoại của bạn"
+              placeholder={t('step2.phone_placeholder')}
               placeholderTextColor="#94A3B8"
               keyboardType="phone-pad"
               autoFocus
@@ -672,7 +697,7 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
             onPress={() => {
               if (!isValidPhone) {
                 triggerShake();
-                setErrorMessage('Vui lòng nhập đủ số điện thoại của bạn');
+                setErrorMessage(language === 'vi' ? 'Vui lòng nhập đủ số điện thoại của bạn' : 'Please enter a valid phone number');
                 return;
               }
               setStep(4);
@@ -681,7 +706,9 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
             {loading ? (
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
                 <ActivityIndicator size="small" color="#FFFFFF" />
-                <Text style={[styles.continueBtnText, styles.continueBtnTextWhite]}>Đang xử lý...</Text>
+                <Text style={[styles.continueBtnText, styles.continueBtnTextWhite]}>
+                  {language === 'vi' ? 'Đang xử lý...' : 'Processing...'}
+                </Text>
               </View>
             ) : (
               <Text
@@ -690,7 +717,7 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
                   isValidPhone && styles.continueBtnTextWhite
                 ]}
               >
-                Tiếp tục
+                {t('common.continue')}
               </Text>
             )}
           </TouchableOpacity>
@@ -734,7 +761,7 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
               <View style={styles.sheetDragHandle} />
 
               <View style={styles.otpSheetHeaderRow}>
-                <Text style={styles.otpSheetTitle}>Chọn ứng dụng để nhận mã OTP</Text>
+                <Text style={styles.otpSheetTitle}>{t('step4.title')}</Text>
                 <TouchableOpacity onPress={() => setStep(3)}>
                   <Ionicons name="close" size={22} color="#1E293B" />
                 </TouchableOpacity>
@@ -753,7 +780,7 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
                 >
                   {otpChannel === 'ZALO' && <View style={styles.radioInnerDot} />}
                 </View>
-                <Text style={styles.channelNameText}>Zalo</Text>
+                <Text style={styles.channelNameText}>{t('step4.ch_zalo_title')}</Text>
                 <View style={styles.zaloBadgeIcon}>
                   <Text style={styles.zaloBadgeText}>Zalo</Text>
                 </View>
@@ -791,7 +818,7 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
                 >
                   {otpChannel === 'SMS' && <View style={styles.radioInnerDot} />}
                 </View>
-                <Text style={styles.channelNameText}>Tin nhắn điện thoại</Text>
+                <Text style={styles.channelNameText}>{t('step4.ch_sms_title')}</Text>
                 <View style={styles.smsBadgeIcon}>
                   <Ionicons name="chatbubble-ellipses-outline" size={16} color="#64748B" />
                 </View>
@@ -807,7 +834,7 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
                 {loading ? (
                   <ActivityIndicator color="#FFFFFF" size="small" />
                 ) : (
-                  <Text style={styles.sendOtpTurquoiseText}>Gửi mã OTP</Text>
+                  <Text style={styles.sendOtpTurquoiseText}>{t('step4.btn_send')}</Text>
                 )}
               </TouchableOpacity>
             </View>
@@ -824,13 +851,23 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
 
   return (
     <View style={styles.step5Container}>
-      {/* Top Header with Back Button */}
-      <View style={styles.step3HeaderRow}>
-        <TouchableOpacity style={styles.backArrowBtn} onPress={() => setStep(3)}>
-          <Ionicons name="arrow-back" size={24} color="#1E293B" />
+      {/* Top Header with Back Button, Brand & Language */}
+      <View style={styles.step1TopBar}>
+        <TouchableOpacity style={styles.backTopBtn} activeOpacity={0.7} onPress={() => setStep(3)}>
+          <Ionicons name="arrow-back" size={16} color="#1D1D1F" />
+          <Text style={styles.backTopText}>{t('common.back')}</Text>
         </TouchableOpacity>
-        <Text style={styles.step3HeaderTitle}>Xác minh OTP</Text>
-        <View style={{ width: 40 }} />
+
+        <View style={[styles.brandSmallPill, { backgroundColor: theme.primarySoft, borderColor: theme.primaryBorder }]}>
+          <View style={[styles.brandDotGreen, { backgroundColor: theme.primary }]} />
+          <Text style={[styles.brandSmallText, { color: theme.primary }]}>ECOGO MOBILITY</Text>
+        </View>
+
+        <TouchableOpacity style={styles.langPill} activeOpacity={0.7} onPress={toggleLanguage}>
+          <Ionicons name="globe-outline" size={14} color="#1D1D1F" />
+          <Text style={styles.langPillText}>{language.toUpperCase()}</Text>
+          <Ionicons name="chevron-down" size={12} color="#64748B" />
+        </TouchableOpacity>
       </View>
 
       {/* Top Notification Banner showing the newly generated OTP */}
@@ -852,9 +889,9 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
           <View style={{ flex: 1 }}>
             <View style={styles.pushTopLine}>
               <Text style={styles.pushAppName}>EcoGo Smart</Text>
-              <Text style={styles.pushTimeNow}>vừa xong</Text>
+              <Text style={styles.pushTimeNow}>{language === 'vi' ? 'vừa xong' : 'just now'}</Text>
             </View>
-            <Text style={styles.pushBodyText}>Mã xác minh của bạn là</Text>
+            <Text style={styles.pushBodyText}>{language === 'vi' ? 'Mã xác minh của bạn là' : 'Your verification code is'}</Text>
             <Text style={styles.pushOtpCode}>{latestGeneratedOtp}</Text>
           </View>
         </TouchableOpacity>
@@ -870,13 +907,15 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
         </View>
 
         <Text style={styles.otpInstructionText}>
-          Nhập mã gồm 4 chữ số mà bạn đã nhận được qua {otpChannel === 'ZALO' ? 'Zalo' : otpChannel === 'WHATSAPP' ? 'WhatsApp' : 'tin nhắn SMS'}
+          {language === 'vi'
+            ? `Nhập mã gồm 4 chữ số mà bạn đã nhận được qua ${otpChannel === 'ZALO' ? 'Zalo' : otpChannel === 'WHATSAPP' ? 'WhatsApp' : 'tin nhắn SMS'}`
+            : `Enter the 4-digit code sent to your phone via ${otpChannel === 'ZALO' ? 'Zalo' : otpChannel === 'WHATSAPP' ? 'WhatsApp' : 'SMS'}`}
         </Text>
 
         <View style={styles.otpPhoneRow}>
           <Text style={styles.otpPhoneBold}>(+84) {displayPhone} </Text>
           <TouchableOpacity onPress={() => setStep(3)}>
-            <Text style={styles.changePhoneLink}>Đổi số điện thoại</Text>
+            <Text style={styles.changePhoneLink}>{language === 'vi' ? 'Đổi số điện thoại' : 'Change number'}</Text>
           </TouchableOpacity>
         </View>
 
@@ -919,7 +958,9 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
         >
           <Ionicons name="refresh" size={14} color={countdown === 0 ? theme.primary : '#94A3B8'} />
           <Text style={[styles.resendText, countdown === 0 && { color: theme.primary, fontWeight: '700' }]}>
-            {countdown > 0 ? `Gửi lại mã ${countdown}s` : 'Gửi lại mã ngay'}
+            {countdown > 0
+              ? (language === 'vi' ? `Gửi lại mã sau ${countdown}s` : `Resend code in ${countdown}s`)
+              : (language === 'vi' ? 'Gửi lại mã ngay' : 'Resend code now')}
           </Text>
         </TouchableOpacity>
       </View>

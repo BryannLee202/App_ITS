@@ -12,7 +12,14 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { FONTS, THEME_PRESETS } from '../styles/theme';
 
-export default function ProfileScreen({ onOpenGreenRace, onLogout, onNavigateToTrips, theme = THEME_PRESETS.BE_SUA_CAFE }) {
+export default function ProfileScreen({
+  onOpenGreenRace,
+  onLogout,
+  onNavigateToTrips,
+  theme = THEME_PRESETS.BE_SUA_CAFE,
+  language = 'vi',
+  toggleLanguage
+}) {
   const [user] = useState({
     fullName: 'Minh Tài',
     phone: '+84386726647',
@@ -326,10 +333,17 @@ export default function ProfileScreen({ onOpenGreenRace, onLogout, onNavigateToT
             <Ionicons name="chevron-forward" size={18} color="#9A9FA5" />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuListRow}>
-            <Ionicons name="language-outline" size={20} color="#6F767E" />
-            <Text style={styles.menuListText}>Ngôn ngữ (Tiếng Việt)</Text>
-            <Ionicons name="chevron-forward" size={18} color="#9A9FA5" />
+          <TouchableOpacity style={styles.menuListRow} activeOpacity={0.7} onPress={toggleLanguage}>
+            <Ionicons name="language-outline" size={20} color={theme.primary} />
+            <Text style={styles.menuListText}>
+              {language === 'vi' ? 'Ngôn ngữ: Tiếng Việt (VI)' : 'Language: English (EN)'}
+            </Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+              <Text style={{ fontSize: 13, color: theme.primary, fontWeight: '700' }}>
+                {language === 'vi' ? 'VI' : 'EN'}
+              </Text>
+              <Ionicons name="swap-horizontal" size={16} color={theme.primary} />
+            </View>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.menuListRow}>

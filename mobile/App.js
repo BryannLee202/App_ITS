@@ -15,6 +15,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { FONTS, THEME_PRESETS } from './src/styles/theme';
 import ApiService from './src/services/api';
+import { LanguageProvider, useLanguage } from './src/i18n';
 
 import HomeScreen from './src/screens/HomeScreen';
 import MapScreen from './src/screens/MapScreen';
@@ -79,6 +80,15 @@ const ECOGO_RACE_BADGES = [
 ];
 
 export default function App() {
+  return (
+    <LanguageProvider>
+      <AppContent />
+    </LanguageProvider>
+  );
+}
+
+function AppContent() {
+  const { language, toggleLanguage, setLanguage, t } = useLanguage();
   const [isOnboarded, setIsOnboarded] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [isCheckingSession, setIsCheckingSession] = useState(true);
@@ -128,7 +138,10 @@ export default function App() {
 
   useEffect(() => {
     if (Platform.OS === 'web' && typeof document !== 'undefined') {
-      document.title = 'EcoGo Smart · Thuê Xe Tự Lái Đa Dạng 24/7';
+      document.title =
+        language === 'vi'
+          ? 'EcoGo Smart · Thuê Xe Tự Lái Đa Dạng 24/7'
+          : 'EcoGo Smart · 24/7 Multi-Vehicle Rental';
       const id = 'google-font-plus-jakarta';
       if (!document.getElementById(id)) {
         const link = document.createElement('link');
@@ -149,7 +162,7 @@ export default function App() {
         document.head.appendChild(styleEl);
       }
     }
-  }, []);
+  }, [language]);
 
   const renderContent = () => {
     if (!isOnboarded) {
@@ -198,6 +211,8 @@ export default function App() {
         return (
           <ProfileScreen
             theme={theme}
+            language={language}
+            toggleLanguage={toggleLanguage}
             onOpenGreenRace={() => setShowGreenRaceModal(true)}
             onOpenRewards={() => setShowRewardsModal(true)}
             onNavigateToMap={() => setActiveTab('MAP')}
@@ -277,7 +292,7 @@ export default function App() {
                             isActive && { color: '#1D1D1F', fontWeight: '700' }
                           ]}
                         >
-                          {tab.label}
+                          {t(`tabs.${tab.id.toLowerCase()}`) || tab.label}
                         </Text>
                       </TouchableOpacity>
                     );
@@ -308,7 +323,7 @@ export default function App() {
                           isActive && { color: theme.primary, fontWeight: '800' }
                         ]}
                       >
-                        {tab.label}
+                        {t(`tabs.${tab.id.toLowerCase()}`) || tab.label}
                       </Text>
                     </TouchableOpacity>
                   );
