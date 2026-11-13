@@ -498,12 +498,15 @@ const styles = StyleSheet.create({
     borderColor: '#D4AF37'
   },
   emptyTitle: {
+    fontFamily: FONTS.family,
     fontSize: 16,
     fontWeight: '800',
     color: '#2B180D',
-    textAlign: 'center'
+    textAlign: 'center',
+    letterSpacing: -0.2
   },
   emptyDesc: {
+    fontFamily: FONTS.family,
     fontSize: 12,
     color: '#8C7A6B',
     textAlign: 'center',
@@ -526,6 +529,7 @@ const styles = StyleSheet.create({
     elevation: 3
   },
   goHomeBtnText: {
+    fontFamily: FONTS.family,
     color: '#FAF7F2',
     fontSize: 13,
     fontWeight: '800',
@@ -558,6 +562,7 @@ const styles = StyleSheet.create({
     marginRight: 5
   },
   liveConnectionText: {
+    fontFamily: FONTS.family,
     fontSize: 10,
     fontWeight: '800',
     color: '#2D8A4E',
@@ -574,6 +579,7 @@ const styles = StyleSheet.create({
     borderColor: '#EBE3D7'
   },
   contractBadgeText: {
+    fontFamily: FONTS.family,
     fontSize: 10,
     fontWeight: '800',
     color: '#6F4E37',
@@ -588,10 +594,12 @@ const styles = StyleSheet.create({
   },
   vehicleTitle: {
     flex: 1,
+    fontFamily: FONTS.family,
     fontSize: 18,
-    fontWeight: '900',
+    fontWeight: '800',
     color: '#2B180D',
-    marginRight: 8
+    marginRight: 8,
+    letterSpacing: -0.2
   },
   plateCapsule: {
     backgroundColor: '#FAF7F2',
@@ -602,10 +610,11 @@ const styles = StyleSheet.create({
     borderColor: '#D4AF37'
   },
   plateCapsuleText: {
+    fontFamily: FONTS.family,
     fontSize: 11,
-    fontWeight: '900',
+    fontWeight: '800',
     color: '#2B180D',
-    letterSpacing: 0.5
+    letterSpacing: 0.6
   },
   subMetaRow: {
     flexDirection: 'row',
@@ -617,9 +626,10 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   metaStatusText: {
+    fontFamily: FONTS.family,
     fontSize: 11,
     color: '#6F4E37',
-    fontWeight: '700',
+    fontWeight: '600',
     marginLeft: 4
   },
   metaDotDivider: {
@@ -665,8 +675,9 @@ const styles = StyleSheet.create({
     borderRadius: 14
   },
   floatingSignalText: {
+    fontFamily: FONTS.family,
     fontSize: 11,
-    fontWeight: '700',
+    fontWeight: '600',
     color: '#FAF7F2',
     marginLeft: 6,
     flex: 1
@@ -695,12 +706,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#EBE3D7'
   },
   metricVal: {
-    fontSize: 13,
-    fontWeight: '900',
-    color: '#2B180D'
+    fontFamily: FONTS.family,
+    fontSize: 13.5,
+    fontWeight: '800',
+    color: '#2B180D',
+    letterSpacing: -0.1
   },
   metricLbl: {
-    fontSize: 9,
+    fontFamily: FONTS.family,
+    fontSize: 9.5,
     color: '#8C7A6B',
     marginTop: 2
   },
@@ -726,6 +740,7 @@ const styles = StyleSheet.create({
     marginBottom: 12
   },
   cardSectionTitle: {
+    fontFamily: FONTS.family,
     fontSize: 13,
     fontWeight: '800',
     color: '#2B180D'
@@ -739,10 +754,12 @@ const styles = StyleSheet.create({
     borderRadius: 8
   },
   securitySealText: {
-    fontSize: 9,
+    fontFamily: FONTS.family,
+    fontSize: 9.5,
     fontWeight: '800',
     color: '#6F4E37',
-    marginLeft: 3
+    marginLeft: 3,
+    letterSpacing: 0.4
   },
   primaryActionsRow: {
     flexDirection: 'row',
@@ -787,7 +804,8 @@ const styles = StyleSheet.create({
     flex: 1
   },
   primaryActionTitle: {
-    fontSize: 12,
+    fontFamily: FONTS.family,
+    fontSize: 12.5,
     fontWeight: '800',
     color: '#2B180D'
   },
@@ -795,7 +813,8 @@ const styles = StyleSheet.create({
     color: '#FAF7F2'
   },
   primaryActionSub: {
-    fontSize: 9,
+    fontFamily: FONTS.family,
+    fontSize: 9.5,
     color: '#8C7A6B',
     marginTop: 1
   },
@@ -836,11 +855,13 @@ const styles = StyleSheet.create({
     borderColor: '#EBE3D7'
   },
   secBtnLabel: {
+    fontFamily: FONTS.family,
     fontSize: 11,
-    fontWeight: '800',
+    fontWeight: '700',
     color: '#2B180D'
   },
   secBtnMicro: {
+    fontFamily: FONTS.family,
     fontSize: 9,
     color: '#8C7A6B',
     marginTop: 1
@@ -871,12 +892,14 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   glosaTitle: {
-    fontSize: 12,
+    fontFamily: FONTS.family,
+    fontSize: 12.5,
     fontWeight: '800',
     color: '#2B180D',
     marginLeft: 6
   },
   glosaSub: {
+    fontFamily: FONTS.family,
     fontSize: 10,
     color: '#8C7A6B',
     marginTop: 2
@@ -897,6 +920,7 @@ const styles = StyleSheet.create({
     marginRight: 5
   },
   glosaSignalText: {
+    fontFamily: FONTS.family,
     fontSize: 10,
     fontWeight: '800',
     color: '#2D8A4E'
@@ -912,15 +936,17 @@ const styles = StyleSheet.create({
     borderColor: '#EBE3D7'
   },
   glosaSpeedLabel: {
+    fontFamily: FONTS.family,
     fontSize: 11,
     fontWeight: '800',
     color: '#2B180D'
   },
   glosaAdviceMsg: {
-    fontSize: 10,
+    fontFamily: FONTS.family,
+    fontSize: 10.5,
     color: '#6F4E37',
     marginTop: 2,
-    lineHeight: 14
+    lineHeight: 14.5
   },
   speedCapsule: {
     alignItems: 'center',
@@ -932,11 +958,13 @@ const styles = StyleSheet.create({
     borderColor: '#D4AF37'
   },
   glosaSpeedValue: {
+    fontFamily: FONTS.family,
     fontSize: 18,
-    fontWeight: '900',
+    fontWeight: '800',
     color: '#2B180D'
   },
   glosaSpeedUnit: {
+    fontFamily: FONTS.family,
     fontSize: 9,
     fontWeight: '700',
     color: '#8C7A6B'
@@ -960,10 +988,12 @@ const styles = StyleSheet.create({
     elevation: 3
   },
   returnBtnText: {
+    fontFamily: FONTS.family,
     color: '#FAF7F2',
     fontSize: 13,
     fontWeight: '800',
-    marginLeft: 8
+    marginLeft: 8,
+    letterSpacing: 0.2
   },
   cancelBookingBtn: {
     flexDirection: 'row',
@@ -977,9 +1007,11 @@ const styles = StyleSheet.create({
     borderColor: '#EBE3D7'
   },
   cancelBookingBtnText: {
+    fontFamily: FONTS.family,
     fontSize: 12,
-    fontWeight: '800',
+    fontWeight: '700',
     color: '#6F4E37',
-    marginLeft: 6
+    marginLeft: 6,
+    letterSpacing: 0.2
   }
 });

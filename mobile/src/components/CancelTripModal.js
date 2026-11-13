@@ -9,6 +9,7 @@ import {
   ActivityIndicator
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { FONTS } from '../styles/theme';
 import ApiService from '../services/api';
 
 const CANCEL_REASONS = [
@@ -314,14 +315,18 @@ const styles = StyleSheet.create({
     marginRight: 8
   },
   sheetTitle: {
-    fontSize: 15,
+    fontFamily: FONTS.family,
+    fontSize: 15.5,
     fontWeight: '800',
-    color: '#2B180D'
+    color: '#2B180D',
+    letterSpacing: -0.2
   },
   sheetSubtitle: {
+    fontFamily: FONTS.family,
     fontSize: 11,
     color: '#8C7A6B',
-    marginTop: 2
+    marginTop: 2,
+    letterSpacing: 0.1
   },
   closeBtn: {
     width: 32,
@@ -346,15 +351,17 @@ const styles = StyleSheet.create({
     borderColor: '#D4AF37'
   },
   policyTitle: {
-    fontSize: 12,
+    fontFamily: FONTS.family,
+    fontSize: 12.5,
     fontWeight: '800',
     color: '#2B180D',
     marginBottom: 2
   },
   policyDesc: {
-    fontSize: 10,
+    fontFamily: FONTS.family,
+    fontSize: 10.5,
     color: '#6F4E37',
-    lineHeight: 14
+    lineHeight: 15
   },
   vehSummaryCard: {
     backgroundColor: '#FFFFFF',
@@ -371,21 +378,25 @@ const styles = StyleSheet.create({
     marginBottom: 4
   },
   vehSummaryName: {
+    fontFamily: FONTS.family,
     fontSize: 13,
     fontWeight: '800',
     color: '#2B180D'
   },
   vehSummaryPlate: {
+    fontFamily: FONTS.family,
     fontSize: 11,
     fontWeight: '800',
     color: '#6F4E37',
     backgroundColor: '#F5EFEB',
     paddingHorizontal: 8,
     paddingVertical: 2,
-    borderRadius: 6
+    borderRadius: 6,
+    letterSpacing: 0.5
   },
   vehContractCode: {
-    fontSize: 10,
+    fontFamily: FONTS.family,
+    fontSize: 10.5,
     color: '#8C7A6B'
   },
   sectionCard: {
@@ -401,7 +412,8 @@ const styles = StyleSheet.create({
     borderColor: '#E2D9CC'
   },
   sectionTitle: {
-    fontSize: 12,
+    fontFamily: FONTS.family,
+    fontSize: 12.5,
     fontWeight: '800',
     color: '#2B180D',
     marginBottom: 8
@@ -421,10 +433,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5EFEB'
   },
   reasonText: {
+    fontFamily: FONTS.family,
     fontSize: 11,
     color: '#5C4A3C',
     marginLeft: 8,
-    flex: 1
+    flex: 1,
+    lineHeight: 15
   },
   reasonTextActive: {
     fontWeight: '700',
@@ -437,11 +451,13 @@ const styles = StyleSheet.create({
     marginBottom: 5
   },
   calcLabel: {
+    fontFamily: FONTS.family,
     fontSize: 11,
     color: '#6E5D4F'
   },
   calcVal: {
-    fontSize: 11,
+    fontFamily: FONTS.family,
+    fontSize: 11.5,
     fontWeight: '700',
     color: '#2B180D'
   },
@@ -456,18 +472,22 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   calcTotalLabel: {
-    fontSize: 12,
+    fontFamily: FONTS.family,
+    fontSize: 12.5,
     fontWeight: '800',
     color: '#2B180D'
   },
   calcTotalSub: {
-    fontSize: 9,
+    fontFamily: FONTS.family,
+    fontSize: 9.5,
     color: '#8C7A6B'
   },
   calcTotalAmount: {
-    fontSize: 16,
-    fontWeight: '900',
-    color: '#2D8A4E'
+    fontFamily: FONTS.family,
+    fontSize: 16.5,
+    fontWeight: '800',
+    color: '#2D8A4E',
+    letterSpacing: -0.2
   },
   restorationNoteBox: {
     flexDirection: 'row',
@@ -479,11 +499,12 @@ const styles = StyleSheet.create({
     borderColor: '#EBE3D7'
   },
   restorationNoteText: {
-    fontSize: 10,
+    fontFamily: FONTS.family,
+    fontSize: 10.5,
     color: '#6F4E37',
     marginLeft: 6,
     flex: 1,
-    lineHeight: 14
+    lineHeight: 14.5
   },
   bottomBar: {
     flexDirection: 'row',
@@ -507,6 +528,7 @@ const styles = StyleSheet.create({
     borderColor: '#EBE3D7'
   },
   keepTripText: {
+    fontFamily: FONTS.family,
     fontSize: 12,
     fontWeight: '700',
     color: '#6F4E37'
@@ -527,10 +549,12 @@ const styles = StyleSheet.create({
     elevation: 3
   },
   cancelTripText: {
+    fontFamily: FONTS.family,
     fontSize: 12,
     fontWeight: '800',
     color: '#FAF7F2',
-    marginLeft: 6
+    marginLeft: 6,
+    letterSpacing: 0.2
   },
 
   /* Success Screen */
@@ -553,19 +577,21 @@ const styles = StyleSheet.create({
     elevation: 4
   },
   successHeader: {
-    fontSize: 14,
-    fontWeight: '900',
+    fontFamily: FONTS.family,
+    fontSize: 14.5,
+    fontWeight: '800',
     color: '#2B180D',
     textAlign: 'center',
-    letterSpacing: 0.3
+    letterSpacing: 0.2
   },
   successSub: {
+    fontFamily: FONTS.family,
     fontSize: 11,
     color: '#8C7A6B',
     textAlign: 'center',
     marginTop: 4,
     marginBottom: 14,
-    lineHeight: 16,
+    lineHeight: 16.5,
     paddingHorizontal: 16
   },
   receiptBox: {
@@ -584,11 +610,13 @@ const styles = StyleSheet.create({
     marginBottom: 6
   },
   receiptKey: {
+    fontFamily: FONTS.family,
     fontSize: 11,
     color: '#8C7A6B'
   },
   receiptValBold: {
-    fontSize: 11,
+    fontFamily: FONTS.family,
+    fontSize: 11.5,
     fontWeight: '800',
     color: '#2B180D'
   },
@@ -607,6 +635,7 @@ const styles = StyleSheet.create({
     elevation: 3
   },
   doneBtnText: {
+    fontFamily: FONTS.family,
     fontSize: 13,
     fontWeight: '800',
     color: '#FAF7F2',

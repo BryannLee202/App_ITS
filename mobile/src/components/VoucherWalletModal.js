@@ -9,6 +9,7 @@ import {
   Alert
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { FONTS, COLORS } from '../styles/theme';
 
 const DAILY_PROMOS = [
   {
@@ -515,10 +516,12 @@ const styles = StyleSheet.create({
     elevation: 8
   },
   toastText: {
+    fontFamily: FONTS.family,
     color: '#FAF7F2',
-    fontSize: 11,
-    fontWeight: '800',
-    marginLeft: 6
+    fontSize: 11.5,
+    fontWeight: '700',
+    marginLeft: 6,
+    letterSpacing: 0.2
   },
   headerRow: {
     flexDirection: 'row',
@@ -537,15 +540,19 @@ const styles = StyleSheet.create({
     gap: 6
   },
   title: {
-    fontSize: 16,
-    fontWeight: '900',
+    fontFamily: FONTS.family,
+    fontSize: 16.5,
+    fontWeight: '800',
     color: '#2B180D',
-    marginLeft: 6
+    marginLeft: 6,
+    letterSpacing: -0.2
   },
   subtitle: {
+    fontFamily: FONTS.family,
     fontSize: 11,
     color: '#8C7A6B',
-    marginTop: 2
+    marginTop: 2,
+    letterSpacing: 0.1
   },
   closeBtn: {
     width: 32,
@@ -587,12 +594,15 @@ const styles = StyleSheet.create({
     borderColor: '#D4AF37'
   },
   coinsBalanceVal: {
-    fontSize: 14,
-    fontWeight: '900',
-    color: '#2B180D'
+    fontFamily: FONTS.family,
+    fontSize: 15,
+    fontWeight: '800',
+    color: '#2B180D',
+    letterSpacing: -0.2
   },
   coinsBalanceSub: {
-    fontSize: 10,
+    fontFamily: FONTS.family,
+    fontSize: 10.5,
     color: '#8C7A6B',
     marginTop: 1
   },
@@ -611,10 +621,12 @@ const styles = StyleSheet.create({
     borderColor: '#6F4E37'
   },
   quickShopBtnText: {
-    fontSize: 11,
-    fontWeight: '800',
+    fontFamily: FONTS.family,
+    fontSize: 11.5,
+    fontWeight: '700',
     color: '#6F4E37',
-    marginLeft: 4
+    marginLeft: 4,
+    letterSpacing: 0.2
   },
   quickShopBtnTextActive: {
     color: '#FAF7F2'
@@ -625,7 +637,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
+    paddingHorizontal: 14,
     paddingVertical: 8,
     backgroundColor: '#F5EFEB',
     borderBottomWidth: 1,
@@ -633,17 +645,22 @@ const styles = StyleSheet.create({
   },
   tabBtn: {
     paddingVertical: 6,
-    paddingHorizontal: 8,
+    paddingHorizontal: 9,
     borderRadius: 12,
-    backgroundColor: '#FAF7F2'
+    backgroundColor: '#FAF7F2',
+    borderWidth: 1,
+    borderColor: '#EAE1D4'
   },
   tabBtnActive: {
-    backgroundColor: '#6F4E37'
+    backgroundColor: '#6F4E37',
+    borderColor: '#6F4E37'
   },
   tabText: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#8C7A6B'
+    fontFamily: FONTS.family,
+    fontSize: 11.5,
+    fontWeight: '600',
+    color: '#7E6B5C',
+    letterSpacing: 0.1
   },
   tabTextActive: {
     color: '#FAF7F2',
@@ -667,6 +684,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderWidth: 1,
     borderColor: '#EBE3D7',
+    borderLeftWidth: 3.5,
+    borderLeftColor: '#6F4E37',
     shadowColor: '#2B180D',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
@@ -679,36 +698,46 @@ const styles = StyleSheet.create({
     marginBottom: 4
   },
   ticketCodeText: {
+    fontFamily: FONTS.family,
     fontSize: 13,
-    fontWeight: '900',
+    fontWeight: '800',
     color: '#6F4E37',
-    marginRight: 6
+    marginRight: 6,
+    letterSpacing: 0.8
   },
   ticketTagBadge: {
-    paddingHorizontal: 6,
-    paddingVertical: 2,
+    paddingHorizontal: 7,
+    paddingVertical: 2.5,
     borderRadius: 6
   },
   ticketTagText: {
-    fontSize: 9,
-    fontWeight: '800'
+    fontFamily: FONTS.family,
+    fontSize: 9.5,
+    fontWeight: '800',
+    letterSpacing: 0.6
   },
   ticketTitle: {
-    fontSize: 12,
-    fontWeight: '800',
+    fontFamily: FONTS.family,
+    fontSize: 13,
+    fontWeight: '700',
     color: '#2B180D',
-    marginBottom: 2
+    marginBottom: 2.5,
+    lineHeight: 18,
+    letterSpacing: -0.1
   },
   ticketDesc: {
-    fontSize: 10,
+    fontFamily: FONTS.family,
+    fontSize: 11,
     color: '#6E5D4F',
-    lineHeight: 14,
-    marginBottom: 4
+    lineHeight: 15.5,
+    marginBottom: 5
   },
   ticketExpiry: {
-    fontSize: 9,
+    fontFamily: FONTS.family,
+    fontSize: 10,
     fontWeight: '700',
-    color: '#B45309'
+    color: '#B45309',
+    letterSpacing: 0.1
   },
   useNowBtn: {
     flexDirection: 'row',
@@ -716,13 +745,20 @@ const styles = StyleSheet.create({
     backgroundColor: '#4E3322',
     paddingHorizontal: 12,
     paddingVertical: 8,
-    borderRadius: 12
+    borderRadius: 12,
+    shadowColor: '#2B180D',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 3,
+    elevation: 2
   },
   useNowBtnText: {
-    fontSize: 11,
+    fontFamily: FONTS.family,
+    fontSize: 11.5,
     fontWeight: '800',
     color: '#FAF7F2',
-    marginLeft: 4
+    marginLeft: 4,
+    letterSpacing: 0.3
   },
 
   /* Today Tab Extra */
@@ -745,7 +781,8 @@ const styles = StyleSheet.create({
     borderRadius: 2
   },
   progressText: {
-    fontSize: 9,
+    fontFamily: FONTS.family,
+    fontSize: 10,
     color: '#8C7A6B'
   },
   saveBtn: {
@@ -764,8 +801,9 @@ const styles = StyleSheet.create({
     borderColor: '#6F4E37'
   },
   saveBtnText: {
-    fontSize: 10,
-    fontWeight: '800',
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    fontWeight: '700',
     color: '#6F4E37',
     marginLeft: 3
   },
@@ -776,8 +814,9 @@ const styles = StyleSheet.create({
     paddingVertical: 2
   },
   quickApplySmallText: {
-    fontSize: 10,
-    fontWeight: '800',
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    fontWeight: '700',
     color: '#6F4E37'
   },
 
@@ -791,11 +830,12 @@ const styles = StyleSheet.create({
     marginBottom: 10
   },
   shopInstructionText: {
-    fontSize: 11,
+    fontFamily: FONTS.family,
+    fontSize: 11.5,
     color: '#5C4A3C',
     marginLeft: 6,
     flex: 1,
-    lineHeight: 15
+    lineHeight: 16.5
   },
   shopItemCard: {
     flexDirection: 'row',
@@ -806,7 +846,9 @@ const styles = StyleSheet.create({
     padding: 12,
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: '#EBE3D7'
+    borderColor: '#EBE3D7',
+    borderLeftWidth: 3.5,
+    borderLeftColor: '#D4AF37'
   },
   coinCostPill: {
     flexDirection: 'row',
@@ -824,8 +866,9 @@ const styles = StyleSheet.create({
     marginRight: 3
   },
   coinCostPillVal: {
-    fontSize: 11,
-    fontWeight: '900',
+    fontFamily: FONTS.family,
+    fontSize: 12,
+    fontWeight: '800',
     color: '#6F4E37'
   },
   redeemBtn: {
@@ -837,16 +880,19 @@ const styles = StyleSheet.create({
     borderRadius: 12
   },
   redeemBtnText: {
-    fontSize: 11,
+    fontFamily: FONTS.family,
+    fontSize: 11.5,
     fontWeight: '800',
     color: '#FAF7F2',
-    marginLeft: 4
+    marginLeft: 4,
+    letterSpacing: 0.2
   },
   redeemBtnDisabled: {
     backgroundColor: '#EBE3D7'
   },
   redeemBtnDisabledText: {
-    fontSize: 10,
+    fontFamily: FONTS.family,
+    fontSize: 10.5,
     fontWeight: '700',
     color: '#8C7A6B'
   },
@@ -862,10 +908,12 @@ const styles = StyleSheet.create({
     opacity: 0.75
   },
   expiredCodeText: {
+    fontFamily: FONTS.family,
     fontSize: 12,
     fontWeight: '800',
     color: '#8C7A6B',
-    marginRight: 6
+    marginRight: 6,
+    letterSpacing: 0.5
   },
   expiredTagBadge: {
     backgroundColor: '#F5EFEB',
@@ -874,20 +922,25 @@ const styles = StyleSheet.create({
     borderRadius: 6
   },
   expiredTagText: {
-    fontSize: 9,
+    fontFamily: FONTS.family,
+    fontSize: 9.5,
     fontWeight: '800',
-    color: '#8C7A6B'
+    color: '#8C7A6B',
+    letterSpacing: 0.4
   },
   expiredTitle: {
-    fontSize: 11,
+    fontFamily: FONTS.family,
+    fontSize: 12,
     fontWeight: '700',
     color: '#5C4A3C',
     marginTop: 2
   },
   expiredDesc: {
-    fontSize: 10,
+    fontFamily: FONTS.family,
+    fontSize: 10.5,
     color: '#8C7A6B',
-    marginTop: 1
+    marginTop: 1,
+    lineHeight: 15
   },
 
   /* Empty State */
@@ -898,18 +951,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16
   },
   emptyStateTitle: {
-    fontSize: 13,
+    fontFamily: FONTS.family,
+    fontSize: 14,
     fontWeight: '800',
     color: '#2B180D',
     marginTop: 8
   },
   emptyStateSub: {
-    fontSize: 11,
+    fontFamily: FONTS.family,
+    fontSize: 11.5,
     color: '#8C7A6B',
     textAlign: 'center',
     marginTop: 4,
     marginBottom: 12,
-    lineHeight: 16
+    lineHeight: 16.5
   },
   emptyActionBtn: {
     backgroundColor: '#4E3322',
@@ -918,7 +973,8 @@ const styles = StyleSheet.create({
     borderRadius: 12
   },
   emptyActionText: {
-    fontSize: 11,
+    fontFamily: FONTS.family,
+    fontSize: 11.5,
     fontWeight: '800',
     color: '#FAF7F2'
   },
@@ -933,9 +989,11 @@ const styles = StyleSheet.create({
     borderTopColor: '#EBE3D7'
   },
   footerTipText: {
-    fontSize: 10,
+    fontFamily: FONTS.family,
+    fontSize: 10.5,
     color: '#6F4E37',
     marginLeft: 6,
-    flex: 1
+    flex: 1,
+    lineHeight: 15
   }
 });
