@@ -659,7 +659,7 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
             style={[
               styles.continueBtn,
               { marginHorizontal: 18, marginBottom: 14 },
-              isValidPhone && styles.continueBtnTurquoise
+              isValidPhone && { backgroundColor: theme.primary }
             ]}
             disabled={loading}
             activeOpacity={0.85}
@@ -791,9 +791,9 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
                 </View>
               </TouchableOpacity>
 
-              {/* Send OTP Turquoise CTA */}
+              {/* Send OTP Coffee CTA */}
               <TouchableOpacity
-                style={[styles.sendOtpTurquoiseBtn, loading && { opacity: 0.7 }]}
+                style={[styles.sendOtpTurquoiseBtn, { backgroundColor: theme.primary }, loading && { opacity: 0.7 }]}
                 disabled={loading}
                 activeOpacity={0.85}
                 onPress={handleSendOtpRequest}
@@ -849,7 +849,7 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
       <View style={styles.step5BodyCenter}>
         <View style={styles.phoneFrameIllustration}>
           <View style={styles.phoneSpeakerBar} />
-          <View style={styles.cyanChatBubble}>
+          <View style={[styles.cyanChatBubble, { backgroundColor: theme.primary }]}>
             <Text style={styles.cyanChatDots}>• • •</Text>
           </View>
         </View>
@@ -882,7 +882,7 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
                 key={i}
                 style={[
                   styles.otpDigitBox,
-                  isFocused && styles.otpDigitBoxFocused,
+                  isFocused && { borderColor: theme.primary, borderWidth: 2 },
                   errorMessage ? { borderColor: '#EF4444' } : null
                 ]}
               >
@@ -919,7 +919,7 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
           >
             <View style={{ alignItems: 'center', flex: 1 }}>
               <Text style={styles.fromZaloLabel}>Từ {otpChannel === 'ZALO' ? 'Zalo' : 'Tin nhắn'}</Text>
-              <Text style={styles.fromZaloCode}>{latestGeneratedOtp}</Text>
+              <Text style={[styles.fromZaloCode, { color: theme.primary }]}>{latestGeneratedOtp}</Text>
             </View>
             <View style={styles.autofillKeyRight}>
               <Ionicons name="key" size={18} color="#334155" />

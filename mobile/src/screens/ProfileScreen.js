@@ -12,7 +12,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { FONTS, THEME_PRESETS } from '../styles/theme';
 
-export default function ProfileScreen({ onOpenGreenRace, onLogout, theme = THEME_PRESETS.MINT }) {
+export default function ProfileScreen({ onOpenGreenRace, onLogout, onNavigateToTrips, theme = THEME_PRESETS.BE_SUA_CAFE }) {
   const [user] = useState({
     fullName: 'Minh Tài',
     phone: '+84386726647',
@@ -173,6 +173,31 @@ export default function ProfileScreen({ onOpenGreenRace, onLogout, theme = THEME
             </View>
           </TouchableOpacity>
         </View>
+
+        {/* Lịch Sử Chuyến Đi Banner */}
+        {onNavigateToTrips && (
+          <TouchableOpacity
+            style={[
+              styles.tripHistoryBanner,
+              { backgroundColor: theme.primarySoft, borderColor: theme.primaryBorder }
+            ]}
+            activeOpacity={0.88}
+            onPress={onNavigateToTrips}
+          >
+            <View style={[styles.tripBannerIcon, { backgroundColor: theme.primary }]}>
+              <Ionicons name="calendar" size={18} color="#FFFFFF" />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={[styles.tripBannerTitle, { color: theme.primaryDark || theme.primary }]}>
+                Lịch sử chuyến đi
+              </Text>
+              <Text style={styles.tripBannerSub}>
+                Xem chi tiết hành trình, hóa đơn điện tử & chứng nhận CO₂
+              </Text>
+            </View>
+            <Ionicons name="chevron-forward" size={18} color={theme.primary} />
+          </TouchableOpacity>
+        )}
 
         {/* ============================================================
             5. "TÁC VỤ" (2x2 GRID)
@@ -1013,5 +1038,32 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 15,
     fontWeight: '700'
+  },
+  tripHistoryBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 18,
+    padding: 14,
+    borderWidth: 1,
+    marginBottom: 18,
+    gap: 12
+  },
+  tripBannerIcon: {
+    width: 38,
+    height: 38,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  tripBannerTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 14,
+    fontWeight: '700'
+  },
+  tripBannerSub: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    color: '#6F767E',
+    marginTop: 2
   }
 });

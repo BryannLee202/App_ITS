@@ -22,10 +22,9 @@ import ProfileScreen from './src/screens/ProfileScreen';
 import OnboardingAuthFlow from './src/screens/OnboardingAuthFlow';
 
 const DOCK_TABS = [
-  { id: 'HOME', icon: 'search-outline', activeIcon: 'search', label: 'Khám phá' },
+  { id: 'HOME', icon: 'compass-outline', activeIcon: 'compass', label: 'Khám phá' },
   { id: 'MAP', icon: 'map-outline', activeIcon: 'map', label: 'Bản đồ' },
   { id: 'KEY', icon: 'key-outline', activeIcon: 'key', label: 'Khóa xe', isCenterKey: true },
-  { id: 'TRIPS', icon: 'calendar-outline', activeIcon: 'calendar', label: 'Chuyến đi' },
   { id: 'PROFILE', icon: 'person-outline', activeIcon: 'person', label: 'Tài khoản' }
 ];
 
@@ -81,7 +80,7 @@ export default function App() {
   const [isOnboarded, setIsOnboarded] = useState(false);
   const [onboardingAutoPlay, setOnboardingAutoPlay] = useState(true);
   const [activeTab, setActiveTab] = useState('HOME');
-  const [themeKey, setThemeKey] = useState('SAGE'); // 'SAGE' | 'TAUPE' | 'LILAC' | 'STEEL' | 'TERRACOTTA'
+  const [themeKey, setThemeKey] = useState('BE_SUA_CAFE');
   const [showRewardsModal, setShowRewardsModal] = useState(false);
   const [showGreenRaceModal, setShowGreenRaceModal] = useState(false);
   const [showGreenRaceTerms, setShowGreenRaceTerms] = useState(false);
@@ -150,7 +149,13 @@ export default function App() {
       case 'KEY':
         return <DigitalKeyScreen theme={theme} onNavigateHome={() => setActiveTab('HOME')} />;
       case 'TRIPS':
-        return <TripsHistoryScreen theme={theme} onNavigateToKey={() => setActiveTab('KEY')} />;
+        return (
+          <TripsHistoryScreen
+            theme={theme}
+            onNavigateToKey={() => setActiveTab('KEY')}
+            onNavigateBack={() => setActiveTab('PROFILE')}
+          />
+        );
       case 'PROFILE':
         return (
           <ProfileScreen
@@ -158,6 +163,7 @@ export default function App() {
             onOpenGreenRace={() => setShowGreenRaceModal(true)}
             onOpenRewards={() => setShowRewardsModal(true)}
             onNavigateToMap={() => setActiveTab('MAP')}
+            onNavigateToTrips={() => setActiveTab('TRIPS')}
             onLogout={() => {
               setOnboardingAutoPlay(false);
               setIsOnboarded(false);
@@ -278,66 +284,6 @@ export default function App() {
         ]}
       >
         <SafeAreaView style={styles.safeArea}>
-          {/* =========================================================================
-              INTERACTIVE PASTEL THEME PICKER TAB BAR (ALWAYS VISIBLE IN-APP)
-             ========================================================================= */}
-          <View style={styles.inAppPastelContainer}>
-            <View style={styles.inAppPastelHeader}>
-              <View style={styles.inAppPastelTitleWrap}>
-                <Ionicons name="color-palette" size={14} color={theme.primary} />
-                <Text style={styles.inAppPastelTitle}>MÀU PASTEL TRẢI NGHIỆM:</Text>
-              </View>
-              <View
-                style={[
-                  styles.inAppPastelActiveTag,
-                  { backgroundColor: theme.primarySoft, borderColor: theme.primaryBorder }
-                ]}
-              >
-                <Text style={[styles.inAppPastelActiveTagText, { color: theme.primary }]}>
-                  {theme.tag || theme.name}
-                </Text>
-              </View>
-            </View>
-
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.inAppPastelScroll}
-            >
-              {Object.values(THEME_PRESETS)
-                .filter((p) => p.id !== 'MINT')
-                .map((preset) => {
-                  const isSelected = theme.id === preset.id;
-                  return (
-                    <TouchableOpacity
-                      key={preset.id}
-                      activeOpacity={0.8}
-                      style={[
-                        styles.inAppPastelChip,
-                        isSelected && {
-                          backgroundColor: preset.primarySoft,
-                          borderColor: preset.primary
-                        }
-                      ]}
-                      onPress={() => setThemeKey(preset.id)}
-                    >
-                      <View style={[styles.inAppColorDot, { backgroundColor: preset.primary }]}>
-                        {isSelected && <Ionicons name="checkmark" size={9} color="#FFFFFF" />}
-                      </View>
-                      <Text
-                        style={[
-                          styles.inAppPastelChipText,
-                          isSelected && { color: preset.primary, fontWeight: '800' }
-                        ]}
-                      >
-                        {preset.name}
-                      </Text>
-                    </TouchableOpacity>
-                  );
-                })}
-            </ScrollView>
-          </View>
-
           <View style={styles.mainContentArea}>{renderContent()}</View>
 
           {/* =========================================================================

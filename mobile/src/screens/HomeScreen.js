@@ -25,36 +25,36 @@ const CATEGORIES = [
 const HERO_PROMOS = [
   {
     id: 'promo-1',
-    title: 'Thứ 4 Ngày Xanh: Giảm 50%',
-    subtitle: 'Mọi dòng xe máy điện & ô tô tự lái tiết kiệm nửa giá hôm nay',
-    tag: '⚡ SIÊU HỘI TUẦN',
-    voucherCode: 'XANH20',
-    btnText: 'Lưu mã ngay',
-    bgColor: '#00695C',
-    accentColor: '#80CBC4',
-    icon: 'leaf'
-  },
-  {
-    id: 'promo-2',
-    title: 'Gói Quà Bạn Mới 500.000đ',
-    subtitle: 'Tặng combo 5 voucher cho 5 chuyến đi xanh đầu tiên',
-    tag: '🎁 BẠN MỚI',
-    voucherCode: 'CHAOXANH',
-    btnText: 'Nhận 500K',
-    bgColor: '#0284C7',
-    accentColor: '#BAE6FD',
-    icon: 'gift'
-  },
-  {
-    id: 'promo-3',
     title: 'Đồng Hành Sinh Viên UTH',
     subtitle: 'Trợ giá 50.000đ khi xuất phát từ các trạm ĐH GTVT TP.HCM',
     tag: '🎓 CHUYÊN ĐỀ UTH',
     voucherCode: 'UTH50K',
     btnText: 'Nhận trợ giá',
-    bgColor: '#C2410C',
-    accentColor: '#FFEDD5',
+    bgColor: '#6F4E37',     // Nâu Cà Phê Warm Coffee
+    accentColor: '#F6EFE9', // Be Sữa Foam
     icon: 'school'
+  },
+  {
+    id: 'promo-2',
+    title: 'Thứ 4 Ngày Xanh: Giảm 50%',
+    subtitle: 'Mọi dòng xe máy điện & ô tô tự lái tiết kiệm nửa giá hôm nay',
+    tag: '⚡ HÀNH TRÌNH XANH',
+    voucherCode: 'XANH20',
+    btnText: 'Lưu mã ngay',
+    bgColor: '#4E3322',     // Deep Roasted Espresso
+    accentColor: '#FAF7F2', // Warm Vanilla Milk
+    icon: 'leaf'
+  },
+  {
+    id: 'promo-3',
+    title: 'Gói Quà Bạn Mới 500.000đ',
+    subtitle: 'Tặng combo 5 voucher cho các chuyến đi xanh đầu tiên',
+    tag: '🎁 BẠN MỚI',
+    voucherCode: 'CHAOXANH',
+    btnText: 'Nhận 500K',
+    bgColor: '#52735E',     // Organic Muted Matcha
+    accentColor: '#EEF5F0', // Matcha Milk Cream
+    icon: 'gift'
   },
   {
     id: 'promo-4',
@@ -63,8 +63,8 @@ const HERO_PROMOS = [
     tag: '🏖️ CUỐI TUẦN',
     voucherCode: 'THUENGAY200',
     btnText: 'Đặt xe ngay',
-    bgColor: '#6D28D9',
-    accentColor: '#DDD6FE',
+    bgColor: '#5D4037',     // Roasted Mocha
+    accentColor: '#F6EFE9', // Be Sữa
     icon: 'compass'
   }
 ];

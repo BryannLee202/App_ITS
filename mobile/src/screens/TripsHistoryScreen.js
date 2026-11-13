@@ -14,8 +14,9 @@ import { FONTS, THEME_PRESETS } from '../styles/theme';
 import ApiService from '../services/api';
 
 export default function TripsHistoryScreen({
-  theme = THEME_PRESETS.MINT,
-  onNavigateToKey
+  theme = THEME_PRESETS.BE_SUA_CAFE,
+  onNavigateToKey,
+  onNavigateBack
 }) {
   const [trips, setTrips] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -41,6 +42,16 @@ export default function TripsHistoryScreen({
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View style={styles.headerSection}>
+          {onNavigateBack && (
+            <TouchableOpacity
+              style={styles.backBtnPill}
+              activeOpacity={0.7}
+              onPress={onNavigateBack}
+            >
+              <Ionicons name="arrow-back" size={16} color={theme.primary} />
+              <Text style={[styles.backBtnPillText, { color: theme.primary }]}>Quay lại</Text>
+            </TouchableOpacity>
+          )}
           <Text style={styles.title}>Chuyến đi & Hợp đồng</Text>
           <Text style={styles.subtitle}>
             Lịch sử thuê xe, hóa đơn điện tử và thống kê di chuyển xanh
@@ -278,6 +289,24 @@ const styles = StyleSheet.create({
   },
   headerSection: {
     marginBottom: 14
+  },
+  backBtnPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 99,
+    backgroundColor: '#FAF7F2',
+    borderWidth: 1,
+    borderColor: '#EAE2D5',
+    alignSelf: 'flex-start',
+    marginBottom: 10
+  },
+  backBtnPillText: {
+    fontFamily: FONTS.family,
+    fontSize: 12,
+    fontWeight: '700'
   },
   title: {
     fontFamily: FONTS.family,
