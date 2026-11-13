@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import {
   View,
   Text,
@@ -8,7 +8,8 @@ import {
   ActivityIndicator,
   RefreshControl,
   TextInput,
-  Modal
+  Modal,
+  Image
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { FONTS, THEME_PRESETS } from '../styles/theme';
@@ -332,6 +333,12 @@ export default function HomeScreen({
   const [showBookingModal, setShowBookingModal] = useState(false);
   const [bookingToast, setBookingToast] = useState(null);
 
+  // Dedicated Fleet Catalog View State ('CAR' | 'MOTORBIKE' | null)
+  const [catalogMode, setCatalogMode] = useState(null);
+  const [catalogBrand, setCatalogBrand] = useState('ALL');
+  const [catalogSortBy, setCatalogSortBy] = useState('PRICE_ASC'); // 'PRICE_ASC' | 'PRICE_DESC' | 'RANGE_DESC' | 'RATING_DESC'
+  const [catalogSearch, setCatalogSearch] = useState('');
+
   // Handle external voucher application from Wallet Modal
   useEffect(() => {
     if (appliedVoucherCode) {
@@ -546,23 +553,404 @@ export default function HomeScreen({
     );
   });
 
+  // Dedicated Fleet Catalog dynamic brands & filtered/sorted vehicle list
+  const availableBrands = useMemo(() => {
+    if (!catalogMode) return ['ALL'];
+    const brands = Array.from(
+      new Set(
+        vehicles
+          .filter((v) => v.category === catalogMode && v.brand)
+          .map((v) => v.brand)
+      )
+    );
+    return ['ALL', ...brands];
+  }, [vehicles, catalogMode]);
+
+  const catalogVehicles = useMemo(() => {
+    if (!catalogMode) return [];
+    let list = vehicles.filter((v) => v.category === catalogMode);
+
+    if (catalogBrand !== 'ALL') {
+      list = list.filter((v) => v.brand?.toLowerCase() === catalogBrand.toLowerCase());
+    }
+
+    if (catalogSearch.trim()) {
+      const q = catalogSearch.toLowerCase().trim();
+      list = list.filter(
+        (v) =>
+          (v.name && v.name.toLowerCase().includes(q)) ||
+          (v.brand && v.brand.toLowerCase().includes(q)) ||
+          (v.model && v.model.toLowerCase().includes(q)) ||
+          (v.plateNumber && v.plateNumber.toLowerCase().includes(q))
+      );
+    }
+
+    list = [...list].sort((a, b) => {
+      if (catalogSortBy === 'PRICE_ASC') {
+        return (a.hourlyPrice || 0) - (b.hourlyPrice || 0);
+      }
+      if (catalogSortBy === 'PRICE_DESC') {
+        return (b.hourlyPrice || 0) - (a.hourlyPrice || 0);
+      }
+      if (catalogSortBy === 'RANGE_DESC') {
+        return (b.rangeKm || 0) - (a.rangeKm || 0);
+      }
+      if (catalogSortBy === 'RATING_DESC') {
+        return (b.rating || 0) - (a.rating || 0);
+      }
+      return 0;
+    });
+
+    return list;
+  }, [vehicles, catalogMode, catalogBrand, catalogSearch, catalogSortBy]);
+
   return (
     <View style={styles.container}>
-      <ScrollView
-        ref={mainScrollRef}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={() => {
-              setRefreshing(true);
-              loadInitialData();
-            }}
-            tintColor={theme.primary}
-          />
-        }
-      >
+      {catalogMode ? (
+        <ScrollView
+          style={styles.catalogScreenContainer}
+          contentContainerStyle={styles.catalogScreenScroll}
+          showsVerticalScrollIndicator={false}
+        >
+          {/* 1. Header Bar with Back Button & Switcher */}
+          <View style={styles.catScreenHeader}>
+            <TouchableOpacity
+              style={styles.catBackBtn}
+              activeOpacity={0.8}
+              onPress={() => setCatalogMode(null)}
+            >
+              <Ionicons name="arrow-back" size={18} color="#2B180D" />
+              <Text style={styles.catBackBtnText}>Trang chủ</Text>
+            </TouchableOpacity>
+
+            <View style={styles.catTitleWrap}>
+              <View style={styles.catTitleBadgeRow}>
+                <View style={[styles.catBadgeCircle, { backgroundColor: '#F5EFEB' }]}>
+                  <Ionicons
+                    name={catalogMode === 'CAR' ? 'car-sport' : 'bicycle'}
+                    size={18}
+                    color="#6F4E37"
+                  />
+                </View>
+                <Text style={styles.catScreenMainTitle}>
+                  {catalogMode === 'CAR' ? 'Dàn Ô Tô Tự Lái' : 'Dàn Xe Máy Điện'}
+                </Text>
+              </View>
+              <Text style={styles.catScreenSubtitle}>
+                TP.HCM · Mở khóa Digital Key 24/7 · 0đ thế chấp · ITS GLOSA
+              </Text>
+            </View>
+
+            {/* Quick Category Switcher Tabs */}
+            <View style={styles.catModeToggleRow}>
+              <TouchableOpacity
+                style={[
+                  styles.catModeToggleBtn,
+                  catalogMode === 'CAR' && styles.catModeToggleBtnActive
+                ]}
+                activeOpacity={0.8}
+                onPress={() => {
+                  setCatalogMode('CAR');
+                  setCatalogBrand('ALL');
+                }}
+              >
+                <Ionicons
+                  name="car-sport"
+                  size={14}
+                  color={catalogMode === 'CAR' ? '#FFFFFF' : '#6F4E37'}
+                />
+                <Text
+                  style={[
+                    styles.catModeToggleText,
+                    catalogMode === 'CAR' && styles.catModeToggleTextActive
+                  ]}
+                >
+                  Ô tô tự lái ({vehicles.filter((v) => v.category === 'CAR').length})
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[
+                  styles.catModeToggleBtn,
+                  catalogMode === 'MOTORBIKE' && styles.catModeToggleBtnActive
+                ]}
+                activeOpacity={0.8}
+                onPress={() => {
+                  setCatalogMode('MOTORBIKE');
+                  setCatalogBrand('ALL');
+                }}
+              >
+                <Ionicons
+                  name="bicycle"
+                  size={14}
+                  color={catalogMode === 'MOTORBIKE' ? '#FFFFFF' : '#6F4E37'}
+                />
+                <Text
+                  style={[
+                    styles.catModeToggleText,
+                    catalogMode === 'MOTORBIKE' && styles.catModeToggleTextActive
+                  ]}
+                >
+                  Xe máy điện ({vehicles.filter((v) => v.category === 'MOTORBIKE').length})
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* 2. Search Bar */}
+          <View style={styles.catSearchContainer}>
+            <View style={styles.catSearchBox}>
+              <Ionicons name="search-outline" size={18} color="#8C6239" />
+              <TextInput
+                style={styles.catSearchInput}
+                placeholder={
+                  catalogMode === 'CAR'
+                    ? 'Tìm xe ô tô (VF 8, Ioniq 5, VF 6, Mazda CX-5...)'
+                    : 'Tìm xe máy điện (Feliz S, Klara S, NEO\'s...)'
+                }
+                placeholderTextColor="#A89F91"
+                value={catalogSearch}
+                onChangeText={setCatalogSearch}
+              />
+              {catalogSearch.length > 0 && (
+                <TouchableOpacity onPress={() => setCatalogSearch('')}>
+                  <Ionicons name="close-circle" size={18} color="#8C6239" />
+                </TouchableOpacity>
+              )}
+            </View>
+          </View>
+
+          {/* 3. Brand Filter Scroll */}
+          <View style={styles.catFilterGroup}>
+            <View style={styles.catFilterHeader}>
+              <Ionicons name="filter-outline" size={14} color="#6F4E37" />
+              <Text style={styles.catFilterGroupTitle}>Hãng sản xuất:</Text>
+            </View>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.catBrandScroll}
+            >
+              {availableBrands.map((brand) => {
+                const active = catalogBrand === brand;
+                const count =
+                  brand === 'ALL'
+                    ? vehicles.filter((v) => v.category === catalogMode).length
+                    : vehicles.filter((v) => v.category === catalogMode && v.brand === brand).length;
+                return (
+                  <TouchableOpacity
+                    key={brand}
+                    style={[
+                      styles.catBrandChip,
+                      active && styles.catBrandChipActive
+                    ]}
+                    activeOpacity={0.8}
+                    onPress={() => setCatalogBrand(brand)}
+                  >
+                    <Text style={[styles.catBrandText, active && styles.catBrandTextActive]}>
+                      {brand === 'ALL' ? 'Tất cả' : brand} ({count})
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </ScrollView>
+          </View>
+
+          {/* 4. Sort By Pills */}
+          <View style={styles.catFilterGroup}>
+            <View style={styles.catFilterHeader}>
+              <Ionicons name="swap-vertical-outline" size={14} color="#6F4E37" />
+              <Text style={styles.catFilterGroupTitle}>Sắp xếp theo:</Text>
+            </View>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.catSortScroll}
+            >
+              {[
+                { id: 'PRICE_ASC', label: 'Giá thấp → cao', icon: 'trending-up-outline' },
+                { id: 'PRICE_DESC', label: 'Giá cao → thấp', icon: 'trending-down-outline' },
+                { id: 'RANGE_DESC', label: 'Pin / Tầm xa nhất', icon: 'battery-charging-outline' },
+                { id: 'RATING_DESC', label: 'Đánh giá cao nhất', icon: 'star-outline' }
+              ].map((sortItem) => {
+                const active = catalogSortBy === sortItem.id;
+                return (
+                  <TouchableOpacity
+                    key={sortItem.id}
+                    style={[
+                      styles.catSortChip,
+                      active && styles.catSortChipActive
+                    ]}
+                    activeOpacity={0.8}
+                    onPress={() => setCatalogSortBy(sortItem.id)}
+                  >
+                    <Ionicons
+                      name={sortItem.icon}
+                      size={14}
+                      color={active ? '#FFFFFF' : '#6F4E37'}
+                    />
+                    <Text style={[styles.catSortText, active && styles.catSortTextActive]}>
+                      {sortItem.label}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </ScrollView>
+          </View>
+
+          {/* 5. Result Count & Reset Action */}
+          <View style={styles.catResultMetaRow}>
+            <Text style={styles.catResultMetaText}>
+              Tìm thấy <Text style={{ fontWeight: '800', color: '#2B180D' }}>{catalogVehicles.length}</Text> xe sẵn sàng phục vụ
+            </Text>
+            {(catalogBrand !== 'ALL' || catalogSearch.trim().length > 0 || catalogSortBy !== 'PRICE_ASC') && (
+              <TouchableOpacity
+                style={styles.catResetBtn}
+                activeOpacity={0.7}
+                onPress={() => {
+                  setCatalogBrand('ALL');
+                  setCatalogSearch('');
+                  setCatalogSortBy('PRICE_ASC');
+                }}
+              >
+                <Ionicons name="refresh" size={12} color="#8C6239" />
+                <Text style={styles.catResetBtnText}>Đặt lại bộ lọc</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+
+          {/* 6. Vehicle Cards List */}
+          {catalogVehicles.length === 0 ? (
+            <View style={styles.catEmptyBox}>
+              <View style={styles.catEmptyIconWrap}>
+                <Ionicons name="search" size={32} color="#6F4E37" />
+              </View>
+              <Text style={styles.catEmptyTitle}>Không tìm thấy xe phù hợp</Text>
+              <Text style={styles.catEmptySub}>
+                Không có xe nào khớp với tiêu chí tìm kiếm hoặc hãng xe bạn đã chọn.
+              </Text>
+              <TouchableOpacity
+                style={styles.catEmptyActionBtn}
+                onPress={() => {
+                  setCatalogBrand('ALL');
+                  setCatalogSearch('');
+                  setCatalogSortBy('PRICE_ASC');
+                }}
+              >
+                <Text style={styles.catEmptyActionText}>Xem tất cả xe</Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            catalogVehicles.map((veh) => {
+              const station = SAVED_PLACES.find((s) => s.id === veh.stationId);
+              return (
+                <View key={veh.id} style={styles.catVehicleCard}>
+                  {/* Photo Container */}
+                  <View style={styles.catPhotoBox}>
+                    <Image
+                      source={{ uri: veh.thumbnail || veh.images?.[0] }}
+                      style={styles.catPhotoImage}
+                      resizeMode="cover"
+                    />
+                    <View style={styles.catCardBadgeTopLeft}>
+                      <Text style={styles.catCardBadgeText}>🛡️ 0đ Thế chấp</Text>
+                    </View>
+                    <View style={styles.catCardBadgeTopRight}>
+                      <Text style={styles.catCardBadgeStatus}>🟢 Sẵn sàng nhận</Text>
+                    </View>
+                  </View>
+
+                  {/* Body Info */}
+                  <View style={styles.catCardBody}>
+                    <View style={styles.catCardHeaderRow}>
+                      <View style={{ flex: 1, paddingRight: 8 }}>
+                        <Text style={styles.catCardBrandName}>
+                          {veh.brand} · {veh.year || 2024} · {veh.plateNumber}
+                        </Text>
+                        <Text style={styles.catCardTitle} numberOfLines={1}>
+                          {veh.name}
+                        </Text>
+                      </View>
+                      <View style={styles.catCardRatingBox}>
+                        <Ionicons name="star" size={13} color="#D4AF37" />
+                        <Text style={styles.catCardRatingText}>{veh.rating || 4.95}</Text>
+                        <Text style={styles.catCardTripsText}>({veh.totalTrips || 120})</Text>
+                      </View>
+                    </View>
+
+                    {/* Quick Specs Pill Row */}
+                    <View style={styles.catSpecsRow}>
+                      <View style={styles.catSpecPill}>
+                        <Ionicons name="flash" size={12} color="#15803D" />
+                        <Text style={styles.catSpecPillText}>
+                          {veh.telematics?.batteryLevelPct || 94}% Pin ({veh.rangeKm}km)
+                        </Text>
+                      </View>
+                      <View style={styles.catSpecPill}>
+                        <Ionicons name="people-outline" size={12} color="#6F4E37" />
+                        <Text style={styles.catSpecPillText}>{veh.seats || 5} chỗ</Text>
+                      </View>
+                      <View style={styles.catSpecPill}>
+                        <Ionicons name="speedometer-outline" size={12} color="#6F4E37" />
+                        <Text style={styles.catSpecPillText}>Làn sóng xanh</Text>
+                      </View>
+                    </View>
+
+                    {/* Location Tag */}
+                    <View style={styles.catLocationRow}>
+                      <Ionicons name="location-outline" size={13} color="#8C6239" />
+                      <Text style={styles.catLocationText} numberOfLines={1}>
+                        Trạm: {station?.name || 'UTH Cơ sở 1 Bình Thạnh'}
+                      </Text>
+                    </View>
+
+                    {/* Price and Action Row */}
+                    <View style={styles.catFooterRow}>
+                      <View>
+                        <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
+                          <Text style={styles.catPriceHourly}>
+                            {(veh.hourlyPrice || 100000).toLocaleString('vi-VN')}đ
+                          </Text>
+                          <Text style={styles.catPriceUnit}>/giờ</Text>
+                        </View>
+                        <Text style={styles.catPriceDaily}>
+                          {(veh.dailyPrice || 900000).toLocaleString('vi-VN')}đ/ngày (24h)
+                        </Text>
+                      </View>
+
+                      <TouchableOpacity
+                        style={styles.catBookNowBtn}
+                        activeOpacity={0.85}
+                        onPress={() => handleOpenBooking(veh)}
+                      >
+                        <Ionicons name="key" size={14} color="#D4AF37" />
+                        <Text style={styles.catBookNowText}>Đặt Thuê Ngay →</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </View>
+              );
+            })
+          )}
+
+          <View style={{ height: 110 }} />
+        </ScrollView>
+      ) : (
+        <ScrollView
+          ref={mainScrollRef}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={() => {
+                setRefreshing(true);
+                loadInitialData();
+              }}
+              tintColor={theme.primary}
+            />
+          }
+        >
         {/* ============================================================
             1. COMPACT APPLE WHITE HEADER & QUICK BOOKING BOX
            ============================================================ */}
@@ -722,32 +1110,28 @@ export default function HomeScreen({
             <TouchableOpacity
               style={[
                 styles.featureTile,
-                selectedCategory === 'CAR'
-                  ? styles.featureTileActive
-                  : { backgroundColor: theme.primarySoft, borderColor: theme.primaryBorder }
+                { backgroundColor: theme.primarySoft, borderColor: theme.primaryBorder }
               ]}
               activeOpacity={0.85}
               onPress={() => {
-                setSelectedCategory('CAR');
-                setBookingToast({
-                  title: '🚗 Dàn Ô Tô Tự Lái Sẵn Sàng',
-                  message: 'Đang hiển thị xe ô tô tự lái (Ioniq 5, VF 8, VF 6, CX-5...)'
-                });
-                setTimeout(() => {
-                  mainScrollRef.current?.scrollTo({ y: 350, animated: true });
-                }, 200);
-                setTimeout(() => setBookingToast(null), 3000);
+                setCatalogMode('CAR');
+                setCatalogBrand('ALL');
+                setCatalogSortBy('PRICE_ASC');
+                setCatalogSearch('');
               }}
             >
               <View style={[styles.featureIconBox, { backgroundColor: '#FFFFFF' }]}>
                 <Ionicons name="car-sport-outline" size={20} color={theme.primary} />
               </View>
               <View style={styles.featureTextCol}>
-                <Text style={styles.featureTitle} numberOfLines={1}>
-                  Ô tô tự lái
-                </Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <Text style={styles.featureTitle} numberOfLines={1}>
+                    Ô tô tự lái
+                  </Text>
+                  <Ionicons name="chevron-forward" size={13} color="#8C6239" />
+                </View>
                 <Text style={[styles.featureSub, { color: theme.primary }]} numberOfLines={1}>
-                  Từ 85.000đ/giờ
+                  Từ 85k/h · {vehicles.filter((v) => v.category === 'CAR').length} xe →
                 </Text>
               </View>
             </TouchableOpacity>
@@ -756,32 +1140,28 @@ export default function HomeScreen({
             <TouchableOpacity
               style={[
                 styles.featureTile,
-                selectedCategory === 'MOTORBIKE'
-                  ? styles.featureTileActive
-                  : { backgroundColor: theme.beigeSoft, borderColor: theme.beigeBorder }
+                { backgroundColor: theme.beigeSoft, borderColor: theme.beigeBorder }
               ]}
               activeOpacity={0.85}
               onPress={() => {
-                setSelectedCategory('MOTORBIKE');
-                setBookingToast({
-                  title: '🛵 Dàn Xe Máy Điện Thông Minh',
-                  message: 'Đang hiển thị xe máy điện đổi pin 24/7 (Feliz S, Klara S, NEO\'s...)'
-                });
-                setTimeout(() => {
-                  mainScrollRef.current?.scrollTo({ y: 350, animated: true });
-                }, 200);
-                setTimeout(() => setBookingToast(null), 3000);
+                setCatalogMode('MOTORBIKE');
+                setCatalogBrand('ALL');
+                setCatalogSortBy('PRICE_ASC');
+                setCatalogSearch('');
               }}
             >
               <View style={[styles.featureIconBox, { backgroundColor: '#FFFFFF' }]}>
                 <Ionicons name="bicycle-outline" size={20} color="#8C6239" />
               </View>
               <View style={styles.featureTextCol}>
-                <Text style={styles.featureTitle} numberOfLines={1}>
-                  Xe máy điện
-                </Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <Text style={styles.featureTitle} numberOfLines={1}>
+                    Xe máy điện
+                  </Text>
+                  <Ionicons name="chevron-forward" size={13} color="#8C6239" />
+                </View>
                 <Text style={[styles.featureSub, { color: '#8C6239' }]} numberOfLines={1}>
-                  Từ 22.000đ/giờ
+                  Từ 22k/h · {vehicles.filter((v) => v.category === 'MOTORBIKE').length} xe →
                 </Text>
               </View>
             </TouchableOpacity>
@@ -1044,6 +1424,26 @@ export default function HomeScreen({
             })}
           </View>
 
+          {/* Quick Dedicated Catalog Launcher Banner */}
+          <TouchableOpacity
+            style={styles.catOpenDedicatedBtn}
+            activeOpacity={0.85}
+            onPress={() => {
+              setCatalogMode(selectedCategory === 'MOTORBIKE' ? 'MOTORBIKE' : 'CAR');
+              setCatalogBrand('ALL');
+              setCatalogSortBy('PRICE_ASC');
+              setCatalogSearch('');
+            }}
+          >
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+              <Ionicons name="options" size={15} color="#6F4E37" />
+              <Text style={styles.catOpenDedicatedText}>
+                Mở chuyên trang & Bộ lọc chi tiết ({selectedCategory === 'MOTORBIKE' ? 'Xe máy điện' : 'Ô tô tự lái'})
+              </Text>
+            </View>
+            <Ionicons name="arrow-forward" size={14} color="#6F4E37" />
+          </TouchableOpacity>
+
           {loading ? (
             <ActivityIndicator size="large" color={theme.primary} style={{ marginVertical: 28 }} />
           ) : (
@@ -1061,6 +1461,7 @@ export default function HomeScreen({
 
         <View style={{ height: 96 }} />
       </ScrollView>
+      )}
 
       {/* ============================================================
           MODAL 1: STATION & DESTINATION SELECTOR
@@ -2990,5 +3391,476 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: '#6F4E37',
     lineHeight: 15
+  },
+
+  /* ============================================================
+     DEDICATED FLEET CATALOG SCREEN (QUIET LUXURY STYLING)
+     ============================================================ */
+  catalogScreenContainer: {
+    flex: 1,
+    backgroundColor: '#FAF7F2'
+  },
+  catalogScreenScroll: {
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 32
+  },
+  catScreenHeader: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#EFE8DE',
+    marginBottom: 14,
+    shadowColor: '#2B180D',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 6,
+    elevation: 2
+  },
+  catBackBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    alignSelf: 'flex-start',
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 12,
+    backgroundColor: '#FAF7F2',
+    borderWidth: 1,
+    borderColor: '#EFE8DE',
+    marginBottom: 12
+  },
+  catBackBtnText: {
+    fontFamily: FONTS.family,
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#2B180D'
+  },
+  catTitleWrap: {
+    marginBottom: 14
+  },
+  catTitleBadgeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8
+  },
+  catBadgeCircle: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#EFE8DE'
+  },
+  catScreenMainTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 18,
+    fontWeight: '800',
+    color: '#2B180D'
+  },
+  catScreenSubtitle: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    color: '#8C6239',
+    marginTop: 4
+  },
+  catModeToggleRow: {
+    flexDirection: 'row',
+    gap: 8,
+    backgroundColor: '#FAF7F2',
+    padding: 4,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#EFE8DE'
+  },
+  catModeToggleBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    paddingVertical: 8,
+    borderRadius: 10
+  },
+  catModeToggleBtnActive: {
+    backgroundColor: '#4E3322'
+  },
+  catModeToggleText: {
+    fontFamily: FONTS.family,
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#6F4E37'
+  },
+  catModeToggleTextActive: {
+    color: '#FFFFFF'
+  },
+  catSearchContainer: {
+    marginBottom: 12
+  },
+  catSearchBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 14,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderWidth: 1,
+    borderColor: '#EFE8DE',
+    gap: 8
+  },
+  catSearchInput: {
+    flex: 1,
+    fontFamily: FONTS.family,
+    fontSize: 13,
+    color: '#2B180D',
+    padding: 0
+  },
+  catFilterGroup: {
+    marginBottom: 12
+  },
+  catFilterHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    marginBottom: 8
+  },
+  catFilterGroupTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#4E3322'
+  },
+  catBrandScroll: {
+    gap: 8,
+    paddingRight: 10
+  },
+  catBrandChip: {
+    paddingVertical: 7,
+    paddingHorizontal: 14,
+    borderRadius: 16,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#EFE8DE'
+  },
+  catBrandChipActive: {
+    backgroundColor: '#4E3322',
+    borderColor: '#4E3322'
+  },
+  catBrandText: {
+    fontFamily: FONTS.family,
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#6F4E37'
+  },
+  catBrandTextActive: {
+    color: '#FFFFFF',
+    fontWeight: '700'
+  },
+  catSortScroll: {
+    gap: 8,
+    paddingRight: 10
+  },
+  catSortChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    paddingVertical: 7,
+    paddingHorizontal: 12,
+    borderRadius: 16,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#EFE8DE'
+  },
+  catSortChipActive: {
+    backgroundColor: '#F5EFEB',
+    borderColor: '#6F4E37'
+  },
+  catSortText: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#6F4E37'
+  },
+  catSortTextActive: {
+    color: '#4E3322',
+    fontWeight: '800'
+  },
+  catResultMetaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginVertical: 10,
+    paddingHorizontal: 2
+  },
+  catResultMetaText: {
+    fontFamily: FONTS.family,
+    fontSize: 12,
+    color: '#6F4E37'
+  },
+  catResetBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    borderRadius: 8,
+    backgroundColor: '#F5EFEB',
+    borderWidth: 1,
+    borderColor: '#E8DFD8'
+  },
+  catResetBtnText: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#8C6239'
+  },
+  catVehicleCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#EFE8DE',
+    marginBottom: 16,
+    shadowColor: '#2B180D',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
+    elevation: 4
+  },
+  catPhotoBox: {
+    width: '100%',
+    height: 180,
+    backgroundColor: '#F5EFEB',
+    position: 'relative'
+  },
+  catPhotoImage: {
+    width: '100%',
+    height: '100%'
+  },
+  catCardBadgeTopLeft: {
+    position: 'absolute',
+    top: 10,
+    left: 10,
+    backgroundColor: 'rgba(255,255,255,0.92)',
+    paddingVertical: 4,
+    paddingHorizontal: 9,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#EFE8DE'
+  },
+  catCardBadgeText: {
+    fontFamily: FONTS.family,
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#2B180D'
+  },
+  catCardBadgeTopRight: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    backgroundColor: 'rgba(255,255,255,0.92)',
+    paddingVertical: 4,
+    paddingHorizontal: 9,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#EFE8DE'
+  },
+  catCardBadgeStatus: {
+    fontFamily: FONTS.family,
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#15803D'
+  },
+  catCardBody: {
+    padding: 14
+  },
+  catCardHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    marginBottom: 10
+  },
+  catCardBrandName: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#8C6239',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5
+  },
+  catCardTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 16,
+    fontWeight: '800',
+    color: '#2B180D',
+    marginTop: 2
+  },
+  catCardRatingBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+    backgroundColor: '#FAF7F2',
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#EFE8DE'
+  },
+  catCardRatingText: {
+    fontFamily: FONTS.family,
+    fontSize: 12,
+    fontWeight: '800',
+    color: '#2B180D'
+  },
+  catCardTripsText: {
+    fontFamily: FONTS.family,
+    fontSize: 10,
+    color: '#8C6239'
+  },
+  catSpecsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    flexWrap: 'wrap',
+    marginBottom: 10
+  },
+  catSpecPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: '#FAF7F2',
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#EFE8DE'
+  },
+  catSpecPillText: {
+    fontFamily: FONTS.family,
+    fontSize: 10,
+    fontWeight: '600',
+    color: '#4E3322'
+  },
+  catLocationRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    marginBottom: 12
+  },
+  catLocationText: {
+    flex: 1,
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    color: '#6F4E37'
+  },
+  catFooterRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingTop: 10,
+    borderTopWidth: 1,
+    borderTopColor: '#EFE8DE'
+  },
+  catPriceHourly: {
+    fontFamily: FONTS.family,
+    fontSize: 17,
+    fontWeight: '800',
+    color: '#2B180D'
+  },
+  catPriceUnit: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#8C6239'
+  },
+  catPriceDaily: {
+    fontFamily: FONTS.family,
+    fontSize: 10,
+    color: '#8C6239',
+    marginTop: 2
+  },
+  catBookNowBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: '#4E3322',
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 12
+  },
+  catBookNowText: {
+    fontFamily: FONTS.family,
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#FFFFFF'
+  },
+  catEmptyBox: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 40,
+    paddingHorizontal: 20,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#EFE8DE',
+    marginTop: 10
+  },
+  catEmptyIconWrap: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: '#FAF7F2',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#EFE8DE'
+  },
+  catEmptyTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 16,
+    fontWeight: '800',
+    color: '#2B180D',
+    marginBottom: 6
+  },
+  catEmptySub: {
+    fontFamily: FONTS.family,
+    fontSize: 12,
+    color: '#8C6239',
+    textAlign: 'center',
+    lineHeight: 18,
+    marginBottom: 16
+  },
+  catEmptyActionBtn: {
+    backgroundColor: '#4E3322',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 12
+  },
+  catEmptyActionText: {
+    fontFamily: FONTS.family,
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#FFFFFF'
+  },
+  catOpenDedicatedBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#F5EFEB',
+    borderWidth: 1,
+    borderColor: '#E8DFD8',
+    borderRadius: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    marginVertical: 10
+  },
+  catOpenDedicatedText: {
+    fontFamily: FONTS.family,
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#6F4E37'
   }
 });
