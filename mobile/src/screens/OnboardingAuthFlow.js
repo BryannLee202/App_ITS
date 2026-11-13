@@ -284,8 +284,8 @@ export default function OnboardingAuthFlow({ onComplete }) {
                 <View style={styles.splashInnerShield}>
                   <Ionicons
                     name="navigate"
-                    size={46}
-                    color="#00F5D4"
+                    size={44}
+                    color="#FFFFFF"
                     style={{ transform: [{ rotate: '15deg' }] }}
                   />
                 </View>
@@ -296,13 +296,13 @@ export default function OnboardingAuthFlow({ onComplete }) {
             </View>
 
             {/* Brand Typography */}
-            <Text style={styles.splashBrandTitle}>Green SM</Text>
+            <Text style={styles.splashBrandTitle}>EcoGo Smart</Text>
             <View style={styles.splashBadgePill}>
-              <Text style={styles.splashBadgePillText}>ECOGO SMART MOBILITY</Text>
+              <Text style={styles.splashBadgePillText}>DI CHUYỂN XANH THÔNG MINH 24/7</Text>
             </View>
 
             <Text style={styles.splashSloganText}>
-              Mọi thứ trong tầm tay{'\n'}Hành trình xanh thông minh
+              Thuê xe tự động không chạm · Đổi pin 0đ{'\n'}Hành trình xanh bảo vệ môi trường
             </Text>
 
             {/* Animated Vector Drawing Path Line */}
@@ -356,13 +356,13 @@ export default function OnboardingAuthFlow({ onComplete }) {
             </View>
 
             <Text style={styles.locTitle}>
-              Cho phép “Green SM” sử dụng{'\n'}vị trí của bạn?
+              Cho phép “EcoGo Smart” sử dụng{'\n'}vị trí của bạn?
             </Text>
             <Text style={styles.locSubtitle}>
-              It'll help us ensure your ride safety{'\n'}and drivers can find you faster
+              Giúp bạn tìm trạm xe & trụ sạc gần nhất,{'\n'}và mở khóa xe nhanh chóng qua Bluetooth
             </Text>
 
-            {/* Dark Map Vector Preview */}
+            {/* Clean Light Map Vector Preview */}
             <View style={styles.locMapPreview}>
               <View style={[styles.roadLineH, { top: 28, transform: [{ rotate: '6deg' }] }]} />
               <View style={[styles.roadLineH, { top: 68, transform: [{ rotate: '-4deg' }] }]} />
@@ -372,34 +372,44 @@ export default function OnboardingAuthFlow({ onComplete }) {
               <View style={[styles.roadLineV, { left: 225, transform: [{ rotate: '18deg' }] }]} />
 
               <View style={styles.precisePill}>
-                <Ionicons name="navigate" size={11} color="#38BDF8" />
+                <Ionicons name="navigate" size={11} color="#0CA678" />
                 <Text style={styles.precisePillText}>Chính xác: Bật</Text>
               </View>
 
-              <Text style={[styles.streetLabel, { top: 32, left: 18 }]}>NGUYỄN DUY TRINH</Text>
-              <Text style={[styles.streetLabel, { top: 22, left: 82, fontSize: 7 }]}>ĐƯỜNG SỐ 46</Text>
+              <Text style={[styles.streetLabel, { top: 32, left: 18 }]}>CHU VĂN AN</Text>
+              <Text style={[styles.streetLabel, { top: 22, left: 82, fontSize: 7 }]}>ĐINH BỘ LĨNH</Text>
               <Text style={[styles.streetLabel, { top: 14, right: 32, transform: [{ rotate: '-24deg' }] }]}>
-                NGUYỄN DUY TRINH
+                ĐIỆN BIÊN PHỦ
               </Text>
               <Text style={[styles.streetLabel, { bottom: 26, left: 22, transform: [{ rotate: '-32deg' }] }]}>
-                ĐƯỜNG SỐ 42
+                BẠCH ĐẰNG
               </Text>
 
               <View style={styles.mapCenterTarget}>
-                <Text style={styles.paradiseLabel}>PARADISE{'\n'}LUXURY</Text>
+                <Text style={styles.paradiseLabel}>TRẠM ECOGO{'\n'}UTH</Text>
                 <View style={styles.blueLocationDot} />
               </View>
 
               <View style={styles.landmarkBottomRow}>
                 <View style={styles.landmarkIconCircle}>
-                  <Ionicons name="business" size={8} color="#1E293B" />
+                  <Ionicons name="flash" size={8} color="#0CA678" />
                 </View>
-                <Text style={styles.landmarkText}>Đất Thánh Mỹ Hòa</Text>
+                <Text style={styles.landmarkText}>Trụ sạc VinFast 60kW</Text>
               </View>
             </View>
 
             <TouchableOpacity
-              style={styles.locPermBtn}
+              style={[styles.locPermBtn, styles.locPermBtnPrimary]}
+              activeOpacity={0.85}
+              onPress={() => handleLocationChoice(true)}
+            >
+              <Text style={[styles.locPermBtnText, styles.locPermBtnTextPrimary]}>
+                Cho phép khi dùng ứng dụng
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.locPermBtn, styles.locPermBtnSecondary]}
               activeOpacity={0.85}
               onPress={() => handleLocationChoice(true)}
             >
@@ -407,19 +417,11 @@ export default function OnboardingAuthFlow({ onComplete }) {
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={styles.locPermBtn}
-              activeOpacity={0.85}
-              onPress={() => handleLocationChoice(true)}
-            >
-              <Text style={styles.locPermBtnText}>Cho phép khi dùng ứng dụng</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.locPermBtn}
+              style={[styles.locPermBtn, styles.locPermBtnCancel]}
               activeOpacity={0.85}
               onPress={() => handleLocationChoice(false)}
             >
-              <Text style={styles.locPermBtnText}>Từ chối</Text>
+              <Text style={[styles.locPermBtnText, styles.locPermBtnTextCancel]}>Để sau / Từ chối</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -447,19 +449,19 @@ export default function OnboardingAuthFlow({ onComplete }) {
 
           <View style={[styles.orbitBadge, { top: 18, left: '41%' }]}>
             <View style={styles.car3DPill}>
-              <Ionicons name="car-sport" size={28} color="#00B5AD" />
+              <Ionicons name="car-sport" size={28} color="#0CA678" />
             </View>
           </View>
 
           <View style={[styles.orbitBadge, { top: 44, left: 26 }]}>
             <View style={styles.scooter3DPill}>
-              <Ionicons name="bicycle" size={22} color="#0891B2" />
+              <Ionicons name="bicycle" size={22} color="#0CA678" />
             </View>
           </View>
 
           <View style={[styles.orbitBadge, { top: 112, right: 24 }]}>
             <View style={styles.food3DPill}>
-              <Text style={{ fontSize: 28 }}>🍔🥤</Text>
+              <Text style={{ fontSize: 28 }}>⚡🔋</Text>
             </View>
           </View>
 
@@ -477,10 +479,10 @@ export default function OnboardingAuthFlow({ onComplete }) {
 
           <View style={styles.heroTextBlock}>
             <Text style={styles.heroCyanTitle}>
-              Green SM Mọi{'\n'}thứ trong tầm tay
+              EcoGo Smart{'\n'}Di chuyển xanh 24/7
             </Text>
             <Text style={styles.heroSubtitle}>
-              Đăng ký hoặc đăng nhập để bắt đầu{'\n'}hành trình xanh của bạn
+              Đăng ký hoặc đăng nhập để bắt đầu{'\n'}hành trình di chuyển thông minh của bạn
             </Text>
           </View>
         </View>
@@ -543,7 +545,7 @@ export default function OnboardingAuthFlow({ onComplete }) {
 
           <Text style={styles.termsFooterText}>
             Bằng việc "Tiếp tục", tôi đồng ý với{' '}
-            <Text style={styles.termsLinkCyan}>Điều khoản và Điều kiện</Text> của{'\n'}Green SM
+            <Text style={styles.termsLinkCyan}>Điều khoản và Điều kiện</Text> của{'\n'}EcoGo Smart Mobility
           </Text>
         </View>
       </View>
@@ -780,7 +782,7 @@ export default function OnboardingAuthFlow({ onComplete }) {
         >
           <View style={styles.pushIconWrap}>
             <View style={styles.pushCyanCircle}>
-              <Text style={styles.pushCyanLogoText}>GREEN SM</Text>
+              <Text style={styles.pushCyanLogoText}>ECOGO</Text>
             </View>
             <View style={styles.pushZaloMini}>
               <Text style={styles.pushZaloMiniText}>{otpChannel === 'ZALO' ? 'Zalo' : 'SMS'}</Text>
@@ -789,7 +791,7 @@ export default function OnboardingAuthFlow({ onComplete }) {
 
           <View style={{ flex: 1 }}>
             <View style={styles.pushTopLine}>
-              <Text style={styles.pushAppName}>Green SM</Text>
+              <Text style={styles.pushAppName}>EcoGo Smart</Text>
               <Text style={styles.pushTimeNow}>vừa xong</Text>
             </View>
             <Text style={styles.pushBodyText}>Mã xác minh của bạn là</Text>
@@ -855,8 +857,8 @@ export default function OnboardingAuthFlow({ onComplete }) {
           disabled={countdown > 0 || loading}
           onPress={handleSendOtpRequest}
         >
-          <Ionicons name="refresh" size={14} color={countdown === 0 ? '#00B5AD' : '#94A3B8'} />
-          <Text style={[styles.resendText, countdown === 0 && { color: '#00B5AD', fontWeight: '700' }]}>
+          <Ionicons name="refresh" size={14} color={countdown === 0 ? '#0CA678' : '#94A3B8'} />
+          <Text style={[styles.resendText, countdown === 0 && { color: '#0CA678', fontWeight: '700' }]}>
             {countdown > 0 ? `Gửi lại mã ${countdown}s` : 'Gửi lại mã ngay'}
           </Text>
         </TouchableOpacity>
@@ -913,7 +915,7 @@ const styles = StyleSheet.create({
      ============================================================ */
   splashContainer: {
     flex: 1,
-    backgroundColor: '#041E1E',
+    backgroundColor: '#FFFFFF',
     justifyContent: 'space-between',
     alignItems: 'center',
     position: 'relative',
@@ -925,11 +927,11 @@ const styles = StyleSheet.create({
     width: 280,
     height: 280,
     borderRadius: 140,
-    backgroundColor: 'rgba(0, 245, 212, 0.12)',
-    shadowColor: '#00F5D4',
+    backgroundColor: 'rgba(12, 166, 120, 0.08)',
+    shadowColor: '#0CA678',
     shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.8,
-    shadowRadius: 60
+    shadowOpacity: 0.35,
+    shadowRadius: 50
   },
   splashCenterTouchable: {
     flex: 1,
@@ -956,25 +958,25 @@ const styles = StyleSheet.create({
     width: 96,
     height: 96,
     borderRadius: 48,
-    backgroundColor: 'rgba(0, 196, 180, 0.15)',
+    backgroundColor: '#EBFBF5',
     borderWidth: 2,
-    borderColor: 'rgba(0, 245, 212, 0.5)',
+    borderColor: '#A3EAD2',
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#00F5D4',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.6,
+    shadowColor: '#0CA678',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
     shadowRadius: 16
   },
   splashInnerShield: {
     width: 76,
     height: 76,
     borderRadius: 22,
-    backgroundColor: '#073333',
+    backgroundColor: '#0CA678',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1.5,
-    borderColor: '#00F5D4'
+    borderColor: '#0CA678'
   },
   splashOrbitRing: {
     position: 'absolute',
@@ -983,20 +985,20 @@ const styles = StyleSheet.create({
     borderRadius: 58,
     borderWidth: 1,
     borderStyle: 'dashed',
-    borderColor: 'rgba(255, 255, 255, 0.25)'
+    borderColor: '#D1FAE5'
   },
   splashBrandTitle: {
     fontFamily: FONTS.family,
     fontSize: 34,
     fontWeight: '900',
-    color: '#FFFFFF',
+    color: '#1D1D1F',
     letterSpacing: -0.5,
     marginBottom: 4
   },
   splashBadgePill: {
-    backgroundColor: 'rgba(0, 245, 212, 0.15)',
+    backgroundColor: '#EBFBF5',
     borderWidth: 1,
-    borderColor: 'rgba(0, 245, 212, 0.4)',
+    borderColor: '#A3EAD2',
     borderRadius: 99,
     paddingHorizontal: 12,
     paddingVertical: 4,
@@ -1006,13 +1008,13 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.family,
     fontSize: 10,
     fontWeight: '800',
-    color: '#5EEAD4',
+    color: '#0CA678',
     letterSpacing: 1.2
   },
   splashSloganText: {
     fontFamily: FONTS.family,
     fontSize: 13,
-    color: '#94A3B8',
+    color: '#64748B',
     textAlign: 'center',
     lineHeight: 19,
     marginBottom: 20
@@ -1020,22 +1022,22 @@ const styles = StyleSheet.create({
   splashDrawingLineWrap: {
     width: 180,
     height: 4,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    backgroundColor: '#E2E8F0',
     borderRadius: 2,
     overflow: 'hidden',
     marginBottom: 24
   },
   splashDrawingLineFill: {
     height: '100%',
-    backgroundColor: '#00F5D4',
+    backgroundColor: '#0CA678',
     borderRadius: 2
   },
   splashSkipPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    backgroundColor: '#F1F5F9',
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.15)',
+    borderColor: '#E2E8F0',
     borderRadius: 20,
     paddingHorizontal: 14,
     paddingVertical: 7
@@ -1044,7 +1046,7 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.family,
     fontSize: 11,
     fontWeight: '600',
-    color: '#E2E8F0'
+    color: '#475569'
   },
   splashFooterInfo: {
     paddingBottom: 24
@@ -1052,37 +1054,39 @@ const styles = StyleSheet.create({
   splashFooterVersion: {
     fontFamily: FONTS.family,
     fontSize: 10,
-    color: '#64748B',
+    color: '#94A3B8',
     fontWeight: '500'
   },
 
   /* STEP 1 */
   step1Container: {
     flex: 1,
-    backgroundColor: '#2E6F6D',
+    backgroundColor: '#FFFFFF',
     justifyContent: 'space-between'
   },
   step1CenterWrap: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 24
+    paddingHorizontal: 20
   },
   locDialogCard: {
     width: '100%',
     maxWidth: 340,
-    backgroundColor: '#113534',
-    borderRadius: 28,
-    padding: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 12 },
-    shadowOpacity: 0.35,
-    shadowRadius: 24,
-    elevation: 10
+    backgroundColor: '#FFFFFF',
+    borderRadius: 26,
+    padding: 22,
+    borderWidth: 1,
+    borderColor: '#EAEAE8',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.08,
+    shadowRadius: 26,
+    elevation: 8
   },
   locAppIconWrap: {
-    width: 54,
-    height: 54,
+    width: 52,
+    height: 52,
     position: 'relative',
     marginBottom: 14
   },
@@ -1090,7 +1094,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 14,
-    backgroundColor: '#1D9BF0',
+    backgroundColor: '#0CA678',
     alignItems: 'center',
     justifyContent: 'center'
   },
@@ -1098,26 +1102,26 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: -2,
     right: -2,
-    width: 22,
-    height: 22,
-    borderRadius: 7,
-    backgroundColor: '#0284C7',
+    width: 20,
+    height: 20,
+    borderRadius: 6,
+    backgroundColor: '#1D1D1F',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1.5,
-    borderColor: '#113534'
+    borderColor: '#FFFFFF'
   },
   locTitle: {
     fontFamily: FONTS.family,
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#FFFFFF',
-    lineHeight: 24
+    fontSize: 19,
+    fontWeight: '800',
+    color: '#1D1D1F',
+    lineHeight: 25
   },
   locSubtitle: {
     fontFamily: FONTS.family,
     fontSize: 13,
-    color: '#94A3B8',
+    color: '#64748B',
     marginTop: 6,
     lineHeight: 18
   },
@@ -1125,9 +1129,11 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 138,
     borderRadius: 16,
-    backgroundColor: '#273549',
+    backgroundColor: '#F1F5F9',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
     marginTop: 14,
-    marginBottom: 14,
+    marginBottom: 16,
     overflow: 'hidden',
     position: 'relative'
   },
@@ -1135,15 +1141,15 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: -20,
     right: -20,
-    height: 3,
-    backgroundColor: '#475569'
+    height: 4,
+    backgroundColor: '#FFFFFF'
   },
   roadLineV: {
     position: 'absolute',
     top: -20,
     bottom: -20,
-    width: 2.5,
-    backgroundColor: '#475569'
+    width: 3.5,
+    backgroundColor: '#FFFFFF'
   },
   precisePill: {
     position: 'absolute',
@@ -1151,7 +1157,9 @@ const styles = StyleSheet.create({
     left: 8,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(15, 23, 42, 0.82)',
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
     paddingHorizontal: 9,
     paddingVertical: 4,
     borderRadius: 99,
@@ -1160,13 +1168,13 @@ const styles = StyleSheet.create({
   },
   precisePillText: {
     fontFamily: FONTS.family,
-    color: '#FFFFFF',
+    color: '#0CA678',
     fontSize: 10,
     fontWeight: '700'
   },
   streetLabel: {
     position: 'absolute',
-    color: '#CBD5E1',
+    color: '#64748B',
     fontSize: 8,
     fontWeight: '700',
     letterSpacing: 0.4
@@ -1179,7 +1187,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   paradiseLabel: {
-    color: '#E2E8F0',
+    color: '#0CA678',
     fontSize: 8,
     fontWeight: '800',
     textAlign: 'center',
@@ -1189,46 +1197,68 @@ const styles = StyleSheet.create({
     width: 18,
     height: 18,
     borderRadius: 9,
-    backgroundColor: '#60A5FA',
-    borderWidth: 2.5,
-    borderColor: '#BAE6FD',
-    opacity: 0.9
+    backgroundColor: '#0CA678',
+    borderWidth: 3,
+    borderColor: '#EBFBF5',
+    opacity: 1
   },
   landmarkBottomRow: {
     position: 'absolute',
     bottom: 8,
-    left: '34%',
+    left: '30%',
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.92)',
+    paddingHorizontal: 7,
+    paddingVertical: 3,
+    borderRadius: 6,
     gap: 4
   },
   landmarkIconCircle: {
     width: 14,
     height: 14,
     borderRadius: 7,
-    backgroundColor: '#CBD5E1',
+    backgroundColor: '#EBFBF5',
     alignItems: 'center',
     justifyContent: 'center'
   },
   landmarkText: {
-    color: '#F1F5F9',
-    fontSize: 9,
+    color: '#1D1D1F',
+    fontSize: 8,
     fontWeight: '700'
   },
   locPermBtn: {
     width: '100%',
-    backgroundColor: '#244B49',
     paddingVertical: 13,
-    borderRadius: 99,
+    borderRadius: 14,
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 8
   },
+  locPermBtnPrimary: {
+    backgroundColor: '#0CA678'
+  },
+  locPermBtnSecondary: {
+    backgroundColor: '#F8F9FA',
+    borderWidth: 1,
+    borderColor: '#E2E8F0'
+  },
+  locPermBtnCancel: {
+    backgroundColor: 'transparent'
+  },
   locPermBtnText: {
     fontFamily: FONTS.family,
-    color: '#FFFFFF',
+    color: '#1D1D1F',
     fontSize: 14,
     fontWeight: '600'
+  },
+  locPermBtnTextPrimary: {
+    color: '#FFFFFF',
+    fontWeight: '700'
+  },
+  locPermBtnTextCancel: {
+    color: '#8E8E93',
+    fontWeight: '500'
   },
 
   /* STEP 2 */
@@ -1334,7 +1364,7 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.family,
     fontSize: 30,
     fontWeight: '800',
-    color: '#00B5AD',
+    color: '#0CA678',
     lineHeight: 36,
     letterSpacing: -0.5
   },
@@ -1402,7 +1432,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   continueBtnTurquoise: {
-    backgroundColor: '#00C4B4'
+    backgroundColor: '#0CA678'
   },
   continueBtnText: {
     fontFamily: FONTS.family,
@@ -1467,7 +1497,7 @@ const styles = StyleSheet.create({
     lineHeight: 16
   },
   termsLinkCyan: {
-    color: '#00B5AD',
+    color: '#0CA678',
     fontWeight: '600'
   },
 
@@ -1639,8 +1669,8 @@ const styles = StyleSheet.create({
     marginRight: 14
   },
   radioOuterSelected: {
-    borderColor: '#00B5AD',
-    backgroundColor: '#00B5AD'
+    borderColor: '#0CA678',
+    backgroundColor: '#0CA678'
   },
   radioInnerDot: {
     width: 8,
@@ -1683,7 +1713,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   sendOtpTurquoiseBtn: {
-    backgroundColor: '#22C1C3',
+    backgroundColor: '#0CA678',
     borderRadius: 12,
     paddingVertical: 15,
     alignItems: 'center',
@@ -1706,7 +1736,7 @@ const styles = StyleSheet.create({
   iosPushBanner: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#262629',
+    backgroundColor: '#1D1D1F',
     marginHorizontal: 10,
     marginTop: 6,
     paddingHorizontal: 14,
@@ -1715,7 +1745,7 @@ const styles = StyleSheet.create({
     gap: 12,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.25,
+    shadowOpacity: 0.18,
     shadowRadius: 16,
     elevation: 8
   },
@@ -1728,7 +1758,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#00D2D3',
+    backgroundColor: '#0CA678',
     alignItems: 'center',
     justifyContent: 'center'
   },
@@ -1810,7 +1840,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: -12,
     right: -12,
-    backgroundColor: '#22D3EE',
+    backgroundColor: '#0CA678',
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 12
@@ -1842,7 +1872,7 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.family,
     fontSize: 14,
     fontWeight: '600',
-    color: '#00B5AD'
+    color: '#0CA678'
   },
   otpBoxesRow: {
     flexDirection: 'row',
@@ -1860,7 +1890,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   otpDigitBoxFocused: {
-    borderColor: '#1E293B',
+    borderColor: '#0CA678',
     backgroundColor: '#FFFFFF'
   },
   otpDigitText: {
