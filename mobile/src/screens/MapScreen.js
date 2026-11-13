@@ -677,7 +677,7 @@ export default function MapScreen({
 
         {reservedChargerToast && (
           <View style={styles.chargerToast}>
-            <Ionicons name="checkmark-circle" size={18} color="#38D9A9" />
+            <Ionicons name="checkmark-circle" size={18} color={theme.primary} />
             <Text style={styles.chargerToastText}>{reservedChargerToast}</Text>
           </View>
         )}

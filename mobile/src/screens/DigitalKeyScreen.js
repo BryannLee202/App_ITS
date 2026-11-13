@@ -249,9 +249,9 @@ export default function DigitalKeyScreen({ theme = THEME_PRESETS.MINT, onNavigat
               <Text style={styles.glosaTitle}>Hỗ trợ làn sóng xanh (GLOSA)</Text>
               <Text style={styles.glosaSub}>Trục Điện Biên Phủ – Mai Chí Thọ</Text>
             </View>
-            <View style={styles.glosaSignalBadge}>
-              <View style={styles.liveGreenDot} />
-              <Text style={styles.glosaSignalText}>
+            <View style={[styles.glosaSignalBadge, { backgroundColor: theme.primarySoft }]}>
+              <View style={[styles.liveGreenDot, { backgroundColor: theme.primary }]} />
+              <Text style={[styles.glosaSignalText, { color: theme.primary }]}>
                 Đèn {glosa.signalState === 'GREEN' ? 'xanh' : 'đỏ'} {glosa.secondsToSignalChange}s
               </Text>
             </View>

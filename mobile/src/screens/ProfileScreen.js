@@ -88,7 +88,10 @@ export default function ProfileScreen({ onOpenGreenRace, onLogout, theme = THEME
             3. GREEN RACE HERO CARD (EXACT REPLICA OF 18:57 SCREENSHOT)
            ============================================================ */}
         <TouchableOpacity
-          style={styles.greenRaceCard}
+          style={[
+            styles.greenRaceCard,
+            { backgroundColor: theme.primarySoft, borderColor: theme.primaryBorder }
+          ]}
           activeOpacity={0.93}
           onPress={onOpenGreenRace}
         >
@@ -132,17 +135,17 @@ export default function ProfileScreen({ onOpenGreenRace, onLogout, theme = THEME
               <Text style={styles.grMetricLabel}>
                 Đã đóng góp quỹ Vì Tương{'\n'}Lai Xanh
               </Text>
-              <Text style={styles.grMetricVal}>{user.greenFundContribution}</Text>
+              <Text style={[styles.grMetricVal, { color: theme.primary }]}>{user.greenFundContribution}</Text>
             </View>
 
             <View style={styles.grMetricCol}>
               <Text style={styles.grMetricLabel}>Tổng KM{'\n'}đã đi</Text>
-              <Text style={styles.grMetricVal}>{user.totalKm}</Text>
+              <Text style={[styles.grMetricVal, { color: theme.primary }]}>{user.totalKm}</Text>
             </View>
 
             <View style={styles.grMetricCol}>
               <Text style={styles.grMetricLabel}>KM tích luỹ{'\n'}năm 2026</Text>
-              <Text style={styles.grMetricVal}>{user.year2026Km}</Text>
+              <Text style={[styles.grMetricVal, { color: theme.primary }]}>{user.year2026Km}</Text>
             </View>
           </View>
         </TouchableOpacity>
@@ -161,7 +164,7 @@ export default function ProfileScreen({ onOpenGreenRace, onLogout, theme = THEME
             </View>
           </TouchableOpacity>
 
-          <TouchableOpacity style={[styles.accountTypeCard, styles.businessCardAqua]} activeOpacity={0.9}>
+          <TouchableOpacity style={[styles.accountTypeCard, { backgroundColor: theme.primarySoft }]} activeOpacity={0.9}>
             <Text style={styles.accountTypeTitle}>Doanh nghiệp</Text>
             <View style={styles.briefcase3DIllustration}>
               <Ionicons name="briefcase" size={38} color="#1D1D1F" />

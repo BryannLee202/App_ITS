@@ -902,8 +902,8 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
           disabled={countdown > 0 || loading}
           onPress={handleSendOtpRequest}
         >
-          <Ionicons name="refresh" size={14} color={countdown === 0 ? '#0CA678' : '#94A3B8'} />
-          <Text style={[styles.resendText, countdown === 0 && { color: '#0CA678', fontWeight: '700' }]}>
+          <Ionicons name="refresh" size={14} color={countdown === 0 ? theme.primary : '#94A3B8'} />
+          <Text style={[styles.resendText, countdown === 0 && { color: theme.primary, fontWeight: '700' }]}>
             {countdown > 0 ? `Gửi lại mã ${countdown}s` : 'Gửi lại mã ngay'}
           </Text>
         </TouchableOpacity>
