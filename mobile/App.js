@@ -90,12 +90,8 @@ export default function App() {
   const [showGreenRaceTerms, setShowGreenRaceTerms] = useState(false);
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [copiedCode, setCopiedCode] = useState(null);
-  const [viewMode, setViewMode] = useState('PHONE'); // 'PHONE' | 'WIDE'
 
-  const theme = THEME_PRESETS[themeKey] || THEME_PRESETS.SAGE;
-
-  const { width: windowWidth } = useWindowDimensions();
-  const isDesktopBrowser = Platform.OS === 'web' && windowWidth >= 768;
+  const theme = THEME_PRESETS[themeKey] || THEME_PRESETS.BE_SUA_CAFE;
 
   useEffect(() => {
     checkSavedSession();
@@ -242,111 +238,8 @@ export default function App() {
     <View style={styles.outerViewport}>
       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
 
-      {/* Top Mode & Live Color Switcher on Desktop Browser */}
-      {isDesktopBrowser && (
-        <View style={styles.desktopToolbar}>
-          <View style={styles.toolbarBrand}>
-            <View style={[styles.statusDot, { backgroundColor: theme.primary }]} />
-            <Text style={styles.toolbarTitle}>ECOGO SMART · Thuê xe tự động 24/7 (UTH)</Text>
-            <TouchableOpacity
-              style={[
-                styles.themeChip,
-                { marginLeft: 8, backgroundColor: theme.primarySoft, borderColor: theme.primaryBorder }
-              ]}
-              onPress={() => {
-                ApiService.clearSession();
-                setOnboardingAutoPlay(true);
-                setIsOnboarded(false);
-              }}
-            >
-              <Ionicons name="refresh" size={12} color={theme.primary} />
-              <Text style={[styles.themeChipText, { color: theme.primary, fontWeight: '700' }]}>
-                Đặt lại phiên (Thử nghiệm 5 bước)
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* 4-Color Live Theme Switcher */}
-          <View style={styles.themePickerRow}>
-            <Text style={styles.themePickerLabel}>Màu giao diện:</Text>
-            {Object.values(THEME_PRESETS).map((preset) => {
-              const isSelected = theme.id === preset.id;
-              return (
-                <TouchableOpacity
-                  key={preset.id}
-                  style={[
-                    styles.themeChip,
-                    isSelected && {
-                      backgroundColor: preset.primarySoft,
-                      borderColor: preset.primary
-                    }
-                  ]}
-                  onPress={() => setThemeKey(preset.id)}
-                >
-                  <View style={[styles.themeColorDot, { backgroundColor: preset.primary }]} />
-                  <Text
-                    style={[
-                      styles.themeChipText,
-                      isSelected && { color: preset.primary, fontWeight: '700' }
-                    ]}
-                  >
-                    {preset.name}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
-
-          <View style={styles.modeToggleGroup}>
-            <TouchableOpacity
-              style={[styles.modeBtn, viewMode === 'PHONE' && styles.modeBtnActive]}
-              onPress={() => setViewMode('PHONE')}
-            >
-              <Ionicons
-                name="phone-portrait-outline"
-                size={13}
-                color={viewMode === 'PHONE' ? theme.primary : '#64748B'}
-              />
-              <Text
-                style={[
-                  styles.modeBtnText,
-                  viewMode === 'PHONE' && { color: theme.primary, fontWeight: '700' }
-                ]}
-              >
-                Điện thoại
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[styles.modeBtn, viewMode === 'WIDE' && styles.modeBtnActive]}
-              onPress={() => setViewMode('WIDE')}
-            >
-              <Ionicons
-                name="expand-outline"
-                size={13}
-                color={viewMode === 'WIDE' ? theme.primary : '#64748B'}
-              />
-              <Text
-                style={[
-                  styles.modeBtnText,
-                  viewMode === 'WIDE' && { color: theme.primary, fontWeight: '700' }
-                ]}
-              >
-                Mở rộng
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      )}
-
-      {/* Main App Shell */}
-      <View
-        style={[
-          styles.appShell,
-          isDesktopBrowser && viewMode === 'PHONE' && styles.phoneSimulatorShell,
-          isDesktopBrowser && viewMode === 'WIDE' && styles.wideWebShell
-        ]}
-      >
+      {/* Main App Shell (Locked to Phone Aspect Ratio) */}
+      <View style={[styles.appShell, styles.phoneSimulatorShell]}>
         <SafeAreaView style={styles.safeArea}>
           <View style={styles.mainContentArea}>{renderContent()}</View>
 
@@ -760,121 +653,30 @@ const styles = StyleSheet.create({
   },
   outerViewport: {
     flex: 1,
-    backgroundColor: '#EFEEEA',
+    backgroundColor: '#FAF7F2',
     alignItems: 'center',
-    justifyContent: 'flex-start'
-  },
-  desktopToolbar: {
-    width: '100%',
-    height: 46,
-    backgroundColor: '#FFFFFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#E2E8F0',
-    paddingHorizontal: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between'
-  },
-  toolbarBrand: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8
-  },
-  statusDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4
-  },
-  toolbarTitle: {
-    fontFamily: FONTS.family,
-    fontSize: 13,
-    fontWeight: '700',
-    color: '#0F172A'
-  },
-  themePickerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6
-  },
-  themePickerLabel: {
-    fontFamily: FONTS.family,
-    fontSize: 11,
-    fontWeight: '600',
-    color: '#64748B',
-    marginRight: 2
-  },
-  themeChip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 9,
-    paddingVertical: 4,
-    borderRadius: 99,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    backgroundColor: '#F8FAFC',
-    gap: 5
-  },
-  themeColorDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5
-  },
-  themeChipText: {
-    fontFamily: FONTS.family,
-    fontSize: 11,
-    fontWeight: '500',
-    color: '#475569'
-  },
-  modeToggleGroup: {
-    flexDirection: 'row',
-    backgroundColor: '#F1F5F9',
-    padding: 3,
-    borderRadius: 10,
-    gap: 4
-  },
-  modeBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 7,
-    gap: 5
-  },
-  modeBtnActive: {
-    backgroundColor: '#FFFFFF',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.08,
-    shadowRadius: 2
-  },
-  modeBtnText: {
-    fontFamily: FONTS.family,
-    fontSize: 12,
-    fontWeight: '500',
-    color: '#64748B'
+    justifyContent: 'center',
+    paddingVertical: 14
   },
   appShell: {
     flex: 1,
     width: '100%',
-    backgroundColor: '#F7F7F5'
+    backgroundColor: '#FFFFFF'
   },
   phoneSimulatorShell: {
     width: 414,
     maxWidth: '100%',
-    marginVertical: 12,
-    borderRadius: 36,
+    height: '100%',
+    maxHeight: 896,
+    borderRadius: 38,
     borderWidth: 1,
     borderColor: '#EAE2D5',
     overflow: 'hidden',
     shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.06,
-    shadowRadius: 20,
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.08,
+    shadowRadius: 28,
     elevation: 8
-  },
-  wideWebShell: {
-    maxWidth: 1024,
-    width: '100%'
   },
   safeArea: {
     flex: 1,
