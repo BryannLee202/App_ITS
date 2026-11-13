@@ -330,6 +330,7 @@ export default function HomeScreen({
   const [stationCategoryTab, setStationCategoryTab] = useState('ALL');
   const [selectedPlace, setSelectedPlace] = useState(SAVED_PLACES[0]);
   const [bookingVehicle, setBookingVehicle] = useState(null);
+  const [bookingDeliveryMode, setBookingDeliveryMode] = useState('STATION'); // 'STATION' | 'DOORSTEP'
   const [showBookingModal, setShowBookingModal] = useState(false);
   const [bookingToast, setBookingToast] = useState(null);
 
@@ -697,6 +698,31 @@ export default function HomeScreen({
             </View>
           </View>
 
+          {/* Active Doorstep Delivery Mode Banner */}
+          {bookingDeliveryMode === 'DOORSTEP' && (
+            <View style={styles.doorstepActiveBanner}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flex: 1 }}>
+                <Ionicons name="navigate" size={15} color="#6F4E37" />
+                <Text style={styles.doorstepActiveBannerText} numberOfLines={1}>
+                  Đang bật: <Text style={{ fontWeight: '800', color: '#2B180D' }}>Giao xe tận nơi miễn phí 5km</Text> (Mã FREESHIP)
+                </Text>
+              </View>
+              <TouchableOpacity
+                onPress={() => {
+                  setBookingDeliveryMode('STATION');
+                  setBookingToast({
+                    title: 'Đã đổi sang Nhận tại trạm',
+                    message: 'Phương thức nhận xe đã chuyển về trạm sạc gần bạn nhất.'
+                  });
+                  setTimeout(() => setBookingToast(null), 2500);
+                }}
+                style={styles.clearStationFilterBtn}
+              >
+                <Text style={styles.clearStationFilterText}>Đổi nhận tại trạm</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
           {/* 2. Search Bar */}
           <View style={styles.catSearchContainer}>
             <View style={styles.catSearchBox}>
@@ -924,7 +950,9 @@ export default function HomeScreen({
                         onPress={() => handleOpenBooking(veh)}
                       >
                         <Ionicons name="key" size={14} color="#D4AF37" />
-                        <Text style={styles.catBookNowText}>Đặt Thuê Ngay →</Text>
+                        <Text style={styles.catBookNowText}>
+                          {bookingDeliveryMode === 'DOORSTEP' ? 'Đặt Giao Tận Nơi →' : 'Đặt Thuê Ngay →'}
+                        </Text>
                       </TouchableOpacity>
                     </View>
                   </View>
@@ -1819,27 +1847,80 @@ export default function HomeScreen({
               </View>
             </View>
 
-            {/* CTA Button */}
+            {/* Quick Vehicle Picker List */}
+            <View style={{ marginVertical: 10 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+                <Text style={{ fontFamily: FONTS.family, fontSize: 12, fontWeight: '700', color: '#2B180D' }}>
+                  Chọn nhanh dòng xe muốn nhận:
+                </Text>
+                <Text style={{ fontFamily: FONTS.family, fontSize: 11, color: '#8C6239', fontWeight: '600' }}>
+                  {vehicles.length} xe sẵn sàng
+                </Text>
+              </View>
+
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={{ gap: 8, paddingVertical: 2 }}
+              >
+                {vehicles.map((veh) => (
+                  <TouchableOpacity
+                    key={veh.id}
+                    style={styles.doorstepVehPillCard}
+                    activeOpacity={0.82}
+                    onPress={() => {
+                      setShowDoorstepModal(false);
+                      setBookingDeliveryMode('DOORSTEP');
+                      setSelectedVoucherForBooking('FREESHIP');
+                      handleOpenBooking(veh);
+                      setBookingToast({
+                        title: `🚀 Giao tận nơi: ${veh.name}`,
+                        message: 'Mã miễn phí giao nhận FREESHIP đã áp dụng thành công!'
+                      });
+                      setTimeout(() => setBookingToast(null), 3000);
+                    }}
+                  >
+                    <Image
+                      source={{ uri: veh.thumbnail || veh.images?.[0] }}
+                      style={styles.doorstepVehThumb}
+                      resizeMode="cover"
+                    />
+                    <View style={{ padding: 6 }}>
+                      <Text style={styles.doorstepVehName} numberOfLines={1}>
+                        {veh.name}
+                      </Text>
+                      <Text style={styles.doorstepVehPrice}>
+                        {(veh.hourlyPrice || 85000).toLocaleString('vi-VN')}đ/h
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            </View>
+
+            {/* Main Action Button: Browse all vehicles for doorstep delivery */}
             <TouchableOpacity
               style={styles.modalPrimaryActionBtn}
               activeOpacity={0.88}
               onPress={() => {
                 setShowDoorstepModal(false);
-                const targetVeh = filteredVehicles[0] || vehicles[0];
-                if (targetVeh) {
-                  setBookingVehicle(targetVeh);
-                  setSelectedVoucherForBooking('FREESHIP');
-                  setShowBookingModal(true);
-                  setBookingToast({
-                    title: '🚀 Đã kích hoạt Giao xe tận nơi!',
-                    message: 'Mã miễn phí giao nhận FREESHIP đã được áp dụng vào đơn đặt xe.'
-                  });
-                  setTimeout(() => setBookingToast(null), 3000);
-                }
+                setBookingDeliveryMode('DOORSTEP');
+                setSelectedVoucherForBooking('FREESHIP');
+                setCatalogMode('CAR');
+                setCatalogBrand('ALL');
+                setCatalogSortBy('PRICE_ASC');
+                setCatalogSearch('');
+                setBookingToast({
+                  title: '🚚 Danh Sách Xe Giao Tận Nơi',
+                  message: 'Miễn phí 5km toàn TP.HCM · Mã FREESHIP đã sẵn sàng cho mọi xe!'
+                });
+                setTimeout(() => setBookingToast(null), 3000);
               }}
             >
-              <Ionicons name="key" size={15} color="#D4AF37" />
-              <Text style={styles.modalPrimaryActionText}>Chọn Xe & Đặt Giao Tận Nơi Ngay →</Text>
+              <Ionicons name="car-sport" size={15} color="#D4AF37" />
+              <Text style={styles.modalPrimaryActionText}>
+                Xem Toàn Bộ {vehicles.length} Xe & Đặt Giao Tận Nơi →
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -1937,6 +2018,11 @@ export default function HomeScreen({
         onClose={() => setShowBookingModal(false)}
         onBookingSuccess={handleBookingSuccess}
         initialVoucherCode={selectedVoucherForBooking}
+        initialDeliveryMode={bookingDeliveryMode}
+        onSwitchVehicle={() => {
+          setShowBookingModal(false);
+          setCatalogMode('CAR');
+        }}
       />
     </View>
   );
@@ -3861,6 +3947,49 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.family,
     fontSize: 12,
     fontWeight: '700',
+    color: '#6F4E37'
+  },
+  doorstepVehPillCard: {
+    width: 130,
+    backgroundColor: '#FAF7F2',
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#EFE8DE',
+    overflow: 'hidden'
+  },
+  doorstepVehThumb: {
+    width: '100%',
+    height: 70,
+    backgroundColor: '#E8DFD8'
+  },
+  doorstepVehName: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#2B180D'
+  },
+  doorstepVehPrice: {
+    fontFamily: FONTS.family,
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#6F4E37',
+    marginTop: 2
+  },
+  doorstepActiveBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#F5EFEB',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#E8DFD8',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    marginBottom: 12
+  },
+  doorstepActiveBannerText: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
     color: '#6F4E37'
   }
 });

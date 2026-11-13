@@ -46,12 +46,14 @@ export default function BookingModal({
   vehicle,
   onClose,
   onBookingSuccess,
-  initialVoucherCode = 'CHAOXANH'
+  initialVoucherCode = 'CHAOXANH',
+  initialDeliveryMode = 'STATION',
+  onSwitchVehicle
 }) {
   const [rentalType, setRentalType] = useState('HOURLY'); // 'HOURLY' | 'DAILY'
   const [durationHours, setDurationHours] = useState(4);
   const [durationDays, setDurationDays] = useState(1);
-  const [deliveryMode, setDeliveryMode] = useState('STATION'); // 'STATION' | 'DOORSTEP'
+  const [deliveryMode, setDeliveryMode] = useState(initialDeliveryMode || 'STATION');
   const [insuranceTier, setInsuranceTier] = useState('STANDARD');
   const [voucherCode, setVoucherCode] = useState(initialVoucherCode);
   const [agreedTerms, setAgreedTerms] = useState(true);
@@ -65,6 +67,12 @@ export default function BookingModal({
       setVoucherCode(initialVoucherCode);
     }
   }, [visible, initialVoucherCode]);
+
+  useEffect(() => {
+    if (visible && initialDeliveryMode) {
+      setDeliveryMode(initialDeliveryMode);
+    }
+  }, [visible, initialDeliveryMode]);
 
   useEffect(() => {
     if (visible && vehicle) {
@@ -173,10 +181,21 @@ export default function BookingModal({
               <Text style={styles.topTitle}>Chi Tiết & Đặt Thuê Xe</Text>
               <Text style={styles.topSubtitle}>Hợp đồng điện tử • Mở khóa Digital Key 24/7</Text>
             </View>
-            <View style={styles.verifiedChip}>
-              <Ionicons name="shield-checkmark" size={13} color="#D4AF37" />
-              <Text style={styles.verifiedChipText}>0đ Cọc</Text>
-            </View>
+            {onSwitchVehicle ? (
+              <TouchableOpacity
+                style={styles.switchVehBtn}
+                onPress={onSwitchVehicle}
+                activeOpacity={0.8}
+              >
+                <Ionicons name="car-sport-outline" size={13} color="#6F4E37" />
+                <Text style={styles.switchVehText}>Đổi xe</Text>
+              </TouchableOpacity>
+            ) : (
+              <View style={styles.verifiedChip}>
+                <Ionicons name="shield-checkmark" size={13} color="#D4AF37" />
+                <Text style={styles.verifiedChipText}>0đ Cọc</Text>
+              </View>
+            )}
           </View>
 
           <ScrollView style={styles.scrollBody} showsVerticalScrollIndicator={false}>
@@ -622,6 +641,23 @@ const styles = StyleSheet.create({
     gap: 4
   },
   verifiedChipText: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#6F4E37'
+  },
+  switchVehBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 14,
+    backgroundColor: '#FAF7F2',
+    borderWidth: 1,
+    borderColor: '#EFE8DE'
+  },
+  switchVehText: {
     fontFamily: FONTS.family,
     fontSize: 11,
     fontWeight: '700',
