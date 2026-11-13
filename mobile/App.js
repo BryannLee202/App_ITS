@@ -798,15 +798,15 @@ const styles = StyleSheet.create({
     width: 414,
     maxWidth: '100%',
     marginVertical: 12,
-    borderRadius: 38,
-    borderWidth: 1.5,
-    borderColor: '#FFFFFF',
+    borderRadius: 36,
+    borderWidth: 1,
+    borderColor: '#EAE2D5',
     overflow: 'hidden',
     shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 12 },
-    shadowOpacity: 0.08,
-    shadowRadius: 28,
-    elevation: 10
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.06,
+    shadowRadius: 20,
+    elevation: 8
   },
   wideWebShell: {
     maxWidth: 1024,
@@ -814,7 +814,7 @@ const styles = StyleSheet.create({
   },
   safeArea: {
     flex: 1,
-    backgroundColor: '#F7F7F5',
+    backgroundColor: '#FFFFFF',
     position: 'relative'
   },
   mainContentArea: {

@@ -338,8 +338,17 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
   if (step === 1) {
     return (
       <View style={styles.step1Container}>
-        {/* Top Header with Brand and Instant Skip */}
+        {/* Top Header with Back Button, Brand and Instant Skip */}
         <View style={styles.step1TopBar}>
+          <TouchableOpacity
+            style={styles.backTopBtn}
+            activeOpacity={0.7}
+            onPress={() => setStep(0)}
+          >
+            <Ionicons name="arrow-back" size={16} color="#1D1D1F" />
+            <Text style={styles.backTopText}>Quay lại</Text>
+          </TouchableOpacity>
+
           <View style={[styles.brandSmallPill, { backgroundColor: theme.primarySoft, borderColor: theme.primaryBorder }]}>
             <View style={[styles.brandDotGreen, { backgroundColor: theme.primary }]} />
             <Text style={[styles.brandSmallText, { color: theme.primary }]}>ECOGO MOBILITY</Text>
@@ -470,14 +479,23 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
   if (step === 2) {
     return (
       <View style={styles.step2Container}>
-        {/* Top Header Row with Language & Skip */}
+        {/* Top Header Row with Back Button, Brand & Skip */}
         <View style={styles.step2TopRow}>
+          <TouchableOpacity
+            style={styles.backTopBtn}
+            activeOpacity={0.7}
+            onPress={() => setStep(1)}
+          >
+            <Ionicons name="arrow-back" size={16} color="#1D1D1F" />
+            <Text style={styles.backTopText}>Quay lại</Text>
+          </TouchableOpacity>
+
           <View style={[styles.brandSmallPill, { backgroundColor: theme.primarySoft, borderColor: theme.primaryBorder }]}>
             <View style={[styles.brandDotGreen, { backgroundColor: theme.primary }]} />
             <Text style={[styles.brandSmallText, { color: theme.primary }]}>ECOGO MOBILITY</Text>
           </View>
 
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
             {onComplete ? (
               <TouchableOpacity
                 style={styles.skipTopBtn}
@@ -818,6 +836,15 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
 
   return (
     <View style={styles.step5Container}>
+      {/* Top Header with Back Button */}
+      <View style={styles.step3HeaderRow}>
+        <TouchableOpacity style={styles.backArrowBtn} onPress={() => setStep(3)}>
+          <Ionicons name="arrow-back" size={24} color="#1E293B" />
+        </TouchableOpacity>
+        <Text style={styles.step3HeaderTitle}>Xác minh OTP</Text>
+        <View style={{ width: 40 }} />
+      </View>
+
       {/* Top Notification Banner showing the newly generated OTP */}
       {latestGeneratedOtp ? (
         <TouchableOpacity
@@ -1141,6 +1168,23 @@ const styles = StyleSheet.create({
     color: '#0CA678',
     letterSpacing: 0.8
   },
+  backTopBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 99,
+    backgroundColor: '#FAF7F2',
+    borderWidth: 1,
+    borderColor: '#EAE2D5'
+  },
+  backTopText: {
+    fontFamily: FONTS.family,
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#1D1D1F'
+  },
   skipTopBtn: {
     paddingHorizontal: 12,
     paddingVertical: 6,
@@ -1159,21 +1203,13 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 20
+    paddingHorizontal: 16
   },
   locDialogCard: {
     width: '100%',
-    maxWidth: 340,
+    maxWidth: 380,
     backgroundColor: '#FFFFFF',
-    borderRadius: 24,
-    padding: 22,
-    borderWidth: 1,
-    borderColor: '#EAEAEA',
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.08,
-    shadowRadius: 24,
-    elevation: 8
+    paddingVertical: 6
   },
   locHeaderRow: {
     flexDirection: 'row',
