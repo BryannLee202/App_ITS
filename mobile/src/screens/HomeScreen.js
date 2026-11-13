@@ -564,11 +564,14 @@ export default function HomeScreen({
     setShowBookingModal(true);
   };
 
-  const handleBookingSuccess = () => {
+  const handleBookingSuccess = (result) => {
     setShowBookingModal(false);
+    const vName = result?.vehicle?.name || bookingVehicle?.name || 'Phương tiện';
+    const vPlate = result?.vehicle?.plateNumber || bookingVehicle?.plateNumber || '';
+    const cNumber = result?.trip?.contractNumber ? ` • ${result.trip.contractNumber}` : '';
     setBookingToast({
-      title: 'Đặt xe thành công',
-      message: `${bookingVehicle?.name} (${bookingVehicle?.plateNumber}) đã sẵn sàng mở khóa.`
+      title: 'Ký hợp đồng & Thanh toán thành công',
+      message: `${vName} (${vPlate})${cNumber} đã sẵn sàng mở khóa Digital Key 24/7.`
     });
     loadInitialData();
     setTimeout(() => {

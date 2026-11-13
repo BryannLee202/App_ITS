@@ -158,7 +158,10 @@ exports.getBookingQuote = (req, res) => {
     durationDays = 1,
     insuranceTier = 'STANDARD',
     deliveryMode = 'STATION',
-    voucherCode = ''
+    voucherCode = '',
+    depositOption = 'VERIFIED_WAIVER_0D', // 'VERIFIED_WAIVER_0D' | 'CASH_TRANSFER' | 'ASSET_BIKE'
+    useEcoCoins = false,
+    availableCoins = 250
   } = req.body;
 
   const vehicle = telematicsService.getVehicleById(vehicleId);
@@ -196,7 +199,25 @@ exports.getBookingQuote = (req, res) => {
     }
   }
 
-  const totalAmount = Math.max(0, baseRentalFee + insuranceFee + platformServiceFee + deliveryFee - discountAmount);
+  // Eco coins discount: 100 coins = 10.000đ
+  let ecoCoinsDiscount = 0;
+  if (useEcoCoins && availableCoins > 0) {
+    ecoCoinsDiscount = Math.floor(availableCoins / 10) * 1000; // e.g. 250 coins = 25.000đ
+  }
+
+  const isCar = vehicle.type === 'CAR';
+  let depositAmount = 0;
+  let depositLabel = 'Miễn cọc bảo chứng (eKYC / SV UTH)';
+  if (depositOption === 'CASH_TRANSFER') {
+    depositAmount = isCar ? 5000000 : 1500000;
+    depositLabel = isCar ? '5.000.000đ (Hoàn trả sau 24h trả xe)' : '1.500.000đ (Hoàn trả sau 24h trả xe)';
+  } else if (depositOption === 'ASSET_BIKE') {
+    depositAmount = 0;
+    depositLabel = 'Thế chấp xe máy cá nhân + Cavet gốc (0đ tiền mặt)';
+  }
+
+  const rentalSubtotal = Math.max(0, baseRentalFee + insuranceFee + platformServiceFee + deliveryFee - discountAmount - ecoCoinsDiscount);
+  const totalPayable = rentalSubtotal + depositAmount;
 
   return res.json({
     success: true,
@@ -213,8 +234,13 @@ exports.getBookingQuote = (req, res) => {
       deliveryFee,
       voucherCode: appliedVoucher ? appliedVoucher.code : null,
       discountAmount,
-      depositAmount: 0,
-      totalAmount
+      ecoCoinsDiscount,
+      depositOption,
+      depositAmount,
+      depositLabel,
+      rentalSubtotal,
+      totalAmount: rentalSubtotal,
+      totalPayable
     }
   });
 };
@@ -229,7 +255,13 @@ exports.createRental = (req, res) => {
     returnStationId,
     insuranceTier = 'STANDARD',
     deliveryMode = 'STATION',
-    voucherCode = ''
+    voucherCode = '',
+    depositOption = 'VERIFIED_WAIVER_0D',
+    depositAmount = 0,
+    paymentMethod = 'VIETQR',
+    ecoCoinsUsed = 0,
+    signatureData = null,
+    contractNumber = null
   } = req.body;
 
   const vehicle = telematicsService.getVehicleById(vehicleId);
@@ -263,7 +295,12 @@ exports.createRental = (req, res) => {
     }
   }
 
-  const estimatedTotal = Math.max(0, baseRentalFee + insuranceFee + platformServiceFee + deliveryFee - discountAmount);
+  const coinsDiscount = ecoCoinsUsed > 0 ? Math.floor(ecoCoinsUsed / 10) * 1000 : 0;
+  const rentalSubtotal = Math.max(0, baseRentalFee + insuranceFee + platformServiceFee + deliveryFee - discountAmount - coinsDiscount);
+  const finalDeposit = Number(depositAmount) || 0;
+  const estimatedTotal = rentalSubtotal + finalDeposit;
+
+  const finalContractNumber = contractNumber || `HD-ECOGO-2026-${Math.floor(1000 + Math.random() * 9000)}`;
 
   const newTrip = {
     id: `trip_${uuidv4().substring(0, 8)}`,
@@ -285,13 +322,25 @@ exports.createRental = (req, res) => {
     deliveryFee,
     voucherCode: voucher ? voucher.code : null,
     discountAmount,
+    ecoCoinsUsed,
+    coinsDiscount,
+    depositOption,
+    depositAmount: finalDeposit,
+    rentalSubtotal,
     estimatedTotal,
+    paymentMethod,
+    paymentStatus: 'PAID',
+    paidAt: new Date().toISOString(),
+    eContractSigned: true,
+    contractNumber: finalContractNumber,
+    signatureData: signatureData || 'Digital Signature verified by EcoGo CA',
+    signedBy: 'Nguyễn Minh Tài',
+    renterCccd: '079204018899',
+    renterLicense: 'GPLX B2-79018442',
     distanceTraveledKm: 0,
     co2SavedKg: 0,
-    ecoPointsEarned: 0,
-    digitalKeyActivated: true,
-    eContractSigned: true,
-    contractNumber: `HD-ITS-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`
+    ecoPointsEarned: Math.round(estimatedTotal / 10000),
+    digitalKeyActivated: true
   };
 
   rentals.unshift(newTrip);
