@@ -110,37 +110,30 @@ export default function TripsHistoryScreen({
           </Text>
         </View>
 
-        {/* DYNAMIC TELEMETRY ECO SUMMARY CARD */}
+        {/* PRACTICAL RENTAL & PERKS SUMMARY CARD */}
         <View style={styles.ecoSummaryCard}>
           <View style={styles.ecoTopBadgeRow}>
             <View style={[styles.ecoBadgeMint, { backgroundColor: theme.primarySoft }]}>
-              <Ionicons name="leaf" size={12} color={theme.primary} />
+              <Ionicons name="car-sport" size={13} color={theme.primary} />
               <Text style={[styles.ecoBadgeMintText, { color: theme.primary }]}>
-                Thống kê viễn trắc xe điện ITS
+                Tổng kết hành trình UTH
               </Text>
             </View>
 
-            <TouchableOpacity
-              style={styles.formulaInfoBtn}
-              onPress={() => setShowFormulaModal(true)}
-              activeOpacity={0.75}
-            >
-              <Ionicons name="information-circle-outline" size={13} color={theme.primary} />
-              <Text style={[styles.formulaInfoBtnText, { color: theme.primary }]}>Công thức tính</Text>
-            </TouchableOpacity>
+            <Text style={styles.ecoVerifyCode}>EcoGo UTH · 2026</Text>
           </View>
 
           <View style={[styles.ecoRow, { backgroundColor: theme.beigeSoft }]}>
             <View style={styles.ecoItem}>
-              <Text style={[styles.ecoNum, { color: theme.primary }]}>{totalCo2Saved}</Text>
-              <Text style={styles.ecoUnit}>kg CO₂</Text>
-              <Text style={styles.ecoLabel}>Đã tiết giảm</Text>
+              <Text style={[styles.ecoNum, { color: theme.primary }]}>{totalKm}</Text>
+              <Text style={styles.ecoUnit}>km</Text>
+              <Text style={styles.ecoLabel}>Tổng hành trình</Text>
             </View>
             <View style={styles.ecoDivider} />
             <View style={styles.ecoItem}>
-              <Text style={[styles.ecoNum, { color: theme.primary }]}>{totalTrees}</Text>
-              <Text style={styles.ecoUnit}>cây xanh</Text>
-              <Text style={styles.ecoLabel}>Hấp thụ tương đương</Text>
+              <Text style={[styles.ecoNum, { color: theme.primary }]}>{trips.length}</Text>
+              <Text style={styles.ecoUnit}>hợp đồng</Text>
+              <Text style={styles.ecoLabel}>Đã hoàn tất</Text>
             </View>
             <View style={styles.ecoDivider} />
             <View style={styles.ecoItem}>
@@ -162,8 +155,8 @@ export default function TripsHistoryScreen({
           >
             <View style={styles.benefitLeftRow}>
               <Ionicons name="gift-outline" size={14} color="#D4AF37" />
-              <Text style={styles.benefitText}>
-                {totalRewardPoints} điểm = Đủ đổi 3 Voucher giảm giá 50.000đ
+              <Text style={styles.benefitText} numberOfLines={1} ellipsizeMode="tail">
+                Đổi {totalRewardPoints} điểm lấy Voucher ưu đãi
               </Text>
               <Ionicons name="chevron-forward" size={12} color="#8C6239" />
             </View>
@@ -815,14 +808,19 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     marginTop: 10,
     borderWidth: 1,
-    borderColor: '#F0E8DC'
+    borderColor: '#F0E8DC',
+    overflow: 'hidden'
   },
   benefitLeftRow: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 5
+    gap: 4,
+    marginRight: 8,
+    minWidth: 0
   },
   benefitText: {
+    flex: 1,
     fontFamily: FONTS.family,
     fontSize: 10.5,
     fontWeight: '700',
@@ -832,10 +830,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#E8F5E9',
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 4,
-    gap: 2
+    paddingHorizontal: 7,
+    paddingVertical: 3,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: 'rgba(21, 128, 61, 0.25)',
+    gap: 3,
+    flexShrink: 0
   },
   ecoEliteBadgeText: {
     fontFamily: FONTS.family,
