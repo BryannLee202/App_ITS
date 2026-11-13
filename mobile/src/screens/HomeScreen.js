@@ -584,6 +584,12 @@ export default function HomeScreen({
   };
 
   const filteredVehicles = vehicles.filter((v) => {
+    if (selectedCategory && selectedCategory !== 'ALL' && v.category !== selectedCategory) {
+      return false;
+    }
+    if (selectedCategory === 'CAR' && catalogBrand && catalogBrand !== 'ALL' && v.brand && v.brand.toLowerCase() !== catalogBrand.toLowerCase()) {
+      return false;
+    }
     if (filterByStation && selectedPlace) {
       const matchStation = v.stationId === selectedPlace.id;
       const anyMatchInStation = vehicles.some((item) => item.stationId === selectedPlace.id);
@@ -1181,10 +1187,12 @@ export default function HomeScreen({
               ]}
               activeOpacity={0.85}
               onPress={() => {
-                setCatalogMode('CAR');
+                setSelectedCategory('CAR');
                 setCatalogBrand('ALL');
-                setCatalogSortBy('PRICE_ASC');
-                setCatalogSearch('');
+                setFilterByStation(false);
+                if (mainScrollRef.current) {
+                  mainScrollRef.current.scrollTo({ y: 560, animated: true });
+                }
               }}
             >
               <View style={[styles.featureIconBox, { backgroundColor: '#FFFFFF' }]}>
@@ -1211,10 +1219,12 @@ export default function HomeScreen({
               ]}
               activeOpacity={0.85}
               onPress={() => {
-                setCatalogMode('MOTORBIKE');
+                setSelectedCategory('MOTORBIKE');
                 setCatalogBrand('ALL');
-                setCatalogSortBy('PRICE_ASC');
-                setCatalogSearch('');
+                setFilterByStation(false);
+                if (mainScrollRef.current) {
+                  mainScrollRef.current.scrollTo({ y: 560, animated: true });
+                }
               }}
             >
               <View style={[styles.featureIconBox, { backgroundColor: '#FFFFFF' }]}>
@@ -1421,9 +1431,13 @@ export default function HomeScreen({
                   key={cat.id}
                   style={[
                     styles.catPill,
-                    active && { backgroundColor: '#1D1D1F', borderColor: '#1D1D1F' }
+                    active && { backgroundColor: '#2B180D', borderColor: '#2B180D' }
                   ]}
-                  onPress={() => setSelectedCategory(cat.id)}
+                  onPress={() => {
+                    setSelectedCategory(cat.id);
+                    setCatalogBrand('ALL');
+                  }}
+                  activeOpacity={0.8}
                 >
                   <Text style={[styles.catPillText, active && styles.catPillTextActive]}>
                     {cat.label}
@@ -1433,25 +1447,44 @@ export default function HomeScreen({
             })}
           </View>
 
-          {/* Quick Dedicated Catalog Launcher Banner */}
-          <TouchableOpacity
-            style={styles.catOpenDedicatedBtn}
-            activeOpacity={0.85}
-            onPress={() => {
-              setCatalogMode(selectedCategory === 'MOTORBIKE' ? 'MOTORBIKE' : 'CAR');
-              setCatalogBrand('ALL');
-              setCatalogSortBy('PRICE_ASC');
-              setCatalogSearch('');
-            }}
-          >
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-              <Ionicons name="filter" size={14} color="#6F4E37" />
-              <Text style={styles.catOpenDedicatedText}>
-                Xem danh mục đầy đủ & Bộ lọc hãng xe ({selectedCategory === 'MOTORBIKE' ? 'Xe máy điện' : 'Ô tô tự lái'})
-              </Text>
+          {/* Inline Brand Filter Pills for Cars (Directly inside Ô tô tự lái section) */}
+          {selectedCategory === 'CAR' && (
+            <View style={styles.inlineBrandFilterRow}>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.inlineBrandScroll}
+              >
+                {['ALL', 'VinFast', 'Hyundai', 'Toyota', 'Mazda'].map((brand) => {
+                  const active = catalogBrand === brand;
+                  const brandCount =
+                    brand === 'ALL'
+                      ? vehicles.filter((v) => v.category === 'CAR').length
+                      : vehicles.filter((v) => v.category === 'CAR' && v.brand === brand).length;
+                  return (
+                    <TouchableOpacity
+                      key={brand}
+                      style={[
+                        styles.inlineBrandPill,
+                        active && styles.inlineBrandPillActive
+                      ]}
+                      onPress={() => setCatalogBrand(brand)}
+                      activeOpacity={0.8}
+                    >
+                      <Text style={[styles.inlineBrandText, active && styles.inlineBrandTextActive]}>
+                        {brand === 'ALL' ? 'Tất cả hãng xe' : brand}
+                      </Text>
+                      <View style={[styles.inlineBrandCountBadge, active && styles.inlineBrandCountBadgeActive]}>
+                        <Text style={[styles.inlineBrandCountText, active && styles.inlineBrandCountTextActive]}>
+                          {brandCount}
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                  );
+                })}
+              </ScrollView>
             </View>
-            <Ionicons name="arrow-forward" size={14} color="#6F4E37" />
-          </TouchableOpacity>
+          )}
 
           {loading ? (
             <ActivityIndicator size="large" color={theme.primary} style={{ marginVertical: 28 }} />
@@ -4124,23 +4157,57 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#FFFFFF'
   },
-  catOpenDedicatedBtn: {
+  inlineBrandFilterRow: {
+    paddingHorizontal: 16,
+    marginBottom: 10,
+    marginTop: 2
+  },
+  inlineBrandScroll: {
+    gap: 6,
+    paddingVertical: 2
+  },
+  inlineBrandPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: '#F5EFEB',
-    borderWidth: 1,
-    borderColor: '#E8DFD8',
+    paddingHorizontal: 11,
+    paddingVertical: 5,
     borderRadius: 12,
-    paddingVertical: 10,
-    paddingHorizontal: 14,
-    marginVertical: 10
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#EBE3D7'
   },
-  catOpenDedicatedText: {
+  inlineBrandPillActive: {
+    backgroundColor: '#6F4E37',
+    borderColor: '#6F4E37'
+  },
+  inlineBrandText: {
     fontFamily: FONTS.family,
-    fontSize: 12,
-    fontWeight: '700',
+    fontSize: 11.5,
+    fontWeight: '600',
+    color: '#7E6B5C'
+  },
+  inlineBrandTextActive: {
+    color: '#FAF7F2',
+    fontWeight: '800'
+  },
+  inlineBrandCountBadge: {
+    marginLeft: 5,
+    paddingHorizontal: 5,
+    paddingVertical: 1,
+    borderRadius: 8,
+    backgroundColor: '#F5EFEB'
+  },
+  inlineBrandCountBadgeActive: {
+    backgroundColor: 'rgba(255, 255, 255, 0.22)'
+  },
+  inlineBrandCountText: {
+    fontFamily: FONTS.family,
+    fontSize: 9.5,
+    fontWeight: '800',
     color: '#6F4E37'
+  },
+  inlineBrandCountTextActive: {
+    color: '#FAF7F2'
   },
   doorstepVehPillCard: {
     width: 130,
