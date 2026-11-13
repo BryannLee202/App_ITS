@@ -24,6 +24,7 @@ export default function DigitalKeyScreen({ theme = THEME_PRESETS.MINT, onNavigat
   const [loading, setLoading] = useState(true);
   const [commandLoading, setCommandLoading] = useState(false);
   const [statusToast, setStatusToast] = useState('Đã kết nối Bluetooth Low Energy 5.2');
+  const [activeQuickCommand, setActiveQuickCommand] = useState(null);
 
   useEffect(() => {
     loadActiveTrip();
@@ -66,6 +67,7 @@ export default function DigitalKeyScreen({ theme = THEME_PRESETS.MINT, onNavigat
     if (!activeTrip) return;
     try {
       setCommandLoading(true);
+      setActiveQuickCommand(command);
       const res = await ApiService.controlVehicle(activeTrip.id, command);
       if (res.telematics) setTelematics(res.telematics);
       if (res.message) setStatusToast(res.message);
@@ -73,6 +75,7 @@ export default function DigitalKeyScreen({ theme = THEME_PRESETS.MINT, onNavigat
       setStatusToast(err.message || 'Không thể gửi lệnh điều khiển');
     } finally {
       setCommandLoading(false);
+      setTimeout(() => setActiveQuickCommand(null), 1200);
     }
   };
 
@@ -95,8 +98,8 @@ export default function DigitalKeyScreen({ theme = THEME_PRESETS.MINT, onNavigat
   if (loading) {
     return (
       <View style={styles.centerBox}>
-        <ActivityIndicator size="large" color="#111111" />
-        <Text style={styles.loadingText}>Đang kết nối khóa xe...</Text>
+        <ActivityIndicator size="large" color="#6F4E37" />
+        <Text style={styles.loadingText}>Đang kết nối chìa khóa số BLE 5.2...</Text>
       </View>
     );
   }
@@ -105,14 +108,15 @@ export default function DigitalKeyScreen({ theme = THEME_PRESETS.MINT, onNavigat
     return (
       <View style={styles.emptyContainer}>
         <View style={styles.emptyIconCircle}>
-          <Ionicons name="key-outline" size={32} color="#111111" />
+          <Ionicons name="key" size={32} color="#D4AF37" />
         </View>
-        <Text style={styles.emptyTitle}>Chưa có chuyến đi đang hoạt động</Text>
+        <Text style={styles.emptyTitle}>Chưa có phương tiện đang kích hoạt</Text>
         <Text style={styles.emptyDesc}>
-          Chọn một xe trên trang Khám phá hoặc Bản đồ để nhận chìa khóa số mở cửa xe tự động 24/7.
+          Chọn một xe trên trang Khám phá hoặc Bản đồ để ký hợp đồng điện tử và nhận chìa khóa số mở xe tự động 24/7.
         </Text>
-        <TouchableOpacity style={styles.goHomeBtn} onPress={onNavigateHome}>
-          <Text style={styles.goHomeBtnText}>Tìm xe gần bạn</Text>
+        <TouchableOpacity style={styles.goHomeBtn} onPress={onNavigateHome} activeOpacity={0.88}>
+          <Ionicons name="car-sport" size={16} color="#FAF7F2" />
+          <Text style={styles.goHomeBtnText}>Tìm xe và nhận khóa ngay</Text>
         </TouchableOpacity>
       </View>
     );
@@ -121,165 +125,308 @@ export default function DigitalKeyScreen({ theme = THEME_PRESETS.MINT, onNavigat
   const vehicle = activeTrip.vehicle || {};
   const isLocked = telematics ? telematics.isLocked : false;
   const isEngineOn = telematics ? telematics.isEngineOn : true;
-  const batteryPct = Math.round(telematics?.batteryLevelPct || 90);
-  const currentSpeed = Math.round(telematics?.speedKmh || 0);
+  const batteryPct = Math.round(telematics?.batteryLevelPct || 94);
+  const currentSpeed = Math.round(telematics?.speedKmh || 35);
+  const rangeRemainingKm = Math.round((vehicle.rangeKm || 450) * (batteryPct / 100));
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-      {/* 1. Minimal Tesla-Style Vehicle Header */}
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.scrollContent}
+      showsVerticalScrollIndicator={false}
+    >
+      {/* 1. Dignified Vehicle Identity & Contract Header */}
       <View style={styles.headerBlock}>
-        <View>
-          <Text style={styles.vehicleTitle}>{vehicle.name}</Text>
-          <View style={styles.subStatusRow}>
-            <View style={styles.connectedDot} />
-            <Text style={styles.subStatusText}>
-              {vehicle.plateNumber} · {isLocked ? 'Đang khóa' : 'Đã mở khóa'} · Pin {batteryPct}%
+        {/* Top Status & Contract Badge Row */}
+        <View style={styles.headerTopRow}>
+          <View style={styles.liveConnectionPill}>
+            <View style={styles.greenPulseDot} />
+            <Text style={styles.liveConnectionText}>BLE 5.2 • TRỰC TUYẾN</Text>
+          </View>
+          <View style={styles.contractBadgePill}>
+            <Ionicons name="document-text-outline" size={11} color="#6F4E37" />
+            <Text style={styles.contractBadgeText} numberOfLines={1}>
+              {activeTrip.contractNumber || 'HD-ECOGO-2026-9812'}
             </Text>
           </View>
         </View>
 
-        <View style={styles.contractPill}>
-          <Text style={styles.contractPillText}>{activeTrip.contractNumber}</Text>
+        {/* Vehicle Name and Plate Row */}
+        <View style={styles.vehicleNameRow}>
+          <Text style={styles.vehicleTitle} numberOfLines={1}>{vehicle.name}</Text>
+          <View style={styles.plateCapsule}>
+            <Text style={styles.plateCapsuleText}>{vehicle.plateNumber || '51K-554.12'}</Text>
+          </View>
+        </View>
+
+        {/* Meta summary status */}
+        <View style={styles.subMetaRow}>
+          <View style={styles.metaStatusChip}>
+            <Ionicons
+              name={isLocked ? 'lock-closed' : 'lock-open'}
+              size={12}
+              color={isLocked ? '#8C7A6B' : '#2D8A4E'}
+            />
+            <Text style={[styles.metaStatusText, !isLocked && { color: '#2D8A4E', fontWeight: '800' }]}>
+              {isLocked ? 'Cửa đang khóa' : 'Cửa đã mở khóa'}
+            </Text>
+          </View>
+          <Text style={styles.metaDotDivider}>•</Text>
+          <View style={styles.metaStatusChip}>
+            <Ionicons name="flash" size={12} color="#D4AF37" />
+            <Text style={styles.metaStatusText}>Pin {batteryPct}% ({rangeRemainingKm} km)</Text>
+          </View>
         </View>
       </View>
 
-      {/* 2. Showroom Vehicle Card */}
+      {/* 2. Showroom Vehicle Showcase Hero Card */}
       <View style={styles.heroCard}>
         <View style={styles.photoContainer}>
-          <Image source={{ uri: vehicle.thumbnail }} style={styles.vehPhoto} resizeMode="cover" />
+          <Image
+            source={{ uri: vehicle.thumbnail }}
+            style={styles.vehPhoto}
+            resizeMode="cover"
+          />
+          {/* Floating Luxury Status Indicator */}
+          <View style={styles.floatingSignalBadge}>
+            <Ionicons name="shield-checkmark" size={13} color="#D4AF37" />
+            <Text style={styles.floatingSignalText} numberOfLines={1}>
+              {statusToast}
+            </Text>
+          </View>
         </View>
 
-        <View style={styles.statusToastRow}>
-          <Ionicons name="checkmark-circle" size={15} color={theme.primary} />
-          <Text style={styles.statusToastText} numberOfLines={1}>{statusToast}</Text>
-        </View>
-
-        <View style={styles.metricsRow}>
-          <View style={styles.metricCol}>
+        {/* 4-Pod Automotive Instrument Telemetry Grid */}
+        <View style={styles.metricsGrid}>
+          {/* Gauge 1: Battery SoC */}
+          <View style={styles.metricPod}>
+            <View style={styles.podIconBadge}>
+              <Ionicons name="battery-charging" size={14} color="#2D8A4E" />
+            </View>
             <Text style={styles.metricVal}>{batteryPct}%</Text>
             <Text style={styles.metricLbl}>Dung lượng pin</Text>
           </View>
-          <View style={styles.metricDivider} />
-          <View style={styles.metricCol}>
-            <Text style={styles.metricVal}>{Math.round((vehicle.rangeKm || 420) * (batteryPct / 100))} km</Text>
+
+          <View style={styles.podVerticalDivider} />
+
+          {/* Gauge 2: Remaining Range */}
+          <View style={styles.metricPod}>
+            <View style={styles.podIconBadge}>
+              <Ionicons name="navigate" size={14} color="#6F4E37" />
+            </View>
+            <Text style={styles.metricVal}>{rangeRemainingKm} km</Text>
             <Text style={styles.metricLbl}>Quãng đường</Text>
           </View>
-          <View style={styles.metricDivider} />
-          <View style={styles.metricCol}>
+
+          <View style={styles.podVerticalDivider} />
+
+          {/* Gauge 3: Live Velocity */}
+          <View style={styles.metricPod}>
+            <View style={styles.podIconBadge}>
+              <Ionicons name="speedometer" size={14} color="#6F4E37" />
+            </View>
             <Text style={styles.metricVal}>{currentSpeed} km/h</Text>
-            <Text style={styles.metricLbl}>Vận tốc</Text>
+            <Text style={styles.metricLbl}>Vận tốc live</Text>
           </View>
-          <View style={styles.metricDivider} />
-          <View style={styles.metricCol}>
+
+          <View style={styles.podVerticalDivider} />
+
+          {/* Gauge 4: Cabin Climate */}
+          <View style={styles.metricPod}>
+            <View style={styles.podIconBadge}>
+              <Ionicons name="thermometer" size={14} color="#0284C7" />
+            </View>
             <Text style={styles.metricVal}>22°C</Text>
             <Text style={styles.metricLbl}>Nhiệt độ cabin</Text>
           </View>
         </View>
       </View>
 
-      {/* 3. Primary Controls (Lock / Unlock / Start Engine) */}
+      {/* 3. Automotive Remote Controls Card */}
       <View style={styles.controlsCard}>
-        <Text style={styles.cardSectionTitle}>Điều khiển phương tiện</Text>
+        <View style={styles.controlsHeaderRow}>
+          <Text style={styles.cardSectionTitle}>Điều khiển phương tiện thông minh</Text>
+          <View style={styles.securitySealBadge}>
+            <Ionicons name="finger-print-outline" size={12} color="#6F4E37" />
+            <Text style={styles.securitySealText}>Xác thực mã hóa</Text>
+          </View>
+        </View>
 
-        {/* Primary Lock / Engine Bar */}
+        {/* Master Primary Controls (Lock / Engine) */}
         <View style={styles.primaryActionsRow}>
-          <TouchableOpacity
-            style={[styles.primaryActionBtn, !isLocked && styles.primaryActionBtnActive]}
-            disabled={commandLoading}
-            onPress={() => handleControl(isLocked ? 'UNLOCK' : 'LOCK')}
-          >
-            <Ionicons
-              name={isLocked ? 'lock-closed-outline' : 'lock-open-outline'}
-              size={20}
-              color={!isLocked ? '#FFFFFF' : '#111111'}
-            />
-            <Text style={[styles.primaryActionText, !isLocked && styles.primaryActionTextActive]}>
-              {isLocked ? 'Mở khóa xe' : 'Khóa cửa xe'}
-            </Text>
-          </TouchableOpacity>
-
+          {/* Master 1: Door Lock / Unlock */}
           <TouchableOpacity
             style={[
               styles.primaryActionBtn,
-              isEngineOn && { backgroundColor: theme.primary }
+              !isLocked ? styles.lockBtnUnlocked : styles.lockBtnLocked
+            ]}
+            disabled={commandLoading}
+            onPress={() => handleControl(isLocked ? 'UNLOCK' : 'LOCK')}
+            activeOpacity={0.88}
+          >
+            <View style={styles.primaryIconWrapper}>
+              <Ionicons
+                name={isLocked ? 'lock-closed' : 'lock-open'}
+                size={22}
+                color={!isLocked ? '#D4AF37' : '#6F4E37'}
+              />
+            </View>
+            <View style={styles.primaryTextCol}>
+              <Text style={[styles.primaryActionTitle, !isLocked && styles.primaryActionTitleLight]}>
+                {isLocked ? 'Khóa Cửa Xe' : 'Cửa Xe: Đã Mở'}
+              </Text>
+              <Text style={[styles.primaryActionSub, !isLocked && styles.primaryActionSubLight]}>
+                {isLocked ? 'Chạm để mở khóa BLE' : 'Chạm để khóa an toàn'}
+              </Text>
+            </View>
+          </TouchableOpacity>
+
+          {/* Master 2: Engine Start / Stop */}
+          <TouchableOpacity
+            style={[
+              styles.primaryActionBtn,
+              isEngineOn ? styles.engineBtnOn : styles.engineBtnOff
             ]}
             disabled={commandLoading}
             onPress={() => handleControl(isEngineOn ? 'ENGINE_STOP' : 'ENGINE_START')}
+            activeOpacity={0.88}
           >
-            <Ionicons
-              name="power"
-              size={20}
-              color={isEngineOn ? '#FFFFFF' : '#111111'}
-            />
-            <Text style={[styles.primaryActionText, isEngineOn && styles.primaryActionTextActive]}>
-              {isEngineOn ? 'Động cơ: Bật' : 'Khởi động xe'}
-            </Text>
+            <View style={styles.primaryIconWrapper}>
+              <Ionicons
+                name="power"
+                size={22}
+                color={isEngineOn ? '#2D8A4E' : '#6F4E37'}
+              />
+            </View>
+            <View style={styles.primaryTextCol}>
+              <Text style={[styles.primaryActionTitle, isEngineOn && styles.primaryActionTitleLight]}>
+                {isEngineOn ? 'Động Cơ: Bật' : 'Khởi Động Xe'}
+              </Text>
+              <Text style={[styles.primaryActionSub, isEngineOn && styles.primaryActionSubLight]}>
+                {isEngineOn ? 'Sẵn sàng lăn bánh' : 'Khởi động máy nổ'}
+              </Text>
+            </View>
           </TouchableOpacity>
         </View>
 
-        {/* Secondary Quick Controls (4 Clean Items) */}
+        {/* 4 Secondary Quick Micro-Controls */}
         <View style={styles.secondaryGrid}>
-          <TouchableOpacity style={styles.secBtn} onPress={() => handleControl('TRUNK_OPEN')}>
-            <Ionicons name="car-outline" size={20} color="#111111" />
+          {/* Quick 1: Trunk */}
+          <TouchableOpacity
+            style={[
+              styles.secBtn,
+              activeQuickCommand === 'TRUNK_OPEN' && styles.secBtnActive
+            ]}
+            onPress={() => handleControl('TRUNK_OPEN')}
+            activeOpacity={0.85}
+          >
+            <View style={styles.secIconCircle}>
+              <Ionicons name="car-sport" size={18} color="#6F4E37" />
+            </View>
             <Text style={styles.secBtnLabel}>Mở cốp</Text>
+            <Text style={styles.secBtnMicro}>Điện tự động</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.secBtn} onPress={() => handleControl('AC_PRECOOL')}>
-            <Ionicons name="snow-outline" size={20} color="#111111" />
+          {/* Quick 2: Pre-cool AC */}
+          <TouchableOpacity
+            style={[
+              styles.secBtn,
+              activeQuickCommand === 'AC_PRECOOL' && styles.secBtnActive
+            ]}
+            onPress={() => handleControl('AC_PRECOOL')}
+            activeOpacity={0.85}
+          >
+            <View style={styles.secIconCircle}>
+              <Ionicons name="snow" size={18} color="#0284C7" />
+            </View>
             <Text style={styles.secBtnLabel}>Làm mát</Text>
+            <Text style={styles.secBtnMicro}>22°C Eco</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.secBtn} onPress={() => handleControl('FLASH_LIGHTS')}>
-            <Ionicons name="sunny-outline" size={20} color="#111111" />
+          {/* Quick 3: Flash Headlights */}
+          <TouchableOpacity
+            style={[
+              styles.secBtn,
+              activeQuickCommand === 'FLASH_LIGHTS' && styles.secBtnActive
+            ]}
+            onPress={() => handleControl('FLASH_LIGHTS')}
+            activeOpacity={0.85}
+          >
+            <View style={styles.secIconCircle}>
+              <Ionicons name="flash" size={18} color="#D4AF37" />
+            </View>
             <Text style={styles.secBtnLabel}>Nháy đèn</Text>
+            <Text style={styles.secBtnMicro}>Tìm xe bãi</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.secBtn} onPress={() => handleControl('HORN')}>
-            <Ionicons name="volume-medium-outline" size={20} color="#111111" />
-            <Text style={styles.secBtnLabel}>Tìm xe</Text>
+          {/* Quick 4: Horn / Locate */}
+          <TouchableOpacity
+            style={[
+              styles.secBtn,
+              activeQuickCommand === 'HORN' && styles.secBtnActive
+            ]}
+            onPress={() => handleControl('HORN')}
+            activeOpacity={0.85}
+          >
+            <View style={styles.secIconCircle}>
+              <Ionicons name="volume-high" size={18} color="#6F4E37" />
+            </View>
+            <Text style={styles.secBtnLabel}>Còi xe</Text>
+            <Text style={styles.secBtnMicro}>Bíp định vị</Text>
           </TouchableOpacity>
         </View>
       </View>
 
-      {/* 4. ITS Green Wave Advisory Card */}
+      {/* 4. ITS GLOSA Green Wave Telematics Advisory Card */}
       {glosa && (
         <View style={styles.glosaCard}>
           <View style={styles.glosaTopRow}>
-            <View>
-              <Text style={styles.glosaTitle}>Hỗ trợ làn sóng xanh (GLOSA)</Text>
-              <Text style={styles.glosaSub}>Trục Điện Biên Phủ – Mai Chí Thọ</Text>
+            <View style={{ flex: 1, marginRight: 8 }}>
+              <View style={styles.glosaHeaderGroup}>
+                <Ionicons name="speedometer-outline" size={15} color="#6F4E37" />
+                <Text style={styles.glosaTitle}>Làn sóng xanh thông minh (GLOSA)</Text>
+              </View>
+              <Text style={styles.glosaSub}>Hành lang Điện Biên Phủ – Ngã tư Hàng Xanh</Text>
             </View>
-            <View style={[styles.glosaSignalBadge, { backgroundColor: theme.primarySoft }]}>
-              <View style={[styles.liveGreenDot, { backgroundColor: theme.primary }]} />
-              <Text style={[styles.glosaSignalText, { color: theme.primary }]}>
-                Đèn {glosa.signalState === 'GREEN' ? 'xanh' : 'đỏ'} {glosa.secondsToSignalChange}s
+
+            <View style={styles.glosaSignalBadge}>
+              <View style={styles.liveGreenDot} />
+              <Text style={styles.glosaSignalText}>
+                Đèn xanh {glosa.secondsToSignalChange || 28}s
               </Text>
             </View>
           </View>
 
           <View style={styles.glosaSpeedBox}>
-            <View>
-              <Text style={styles.glosaSpeedLabel}>Vận tốc khuyến nghị qua nút giao</Text>
-              <Text style={styles.glosaAdviceMsg}>{glosa.advisoryMessage}</Text>
+            <View style={{ flex: 1, marginRight: 10 }}>
+              <Text style={styles.glosaSpeedLabel}>Vận tốc tối ưu qua nút giao không dừng</Text>
+              <Text style={styles.glosaAdviceMsg}>
+                {glosa.advisoryMessage || 'Duy trì tốc độ 42 km/h để vượt qua nút giao tiếp theo khi đèn xanh'}
+              </Text>
             </View>
-            <Text style={styles.glosaSpeedValue}>{glosa.recommendedSpeedKmh} km/h</Text>
+            <View style={styles.speedCapsule}>
+              <Text style={styles.glosaSpeedValue}>{glosa.recommendedSpeedKmh || 42}</Text>
+              <Text style={styles.glosaSpeedUnit}>km/h</Text>
+            </View>
           </View>
         </View>
       )}
 
-      {/* 5. CO2 Impact Widget */}
-      <CO2Widget eco={eco} accentColor={theme.primary} softBg={theme.primarySoft} />
+      {/* 5. CO2 Green Footprint Impact Widget */}
+      <CO2Widget eco={eco} accentColor="#6F4E37" softBg="#F5EFEB" />
 
-      {/* 6. Return Vehicle CTA */}
+      {/* 6. End Rental & Return Vehicle CTA */}
       <TouchableOpacity
         style={styles.returnBtn}
-        activeOpacity={0.85}
+        activeOpacity={0.88}
         onPress={handleCompleteTrip}
       >
-        <Text style={styles.returnBtnText}>Kết thúc chuyến & Trả xe tại trạm</Text>
+        <Ionicons name="checkmark-done-circle" size={18} color="#D4AF37" />
+        <Text style={styles.returnBtnText}>Kết thúc chuyến & Trả xe tại trạm UTH</Text>
       </TouchableOpacity>
 
-      <View style={{ height: 96 }} />
+      {/* Safety Spacing for Bottom Tab Bar */}
+      <View style={{ height: 130 }} />
     </ScrollView>
   );
 }
@@ -287,323 +434,507 @@ export default function DigitalKeyScreen({ theme = THEME_PRESETS.MINT, onNavigat
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F7F7F5'
+    backgroundColor: '#FAF7F2'
   },
   scrollContent: {
-    padding: 16
+    paddingHorizontal: 16,
+    paddingTop: 16
   },
   centerBox: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     padding: 24,
-    backgroundColor: '#F7F7F5'
+    backgroundColor: '#FAF7F2'
   },
   loadingText: {
-    fontFamily: FONTS.family,
     marginTop: 12,
     fontSize: 13,
-    color: '#6E6E73'
+    fontWeight: '700',
+    color: '#6F4E37'
   },
   emptyContainer: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     padding: 28,
-    backgroundColor: '#F7F7F5'
+    backgroundColor: '#FAF7F2'
   },
   emptyIconCircle: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    backgroundColor: '#FFFFFF',
+    width: 68,
+    height: 68,
+    borderRadius: 34,
+    backgroundColor: '#F5EFEB',
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 16,
-    borderWidth: 1,
-    borderColor: '#EBECE8'
+    borderWidth: 1.5,
+    borderColor: '#D4AF37'
   },
   emptyTitle: {
-    fontFamily: FONTS.family,
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#1D1D1F'
+    fontSize: 16,
+    fontWeight: '800',
+    color: '#2B180D',
+    textAlign: 'center'
   },
   emptyDesc: {
-    fontFamily: FONTS.family,
-    fontSize: 13,
-    color: '#6E6E73',
+    fontSize: 12,
+    color: '#8C7A6B',
     textAlign: 'center',
-    marginTop: 6,
-    lineHeight: 19
+    marginTop: 8,
+    lineHeight: 18,
+    paddingHorizontal: 16
   },
   goHomeBtn: {
-    backgroundColor: '#1D1D1F',
-    paddingHorizontal: 22,
-    paddingVertical: 12,
-    borderRadius: 12,
-    marginTop: 20
-  },
-  goHomeBtnText: {
-    fontFamily: FONTS.family,
-    color: '#FFFFFF',
-    fontSize: 13,
-    fontWeight: '600'
-  },
-  headerBlock: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: 14
-  },
-  vehicleTitle: {
-    fontFamily: FONTS.family,
-    fontSize: 22,
-    fontWeight: '700',
-    color: '#111111',
-    letterSpacing: -0.4
-  },
-  subStatusRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    backgroundColor: '#4E3322',
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 14,
+    marginTop: 20,
+    shadowColor: '#2B180D',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3
+  },
+  goHomeBtnText: {
+    color: '#FAF7F2',
+    fontSize: 13,
+    fontWeight: '800',
+    marginLeft: 6
+  },
+
+  /* Header Identity Block */
+  headerBlock: {
+    marginBottom: 12
+  },
+  headerTopRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 6
+  },
+  liveConnectionPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#E8F5E9',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 10
+  },
+  greenPulseDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#2D8A4E',
+    marginRight: 5
+  },
+  liveConnectionText: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#2D8A4E',
+    letterSpacing: 0.4
+  },
+  contractBadgePill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F5EFEB',
+    paddingHorizontal: 9,
+    paddingVertical: 4,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#EBE3D7'
+  },
+  contractBadgeText: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#6F4E37',
+    marginLeft: 4,
+    maxWidth: 160
+  },
+  vehicleNameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: 2
+  },
+  vehicleTitle: {
+    flex: 1,
+    fontSize: 18,
+    fontWeight: '900',
+    color: '#2B180D',
+    marginRight: 8
+  },
+  plateCapsule: {
+    backgroundColor: '#FAF7F2',
+    paddingHorizontal: 9,
+    paddingVertical: 4,
+    borderRadius: 8,
+    borderWidth: 1.5,
+    borderColor: '#D4AF37'
+  },
+  plateCapsuleText: {
+    fontSize: 11,
+    fontWeight: '900',
+    color: '#2B180D',
+    letterSpacing: 0.5
+  },
+  subMetaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginTop: 4
   },
-  connectedDot: {
-    width: 7,
-    height: 7,
-    borderRadius: 4,
-    backgroundColor: '#0CA678'
+  metaStatusChip: {
+    flexDirection: 'row',
+    alignItems: 'center'
   },
-  subStatusText: {
-    fontFamily: FONTS.family,
-    fontSize: 13,
-    color: '#6E6E73',
-    fontWeight: '500'
-  },
-  contractPill: {
-    backgroundColor: '#FFFFFF',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#EBEBED'
-  },
-  contractPillText: {
-    fontFamily: FONTS.family,
+  metaStatusText: {
     fontSize: 11,
-    fontWeight: '600',
-    color: '#6E6E73'
+    color: '#6F4E37',
+    fontWeight: '700',
+    marginLeft: 4
   },
+  metaDotDivider: {
+    fontSize: 11,
+    color: '#C4B5A5',
+    marginHorizontal: 8
+  },
+
+  /* Showcase Hero Card */
   heroCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 18,
+    borderRadius: 20,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: '#EBEBED',
-    marginBottom: 14
+    borderColor: '#EBE3D7',
+    marginBottom: 12,
+    shadowColor: '#2B180D',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    elevation: 3
   },
   photoContainer: {
     width: '100%',
-    height: 175,
-    backgroundColor: '#F6F5F2'
+    aspectRatio: 16 / 9,
+    backgroundColor: '#F5EFEB',
+    position: 'relative'
   },
   vehPhoto: {
     width: '100%',
     height: '100%'
   },
-  statusToastRow: {
+  floatingSignalBadge: {
+    position: 'absolute',
+    bottom: 10,
+    left: 10,
+    right: 10,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F2F2F5',
-    gap: 6
+    backgroundColor: 'rgba(43, 24, 13, 0.88)',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 14
   },
-  statusToastText: {
-    fontFamily: FONTS.family,
-    fontSize: 12,
-    color: '#111111',
-    fontWeight: '500',
+  floatingSignalText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#FAF7F2',
+    marginLeft: 6,
     flex: 1
   },
-  metricsRow: {
+
+  /* 4-Pod Telemetry Gauges */
+  metricsGrid: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 14
+    justifyContent: 'space-between',
+    paddingVertical: 12,
+    paddingHorizontal: 6,
+    backgroundColor: '#FAF7F2'
   },
-  metricCol: {
+  metricPod: {
     flex: 1,
-    alignItems: 'center'
+    alignItems: 'center',
+    paddingVertical: 4
   },
-  metricDivider: {
+  podIconBadge: {
+    marginBottom: 3
+  },
+  podVerticalDivider: {
     width: 1,
-    height: 26,
-    backgroundColor: '#EBEBED'
+    height: 28,
+    backgroundColor: '#EBE3D7'
   },
   metricVal: {
-    fontFamily: FONTS.family,
-    fontSize: 15,
-    fontWeight: '700',
-    color: '#111111'
+    fontSize: 13,
+    fontWeight: '900',
+    color: '#2B180D'
   },
   metricLbl: {
-    fontFamily: FONTS.family,
-    fontSize: 11,
-    color: '#8E8E93',
+    fontSize: 9,
+    color: '#8C7A6B',
     marginTop: 2
   },
+
+  /* Automotive Remote Controls Card */
   controlsCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 18,
-    padding: 16,
+    borderRadius: 20,
+    padding: 14,
     borderWidth: 1,
-    borderColor: '#EBEBED',
-    marginBottom: 14
+    borderColor: '#EBE3D7',
+    marginBottom: 12,
+    shadowColor: '#2B180D',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 5,
+    elevation: 2
+  },
+  controlsHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 12
   },
   cardSectionTitle: {
-    fontFamily: FONTS.family,
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#111111',
-    marginBottom: 12
+    fontSize: 13,
+    fontWeight: '800',
+    color: '#2B180D'
+  },
+  securitySealBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F5EFEB',
+    paddingHorizontal: 7,
+    paddingVertical: 3,
+    borderRadius: 8
+  },
+  securitySealText: {
+    fontSize: 9,
+    fontWeight: '800',
+    color: '#6F4E37',
+    marginLeft: 3
   },
   primaryActionsRow: {
     flexDirection: 'row',
-    gap: 10,
+    justifyContent: 'space-between',
     marginBottom: 10
   },
   primaryActionBtn: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 10,
+    borderRadius: 14,
+    marginHorizontal: 3
+  },
+  lockBtnUnlocked: {
+    backgroundColor: '#2B180D'
+  },
+  lockBtnLocked: {
+    backgroundColor: '#F5EFEB',
+    borderWidth: 1,
+    borderColor: '#EBE3D7'
+  },
+  engineBtnOn: {
+    backgroundColor: '#4E3322'
+  },
+  engineBtnOff: {
+    backgroundColor: '#F5EFEB',
+    borderWidth: 1,
+    borderColor: '#EBE3D7'
+  },
+  primaryIconWrapper: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: 'rgba(255, 255, 255, 0.12)',
+    alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#F5F5F7',
-    paddingVertical: 14,
-    borderRadius: 12,
-    gap: 8
+    marginRight: 8
   },
-  primaryActionBtnActive: {
-    backgroundColor: '#1D1D1F'
+  primaryTextCol: {
+    flex: 1
   },
-  primaryActionBtnMint: {
-    backgroundColor: '#0CA678'
+  primaryActionTitle: {
+    fontSize: 12,
+    fontWeight: '800',
+    color: '#2B180D'
   },
-  primaryActionText: {
-    fontFamily: FONTS.family,
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#111111'
+  primaryActionTitleLight: {
+    color: '#FAF7F2'
   },
-  primaryActionTextActive: {
-    color: '#FFFFFF'
+  primaryActionSub: {
+    fontSize: 9,
+    color: '#8C7A6B',
+    marginTop: 1
   },
+  primaryActionSubLight: {
+    color: '#D4AF37'
+  },
+
+  /* 4 Secondary Quick Micro-Controls */
   secondaryGrid: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: 8
+    justifyContent: 'space-between'
   },
   secBtn: {
     flex: 1,
-    backgroundColor: '#F7F7F9',
-    borderRadius: 12,
-    paddingVertical: 12,
+    backgroundColor: '#FAF7F2',
+    borderRadius: 14,
+    paddingVertical: 10,
+    paddingHorizontal: 4,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 5
+    marginHorizontal: 3,
+    borderWidth: 1,
+    borderColor: '#EBE3D7'
+  },
+  secBtnActive: {
+    backgroundColor: '#F5EFEB',
+    borderColor: '#D4AF37'
+  },
+  secIconCircle: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 5,
+    borderWidth: 1,
+    borderColor: '#EBE3D7'
   },
   secBtnLabel: {
-    fontFamily: FONTS.family,
     fontSize: 11,
-    fontWeight: '500',
-    color: '#111111'
+    fontWeight: '800',
+    color: '#2B180D'
   },
+  secBtnMicro: {
+    fontSize: 9,
+    color: '#8C7A6B',
+    marginTop: 1
+  },
+
+  /* ITS GLOSA Smart Wave Card */
   glosaCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 18,
-    padding: 16,
+    borderRadius: 20,
+    padding: 14,
     borderWidth: 1,
-    borderColor: '#EBEBED',
-    marginBottom: 10
+    borderColor: '#EBE3D7',
+    marginBottom: 10,
+    shadowColor: '#2B180D',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 5,
+    elevation: 2
   },
   glosaTopRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: 12
+    alignItems: 'center',
+    marginBottom: 10
+  },
+  glosaHeaderGroup: {
+    flexDirection: 'row',
+    alignItems: 'center'
   },
   glosaTitle: {
-    fontFamily: FONTS.family,
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#111111'
+    fontSize: 12,
+    fontWeight: '800',
+    color: '#2B180D',
+    marginLeft: 6
   },
   glosaSub: {
-    fontFamily: FONTS.family,
-    fontSize: 12,
-    color: '#6E6E73',
-    marginTop: 1
+    fontSize: 10,
+    color: '#8C7A6B',
+    marginTop: 2
   },
   glosaSignalBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#EBFBF5',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 99,
-    gap: 6
+    backgroundColor: '#E8F5E9',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 10
   },
   liveGreenDot: {
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: '#0CA678'
+    backgroundColor: '#2D8A4E',
+    marginRight: 5
   },
   glosaSignalText: {
-    fontFamily: FONTS.family,
-    fontSize: 11,
-    fontWeight: '600',
-    color: '#0CA678'
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#2D8A4E'
   },
   glosaSpeedBox: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#F6F3EC',
-    borderRadius: 12,
-    padding: 12
+    backgroundColor: '#FAF7F2',
+    borderRadius: 14,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#EBE3D7'
   },
   glosaSpeedLabel: {
-    fontFamily: FONTS.family,
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#1D1D1F'
+    fontSize: 11,
+    fontWeight: '800',
+    color: '#2B180D'
   },
   glosaAdviceMsg: {
-    fontFamily: FONTS.family,
-    fontSize: 11,
-    color: '#6E6E73',
+    fontSize: 10,
+    color: '#6F4E37',
     marginTop: 2,
-    maxWidth: 230
+    lineHeight: 14
+  },
+  speedCapsule: {
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#D4AF37'
   },
   glosaSpeedValue: {
-    fontFamily: FONTS.family,
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#0CA678'
+    fontSize: 18,
+    fontWeight: '900',
+    color: '#2B180D'
   },
+  glosaSpeedUnit: {
+    fontSize: 9,
+    fontWeight: '700',
+    color: '#8C7A6B'
+  },
+
+  /* Return Vehicle CTA */
   returnBtn: {
-    backgroundColor: '#1D1D1F',
-    paddingVertical: 15,
-    borderRadius: 12,
+    flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 8
+    justifyContent: 'center',
+    backgroundColor: '#4E3322',
+    paddingVertical: 14,
+    borderRadius: 16,
+    marginTop: 10,
+    shadowColor: '#2B180D',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 3
   },
   returnBtnText: {
-    fontFamily: FONTS.family,
-    color: '#FFFFFF',
-    fontSize: 14,
-    fontWeight: '600'
+    color: '#FAF7F2',
+    fontSize: 13,
+    fontWeight: '800',
+    marginLeft: 8
   }
 });

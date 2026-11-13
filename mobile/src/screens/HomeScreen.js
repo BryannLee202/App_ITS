@@ -1179,7 +1179,7 @@ export default function HomeScreen({
               }}
             >
               <View style={[styles.featureIconBox, { backgroundColor: '#FFFFFF' }]}>
-                <Ionicons name="car-sport-outline" size={20} color={theme.primary} />
+                <Ionicons name="car-sport" size={20} color={theme.primary} />
               </View>
               <View style={styles.featureTextCol}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -1209,7 +1209,7 @@ export default function HomeScreen({
               }}
             >
               <View style={[styles.featureIconBox, { backgroundColor: '#FFFFFF' }]}>
-                <Ionicons name="bicycle-outline" size={20} color="#8C6239" />
+                <Ionicons name="bicycle" size={20} color="#8C6239" />
               </View>
               <View style={styles.featureTextCol}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -1231,7 +1231,7 @@ export default function HomeScreen({
               onPress={() => setShowDoorstepModal(true)}
             >
               <View style={[styles.featureIconBox, { backgroundColor: theme.primarySoft }]}>
-                <Ionicons name="navigate-outline" size={19} color={theme.primary} />
+                <Ionicons name="navigate" size={19} color={theme.primary} />
               </View>
               <View style={styles.featureTextCol}>
                 <Text style={styles.featureTitle} numberOfLines={1}>
@@ -1250,7 +1250,7 @@ export default function HomeScreen({
               onPress={() => setShowGlosaModal(true)}
             >
               <View style={[styles.featureIconBox, { backgroundColor: theme.beigeSoft }]}>
-                <Ionicons name="speedometer-outline" size={19} color="#8C6239" />
+                <Ionicons name="speedometer" size={19} color="#8C6239" />
               </View>
               <View style={styles.featureTextCol}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>

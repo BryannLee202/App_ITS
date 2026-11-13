@@ -282,17 +282,17 @@ function AppContent() {
                         <View
                           style={[
                             styles.centerKeyCircle,
-                            { backgroundColor: '#1D1D1F', shadowColor: '#000000' },
-                            isActive && { backgroundColor: theme.primary, borderColor: '#FFFFFF' }
+                            { backgroundColor: '#4E3322', shadowColor: '#2B180D', borderColor: '#FAF7F2' },
+                            isActive && { backgroundColor: '#6F4E37', borderColor: '#D4AF37' }
                           ]}
                         >
-                          <Ionicons name="key" size={20} color="#FFFFFF" />
+                          <Ionicons name="key" size={20} color="#D4AF37" />
                         </View>
                         <Text
                           style={[
                             styles.dockTabLabel,
                             { marginTop: 3 },
-                            isActive && { color: '#1D1D1F', fontWeight: '700' }
+                            isActive && { color: '#6F4E37', fontWeight: '800' }
                           ]}
                         >
                           {t(`tabs.${tab.id.toLowerCase()}`) || tab.label}
@@ -311,19 +311,19 @@ function AppContent() {
                       <View
                         style={[
                           styles.dockIconPill,
-                          isActive && { backgroundColor: theme.primarySoft }
+                          isActive && { backgroundColor: '#F5EFEB' }
                         ]}
                       >
                         <Ionicons
                           name={isActive ? tab.activeIcon : tab.icon}
                           size={20}
-                          color={isActive ? theme.primary : '#64748B'}
+                          color={isActive ? '#6F4E37' : '#8C7A6B'}
                         />
                       </View>
                       <Text
                         style={[
                           styles.dockTabLabel,
-                          isActive && { color: theme.primary, fontWeight: '800' }
+                          isActive && { color: '#6F4E37', fontWeight: '800' }
                         ]}
                       >
                         {t(`tabs.${tab.id.toLowerCase()}`) || tab.label}
@@ -773,16 +773,16 @@ const styles = StyleSheet.create({
   unifiedGlassDock: {
     height: 66,
     borderRadius: 26,
-    backgroundColor: 'rgba(255, 255, 255, 0.96)',
+    backgroundColor: 'rgba(250, 247, 242, 0.96)',
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: '#EBE3D7',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around',
     paddingHorizontal: 6,
-    shadowColor: '#0F172A',
+    shadowColor: '#2B180D',
     shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.09,
+    shadowOpacity: 0.12,
     shadowRadius: 18,
     elevation: 8
   },
