@@ -8,11 +8,14 @@ import {
   Platform,
   ActivityIndicator,
   Animated,
-  Easing
+  Easing,
+  Image
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { FONTS, THEME_PRESETS } from '../styles/theme';
 import ApiService from '../services/api';
+
+const ECOGO_LOGO = require('../../assets/logo.png');
 
 const KEYPAD_KEYS = [
   { num: '1', sub: '' },
@@ -279,7 +282,7 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
               }
             ]}
           >
-            {/* Animated Logo Wing / Leaf Emblem */}
+            {/* Brand Logo Master - Luxury Automotive Squircle */}
             <View style={styles.splashEmblemWrap}>
               <View
                 style={[
@@ -287,17 +290,14 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
                   { backgroundColor: theme.primarySoft, borderColor: theme.primaryBorder, shadowColor: theme.primary }
                 ]}
               >
-                <View style={[styles.splashInnerShield, { backgroundColor: theme.primary, borderColor: theme.primaryDark }]}>
-                  <Ionicons
-                    name="navigate"
-                    size={44}
-                    color="#FFFFFF"
-                    style={{ transform: [{ rotate: '15deg' }] }}
-                  />
-                </View>
+                <Image
+                  source={ECOGO_LOGO}
+                  style={styles.splashLogoImage}
+                  resizeMode="cover"
+                />
               </View>
 
-              {/* Animated Orbiting Ring Arc */}
+              {/* Orbiting Ambient Ring Arc */}
               <View style={[styles.splashOrbitRing, { borderColor: theme.primaryBorder }]} />
             </View>
 
@@ -309,13 +309,18 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
                 { backgroundColor: theme.primarySoft, borderColor: theme.primaryBorder }
               ]}
             >
+              <Ionicons name="flash" size={11} color={theme.primary} style={{ marginRight: 4 }} />
               <Text style={[styles.splashBadgePillText, { color: theme.primary }]}>
-                DI CHUYỂN XANH THÔNG MINH 24/7
+                THUÊ XE TỰ LÁI & ĐỔI PIN 24/7
               </Text>
             </View>
 
-            <Text style={styles.splashSloganText}>
-              Thuê xe tự động không chạm · Đổi pin 0đ{'\n'}Hành trình xanh bảo vệ môi trường
+            {/* High-impact Slogan */}
+            <Text style={[styles.splashSloganMain, { color: theme.primary }]}>
+              Chạm Là Mở · Lướt Là Đi
+            </Text>
+            <Text style={styles.splashSloganSub}>
+              Hệ thống thuê xe điện tự lái & trạm sạc không chạm 24/7{'\n'}Hành trình xanh bảo vệ môi trường
             </Text>
 
             {/* Animated Vector Drawing Path Line */}
@@ -334,9 +339,15 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
               />
             </View>
 
-            <View style={[styles.splashSkipPill, { backgroundColor: theme.beigeSoft, borderColor: theme.beigeBorder }]}>
-              <Text style={[styles.splashSkipText, { color: theme.primary }]}>Chạm để tiếp tục →</Text>
-            </View>
+            {/* Premium CTA Button */}
+            <TouchableOpacity
+              style={[styles.splashCtaBtn, { backgroundColor: theme.primary }]}
+              activeOpacity={0.85}
+              onPress={handleProceedFromSplash}
+            >
+              <Text style={styles.splashCtaBtnText}>Bắt đầu hành trình</Text>
+              <Ionicons name="arrow-forward" size={15} color="#FAF7F2" style={{ marginLeft: 6 }} />
+            </TouchableOpacity>
           </Animated.View>
         </TouchableOpacity>
       </View>
@@ -372,14 +383,11 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
           <View style={styles.locDialogCard}>
             <View style={styles.locHeaderRow}>
               <View style={styles.locAppIconWrap}>
-                <View style={[styles.locBlueSquare, { backgroundColor: theme.primary }]}>
-                  <Ionicons
-                    name="navigate"
-                    size={24}
-                    color="#FFFFFF"
-                    style={{ transform: [{ rotate: '12deg' }] }}
-                  />
-                </View>
+                <Image
+                  source={ECOGO_LOGO}
+                  style={styles.locAppLogoImage}
+                  resizeMode="cover"
+                />
                 <View style={styles.locHandBadge}>
                   <Ionicons name="checkmark" size={11} color="#FFFFFF" />
                 </View>
@@ -1020,68 +1028,74 @@ const styles = StyleSheet.create({
     marginBottom: 20
   },
   splashOuterGlowRing: {
-    width: 96,
-    height: 96,
-    borderRadius: 48,
+    width: 104,
+    height: 104,
+    borderRadius: 28,
     backgroundColor: '#F6EFE9',
     borderWidth: 2,
     borderColor: '#E5D6C9',
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#6F4E37',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 16
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.22,
+    shadowRadius: 20,
+    overflow: 'hidden'
   },
-  splashInnerShield: {
-    width: 76,
-    height: 76,
-    borderRadius: 22,
-    backgroundColor: '#6F4E37',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1.5,
-    borderColor: '#4E3322'
+  splashLogoImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 26
   },
   splashOrbitRing: {
     position: 'absolute',
-    width: 116,
-    height: 116,
-    borderRadius: 58,
-    borderWidth: 1,
+    width: 128,
+    height: 128,
+    borderRadius: 64,
+    borderWidth: 1.5,
     borderStyle: 'dashed',
     borderColor: '#E5D6C9'
   },
   splashBrandTitle: {
     fontFamily: FONTS.family,
-    fontSize: 34,
+    fontSize: 32,
     fontWeight: '900',
-    color: '#1D1D1F',
+    color: '#2B1E16',
     letterSpacing: -0.5,
     marginBottom: 4
   },
   splashBadgePill: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: '#F6EFE9',
     borderWidth: 1,
     borderColor: '#E5D6C9',
     borderRadius: 99,
     paddingHorizontal: 12,
-    paddingVertical: 4,
-    marginBottom: 12
+    paddingVertical: 5,
+    marginBottom: 14
   },
   splashBadgePillText: {
     fontFamily: FONTS.family,
-    fontSize: 10,
+    fontSize: 10.5,
     fontWeight: '800',
     color: '#6F4E37',
-    letterSpacing: 1.2
+    letterSpacing: 1.1
   },
-  splashSloganText: {
+  splashSloganMain: {
     fontFamily: FONTS.family,
-    fontSize: 13,
-    color: '#64748B',
+    fontSize: 19,
+    fontWeight: '800',
     textAlign: 'center',
-    lineHeight: 19,
+    letterSpacing: -0.2,
+    marginBottom: 6
+  },
+  splashSloganSub: {
+    fontFamily: FONTS.family,
+    fontSize: 12.5,
+    color: '#7C6A59',
+    textAlign: 'center',
+    lineHeight: 18,
     marginBottom: 20
   },
   splashDrawingLineWrap: {
@@ -1090,28 +1104,32 @@ const styles = StyleSheet.create({
     backgroundColor: '#EAE2D5',
     borderRadius: 2,
     overflow: 'hidden',
-    marginBottom: 24
+    marginBottom: 22
   },
   splashDrawingLineFill: {
     height: '100%',
     backgroundColor: '#6F4E37',
     borderRadius: 2
   },
-  splashSkipPill: {
+  splashCtaBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F1F5F9',
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    borderRadius: 20,
-    paddingHorizontal: 14,
-    paddingVertical: 7
+    justifyContent: 'center',
+    backgroundColor: '#6F4E37',
+    borderRadius: 99,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    shadowColor: '#4E3322',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.18,
+    shadowRadius: 10
   },
-  splashSkipText: {
+  splashCtaBtnText: {
     fontFamily: FONTS.family,
-    fontSize: 11,
-    fontWeight: '600',
-    color: '#475569'
+    fontSize: 13.5,
+    fontWeight: '700',
+    color: '#FAF7F2',
+    letterSpacing: 0.3
   },
   splashFooterInfo: {
     paddingBottom: 24
@@ -1214,6 +1232,13 @@ const styles = StyleSheet.create({
     width: 46,
     height: 46,
     position: 'relative'
+  },
+  locAppLogoImage: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#EAE2D5'
   },
   locBlueSquare: {
     width: 44,

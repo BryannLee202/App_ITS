@@ -128,6 +128,7 @@ export default function App() {
 
   useEffect(() => {
     if (Platform.OS === 'web' && typeof document !== 'undefined') {
+      document.title = 'EcoGo Smart · Thuê Xe Điện Tự Lái 24/7';
       const id = 'google-font-plus-jakarta';
       if (!document.getElementById(id)) {
         const link = document.createElement('link');

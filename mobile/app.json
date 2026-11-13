@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "ITS Smart Mobility",
-    "slug": "its-smart-mobility",
+    "name": "EcoGo Smart · Thuê Xe Tự Lái 24/7",
+    "slug": "ecogo-smart",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -9,18 +9,18 @@
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#1E1B4B"
+      "backgroundColor": "#FAF7F2"
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.its.smartmobility"
+      "bundleIdentifier": "com.ecogo.smartmobility"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.png",
-        "backgroundColor": "#1E1B4B"
+        "backgroundColor": "#FAF7F2"
       },
-      "package": "com.its.smartmobility"
+      "package": "com.ecogo.smartmobility"
     },
     "web": {
       "favicon": "./assets/favicon.png"
