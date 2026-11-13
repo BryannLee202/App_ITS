@@ -308,7 +308,7 @@ export default function HomeScreen({
   const [selectedVoucherForBooking, setSelectedVoucherForBooking] = useState('BANMOI30');
   const [activePromoIdx, setActivePromoIdx] = useState(0);
   const [ecoCoins, setEcoCoins] = useState(180);
-  const [ecoStreak, setEcoStreak] = useState(2);
+  const [ecoStreak, setEcoStreak] = useState(0);
   const [checkedInToday, setCheckedInToday] = useState(false);
   const [checkinDays, setCheckinDays] = useState(DEFAULT_CHECKIN_DAYS);
   const [checkinLoading, setCheckinLoading] = useState(false);

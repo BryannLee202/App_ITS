@@ -1,26 +1,15 @@
 {
   "user-001": {
     "userId": "user-001",
-    "userName": "Minh Tài",
+    "userName": "Khách hàng Demo",
     "ecoCoins": 180,
-    "currentStreak": 2,
-    "lastCheckInDate": "2026-11-12",
-    "lastCheckInTimestamp": "2026-11-12T08:30:00.000Z",
-    "totalCheckIns": 2,
+    "currentStreak": 0,
+    "lastCheckInDate": null,
+    "lastCheckInTimestamp": null,
+    "totalCheckIns": 0,
     "vouchers": [
       "BANMOI30"
     ],
-    "history": [
-      {
-        "date": "2026-11-11",
-        "day": 1,
-        "rewardCoins": 15
-      },
-      {
-        "date": "2026-11-12",
-        "day": 2,
-        "rewardCoins": 20
-      }
-    ]
+    "history": []
   }
 }
