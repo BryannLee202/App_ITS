@@ -11,6 +11,58 @@ class ApiService {
     this.token = token;
   }
 
+  saveSession(token, user) {
+    this.setToken(token);
+    try {
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('ecogo_session_token', token);
+        if (user) {
+          localStorage.setItem('ecogo_user_profile', JSON.stringify(user));
+        }
+        localStorage.setItem('ecogo_onboarded', 'true');
+      }
+    } catch (e) {
+      console.warn('Storage save failed:', e);
+    }
+  }
+
+  getStoredSession() {
+    try {
+      if (typeof localStorage !== 'undefined') {
+        const token = localStorage.getItem('ecogo_session_token');
+        const userStr = localStorage.getItem('ecogo_user_profile');
+        const user = userStr ? JSON.parse(userStr) : null;
+        if (token) {
+          this.setToken(token);
+          return { token, user };
+        }
+      }
+    } catch (e) {
+      console.warn('Storage read failed:', e);
+    }
+    return null;
+  }
+
+  clearSession() {
+    this.token = null;
+    try {
+      if (typeof localStorage !== 'undefined') {
+        localStorage.removeItem('ecogo_session_token');
+        localStorage.removeItem('ecogo_user_profile');
+        localStorage.removeItem('ecogo_onboarded');
+      }
+    } catch (e) {
+      console.warn('Storage clear failed:', e);
+    }
+  }
+
+  async verifySession(token) {
+    if (token) {
+      this.setToken(token);
+    }
+    return this.request('/auth/verify-session');
+  }
+
   async request(endpoint, options = {}) {
     const headers = {
       'Content-Type': 'application/json',
@@ -50,7 +102,7 @@ class ApiService {
       body: JSON.stringify({ phone, otp })
     });
     if (data.token) {
-      this.setToken(data.token);
+      this.saveSession(data.token, data.user);
     }
     return data;
   }

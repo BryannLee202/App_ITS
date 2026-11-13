@@ -121,6 +121,14 @@ exports.getProfile = (req, res) => {
   });
 };
 
+exports.verifySession = (req, res) => {
+  return res.json({
+    success: true,
+    message: 'Phiên xác thực hợp lệ',
+    user: req.user
+  });
+};
+
 exports.updateEkyc = (req, res) => {
   const { fullName, cccdNumber, licenseNumber, licenseType } = req.body;
   

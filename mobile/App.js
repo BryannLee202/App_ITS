@@ -9,10 +9,12 @@ import {
   StatusBar,
   Modal,
   ScrollView,
-  useWindowDimensions
+  useWindowDimensions,
+  ActivityIndicator
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { FONTS, THEME_PRESETS } from './src/styles/theme';
+import ApiService from './src/services/api';
 
 import HomeScreen from './src/screens/HomeScreen';
 import MapScreen from './src/screens/MapScreen';
@@ -78,6 +80,8 @@ const ECOGO_RACE_BADGES = [
 
 export default function App() {
   const [isOnboarded, setIsOnboarded] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [isCheckingSession, setIsCheckingSession] = useState(true);
   const [onboardingAutoPlay, setOnboardingAutoPlay] = useState(true);
   const [activeTab, setActiveTab] = useState('HOME');
   const [themeKey, setThemeKey] = useState('BE_SUA_CAFE');
@@ -92,6 +96,39 @@ export default function App() {
 
   const { width: windowWidth } = useWindowDimensions();
   const isDesktopBrowser = Platform.OS === 'web' && windowWidth >= 768;
+
+  useEffect(() => {
+    checkSavedSession();
+  }, []);
+
+  const checkSavedSession = async () => {
+    try {
+      const stored = ApiService.getStoredSession();
+      if (stored && stored.token) {
+        try {
+          const res = await ApiService.verifySession(stored.token);
+          if (res && res.success) {
+            setCurrentUser(res.user || stored.user);
+            setIsOnboarded(true);
+            setIsCheckingSession(false);
+            return;
+          }
+        } catch (err) {
+          console.warn('Backend verify session error:', err.message);
+          if (stored.user) {
+            setCurrentUser(stored.user);
+            setIsOnboarded(true);
+            setIsCheckingSession(false);
+            return;
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('Check session error:', e);
+    } finally {
+      setIsCheckingSession(false);
+    }
+  };
 
   useEffect(() => {
     if (Platform.OS === 'web' && typeof document !== 'undefined') {
@@ -123,7 +160,11 @@ export default function App() {
         <OnboardingAuthFlow
           autoPlayDefault={onboardingAutoPlay}
           theme={theme}
-          onComplete={() => {
+          onComplete={(user, token) => {
+            if (token && user) {
+              ApiService.saveSession(token, user);
+            }
+            setCurrentUser(user);
             setIsOnboarded(true);
             setActiveTab('HOME');
           }}
@@ -165,8 +206,10 @@ export default function App() {
             onNavigateToMap={() => setActiveTab('MAP')}
             onNavigateToTrips={() => setActiveTab('TRIPS')}
             onLogout={() => {
-              setOnboardingAutoPlay(false);
+              ApiService.clearSession();
+              setCurrentUser(null);
               setIsOnboarded(false);
+              setActiveTab('HOME');
             }}
           />
         );
@@ -174,6 +217,26 @@ export default function App() {
         return <HomeScreen theme={theme} />;
     }
   };
+
+  if (isCheckingSession) {
+    return (
+      <View style={{ flex: 1, backgroundColor: '#FAF7F2', alignItems: 'center', justifyContent: 'center' }}>
+        <ActivityIndicator size="large" color="#6F4E37" />
+        <Text
+          style={{
+            marginTop: 14,
+            fontFamily: FONTS.family,
+            fontSize: 13,
+            color: '#6F4E37',
+            fontWeight: '700',
+            letterSpacing: 0.3
+          }}
+        >
+          Đang khởi động EcoGo Smart...
+        </Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.outerViewport}>
@@ -188,16 +251,17 @@ export default function App() {
             <TouchableOpacity
               style={[
                 styles.themeChip,
-                { marginLeft: 8, backgroundColor: '#EBFBF5', borderColor: '#0CA678' }
+                { marginLeft: 8, backgroundColor: theme.primarySoft, borderColor: theme.primaryBorder }
               ]}
               onPress={() => {
+                ApiService.clearSession();
                 setOnboardingAutoPlay(true);
                 setIsOnboarded(false);
               }}
             >
-              <Ionicons name="refresh" size={12} color="#0CA678" />
-              <Text style={[styles.themeChipText, { color: '#0CA678', fontWeight: '700' }]}>
-                Chạy lại Mở App (5 bước)
+              <Ionicons name="refresh" size={12} color={theme.primary} />
+              <Text style={[styles.themeChipText, { color: theme.primary, fontWeight: '700' }]}>
+                Đặt lại phiên (Thử nghiệm 5 bước)
               </Text>
             </TouchableOpacity>
           </View>

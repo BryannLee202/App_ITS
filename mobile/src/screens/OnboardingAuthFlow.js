@@ -195,7 +195,7 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
       const res = await ApiService.verifyOtp(targetPhone, codeToVerify);
       if (res && res.success) {
         if (onComplete) {
-          onComplete(res.user || { fullName: 'Minh Tài', phone: targetPhone });
+          onComplete(res.user || { fullName: 'Minh Tài', phone: targetPhone }, res.token);
         }
       } else {
         triggerShake();
@@ -338,7 +338,7 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
   if (step === 1) {
     return (
       <View style={styles.step1Container}>
-        {/* Top Header with Back Button, Brand and Instant Skip */}
+        {/* Top Header with Back Button and Brand */}
         <View style={styles.step1TopBar}>
           <TouchableOpacity
             style={styles.backTopBtn}
@@ -354,15 +354,7 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
             <Text style={[styles.brandSmallText, { color: theme.primary }]}>ECOGO MOBILITY</Text>
           </View>
 
-          {onComplete ? (
-            <TouchableOpacity
-              style={styles.skipTopBtn}
-              activeOpacity={0.7}
-              onPress={() => onComplete({ fullName: 'Minh Tài', phone: '0901234567' })}
-            >
-              <Text style={styles.skipTopText}>Vào app ngay →</Text>
-            </TouchableOpacity>
-          ) : null}
+          <View style={{ width: 68 }} />
         </View>
 
         <View style={styles.step1CenterWrap}>
@@ -496,16 +488,6 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
           </View>
 
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-            {onComplete ? (
-              <TouchableOpacity
-                style={styles.skipTopBtn}
-                activeOpacity={0.7}
-                onPress={() => onComplete({ fullName: 'Minh Tài', phone: '0901234567' })}
-              >
-                <Text style={styles.skipTopText}>Vào app ngay →</Text>
-              </TouchableOpacity>
-            ) : null}
-
             <TouchableOpacity style={styles.langPill}>
               <Ionicons name="globe-outline" size={14} color="#1D1D1F" />
               <Text style={styles.langPillText}>VI</Text>
