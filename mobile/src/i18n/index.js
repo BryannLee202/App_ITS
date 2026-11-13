@@ -75,6 +75,7 @@ export const TRANSLATIONS = {
     },
     tabs: {
       home: 'Khám phá',
+      vehicles: 'Thuê xe',
       map: 'Bản đồ',
       key: 'Khóa xe',
       profile: 'Tài khoản'
@@ -161,6 +162,7 @@ export const TRANSLATIONS = {
     },
     tabs: {
       home: 'Explore',
+      vehicles: 'Rentals',
       map: 'Map',
       key: 'Digital Key',
       profile: 'Profile'

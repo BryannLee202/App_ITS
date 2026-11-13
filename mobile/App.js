@@ -18,6 +18,7 @@ import ApiService from './src/services/api';
 import { LanguageProvider, useLanguage } from './src/i18n';
 
 import HomeScreen from './src/screens/HomeScreen';
+import VehiclesScreen from './src/screens/VehiclesScreen';
 import MapScreen from './src/screens/MapScreen';
 import DigitalKeyScreen from './src/screens/DigitalKeyScreen';
 import TripsHistoryScreen from './src/screens/TripsHistoryScreen';
@@ -27,8 +28,9 @@ import VoucherWalletModal from './src/components/VoucherWalletModal';
 
 const DOCK_TABS = [
   { id: 'HOME', icon: 'compass-outline', activeIcon: 'compass', label: 'Khám phá' },
-  { id: 'MAP', icon: 'map-outline', activeIcon: 'map', label: 'Bản đồ' },
+  { id: 'VEHICLES', icon: 'car-sport-outline', activeIcon: 'car-sport', label: 'Thuê xe' },
   { id: 'KEY', icon: 'key-outline', activeIcon: 'key', label: 'Khóa xe', isCenterKey: true },
+  { id: 'MAP', icon: 'map-outline', activeIcon: 'map', label: 'Bản đồ' },
   { id: 'PROFILE', icon: 'person-outline', activeIcon: 'person', label: 'Tài khoản' }
 ];
 
@@ -102,6 +104,7 @@ function AppContent() {
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [copiedCode, setCopiedCode] = useState(null);
   const [appliedVoucherFromWallet, setAppliedVoucherFromWallet] = useState(null);
+  const [vehiclesInitialCategory, setVehiclesInitialCategory] = useState('CAR');
 
   const theme = THEME_PRESETS[themeKey] || THEME_PRESETS.BE_SUA_CAFE;
 
@@ -189,12 +192,27 @@ function AppContent() {
         return (
           <HomeScreen
             theme={theme}
+            onNavigateToVehicles={(cat = 'CAR') => {
+              setVehiclesInitialCategory(cat);
+              setActiveTab('VEHICLES');
+            }}
             onNavigateToKey={() => setActiveTab('KEY')}
             onNavigateToMap={() => setActiveTab('MAP')}
             onNavigateToTrips={() => setActiveTab('TRIPS')}
             onNavigateToProfile={() => setActiveTab('PROFILE')}
             onOpenRewards={() => setShowRewardsModal(true)}
             onOpenGreenRace={() => setShowGreenRaceModal(true)}
+            appliedVoucherCode={appliedVoucherFromWallet}
+            onClearAppliedVoucher={() => setAppliedVoucherFromWallet(null)}
+          />
+        );
+      case 'VEHICLES':
+        return (
+          <VehiclesScreen
+            theme={theme}
+            initialCategory={vehiclesInitialCategory}
+            onNavigateToKey={() => setActiveTab('KEY')}
+            onNavigateHome={() => setActiveTab('HOME')}
             appliedVoucherCode={appliedVoucherFromWallet}
             onClearAppliedVoucher={() => setAppliedVoucherFromWallet(null)}
           />

@@ -294,8 +294,9 @@ const SAVED_PLACES = [
 ];
 
 export default function HomeScreen({
-  theme = THEME_PRESETS.MINT,
+  theme = THEME_PRESETS.BE_SUA_CAFE,
   onSelectVehicle,
+  onNavigateToVehicles,
   onNavigateToKey,
   onNavigateToMap,
   onNavigateToTrips,
@@ -672,338 +673,7 @@ export default function HomeScreen({
 
   return (
     <View style={styles.container}>
-      {catalogMode ? (
-        <ScrollView
-          style={styles.catalogScreenContainer}
-          contentContainerStyle={styles.catalogScreenScroll}
-          showsVerticalScrollIndicator={false}
-        >
-          {/* 1. Header Bar with Back Button & Switcher */}
-          <View style={styles.catScreenHeader}>
-            <TouchableOpacity
-              style={styles.catBackBtn}
-              activeOpacity={0.8}
-              onPress={() => setCatalogMode(null)}
-            >
-              <Ionicons name="arrow-back" size={18} color="#2B180D" />
-              <Text style={styles.catBackBtnText}>Trang chủ</Text>
-            </TouchableOpacity>
-
-            <View style={styles.catTitleWrap}>
-              <View style={styles.catTitleBadgeRow}>
-                <View style={[styles.catBadgeCircle, { backgroundColor: '#F5EFEB' }]}>
-                  <Ionicons
-                    name={catalogMode === 'CAR' ? 'car-sport' : 'bicycle'}
-                    size={18}
-                    color="#6F4E37"
-                  />
-                </View>
-                <Text style={styles.catScreenMainTitle}>
-                  {catalogMode === 'CAR' ? 'Dàn Ô Tô Tự Lái' : 'Dàn Xe Máy Điện'}
-                </Text>
-              </View>
-              <Text style={styles.catScreenSubtitle}>
-                TP.HCM · Mở khóa Digital Key 24/7 · 0đ thế chấp · ITS GLOSA
-              </Text>
-            </View>
-
-            {/* Quick Category Switcher Tabs */}
-            <View style={styles.catModeToggleRow}>
-              <TouchableOpacity
-                style={[
-                  styles.catModeToggleBtn,
-                  catalogMode === 'CAR' && styles.catModeToggleBtnActive
-                ]}
-                activeOpacity={0.8}
-                onPress={() => {
-                  setCatalogMode('CAR');
-                  setCatalogBrand('ALL');
-                }}
-              >
-                <Ionicons
-                  name="car-sport"
-                  size={14}
-                  color={catalogMode === 'CAR' ? '#FFFFFF' : '#6F4E37'}
-                />
-                <Text
-                  style={[
-                    styles.catModeToggleText,
-                    catalogMode === 'CAR' && styles.catModeToggleTextActive
-                  ]}
-                >
-                  Ô tô tự lái ({vehicles.filter((v) => v.category === 'CAR').length})
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={[
-                  styles.catModeToggleBtn,
-                  catalogMode === 'MOTORBIKE' && styles.catModeToggleBtnActive
-                ]}
-                activeOpacity={0.8}
-                onPress={() => {
-                  setCatalogMode('MOTORBIKE');
-                  setCatalogBrand('ALL');
-                }}
-              >
-                <Ionicons
-                  name="bicycle"
-                  size={14}
-                  color={catalogMode === 'MOTORBIKE' ? '#FFFFFF' : '#6F4E37'}
-                />
-                <Text
-                  style={[
-                    styles.catModeToggleText,
-                    catalogMode === 'MOTORBIKE' && styles.catModeToggleTextActive
-                  ]}
-                >
-                  Xe máy điện ({vehicles.filter((v) => v.category === 'MOTORBIKE').length})
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          {/* Active Doorstep Delivery Mode Banner */}
-          {bookingDeliveryMode === 'DOORSTEP' && (
-            <View style={styles.doorstepActiveBanner}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flex: 1 }}>
-                <Ionicons name="navigate" size={15} color="#6F4E37" />
-                <Text style={styles.doorstepActiveBannerText} numberOfLines={1}>
-                  Đang bật: <Text style={{ fontWeight: '800', color: '#2B180D' }}>Giao xe tận nơi miễn phí 5km</Text> (Mã FREESHIP)
-                </Text>
-              </View>
-              <TouchableOpacity
-                onPress={() => {
-                  setBookingDeliveryMode('STATION');
-                  setBookingToast({
-                    title: 'Đã đổi sang Nhận tại trạm',
-                    message: 'Phương thức nhận xe đã chuyển về trạm sạc gần bạn nhất.'
-                  });
-                  setTimeout(() => setBookingToast(null), 2500);
-                }}
-                style={styles.clearStationFilterBtn}
-              >
-                <Text style={styles.clearStationFilterText}>Đổi nhận tại trạm</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-
-          {/* 2. Search Bar */}
-          <View style={styles.catSearchContainer}>
-            <View style={styles.catSearchBox}>
-              <Ionicons name="search-outline" size={18} color="#8C6239" />
-              <TextInput
-                style={styles.catSearchInput}
-                placeholder={
-                  catalogMode === 'CAR'
-                    ? 'Tìm xe ô tô (VF 8, Ioniq 5, VF 6, Mazda CX-5...)'
-                    : 'Tìm xe máy điện (Feliz S, Klara S, NEO\'s...)'
-                }
-                placeholderTextColor="#A89F91"
-                value={catalogSearch}
-                onChangeText={setCatalogSearch}
-              />
-              {catalogSearch.length > 0 && (
-                <TouchableOpacity onPress={() => setCatalogSearch('')}>
-                  <Ionicons name="close-circle" size={18} color="#8C6239" />
-                </TouchableOpacity>
-              )}
-            </View>
-          </View>
-
-          {/* 3. Compact Single-Line Brand Filter Bar (No Bulky Headers) */}
-          <View style={styles.catBrandBarWrapper}>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.catBrandScrollCompact}
-            >
-              {availableBrands.map((brand) => {
-                const active = catalogBrand === brand;
-                const count =
-                  brand === 'ALL'
-                    ? vehicles.filter((v) => v.category === catalogMode).length
-                    : vehicles.filter((v) => v.category === catalogMode && v.brand === brand).length;
-                return (
-                  <TouchableOpacity
-                    key={brand}
-                    style={[
-                      styles.catBrandChipCompact,
-                      active && styles.catBrandChipCompactActive
-                    ]}
-                    activeOpacity={0.8}
-                    onPress={() => setCatalogBrand(brand)}
-                  >
-                    <Text style={[styles.catBrandTextCompact, active && styles.catBrandTextCompactActive]}>
-                      {brand === 'ALL' ? 'Tất cả' : brand}
-                    </Text>
-                    <View style={[styles.catBrandCountBadge, active && styles.catBrandCountBadgeActive]}>
-                      <Text style={[styles.catBrandCountText, active && styles.catBrandCountTextActive]}>
-                        {count}
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                );
-              })}
-            </ScrollView>
-          </View>
-
-          {/* 4. Streamlined Meta Row: Vehicle Counter & Sort Dropdown Pill */}
-          <View style={styles.catMetaRowCompact}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-              <Text style={styles.catCountTextCompact}>
-                <Text style={{ fontWeight: '800', color: '#2B180D' }}>{catalogVehicles.length}</Text> xe sẵn sàng
-              </Text>
-              {(catalogBrand !== 'ALL' || catalogSearch.trim().length > 0 || catalogSortBy !== 'PRICE_ASC') && (
-                <TouchableOpacity
-                  style={styles.catResetBtnCompact}
-                  activeOpacity={0.7}
-                  onPress={() => {
-                    setCatalogBrand('ALL');
-                    setCatalogSearch('');
-                    setCatalogSortBy('PRICE_ASC');
-                  }}
-                >
-                  <Ionicons name="refresh" size={11} color="#8C6239" />
-                  <Text style={styles.catResetBtnTextCompact}>Đặt lại</Text>
-                </TouchableOpacity>
-              )}
-            </View>
-
-            {/* Sort Pill Dropdown Button */}
-            <TouchableOpacity
-              style={styles.catSortDropdownPill}
-              activeOpacity={0.8}
-              onPress={() => setShowSortModal(true)}
-            >
-              <Ionicons name="swap-vertical" size={12} color="#6F4E37" />
-              <Text style={styles.catSortDropdownText}>
-                {SORT_OPTIONS.find((s) => s.id === catalogSortBy)?.shortLabel || 'Giá thấp nhất'}
-              </Text>
-              <Ionicons name="chevron-down" size={12} color="#8C6239" />
-            </TouchableOpacity>
-          </View>
-
-          {/* 6. Vehicle Cards List */}
-          {catalogVehicles.length === 0 ? (
-            <View style={styles.catEmptyBox}>
-              <View style={styles.catEmptyIconWrap}>
-                <Ionicons name="search" size={32} color="#6F4E37" />
-              </View>
-              <Text style={styles.catEmptyTitle}>Không tìm thấy xe phù hợp</Text>
-              <Text style={styles.catEmptySub}>
-                Không có xe nào khớp với tiêu chí tìm kiếm hoặc hãng xe bạn đã chọn.
-              </Text>
-              <TouchableOpacity
-                style={styles.catEmptyActionBtn}
-                onPress={() => {
-                  setCatalogBrand('ALL');
-                  setCatalogSearch('');
-                  setCatalogSortBy('PRICE_ASC');
-                }}
-              >
-                <Text style={styles.catEmptyActionText}>Xem tất cả xe</Text>
-              </TouchableOpacity>
-            </View>
-          ) : (
-            catalogVehicles.map((veh) => {
-              const station = SAVED_PLACES.find((s) => s.id === veh.stationId);
-              return (
-                <View key={veh.id} style={styles.catVehicleCard}>
-                  {/* Photo Container */}
-                  <View style={styles.catPhotoBox}>
-                    <Image
-                      source={{ uri: veh.thumbnail || veh.images?.[0] }}
-                      style={styles.catPhotoImage}
-                      resizeMode="cover"
-                    />
-                    <View style={styles.catCardBadgeTopLeft}>
-                      <Text style={styles.catCardBadgeText}>🛡️ 0đ Thế chấp</Text>
-                    </View>
-                    <View style={styles.catCardBadgeTopRight}>
-                      <Text style={styles.catCardBadgeStatus}>🟢 Sẵn sàng nhận</Text>
-                    </View>
-                  </View>
-
-                  {/* Body Info */}
-                  <View style={styles.catCardBody}>
-                    <View style={styles.catCardHeaderRow}>
-                      <View style={{ flex: 1, paddingRight: 8 }}>
-                        <Text style={styles.catCardBrandName}>
-                          {veh.brand} · {veh.year || 2024} · {veh.plateNumber}
-                        </Text>
-                        <Text style={styles.catCardTitle} numberOfLines={1}>
-                          {veh.name}
-                        </Text>
-                      </View>
-                      <View style={styles.catCardRatingBox}>
-                        <Ionicons name="star" size={13} color="#D4AF37" />
-                        <Text style={styles.catCardRatingText}>{veh.rating || 4.95}</Text>
-                        <Text style={styles.catCardTripsText}>({veh.totalTrips || 120})</Text>
-                      </View>
-                    </View>
-
-                    {/* Quick Specs Pill Row */}
-                    <View style={styles.catSpecsRow}>
-                      <View style={styles.catSpecPill}>
-                        <Ionicons name="flash" size={12} color="#15803D" />
-                        <Text style={styles.catSpecPillText}>
-                          {veh.telematics?.batteryLevelPct || 94}% Pin ({veh.rangeKm}km)
-                        </Text>
-                      </View>
-                      <View style={styles.catSpecPill}>
-                        <Ionicons name="people-outline" size={12} color="#6F4E37" />
-                        <Text style={styles.catSpecPillText}>{veh.seats || 5} chỗ</Text>
-                      </View>
-                      <View style={styles.catSpecPill}>
-                        <Ionicons name="speedometer-outline" size={12} color="#6F4E37" />
-                        <Text style={styles.catSpecPillText}>Làn sóng xanh</Text>
-                      </View>
-                    </View>
-
-                    {/* Location Tag */}
-                    <View style={styles.catLocationRow}>
-                      <Ionicons name="location-outline" size={13} color="#8C6239" />
-                      <Text style={styles.catLocationText} numberOfLines={1}>
-                        Trạm: {station?.name || 'UTH Cơ sở 1 Bình Thạnh'}
-                      </Text>
-                    </View>
-
-                    {/* Price and Action Row */}
-                    <View style={styles.catFooterRow}>
-                      <View>
-                        <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
-                          <Text style={styles.catPriceHourly}>
-                            {(veh.hourlyPrice || 100000).toLocaleString('vi-VN')}đ
-                          </Text>
-                          <Text style={styles.catPriceUnit}>/giờ</Text>
-                        </View>
-                        <Text style={styles.catPriceDaily}>
-                          {(veh.dailyPrice || 900000).toLocaleString('vi-VN')}đ/ngày (24h)
-                        </Text>
-                      </View>
-
-                      <TouchableOpacity
-                        style={styles.catBookNowBtn}
-                        activeOpacity={0.85}
-                        onPress={() => handleOpenBooking(veh)}
-                      >
-                        <Ionicons name="key" size={14} color="#D4AF37" />
-                        <Text style={styles.catBookNowText}>
-                          {bookingDeliveryMode === 'DOORSTEP' ? 'Đặt Giao Tận Nơi →' : 'Đặt Thuê Ngay →'}
-                        </Text>
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                </View>
-              );
-            })
-          )}
-
-          <View style={{ height: 110 }} />
-        </ScrollView>
-      ) : (
-        <ScrollView
+      <ScrollView
           ref={mainScrollRef}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
@@ -1186,14 +856,7 @@ export default function HomeScreen({
                 { backgroundColor: theme.primarySoft, borderColor: theme.primaryBorder }
               ]}
               activeOpacity={0.85}
-              onPress={() => {
-                setSelectedCategory('CAR');
-                setCatalogBrand('ALL');
-                setFilterByStation(false);
-                if (mainScrollRef.current) {
-                  mainScrollRef.current.scrollTo({ y: 560, animated: true });
-                }
-              }}
+              onPress={() => onNavigateToVehicles && onNavigateToVehicles('CAR')}
             >
               <View style={[styles.featureIconBox, { backgroundColor: '#FFFFFF' }]}>
                 <Ionicons name="car-sport" size={20} color={theme.primary} />
@@ -1218,14 +881,7 @@ export default function HomeScreen({
                 { backgroundColor: theme.beigeSoft, borderColor: theme.beigeBorder }
               ]}
               activeOpacity={0.85}
-              onPress={() => {
-                setSelectedCategory('MOTORBIKE');
-                setCatalogBrand('ALL');
-                setFilterByStation(false);
-                if (mainScrollRef.current) {
-                  mainScrollRef.current.scrollTo({ y: 560, animated: true });
-                }
-              }}
+              onPress={() => onNavigateToVehicles && onNavigateToVehicles('MOTORBIKE')}
             >
               <View style={[styles.featureIconBox, { backgroundColor: '#FFFFFF' }]}>
                 <Ionicons name="bicycle" size={20} color="#8C6239" />
@@ -1389,121 +1045,28 @@ export default function HomeScreen({
           </View>
         </View>
 
-        {/* ============================================================
-            3. UNIFIED VEHICLE LIST (EASY TO SCAN, NO DUPLICATED PHOTOS)
-           ============================================================ */}
-        <View style={styles.catalogSection}>
-          <View style={styles.catalogHeaderRow}>
-            <Text style={styles.sectionMainTitle}>
-              Xe sẵn sàng gần bạn ({filteredVehicles.length})
+        {/* Quick Fleet Access Card */}
+        <TouchableOpacity
+          style={styles.fleetAccessCard}
+          onPress={() => onNavigateToVehicles && onNavigateToVehicles('CAR')}
+          activeOpacity={0.88}
+        >
+          <View style={{ flex: 1, marginRight: 12 }}>
+            <View style={styles.fleetAccessTagBadge}>
+              <Text style={styles.fleetAccessTagText}>DÀN XE THUÊ 24/7</Text>
+            </View>
+            <Text style={styles.fleetAccessTitle}>Dàn Xe Sẵn Sàng Gần Bạn</Text>
+            <Text style={styles.fleetAccessDesc}>
+              Khám phá 15 dòng ô tô tự lái & xe máy điện tại các trạm Hub TP.HCM. 0đ cọc bảo chứng.
             </Text>
-            <TouchableOpacity onPress={onNavigateToMap}>
-              <Text style={[styles.seeMapLink, { color: theme.primary }]}>Xem bản đồ</Text>
-            </TouchableOpacity>
           </View>
-
-          {/* Active Station Filter Banner */}
-          {filterByStation && selectedPlace && (
-            <View style={styles.stationFilterBanner}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flex: 1 }}>
-                <Ionicons name="location" size={15} color="#6F4E37" />
-                <Text style={styles.stationFilterBannerText} numberOfLines={1}>
-                  Xe tại: <Text style={{ fontWeight: '800', color: '#2B180D' }}>{selectedPlace.shortName}</Text> ({filteredVehicles.length} xe)
-                </Text>
-              </View>
-              <TouchableOpacity
-                style={styles.clearStationFilterBtn}
-                activeOpacity={0.8}
-                onPress={() => setFilterByStation(false)}
-              >
-                <Text style={styles.clearStationFilterText}>Xem tất cả trạm</Text>
-                <Ionicons name="close-circle" size={14} color="#8C6239" />
-              </TouchableOpacity>
-            </View>
-          )}
-
-          {/* Clean Category Filter Pills */}
-          <View style={styles.catFilterRow}>
-            {CATEGORIES.map((cat) => {
-              const active = selectedCategory === cat.id;
-              return (
-                <TouchableOpacity
-                  key={cat.id}
-                  style={[
-                    styles.catPill,
-                    active && { backgroundColor: '#2B180D', borderColor: '#2B180D' }
-                  ]}
-                  onPress={() => {
-                    setSelectedCategory(cat.id);
-                    setCatalogBrand('ALL');
-                  }}
-                  activeOpacity={0.8}
-                >
-                  <Text style={[styles.catPillText, active && styles.catPillTextActive]}>
-                    {cat.label}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
+          <View style={styles.fleetAccessBtnCircle}>
+            <Ionicons name="arrow-forward" size={18} color="#FAF7F2" />
           </View>
+        </TouchableOpacity>
 
-          {/* Inline Brand Filter Pills for Cars (Directly inside Ô tô tự lái section) */}
-          {selectedCategory === 'CAR' && (
-            <View style={styles.inlineBrandFilterRow}>
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={styles.inlineBrandScroll}
-              >
-                {['ALL', 'VinFast', 'Hyundai', 'Toyota', 'Mazda'].map((brand) => {
-                  const active = catalogBrand === brand;
-                  const brandCount =
-                    brand === 'ALL'
-                      ? vehicles.filter((v) => v.category === 'CAR').length
-                      : vehicles.filter((v) => v.category === 'CAR' && v.brand === brand).length;
-                  return (
-                    <TouchableOpacity
-                      key={brand}
-                      style={[
-                        styles.inlineBrandPill,
-                        active && styles.inlineBrandPillActive
-                      ]}
-                      onPress={() => setCatalogBrand(brand)}
-                      activeOpacity={0.8}
-                    >
-                      <Text style={[styles.inlineBrandText, active && styles.inlineBrandTextActive]}>
-                        {brand === 'ALL' ? 'Tất cả hãng xe' : brand}
-                      </Text>
-                      <View style={[styles.inlineBrandCountBadge, active && styles.inlineBrandCountBadgeActive]}>
-                        <Text style={[styles.inlineBrandCountText, active && styles.inlineBrandCountTextActive]}>
-                          {brandCount}
-                        </Text>
-                      </View>
-                    </TouchableOpacity>
-                  );
-                })}
-              </ScrollView>
-            </View>
-          )}
-
-          {loading ? (
-            <ActivityIndicator size="large" color={theme.primary} style={{ marginVertical: 28 }} />
-          ) : (
-            filteredVehicles.map((vehicle) => (
-              <VehicleCard
-                key={vehicle.id}
-                vehicle={vehicle}
-                accentColor={theme.primary}
-                onSelect={handleOpenBooking}
-                onBook={handleOpenBooking}
-              />
-            ))
-          )}
-        </View>
-
-        <View style={{ height: 96 }} />
+        <View style={{ height: 110 }} />
       </ScrollView>
-      )}
 
       {/* ============================================================
           MODAL 1: STATION & DESTINATION SELECTOR
@@ -4516,5 +4079,67 @@ const styles = StyleSheet.create({
   sortOptionLabelSelected: {
     fontWeight: '800',
     color: '#2B180D'
-  }
+  },
+
+  fleetAccessCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#FFFFFF',
+    marginHorizontal: 16,
+    marginTop: 14,
+    marginBottom: 6,
+    padding: 16,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#EBE3D7',
+    shadowColor: '#2B180D',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    elevation: 3
+  },
+  fleetAccessTagBadge: {
+    alignSelf: 'flex-start',
+    backgroundColor: '#F5EFEB',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+    marginBottom: 6,
+    borderWidth: 1,
+    borderColor: '#EBE3D7'
+  },
+  fleetAccessTagText: {
+    fontFamily: FONTS.family,
+    fontSize: 9.5,
+    fontWeight: '800',
+    color: '#6F4E37',
+    letterSpacing: 0.6
+  },
+  fleetAccessTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 15,
+    fontWeight: '800',
+    color: '#2B180D',
+    marginBottom: 3
+  },
+  fleetAccessDesc: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    color: '#8C7A6B',
+    lineHeight: 16
+  },
+  fleetAccessBtnCircle: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#4E3322',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#2B180D',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3
+  },
 });
