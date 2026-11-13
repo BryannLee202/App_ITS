@@ -339,10 +339,6 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
             </View>
           </Animated.View>
         </TouchableOpacity>
-
-        <View style={styles.splashFooterInfo}>
-          <Text style={styles.splashFooterVersion}>Phiên bản 1.0.0-PROD · Chuyên đề UTH</Text>
-        </View>
       </View>
     );
   }
