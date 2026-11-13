@@ -60,6 +60,26 @@
     "nearbyTransit": ["Bus 08", "Bus 14", "Ga Metro Văn Thánh (800m)"]
   },
   {
+    "id": "hub-uth-03",
+    "name": "EcoGo Campus Hub - ĐH GTVT (UTH Cơ sở 3 Tô Ký)",
+    "address": "Hẻm 70 Tô Ký, Phường Tân Chánh Hiệp, Quận 12, TP.HCM",
+    "coordinates": {
+      "latitude": 10.8605,
+      "longitude": 106.6183
+    },
+    "category": "BOTH",
+    "type": "CAMPUS_HUB",
+    "capacity": 16,
+    "availableVehicles": 6,
+    "hasFastCharger": true,
+    "chargerPowerKw": 120,
+    "availablePorts": 4,
+    "totalPorts": 6,
+    "chargingPriceKwh": 3858,
+    "connectorTypes": ["CCS2 120kW", "Type 2 22kW", "Đổi pin xe máy"],
+    "nearbyTransit": ["Tô Ký - Quang Trung", "Công viên Phần mềm Quang Trung"]
+  },
+  {
     "id": "hub-ndt-01",
     "name": "EcoGo Hub & Trạm Sạc Nhanh - Nguyễn Duy Trinh",
     "address": "672 Nguyễn Duy Trinh, P. Bình Trưng Đông, TP. Thủ Đức, TP.HCM",
@@ -238,5 +258,45 @@
     "chargingPriceKwh": 3858,
     "connectorTypes": ["CCS2 250kW DC", "Type 2 22kW", "Đổi pin tự động"],
     "nearbyTransit": ["Ga Metro Khu Công Nghệ Cao", "Tuyến Buýt Điện D4"]
+  },
+  {
+    "id": "hub-dhdhqg-01",
+    "name": "EcoGo Hub - Làng Đại Học Quốc Gia TP.HCM (KTX Khu B)",
+    "address": "Đường Tô Vĩnh Diện, Phường Đông Hòa, TP. Dĩ An & TP. Thủ Đức",
+    "coordinates": {
+      "latitude": 10.8781,
+      "longitude": 106.8055
+    },
+    "category": "BOTH",
+    "type": "CAMPUS_HUB",
+    "capacity": 25,
+    "availableVehicles": 15,
+    "hasFastCharger": true,
+    "chargerPowerKw": 120,
+    "availablePorts": 6,
+    "totalPorts": 8,
+    "chargingPriceKwh": 3858,
+    "connectorTypes": ["CCS2 120kW DC", "Type 2 22kW", "Tủ đổi pin xe máy 24/7"],
+    "nearbyTransit": ["KTX Khu B", "Ga Metro ĐHQG TP.HCM", "Bus 53 & 33"]
+  },
+  {
+    "id": "hub-nguyenhue-01",
+    "name": "EcoGo Station - Phố Đi Bộ & UBND Thành Phố",
+    "address": "68 Nguyễn Huệ, Phường Bến Nghé, Quận 1, TP.HCM",
+    "coordinates": {
+      "latitude": 10.7744,
+      "longitude": 106.7032
+    },
+    "category": "BOTH",
+    "type": "URBAN_HUB",
+    "capacity": 15,
+    "availableVehicles": 8,
+    "hasFastCharger": true,
+    "chargerPowerKw": 250,
+    "availablePorts": 4,
+    "totalPorts": 6,
+    "chargingPriceKwh": 3858,
+    "connectorTypes": ["CCS2 250kW DC", "Type 2 22kW"],
+    "nearbyTransit": ["Phố đi bộ Nguyễn Huệ", "Ga Nhà Hát Thành Phố Metro Tuyến 1"]
   }
 ]

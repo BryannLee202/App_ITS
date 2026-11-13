@@ -153,39 +153,134 @@ const LUCKY_WHEEL_SECTORS = [
 
 const SAVED_PLACES = [
   {
-    id: 'place-1',
-    name: 'ĐH Giao Thông Vận Tải (UTH) - Cơ sở chính',
+    id: 'hub-uth-01',
+    shortName: 'UTH · Cơ sở 1 Võ Oanh',
+    name: 'ĐH Giao Thông Vận Tải (UTH) - Cơ sở 1 Bình Thạnh',
     address: 'Số 2 Võ Oanh, Phường 25, Quận Bình Thạnh, TP.HCM',
     distance: '0,4 km',
+    availableVehicles: 8,
+    availableCars: 5,
+    availableBikes: 3,
+    hasCharger: 'Sạc nhanh 150kW + Đổi pin 24/7',
+    category: 'CAMPUS',
+    icon: 'school-outline'
+  },
+  {
+    id: 'hub-uth-03',
+    shortName: 'UTH · Cơ sở 3 Tô Ký (Q.12)',
+    name: 'ĐH Giao Thông Vận Tải (UTH) - Cơ sở 3 Tân Triều',
+    address: 'Hẻm 70 Tô Ký, Phường Tân Chánh Hiệp, Quận 12, TP.HCM',
+    distance: '7,2 km',
+    availableVehicles: 6,
+    availableCars: 3,
+    availableBikes: 3,
+    hasCharger: 'Sạc nhanh 120kW',
+    category: 'CAMPUS',
+    icon: 'school-outline'
+  },
+  {
+    id: 'hub-dhdhqg-01',
+    shortName: 'KTX ĐHQG TP.HCM (Khu B)',
+    name: 'EcoGo Hub - Làng Đại Học Quốc Gia TP.HCM',
+    address: 'Đường Tô Vĩnh Diện, Phường Đông Hòa, TP. Dĩ An & TP. Thủ Đức',
+    distance: '12,4 km',
+    availableVehicles: 15,
+    availableCars: 5,
+    availableBikes: 10,
+    hasCharger: 'Sạc nhanh 120kW + Tủ đổi pin',
+    category: 'CAMPUS',
+    icon: 'school-outline'
+  },
+  {
+    id: 'hub-chuvanan-01',
+    shortName: 'Chu Văn An · Học Viện Cán Bộ',
+    name: 'EcoGo Hub - Chu Văn An & Học Viện Cán Bộ',
+    address: '85 Chu Văn An, Phường 26, Quận Bình Thạnh, TP.HCM',
+    distance: '0,8 km',
+    availableVehicles: 7,
+    availableCars: 4,
+    availableBikes: 3,
+    hasCharger: 'Siêu sạc 180kW',
+    category: 'CENTRAL',
     icon: 'location-outline'
   },
   {
-    id: 'place-2',
-    name: 'Ga Trung Tâm Bến Thành - Quận 1',
-    address: 'Quảng trường Quách Thị Trang, Phường Bến Thành, Quận 1, TP.HCM',
-    distance: '6,8 km',
-    icon: 'train-outline'
-  },
-  {
-    id: 'place-3',
-    name: 'Khu Đô Thị Tân Cảng & Landmark 81',
+    id: 'hub-landmark-01',
+    shortName: 'Landmark 81 · Tân Cảng',
+    name: 'EcoGo Station - Vinhomes Central Park & Landmark 81',
     address: '720A Điện Biên Phủ, Phường 22, Quận Bình Thạnh, TP.HCM',
     distance: '1,4 km',
+    availableVehicles: 11,
+    availableCars: 7,
+    availableBikes: 4,
+    hasCharger: 'Siêu sạc 250kW',
+    category: 'CENTRAL',
     icon: 'business-outline'
   },
   {
-    id: 'place-4',
-    name: 'Sân Bay Quốc Tế Tân Sơn Nhất (Ga Quốc Nội)',
-    address: 'Đường Trường Sơn, Phường 2, Quận Tân Bình, TP.HCM',
-    distance: '8,5 km',
+    id: 'hub-metro-01',
+    shortName: 'Ga Metro Bến Thành (Quận 1)',
+    name: 'EcoGo Multimodal - Ga Trung Tâm Metro Bến Thành',
+    address: 'Quảng trường Quách Thị Trang, Phường Bến Thành, Quận 1, TP.HCM',
+    distance: '4,8 km',
+    availableVehicles: 14,
+    availableCars: 9,
+    availableBikes: 5,
+    hasCharger: 'Sạc nhanh 150kW',
+    category: 'CENTRAL',
+    icon: 'train-outline'
+  },
+  {
+    id: 'hub-nguyenhue-01',
+    shortName: 'Phố Đi Bộ Nguyễn Huệ (Q.1)',
+    name: 'EcoGo Station - Phố Đi Bộ & UBND Thành Phố',
+    address: '68 Nguyễn Huệ, Phường Bến Nghé, Quận 1, TP.HCM',
+    distance: '4,2 km',
+    availableVehicles: 8,
+    availableCars: 6,
+    availableBikes: 2,
+    hasCharger: 'Siêu sạc 250kW',
+    category: 'CENTRAL',
+    icon: 'trail-sign-outline'
+  },
+  {
+    id: 'hub-tsn-01',
+    shortName: 'Sân Bay Tân Sơn Nhất',
+    name: 'EcoGo Airport Hub - Ga Quốc Nội & Quốc Tế TSN',
+    address: 'Ga Quốc Nội, Đường Trường Sơn, Phường 2, Quận Tân Bình, TP.HCM',
+    distance: '6,5 km',
+    availableVehicles: 12,
+    availableCars: 12,
+    availableBikes: 0,
+    hasCharger: 'Sạc nhanh 180kW',
+    category: 'AIRPORT',
     icon: 'airplane-outline'
   },
   {
-    id: 'place-5',
-    name: 'Khu Đô Thị Mới Thủ Thiêm - Sala',
-    address: 'Đại lộ Mai Chí Thọ, Phường An Khánh, TP. Thủ Đức, TP.HCM',
-    distance: '4,2 km',
+    id: 'hub-thuthiem-01',
+    shortName: 'KĐT Sala Thủ Thiêm',
+    name: 'EcoGo Station - KĐT Sala & Đại Lộ Mai Chí Thọ',
+    address: '10 Mai Chí Thọ, Phường An Lợi Đông, TP. Thủ Đức, TP.HCM',
+    distance: '3,8 km',
+    availableVehicles: 9,
+    availableCars: 6,
+    availableBikes: 3,
+    hasCharger: 'Siêu sạc 250kW + Đổi pin',
+    category: 'AIRPORT',
     icon: 'leaf-outline'
+  },
+  {
+    id: 'charger-thaodien-01',
+    shortName: 'Thảo Điền Pearl & Metro An Phú',
+    name: 'EcoGo Hub - Thảo Điền Pearl & Ga Metro An Phú',
+    address: '12 Quốc Hương, Phường Thảo Điền, TP. Thủ Đức, TP.HCM',
+    distance: '3,1 km',
+    availableVehicles: 5,
+    availableCars: 3,
+    availableBikes: 2,
+    hasCharger: 'Sạc nhanh 180kW',
+    category: 'AIRPORT',
+    icon: 'storefront-outline'
   }
 ];
 
@@ -218,13 +313,32 @@ export default function HomeScreen({
   const [spinDegree, setSpinDegree] = useState(0);
   const [spinResult, setSpinResult] = useState(null);
 
-  // Modals
+  // Modals & Filters
   const [showDestinationModal, setShowDestinationModal] = useState(false);
-  const [destinationQuery, setDestinationQuery] = useState('');
+  const [vehicleSearchQuery, setVehicleSearchQuery] = useState('');
+  const [stationSearchQuery, setStationSearchQuery] = useState('');
+  const [stationCategoryTab, setStationCategoryTab] = useState('ALL');
   const [selectedPlace, setSelectedPlace] = useState(SAVED_PLACES[0]);
   const [bookingVehicle, setBookingVehicle] = useState(null);
   const [showBookingModal, setShowBookingModal] = useState(false);
   const [bookingToast, setBookingToast] = useState(null);
+
+  // Dynamic realistic pickup & return times
+  const formatTimeRange = (tab) => {
+    const now = new Date();
+    const pad = (n) => String(n).padStart(2, '0');
+    const startHour = pad(now.getHours());
+    const startMin = pad(Math.floor(now.getMinutes() / 5) * 5);
+    const startTimeStr = `${startHour}:${startMin}`;
+
+    if (tab === 'DAILY') {
+      return `Nhận ${startTimeStr} hôm nay → ${startTimeStr} ngày mai (24h)`;
+    }
+    const endH = (now.getHours() + 4) % 24;
+    const endTimeStr = `${pad(endH)}:${startMin}`;
+    const nextDay = now.getHours() + 4 >= 24 ? 'ngày mai' : 'hôm nay';
+    return `Nhận ${startTimeStr} hôm nay → ${endTimeStr} ${nextDay} (4h)`;
+  };
 
   // Auto-slide hero promo banner
   useEffect(() => {
@@ -345,12 +459,27 @@ export default function HomeScreen({
   };
 
   const filteredVehicles = vehicles.filter((v) => {
-    if (!destinationQuery.trim()) return true;
-    const q = destinationQuery.toLowerCase();
+    if (!vehicleSearchQuery.trim()) return true;
+    const q = vehicleSearchQuery.toLowerCase();
     return (
-      v.name.toLowerCase().includes(q) ||
-      v.brand.toLowerCase().includes(q) ||
-      v.plateNumber.toLowerCase().includes(q)
+      (v.name && v.name.toLowerCase().includes(q)) ||
+      (v.brand && v.brand.toLowerCase().includes(q)) ||
+      (v.plateNumber && v.plateNumber.toLowerCase().includes(q)) ||
+      (v.type && v.type.toLowerCase().includes(q))
+    );
+  });
+
+  const filteredStations = SAVED_PLACES.filter((p) => {
+    if (stationCategoryTab === 'CAMPUS' && p.category !== 'CAMPUS') return false;
+    if (stationCategoryTab === 'CENTRAL' && p.category !== 'CENTRAL') return false;
+    if (stationCategoryTab === 'AIRPORT' && p.category !== 'AIRPORT') return false;
+
+    if (!stationSearchQuery.trim()) return true;
+    const q = stationSearchQuery.toLowerCase();
+    return (
+      p.name.toLowerCase().includes(q) ||
+      p.shortName.toLowerCase().includes(q) ||
+      p.address.toLowerCase().includes(q)
     );
   });
 
@@ -417,13 +546,13 @@ export default function HomeScreen({
             </View>
           </View>
 
-          {/* Compact Booking Widget */}
+          {/* Compact Smart Booking Hub */}
           <View style={styles.smartBookingCard}>
             {/* 2-Tab Mode Switcher */}
             <View style={styles.packageTabsRow}>
               {[
-                { id: 'HOURLY', label: 'Thuê theo giờ' },
-                { id: 'DAILY', label: 'Thuê theo ngày (24h)' }
+                { id: 'HOURLY', label: 'Thuê theo giờ', icon: 'time-outline' },
+                { id: 'DAILY', label: 'Thuê theo ngày (24h)', icon: 'calendar-outline' }
               ].map((tab) => {
                 const active = rentalPackageTab === tab.id;
                 return (
@@ -431,8 +560,15 @@ export default function HomeScreen({
                     key={tab.id}
                     style={[styles.pkgTabBtn, active && styles.pkgTabBtnActive]}
                     onPress={() => setRentalPackageTab(tab.id)}
+                    activeOpacity={0.85}
                   >
-                    <Text style={[styles.pkgTabText, active && styles.pkgTabTextActive]}>
+                    <Ionicons
+                      name={tab.icon}
+                      size={14}
+                      color={active ? theme.primary : '#8E8E93'}
+                      style={{ marginRight: 5 }}
+                    />
+                    <Text style={[styles.pkgTabText, active && [styles.pkgTabTextActive, { color: theme.primary }]]}>
                       {tab.label}
                     </Text>
                   </TouchableOpacity>
@@ -440,43 +576,59 @@ export default function HomeScreen({
               })}
             </View>
 
-            {/* Combined Station & Time Row (Compact, Easy to Tap) */}
+            {/* Station Selector Box (Spacious, Clear, Zero Truncation) */}
             <TouchableOpacity
-              style={styles.stationSelectorRow}
-              activeOpacity={0.85}
+              style={styles.stationCardBox}
+              activeOpacity={0.88}
               onPress={() => setShowDestinationModal(true)}
             >
-              <View style={[styles.mintDotOuter, { backgroundColor: theme.primarySoft }]}>
-                <View style={[styles.mintDotInner, { backgroundColor: theme.primary }]} />
+              <View style={styles.stationTopHeaderRow}>
+                <View style={styles.stationHeaderLeftWrap}>
+                  <View style={[styles.stationPinCircle, { backgroundColor: theme.primarySoft }]}>
+                    <Ionicons name="location" size={13} color={theme.primary} />
+                  </View>
+                  <Text style={[styles.stationSubLabel, { color: theme.primary }]}>ĐIỂM NHẬN & TRẢ XE</Text>
+                </View>
+                <View style={[styles.changeHubPill, { backgroundColor: theme.primarySoft }]}>
+                  <Text style={[styles.changeHubLink, { color: theme.primary }]}>Đổi trạm</Text>
+                  <Ionicons name="chevron-forward" size={11} color={theme.primary} />
+                </View>
               </View>
-              <View style={{ flex: 1 }}>
-                <Text style={styles.stationSelectedName} numberOfLines={1}>
-                  {selectedPlace ? selectedPlace.name : 'ĐH Giao Thông Vận Tải (UTH)'}
+
+              <Text style={styles.stationMainTitleText} numberOfLines={2}>
+                {selectedPlace?.name || 'ĐH Giao Thông Vận Tải (UTH) - Cơ sở 1 Bình Thạnh'}
+              </Text>
+
+              <View style={styles.stationMetaRow}>
+                <View style={styles.pulseLiveContainer}>
+                  <View style={styles.pulseLiveDot} />
+                  <Text style={styles.pulseLiveText}>
+                    {selectedPlace?.availableVehicles || 8} xe sẵn sàng
+                  </Text>
+                </View>
+                <Text style={styles.metaDotSep}>•</Text>
+                <Text style={styles.stationDistPill}>Cách {selectedPlace?.distance || '0,4 km'}</Text>
+                <Text style={styles.metaDotSep}>•</Text>
+                <Ionicons name="time-outline" size={12} color="#8C6239" style={{ marginRight: 2 }} />
+                <Text style={styles.stationTimeSummaryText} numberOfLines={1}>
+                  {formatTimeRange(rentalPackageTab)}
                 </Text>
-                <Text style={styles.stationTimeSub} numberOfLines={1}>
-                  {rentalPackageTab === 'DAILY'
-                    ? 'Nhận 15:30 hôm nay → 15:30 ngày mai (24h)'
-                    : 'Nhận 15:30 hôm nay → 19:30 hôm nay (4h)'}
-                </Text>
-              </View>
-              <View style={[styles.changeHubPill, { backgroundColor: theme.primarySoft }]}>
-                <Text style={[styles.changeHubLink, { color: theme.primary }]}>Đổi trạm</Text>
               </View>
             </TouchableOpacity>
 
             {/* Quick Search Input */}
             <View style={styles.quickSearchBox}>
-              <Ionicons name="search-outline" size={16} color="#8E8E93" />
+              <Ionicons name="search-outline" size={16} color="#8C6239" />
               <TextInput
                 style={styles.quickSearchInput}
-                value={destinationQuery}
-                onChangeText={setDestinationQuery}
-                placeholder="Tìm dòng xe (Ioniq 5, CX-5, Corolla Cross...)"
-                placeholderTextColor="#8E8E93"
+                value={vehicleSearchQuery}
+                onChangeText={setVehicleSearchQuery}
+                placeholder="Tìm dòng xe (VF 8, Ioniq 5, Feliz S, Klara S...)"
+                placeholderTextColor="#A89F91"
               />
-              {destinationQuery.length > 0 && (
-                <TouchableOpacity onPress={() => setDestinationQuery('')}>
-                  <Ionicons name="close-circle" size={16} color="#8E8E93" />
+              {vehicleSearchQuery.length > 0 && (
+                <TouchableOpacity onPress={() => setVehicleSearchQuery('')}>
+                  <Ionicons name="close-circle" size={16} color="#8C6239" />
                 </TouchableOpacity>
               )}
             </View>
@@ -874,58 +1026,140 @@ export default function HomeScreen({
         onRequestClose={() => setShowDestinationModal(false)}
       >
         <View style={styles.destModalContainer}>
+          {/* Top Navigation Bar */}
           <View style={styles.destHeaderBar}>
             <TouchableOpacity
               style={styles.destBackBtn}
               onPress={() => setShowDestinationModal(false)}
             >
-              <Ionicons name="arrow-back" size={22} color="#1D1D1F" />
+              <Ionicons name="arrow-back" size={22} color="#2B180D" />
             </TouchableOpacity>
-            <Text style={styles.currentLocTitle} numberOfLines={1}>
-              Chọn điểm nhận & trả xe
-            </Text>
-          </View>
-
-          <View style={styles.destInputRow}>
-            <View style={styles.destInputWrap}>
-              <Ionicons name="search-outline" size={18} color="#8E8E93" />
-              <TextInput
-                style={styles.destTextInput}
-                value={destinationQuery}
-                onChangeText={setDestinationQuery}
-                placeholder="Tìm trạm hoặc địa chỉ..."
-                placeholderTextColor="#8E8E93"
-              />
+            <View style={{ flex: 1 }}>
+              <Text style={styles.currentLocTitle} numberOfLines={1}>
+                Chọn điểm nhận & trả xe
+              </Text>
+              <Text style={styles.currentLocSub}>Mạng lưới giao nhận & trạm sạc TP.HCM</Text>
             </View>
           </View>
 
-          <ScrollView style={styles.placesScroll}>
-            {SAVED_PLACES.map((place) => (
-              <TouchableOpacity
-                key={place.id}
-                style={styles.placeItemRow}
-                onPress={() => {
-                  setSelectedPlace(place);
-                  setShowDestinationModal(false);
-                }}
-              >
-                <View style={styles.placeLeftCol}>
-                  <View style={[styles.placeIconCircle, { backgroundColor: theme.primarySoft }]}>
-                    <Ionicons name={place.icon} size={16} color={theme.primary} />
-                  </View>
-                  <Text style={styles.placeDistText}>{place.distance}</Text>
-                </View>
+          {/* Search Input for Stations */}
+          <View style={styles.destInputRow}>
+            <View style={styles.destInputWrap}>
+              <Ionicons name="search-outline" size={18} color="#8C6239" />
+              <TextInput
+                style={styles.destTextInput}
+                value={stationSearchQuery}
+                onChangeText={setStationSearchQuery}
+                placeholder="Tìm trạm theo tên, trường học, quận..."
+                placeholderTextColor="#A89F91"
+              />
+              {stationSearchQuery.length > 0 && (
+                <TouchableOpacity onPress={() => setStationSearchQuery('')}>
+                  <Ionicons name="close-circle" size={18} color="#8C6239" />
+                </TouchableOpacity>
+              )}
+            </View>
+          </View>
 
-                <View style={styles.placeCenterCol}>
-                  <Text style={styles.placeNameText}>{place.name}</Text>
-                  <Text style={styles.placeAddrText} numberOfLines={2}>
-                    {place.address}
+          {/* Station Category Filter Pills */}
+          <View style={styles.stationCategoryScroll}>
+            {[
+              { id: 'ALL', label: 'Tất cả (10)' },
+              { id: 'CAMPUS', label: 'Trường ĐH & UTH' },
+              { id: 'CENTRAL', label: 'Trung tâm & Q.1' },
+              { id: 'AIRPORT', label: 'Sân bay & Thủ Đức' }
+            ].map((cat) => {
+              const active = stationCategoryTab === cat.id;
+              return (
+                <TouchableOpacity
+                  key={cat.id}
+                  style={[
+                    styles.stCatPill,
+                    active && [styles.stCatPillActive, { backgroundColor: theme.primary, borderColor: theme.primary }]
+                  ]}
+                  onPress={() => setStationCategoryTab(cat.id)}
+                >
+                  <Text style={[styles.stCatText, active && styles.stCatTextActive]}>
+                    {cat.label}
                   </Text>
-                </View>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
 
-                <Ionicons name="chevron-forward" size={18} color="#C7C7CC" />
-              </TouchableOpacity>
-            ))}
+          {/* List of Real-World Stations */}
+          <ScrollView style={styles.placesScroll} showsVerticalScrollIndicator={false}>
+            {filteredStations.map((place) => {
+              const isSelected = selectedPlace?.id === place.id;
+              return (
+                <TouchableOpacity
+                  key={place.id}
+                  style={[
+                    styles.stationItemCard,
+                    isSelected && [styles.stationItemCardActive, { borderColor: theme.primary, backgroundColor: theme.beigeSoft }]
+                  ]}
+                  onPress={() => {
+                    setSelectedPlace(place);
+                    setShowDestinationModal(false);
+                  }}
+                  activeOpacity={0.88}
+                >
+                  <View style={styles.stCardTopRow}>
+                    <View style={[styles.placeIconCircle, { backgroundColor: theme.primarySoft }]}>
+                      <Ionicons name={place.icon} size={18} color={theme.primary} />
+                    </View>
+
+                    <View style={{ flex: 1, marginHorizontal: 10 }}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                        <Text style={styles.placeNameText} numberOfLines={1}>
+                          {place.shortName}
+                        </Text>
+                        {isSelected && (
+                          <View style={[styles.selectedPillBadge, { backgroundColor: theme.primary }]}>
+                            <Text style={styles.selectedPillText}>Đang chọn</Text>
+                          </View>
+                        )}
+                      </View>
+                      <Text style={styles.placeAddrText} numberOfLines={2}>
+                        {place.address}
+                      </Text>
+                    </View>
+
+                    <View style={styles.stDistBadge}>
+                      <Ionicons name="navigate-outline" size={11} color="#6F4E37" />
+                      <Text style={styles.stDistText}>{place.distance}</Text>
+                    </View>
+                  </View>
+
+                  {/* Realtime Vehicle & Charging Badges */}
+                  <View style={styles.stTagsRow}>
+                    <View style={styles.stTagVehicle}>
+                      <Ionicons name="car-outline" size={12} color="#4E3322" />
+                      <Text style={styles.stTagVehicleText}>{place.availableCars} ô tô</Text>
+                    </View>
+                    <View style={styles.stTagVehicle}>
+                      <Ionicons name="bicycle-outline" size={12} color="#8C6239" />
+                      <Text style={styles.stTagVehicleText}>{place.availableBikes} xe máy</Text>
+                    </View>
+                    {place.hasCharger ? (
+                      <View style={styles.stTagCharger}>
+                        <Ionicons name="flash" size={11} color="#B45309" />
+                        <Text style={styles.stTagChargerText}>{place.hasCharger}</Text>
+                      </View>
+                    ) : null}
+                  </View>
+                </TouchableOpacity>
+              );
+            })}
+
+            {/* Sandbox Notice Banner */}
+            <View style={styles.demoNoticeBox}>
+              <Ionicons name="shield-checkmark-outline" size={18} color="#6F4E37" />
+              <Text style={styles.demoNoticeText}>
+                Hệ thống trạm thực tế TP.HCM phục vụ demo: Sau khi chọn điểm nhận xe, bạn có thể hoàn tất quy trình đặt xe và trải nghiệm tính năng cấp mã khóa Bluetooth BLE trực tiếp trên ứng dụng.
+              </Text>
+            </View>
+            <View style={{ height: 40 }} />
           </ScrollView>
         </View>
       </Modal>
@@ -1145,46 +1379,101 @@ const styles = StyleSheet.create({
     color: '#1D1D1F',
     fontWeight: '600'
   },
-  stationSelectorRow: {
+  stationCardBox: {
+    backgroundColor: '#FAF7F2',
+    borderRadius: 14,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: '#EFE8DE',
+    marginBottom: 10
+  },
+  stationTopHeaderRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 6,
-    gap: 10,
-    marginBottom: 8
+    justifyContent: 'space-between',
+    marginBottom: 6
   },
-  mintDotOuter: {
-    width: 26,
-    height: 26,
-    borderRadius: 13,
+  stationHeaderLeftWrap: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6
+  },
+  stationPinCircle: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
     alignItems: 'center',
     justifyContent: 'center'
   },
-  mintDotInner: {
-    width: 8,
-    height: 8,
-    borderRadius: 4
-  },
-  stationSelectedName: {
+  stationSubLabel: {
     fontFamily: FONTS.family,
-    fontSize: 13,
-    fontWeight: '600',
-    color: '#1D1D1F'
-  },
-  stationTimeSub: {
-    fontFamily: FONTS.family,
-    fontSize: 11,
-    color: '#6E6E73',
-    marginTop: 2
+    fontSize: 10,
+    fontWeight: '700',
+    letterSpacing: 0.6
   },
   changeHubPill: {
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 99
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+    paddingHorizontal: 9,
+    paddingVertical: 4,
+    borderRadius: 12
   },
   changeHubLink: {
     fontFamily: FONTS.family,
     fontSize: 11,
     fontWeight: '700'
+  },
+  stationMainTitleText: {
+    fontFamily: FONTS.family,
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#2B180D',
+    marginBottom: 8,
+    lineHeight: 19
+  },
+  stationMetaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: 6
+  },
+  pulseLiveContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    backgroundColor: '#ECFDF5',
+    paddingHorizontal: 7,
+    paddingVertical: 3,
+    borderRadius: 6
+  },
+  pulseLiveDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#059669'
+  },
+  pulseLiveText: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#047857'
+  },
+  metaDotSep: {
+    fontSize: 11,
+    color: '#BDB3A6'
+  },
+  stationDistPill: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#6F4E37'
+  },
+  stationTimeSummaryText: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    fontWeight: '500',
+    color: '#6E6E73'
   },
   quickSearchBox: {
     flexDirection: 'row',
@@ -1344,7 +1633,7 @@ const styles = StyleSheet.create({
      ============================================================ */
   destModalContainer: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#FAF7F2',
     paddingTop: 14
   },
   destHeaderBar: {
@@ -1352,83 +1641,211 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingBottom: 12,
-    gap: 10
+    gap: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#EFE8DE'
   },
   destBackBtn: {
-    padding: 4
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#E8E0D5'
   },
   currentLocTitle: {
-    flex: 1,
     fontFamily: FONTS.family,
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: '700',
-    color: '#1D1D1F'
+    color: '#2B180D'
+  },
+  currentLocSub: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    color: '#8C6239',
+    marginTop: 2
   },
   destInputRow: {
     paddingHorizontal: 16,
-    paddingBottom: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#EBECE8'
+    paddingVertical: 10
   },
   destInputWrap: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F5F5F3',
+    backgroundColor: '#FFFFFF',
     borderRadius: 12,
     paddingHorizontal: 12,
-    height: 44,
-    gap: 8
+    height: 42,
+    gap: 8,
+    borderWidth: 1,
+    borderColor: '#E8E0D5'
   },
   destTextInput: {
     flex: 1,
     fontFamily: FONTS.family,
-    fontSize: 14,
-    color: '#1D1D1F'
+    fontSize: 13,
+    color: '#2B180D'
+  },
+  stationCategoryScroll: {
+    flexDirection: 'row',
+    paddingHorizontal: 16,
+    gap: 8,
+    paddingBottom: 10
+  },
+  stCatPill: {
+    paddingHorizontal: 11,
+    paddingVertical: 6,
+    borderRadius: 20,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E8E0D5'
+  },
+  stCatPillActive: {
+    backgroundColor: '#6F4E37',
+    borderColor: '#6F4E37'
+  },
+  stCatText: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#8C6239'
+  },
+  stCatTextActive: {
+    color: '#FFFFFF',
+    fontWeight: '700'
   },
   placesScroll: {
     flex: 1,
-    paddingHorizontal: 16
+    paddingHorizontal: 16,
+    paddingTop: 4
   },
-  placeItemRow: {
+  stationItemCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 14,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: '#EFE8DE',
+    marginBottom: 10,
+    shadowColor: '#2B180D',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.03,
+    shadowRadius: 2,
+    elevation: 1
+  },
+  stationItemCardActive: {
+    borderColor: '#6F4E37',
+    borderWidth: 1.5
+  },
+  stCardTopRow: {
     flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 14,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F2F2F0',
-    gap: 12
-  },
-  placeLeftCol: {
-    alignItems: 'center',
-    width: 48
+    alignItems: 'flex-start'
   },
   placeIconCircle: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     alignItems: 'center',
     justifyContent: 'center'
-  },
-  placeDistText: {
-    fontFamily: FONTS.family,
-    fontSize: 10,
-    color: '#6E6E73',
-    marginTop: 4,
-    fontWeight: '600'
-  },
-  placeCenterCol: {
-    flex: 1
   },
   placeNameText: {
     fontFamily: FONTS.family,
     fontSize: 14,
-    fontWeight: '600',
-    color: '#1D1D1F'
+    fontWeight: '700',
+    color: '#2B180D'
+  },
+  selectedPillBadge: {
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 6
+  },
+  selectedPillText: {
+    fontFamily: FONTS.family,
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#FFFFFF'
   },
   placeAddrText: {
     fontFamily: FONTS.family,
-    fontSize: 12,
+    fontSize: 11,
     color: '#6E6E73',
-    marginTop: 2
+    marginTop: 3,
+    lineHeight: 16
+  },
+  stDistBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+    backgroundColor: '#F5EFEB',
+    paddingHorizontal: 7,
+    paddingVertical: 3,
+    borderRadius: 8
+  },
+  stDistText: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#6F4E37'
+  },
+  stTagsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginTop: 10,
+    paddingTop: 8,
+    borderTopWidth: 1,
+    borderTopColor: '#F7F3EE',
+    flexWrap: 'wrap'
+  },
+  stTagVehicle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: '#F5EFEB',
+    paddingHorizontal: 7,
+    paddingVertical: 3,
+    borderRadius: 6
+  },
+  stTagVehicleText: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#4E3322'
+  },
+  stTagCharger: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+    backgroundColor: '#FEF3C7',
+    paddingHorizontal: 7,
+    paddingVertical: 3,
+    borderRadius: 6
+  },
+  stTagChargerText: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#B45309'
+  },
+  demoNoticeBox: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 8,
+    backgroundColor: '#F5EFEB',
+    borderWidth: 1,
+    borderColor: '#E8E0D5',
+    padding: 12,
+    borderRadius: 12,
+    marginTop: 4,
+    marginBottom: 16
+  },
+  demoNoticeText: {
+    flex: 1,
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    color: '#6F4E37',
+    lineHeight: 16
   },
 
   /* Header Coins & Badges */
