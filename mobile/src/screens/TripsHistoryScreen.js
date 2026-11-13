@@ -53,7 +53,9 @@ const DEFAULT_SEED_TRIPS = [
 export default function TripsHistoryScreen({
   theme = THEME_PRESETS.BE_SUA_CAFE,
   onNavigateToKey,
-  onNavigateBack
+  onNavigateBack,
+  onOpenRewards,
+  onNavigateToRent
 }) {
   const [trips, setTrips] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -149,18 +151,27 @@ export default function TripsHistoryScreen({
           </View>
 
           {/* Actionable Reward & Benefit Bar */}
-          <View style={styles.ecoBenefitBar}>
+          <TouchableOpacity
+            style={styles.ecoBenefitBar}
+            activeOpacity={0.8}
+            onPress={() => {
+              if (onOpenRewards) {
+                onOpenRewards();
+              }
+            }}
+          >
             <View style={styles.benefitLeftRow}>
               <Ionicons name="gift-outline" size={14} color="#D4AF37" />
               <Text style={styles.benefitText}>
                 {totalRewardPoints} điểm = Đủ đổi 3 Voucher giảm giá 50.000đ
               </Text>
+              <Ionicons name="chevron-forward" size={12} color="#8C6239" />
             </View>
             <View style={styles.ecoEliteBadge}>
               <Ionicons name="shield-checkmark" size={10} color="#15803D" />
               <Text style={styles.ecoEliteBadgeText}>Miễn cọc 15M</Text>
             </View>
-          </View>
+          </TouchableOpacity>
         </View>
 
         {loading ? (
@@ -169,7 +180,26 @@ export default function TripsHistoryScreen({
           <View style={styles.listSection}>
             <Text style={styles.listTitle}>Danh sách hợp đồng ({trips.length})</Text>
 
-            {trips.map((trip) => {
+            {trips.length === 0 ? (
+              <View style={styles.emptyContractCard}>
+                <Ionicons name="car-sport-outline" size={44} color="#BDB3A7" />
+                <Text style={styles.emptyContractTitle}>Chưa có hợp đồng nào</Text>
+                <Text style={styles.emptyContractSub}>
+                  Hãy khởi hành chuyến xe điện đầu tiên để nhận dữ liệu viễn trắc CO₂ và tích điểm đổi voucher giảm giá.
+                </Text>
+                {onNavigateToRent && (
+                  <TouchableOpacity
+                    style={[styles.emptyRentBtn, { backgroundColor: theme.primary }]}
+                    onPress={onNavigateToRent}
+                    activeOpacity={0.88}
+                  >
+                    <Ionicons name="car-outline" size={16} color="#FFFFFF" />
+                    <Text style={styles.emptyRentBtnText}>Thuê xe tự lái ngay</Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+            ) : (
+              trips.map((trip) => {
               const isActive = trip.status === 'ACTIVE';
               return (
                 <View
@@ -272,7 +302,7 @@ export default function TripsHistoryScreen({
                   </View>
                 </View>
               );
-            })}
+            }))}
           </View>
         )}
 
@@ -812,6 +842,47 @@ const styles = StyleSheet.create({
     fontSize: 9.5,
     fontWeight: '700',
     color: '#15803D'
+  },
+  emptyContractCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    padding: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#EBE3D7',
+    marginTop: 8
+  },
+  emptyContractTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#1A1D1F',
+    marginTop: 12
+  },
+  emptyContractSub: {
+    fontFamily: FONTS.family,
+    fontSize: 12,
+    color: '#6F767E',
+    textAlign: 'center',
+    lineHeight: 18,
+    marginTop: 6,
+    marginBottom: 16,
+    paddingHorizontal: 12
+  },
+  emptyRentBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 18,
+    paddingVertical: 10,
+    borderRadius: 12
+  },
+  emptyRentBtnText: {
+    fontFamily: FONTS.family,
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontWeight: '700'
   },
   formulaModalCard: {
     backgroundColor: '#FFFFFF',

@@ -23,6 +23,46 @@ let rentals = [
     digitalKeyActivated: true,
     eContractSigned: true,
     contractNumber: 'HD-ECOGO-2026-9812'
+  },
+  {
+    id: 'trip_demo_102',
+    userId: 'usr_demo_01',
+    vehicleId: 'veh-ioniq5-001',
+    pickupStationId: 'hub-uth-01',
+    returnStationId: 'hub-uth-03',
+    rentalType: 'HOURLY',
+    startTime: '2026-10-24T10:00:00.000Z',
+    endTime: '2026-10-24T14:00:00.000Z',
+    status: 'COMPLETED',
+    totalHours: 4,
+    basePricePerHour: 120000,
+    estimatedTotal: 240000,
+    distanceTraveledKm: 82,
+    co2SavedKg: 13.5,
+    ecoPointsEarned: 196,
+    digitalKeyActivated: false,
+    eContractSigned: true,
+    contractNumber: 'HĐ-UTH-2026-0891'
+  },
+  {
+    id: 'trip_demo_103',
+    userId: 'usr_demo_01',
+    vehicleId: 'veh-vf8-001',
+    pickupStationId: 'hub-uth-01',
+    returnStationId: 'hub-thuthiem-01',
+    rentalType: 'HOURLY',
+    startTime: '2026-10-20T08:30:00.000Z',
+    endTime: '2026-10-20T13:30:00.000Z',
+    status: 'COMPLETED',
+    totalHours: 5,
+    basePricePerHour: 150000,
+    estimatedTotal: 350000,
+    distanceTraveledKm: 60,
+    co2SavedKg: 9.9,
+    ecoPointsEarned: 144,
+    digitalKeyActivated: false,
+    eContractSigned: true,
+    contractNumber: 'HĐ-UTH-2026-0542'
   }
 ];
 

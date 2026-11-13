@@ -227,6 +227,11 @@ function AppContent() {
             theme={theme}
             onNavigateToKey={() => setActiveTab('KEY')}
             onNavigateBack={() => setActiveTab('PROFILE')}
+            onOpenRewards={() => setShowRewardsModal(true)}
+            onNavigateToRent={() => {
+              setVehiclesInitialCategory('CAR');
+              setActiveTab('VEHICLES');
+            }}
           />
         );
       case 'PROFILE':
