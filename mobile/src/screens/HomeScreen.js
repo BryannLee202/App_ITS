@@ -655,7 +655,7 @@ export default function HomeScreen({
         <View style={styles.vouchersHubSection}>
           <View style={styles.sectionHeaderRow}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-              <Ionicons name="pricetags" size={18} color="#059669" />
+              <Ionicons name="pricetags" size={18} color={theme.primary} />
               <Text style={styles.sectionMainTitle}>Voucher Hot Hôm Nay</Text>
               <View style={styles.hotFlameBadge}>
                 <Text style={styles.hotFlameText}>🔥 HOT</Text>
@@ -709,7 +709,7 @@ export default function HomeScreen({
                       <Ionicons
                         name={isSaved ? 'checkmark-circle' : 'bookmark-outline'}
                         size={13}
-                        color={isSaved ? '#FFFFFF' : '#059669'}
+                        color={isSaved ? '#FFFFFF' : theme.primary}
                       />
                       <Text style={[styles.vSaveBtnText, isSaved && styles.vSaveBtnTextSaved]}>
                         {isSaved ? 'Đã lưu' : 'Lưu mã'}
@@ -777,7 +777,7 @@ export default function HomeScreen({
                     </Text>
                     <View style={styles.dayIconWrap}>
                       {isClaimed ? (
-                        <Ionicons name="checkmark-circle" size={18} color="#059669" />
+                        <Ionicons name="checkmark-circle" size={18} color={theme.primary} />
                       ) : (
                         <Text style={[styles.dayRewardText, d.isGrand && { color: '#D97706', fontWeight: '800' }]}>
                           {d.reward}
@@ -1585,7 +1585,7 @@ const styles = StyleSheet.create({
   },
   promoDotActive: {
     width: 18,
-    backgroundColor: '#059669'
+    backgroundColor: '#6F4E37'
   },
   promoDotInactive: {
     width: 6,
@@ -1714,14 +1714,14 @@ const styles = StyleSheet.create({
     gap: 4
   },
   vSaveBtnSaved: {
-    backgroundColor: '#059669',
-    borderColor: '#059669'
+    backgroundColor: '#6F4E37',
+    borderColor: '#6F4E37'
   },
   vSaveBtnText: {
     fontFamily: FONTS.family,
     fontSize: 11,
     fontWeight: '700',
-    color: '#059669'
+    color: '#6F4E37'
   },
   vSaveBtnTextSaved: {
     color: '#FFFFFF'
@@ -1850,7 +1850,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#059669',
+    backgroundColor: '#6F4E37',
     borderRadius: 12,
     paddingVertical: 10,
     gap: 6
@@ -1991,7 +1991,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#059669',
+    backgroundColor: '#6F4E37',
     borderRadius: 14,
     paddingVertical: 12,
     gap: 8,

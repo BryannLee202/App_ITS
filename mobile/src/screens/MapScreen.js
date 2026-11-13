@@ -720,7 +720,7 @@ export default function MapScreen({
 
                 {routeSummary && (
                   <View style={styles.routeChip}>
-                    <Ionicons name="navigate" size={10} color="#0284C7" />
+                    <Ionicons name="navigate" size={10} color={theme.primary} />
                     <Text style={styles.routeChipText}>
                       Cách {routeSummary.distanceKm} km · {routeSummary.durationMin} phút
                     </Text>

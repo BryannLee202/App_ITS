@@ -17,6 +17,7 @@ import ApiService from '../services/api';
 import { useLanguage } from '../i18n';
 
 const ECOGO_LOGO = require('../../assets/logo.png');
+const GOOGLE_ICON = require('../../assets/google_icon.png');
 
 const KEYPAD_KEYS = [
   { num: '1', sub: '' },
@@ -511,8 +512,8 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
         {/* Clean Luxury EV Hero Banner (No AI Gimmicks) */}
         <View style={styles.step2HeroCard}>
           <View style={styles.step2IconRow}>
-            <View style={[styles.step2CarBadge, { backgroundColor: theme.primarySoft, borderColor: theme.primaryBorder }]}>
-              <Ionicons name="car-sport" size={28} color={theme.primary} />
+            <View style={[styles.step2CarBadge, { backgroundColor: '#352115', borderColor: '#D4AF37' }]}>
+              <Image source={ECOGO_LOGO} style={styles.step2HeroLogoImg} resizeMode="cover" />
             </View>
             <View style={styles.step2BadgeDetails}>
               <View style={[styles.step2BadgePill, { backgroundColor: theme.primarySoft, borderColor: theme.primaryBorder }]}>
@@ -529,19 +530,19 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
             {t('step2.subtitle')}
           </Text>
 
-          {/* 3 Luxury Feature Chips */}
+          {/* 3 Luxury Feature Chips - Real-world Coffee & Milk Theme */}
           <View style={styles.featureChipsRow}>
-            <View style={styles.featureChip}>
-              <Ionicons name="key-outline" size={13} color={theme.primary} />
-              <Text style={styles.featureChipText}>{t('step2.feature_ble')}</Text>
+            <View style={[styles.featureChip, { backgroundColor: '#F6EFE9', borderColor: '#EAE2D5' }]}>
+              <Ionicons name="key" size={12} color={theme.primary} />
+              <Text style={[styles.featureChipText, { color: '#4E3322' }]}>{t('step2.feature_ble')}</Text>
             </View>
-            <View style={styles.featureChip}>
-              <Ionicons name="flash-outline" size={13} color="#0284C7" />
-              <Text style={styles.featureChipText}>{t('step2.feature_hub')}</Text>
+            <View style={[styles.featureChip, { backgroundColor: '#F6EFE9', borderColor: '#EAE2D5' }]}>
+              <Ionicons name="flash" size={12} color="#8C6239" />
+              <Text style={[styles.featureChipText, { color: '#4E3322' }]}>{t('step2.feature_hub')}</Text>
             </View>
-            <View style={styles.featureChip}>
-              <Ionicons name="shield-checkmark-outline" size={13} color="#D97706" />
-              <Text style={styles.featureChipText}>{t('step2.feature_deposit')}</Text>
+            <View style={[styles.featureChip, { backgroundColor: '#F6EFE9', borderColor: '#EAE2D5' }]}>
+              <Ionicons name="shield-checkmark" size={12} color="#4E3322" />
+              <Text style={[styles.featureChipText, { color: '#4E3322' }]}>{t('step2.feature_deposit')}</Text>
             </View>
           </View>
         </View>
@@ -588,7 +589,7 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
               activeOpacity={0.85}
               onPress={() => setStep(3)}
             >
-              <Ionicons name="logo-apple" size={20} color="#FFFFFF" />
+              <Ionicons name="logo-apple" size={21} color="#FFFFFF" />
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -596,7 +597,7 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
               activeOpacity={0.85}
               onPress={() => setStep(3)}
             >
-              <Text style={styles.googleLogoG}>G</Text>
+              <Image source={GOOGLE_ICON} style={styles.googleLogoImg} resizeMode="contain" />
             </TouchableOpacity>
           </View>
 
@@ -1517,12 +1518,18 @@ const styles = StyleSheet.create({
   step2CarBadge: {
     width: 52,
     height: 52,
-    borderRadius: 16,
-    backgroundColor: '#F6EFE9',
+    borderRadius: 14,
+    backgroundColor: '#352115',
     borderWidth: 1.5,
-    borderColor: '#E5D6C9',
+    borderColor: '#D4AF37',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    overflow: 'hidden'
+  },
+  step2HeroLogoImg: {
+    width: 48,
+    height: 48,
+    borderRadius: 12
   },
   step2BadgeDetails: {
     flex: 1
@@ -1684,28 +1691,36 @@ const styles = StyleSheet.create({
     marginBottom: 18
   },
   appleBtn: {
-    width: 48,
-    height: 48,
-    borderRadius: 12,
-    backgroundColor: '#000000',
+    width: 52,
+    height: 52,
+    borderRadius: 14,
+    backgroundColor: '#111111',
+    borderWidth: 1,
+    borderColor: '#262626',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.12,
+    shadowRadius: 5
   },
   googleBtn: {
-    width: 48,
-    height: 48,
-    borderRadius: 12,
+    width: 52,
+    height: 52,
+    borderRadius: 14,
     backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderWidth: 1.5,
+    borderColor: '#EAE2D5',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    shadowColor: '#6F4E37',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 5
   },
-  googleLogoG: {
-    fontFamily: FONTS.family,
-    fontSize: 20,
-    fontWeight: '800',
-    color: '#EA4335'
+  googleLogoImg: {
+    width: 24,
+    height: 24
   },
   termsFooterText: {
     fontFamily: FONTS.family,
