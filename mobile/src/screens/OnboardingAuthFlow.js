@@ -34,15 +34,16 @@ const KEYPAD_KEYS = [
   { num: 'DEL', sub: '', isDelete: true }
 ];
 
-export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.SAGE }) {
+export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.SAGE, initialStep = 0 }) {
   const { language, toggleLanguage, setLanguage, t } = useLanguage();
   // Steps:
+  // 0: Animated Brand Logo & Welcome Splash (EcoGo Smart)
   // 1: Location Permission (Clean Apple White)
   // 2: Welcome & Phone Input (Clean Luxury Mobility)
   // 3: Phone Input Screen with iOS Keypad
   // 4: OTP Channel Bottom Sheet over Phone Input
   // 5: OTP 4-Digit Verification + Notification Banner
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(initialStep);
   const [phone, setPhone] = useState(''); // Empty by default for manual entry
   const [otpChannel, setOtpChannel] = useState('ZALO'); // 'ZALO' | 'WHATSAPP' | 'SMS'
   const [otpDigits, setOtpDigits] = useState(['', '', '', '']);
