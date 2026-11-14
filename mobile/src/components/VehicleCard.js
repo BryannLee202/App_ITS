@@ -22,6 +22,23 @@ export default function VehicleCard({
   const formattedDailyPrice = Math.round(vehicle.dailyPrice / 1000) + 'k';
   const batteryPct = Math.round(vehicle.telematics?.batteryLevelPct || 90);
 
+  const getBadgeInfo = () => {
+    if (vehicle.category === 'BICYCLE') {
+      if (isElectric) {
+        return { text: `${batteryPct}% E-Bike`, color: '#10B981' };
+      }
+      return { text: 'Xe cơ', color: '#14B8A6' };
+    }
+    if (isElectric) {
+      return { text: `${batteryPct}%`, color: accentColor };
+    }
+    if (vehicle.powerType === 'HYBRID') {
+      return { text: 'HEV', color: '#0EA5E9' };
+    }
+    return { text: 'Xăng', color: '#F59E0B' };
+  };
+  const badgeInfo = getBadgeInfo();
+
   const defaultImg = vehicle.thumbnail || FALLBACK_THUMBNAILS[vehicle.category] || FALLBACK_THUMBNAILS.CAR;
   const [imgUri, setImgUri] = useState(defaultImg);
   const [hasError, setHasError] = useState(false);
@@ -56,9 +73,9 @@ export default function VehicleCard({
           onError={handleImageError}
         />
         <View style={styles.batteryBadge}>
-          <View style={[styles.batteryDot, { backgroundColor: isElectric ? accentColor : '#F59E0B' }]} />
+          <View style={[styles.batteryDot, { backgroundColor: badgeInfo.color }]} />
           <Text style={styles.batteryText}>
-            {isElectric ? `${batteryPct}%` : vehicle.powerType === 'HYBRID' ? 'HEV' : 'Xăng'}
+            {badgeInfo.text}
           </Text>
         </View>
       </View>
