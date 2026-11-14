@@ -1070,7 +1070,7 @@ const styles = StyleSheet.create({
   splashContainer: {
     flex: 1,
     backgroundColor: '#FAF7F2',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
     overflow: 'hidden'
@@ -1214,7 +1214,7 @@ const styles = StyleSheet.create({
   /* STEP 1 */
   step1Container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#FAF7F2',
     justifyContent: 'space-between',
     paddingVertical: 12
   },
@@ -1546,7 +1546,7 @@ const styles = StyleSheet.create({
   /* STEP 2 */
   step2Container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#FAF7F2',
     justifyContent: 'space-between',
     paddingVertical: 12
   },
@@ -1793,7 +1793,7 @@ const styles = StyleSheet.create({
   /* STEP 3 & 4 */
   step3Container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#FAF7F2',
     justifyContent: 'space-between',
     position: 'relative'
   },
@@ -2019,7 +2019,7 @@ const styles = StyleSheet.create({
   /* STEP 5 */
   step5Container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#FAF7F2',
     justifyContent: 'space-between'
   },
   iosPushBanner: {

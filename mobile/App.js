@@ -92,6 +92,9 @@ export default function App() {
 
 function AppContent() {
   const { language, toggleLanguage, setLanguage, t } = useLanguage();
+  const { width: windowWidth } = useWindowDimensions();
+  const isMobile = Platform.OS !== 'web' || windowWidth <= 768;
+
   const [isOnboarded, setIsOnboarded] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [isCheckingSession, setIsCheckingSession] = useState(true);
@@ -283,12 +286,17 @@ function AppContent() {
   }
 
   return (
-    <View style={styles.outerViewport}>
-      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+    <View style={[styles.outerViewport, isMobile && styles.outerViewportMobile]}>
+      <StatusBar barStyle="dark-content" backgroundColor="#FAF7F2" />
 
-      {/* Main App Shell (Locked to Phone Aspect Ratio) */}
-      <View style={[styles.appShell, styles.phoneSimulatorShell]}>
-        <SafeAreaView style={styles.safeArea}>
+      {/* Main App Shell (Full Edge-to-Edge on Mobile, Phone Simulator on Desktop) */}
+      <View
+        style={[
+          styles.appShell,
+          isMobile ? styles.appShellMobile : styles.phoneSimulatorShell
+        ]}
+      >
+        <SafeAreaView style={[styles.safeArea, isMobile && styles.safeAreaMobile]}>
           <View style={styles.mainContentArea}>{renderContent()}</View>
 
           {/* =========================================================================
@@ -653,10 +661,26 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 14
   },
+  outerViewportMobile: {
+    paddingVertical: 0,
+    backgroundColor: '#FAF7F2',
+    alignItems: 'stretch',
+    justifyContent: 'flex-start'
+  },
   appShell: {
     flex: 1,
     width: '100%',
-    backgroundColor: '#FFFFFF'
+    backgroundColor: '#FAF7F2'
+  },
+  appShellMobile: {
+    width: '100%',
+    maxWidth: '100%',
+    height: '100%',
+    maxHeight: '100%',
+    borderRadius: 0,
+    borderWidth: 0,
+    shadowOpacity: 0,
+    elevation: 0
   },
   phoneSimulatorShell: {
     width: 414,
@@ -675,11 +699,16 @@ const styles = StyleSheet.create({
   },
   safeArea: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#FAF7F2',
     position: 'relative'
   },
+  safeAreaMobile: {
+    flex: 1,
+    backgroundColor: '#FAF7F2'
+  },
   mainContentArea: {
-    flex: 1
+    flex: 1,
+    backgroundColor: '#FAF7F2'
   },
 
   /* =========================================================================
