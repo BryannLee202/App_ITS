@@ -9,7 +9,8 @@ import {
   ActivityIndicator,
   Linking,
   Alert,
-  Modal
+  Modal,
+  Switch
 } from 'react-native';
 import ApiService from '../services/api';
 import { Ionicons } from '@expo/vector-icons';
@@ -107,6 +108,123 @@ export default function ProfileScreen({
     } finally {
       setIsSavingProfile(false);
     }
+  };
+
+  // =============================================================
+  // MULTI-PROFILE: GIA ĐÌNH & DOANH NGHIỆP
+  // =============================================================
+  const [showFamilyModal, setShowFamilyModal] = useState(false);
+  const [showBusinessModal, setShowBusinessModal] = useState(false);
+
+  // Gia đình State
+  const [familyShareWallet, setFamilyShareWallet] = useState(true);
+  const [familyShareLocation, setFamilyShareLocation] = useState(true);
+  const [familyMembers, setFamilyMembers] = useState([
+    {
+      id: 'fm_1',
+      name: user.fullName || 'Minh Tài',
+      relation: 'Chủ nhóm (Bạn)',
+      phone: user.phone || '+84386726647',
+      status: 'Quản trị viên',
+      isOwner: true,
+      hasLicense: true
+    },
+    {
+      id: 'fm_2',
+      name: 'Nguyễn Thu Trang',
+      relation: 'Vợ',
+      phone: '+84912345678',
+      status: 'Đã liên kết ví',
+      isOwner: false,
+      hasLicense: false
+    },
+    {
+      id: 'fm_3',
+      name: 'Lê Văn Hùng',
+      relation: 'Ba',
+      phone: '+84903456789',
+      status: 'GPLX B2 Đã duyệt',
+      isOwner: false,
+      hasLicense: true
+    }
+  ]);
+  const [showAddMember, setShowAddMember] = useState(false);
+  const [newMemberName, setNewMemberName] = useState('');
+  const [newMemberPhone, setNewMemberPhone] = useState('');
+  const [newMemberRelation, setNewMemberRelation] = useState('Vợ / Chồng');
+
+  const handleAddMember = () => {
+    if (!newMemberName.trim() || !newMemberPhone.trim()) {
+      Alert.alert('Thiếu thông tin', 'Vui lòng nhập họ tên và số điện thoại người thân.');
+      return;
+    }
+    if (familyMembers.length >= 5) {
+      Alert.alert('Giới hạn nhóm', 'Nhóm gia đình hỗ trợ tối đa 5 thành viên.');
+      return;
+    }
+    const newMember = {
+      id: `fm_${Date.now()}`,
+      name: newMemberName.trim(),
+      relation: newMemberRelation,
+      phone: newMemberPhone.trim(),
+      status: 'Chờ kích hoạt SMS',
+      isOwner: false,
+      hasLicense: false
+    };
+    setFamilyMembers(prev => [...prev, newMember]);
+    setNewMemberName('');
+    setNewMemberPhone('');
+    setShowAddMember(false);
+    Alert.alert(
+      'Đã gửi lời mời',
+      `Đã gửi tin nhắn SMS mời ${newMember.name} (${newMember.phone}) tham gia Nhóm Di Chuyển Gia Đình EcoGo!`
+    );
+  };
+
+  const handleRemoveMember = (id, name) => {
+    Alert.alert(
+      'Xóa thành viên',
+      `Bạn có chắc chắn muốn mời ${name} ra khỏi nhóm gia đình?`,
+      [
+        { text: 'Hủy', style: 'cancel' },
+        {
+          text: 'Xóa',
+          style: 'destructive',
+          onPress: () => {
+            setFamilyMembers(prev => prev.filter(m => m.id !== id));
+          }
+        }
+      ]
+    );
+  };
+
+  // Doanh nghiệp State
+  const [isBusinessTripMode, setIsBusinessTripMode] = useState(false);
+  const [bizCompanyName, setBizCompanyName] = useState('CÔNG TY CỔ PHẦN CÔNG NGHỆ VÀ TRUYỀN THÔNG ECOGO');
+  const [bizTaxId, setBizTaxId] = useState('0318269068');
+  const [bizAddress, setBizAddress] = useState('Tầng 18, Toà nhà Landmark 81, 720A Điện Biên Phủ, P. 22, Q. Bình Thạnh, TP.HCM');
+  const [bizEmail, setBizEmail] = useState('accounting@ecogo.vn');
+  const [bizCostCenter, setBizCostCenter] = useState('PROJECT-2026-SG');
+  const [isSavingBiz, setIsSavingBiz] = useState(false);
+
+  const handleSaveBusinessProfile = () => {
+    if (!bizCompanyName.trim() || !bizTaxId.trim() || !bizEmail.trim()) {
+      Alert.alert('Lỗi', 'Vui lòng điền đầy đủ Tên công ty, MST và Email nhận hóa đơn VAT.');
+      return;
+    }
+    setIsSavingBiz(true);
+    setTimeout(() => {
+      setIsSavingBiz(false);
+      Alert.alert('Thành công', 'Hồ sơ doanh nghiệp & thông tin xuất hóa đơn VAT đã được lưu đồng bộ trên hệ thống EcoGo!');
+    }, 350);
+  };
+
+  const handleExportExpenseReport = () => {
+    Alert.alert(
+      'Xuất bảng kê chi phí',
+      `Bảng kê chi tiết 3 chuyến công tác tháng 11/2026 (tổng 3.480.000đ kèm hóa đơn VAT điện tử) đã được gửi đến email kế toán: ${bizEmail}!`,
+      [{ text: 'Đã hiểu' }]
+    );
   };
 
   const VERIFY_SLIDES = [
@@ -297,20 +415,42 @@ export default function ProfileScreen({
             4. "GIA ĐÌNH" & "DOANH NGHIỆP" 3D CARDS
            ============================================================ */}
         <View style={styles.dualAccountCardsRow}>
-          <TouchableOpacity style={[styles.accountTypeCard, styles.familyCardCream]} activeOpacity={0.9}>
-            <Text style={styles.accountTypeTitle}>Gia đình</Text>
+          <TouchableOpacity
+            style={[styles.accountTypeCard, styles.familyCardCream]}
+            activeOpacity={0.88}
+            onPress={() => setShowFamilyModal(true)}
+          >
+            <View style={styles.accountCardTopRow}>
+              <Text style={styles.accountTypeTitle}>Gia đình</Text>
+              <View style={styles.cardBadgeSmall}>
+                <Text style={styles.cardBadgeSmallText}>{familyMembers.length} TV</Text>
+              </View>
+            </View>
+            <Text style={styles.accountTypeSub}>Dùng chung ví & SOS</Text>
             <View style={styles.house3DIllustration}>
               <View style={styles.heartBubbleRed}>
                 <Ionicons name="heart" size={10} color="#FFFFFF" />
               </View>
-              <Ionicons name="home" size={38} color={theme.primary} />
+              <Ionicons name="home" size={34} color={theme.primary} />
             </View>
           </TouchableOpacity>
 
-          <TouchableOpacity style={[styles.accountTypeCard, { backgroundColor: theme.primarySoft }]} activeOpacity={0.9}>
-            <Text style={styles.accountTypeTitle}>Doanh nghiệp</Text>
+          <TouchableOpacity
+            style={[styles.accountTypeCard, { backgroundColor: theme.primarySoft }]}
+            activeOpacity={0.88}
+            onPress={() => setShowBusinessModal(true)}
+          >
+            <View style={styles.accountCardTopRow}>
+              <Text style={styles.accountTypeTitle}>Doanh nghiệp</Text>
+              <View style={[styles.cardBadgeSmall, { backgroundColor: isBusinessTripMode ? '#15803D' : '#8C6239' }]}>
+                <Text style={[styles.cardBadgeSmallText, { color: '#FFFFFF' }]}>
+                  {isBusinessTripMode ? 'Bật công tác ✓' : 'Xuất VAT'}
+                </Text>
+              </View>
+            </View>
+            <Text style={styles.accountTypeSub}>Hóa đơn & Thẻ Cty</Text>
             <View style={styles.briefcase3DIllustration}>
-              <Ionicons name="briefcase" size={38} color="#1D1D1F" />
+              <Ionicons name="briefcase" size={34} color="#1D1D1F" />
               <View style={styles.claspLeftGold} />
               <View style={styles.claspRightGold} />
             </View>
@@ -322,28 +462,58 @@ export default function ProfileScreen({
            ============================================================ */}
         <Text style={styles.sectionTitle}>Tác vụ</Text>
         <View style={styles.grid2x2}>
-          <TouchableOpacity style={styles.taskCardItem}>
+          <TouchableOpacity
+            style={styles.taskCardItem}
+            activeOpacity={0.8}
+            onPress={() =>
+              Alert.alert(
+                'Ví EcoGo & Phương Thức Thanh Toán',
+                `Số dư khả dụng: 1.500.000đ\n• Thẻ liên kết: Visa/Mastercard (•••• 3892)\n• Phương thức nhanh: VietQR Napas 24/7 & MoMo\n• Đã bật thanh toán tự động khi kết thúc chuyến thuê.`,
+                [{ text: 'Đóng' }]
+              )
+            }
+          >
             <View style={[styles.taskIcon3D, { backgroundColor: theme.primarySoft }]}>
               <Ionicons name="card" size={20} color={theme.primary} />
             </View>
             <Text style={styles.taskCardLabel}>Thanh toán</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.taskCardItem}>
+          <TouchableOpacity
+            style={styles.taskCardItem}
+            activeOpacity={0.8}
+            onPress={() =>
+              Alert.alert(
+                'Ví Voucher Ưu Đãi EcoGo',
+                `Bạn đang có 3 mã ưu đãi sẵn sàng:\n• PRIME50K: Giảm 50.000đ thành viên Prime\n• BANMOI30: Giảm 30% chuyến đầu\n• ECOGO20: Giảm 20% mọi dòng xe\n\nMã sẽ tự động hiển thị gợi ý khi bạn đặt xe.`,
+                [{ text: 'Đã hiểu' }]
+              )
+            }
+          >
             <View style={[styles.taskIcon3D, { backgroundColor: theme.beigeSoft }]}>
               <Ionicons name="ticket" size={20} color="#8C6239" />
             </View>
             <Text style={styles.taskCardLabel}>Mã khuyến mại</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.taskCardItem} onPress={handleOpenSurvey}>
+          <TouchableOpacity style={styles.taskCardItem} onPress={handleOpenSurvey} activeOpacity={0.8}>
             <View style={[styles.taskIcon3D, { backgroundColor: theme.beigeSoft }]}>
               <Ionicons name="headset" size={20} color="#D97706" />
             </View>
             <Text style={styles.taskCardLabel}>Trung tâm hỗ trợ</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.taskCardItem}>
+          <TouchableOpacity
+            style={styles.taskCardItem}
+            activeOpacity={0.8}
+            onPress={() =>
+              Alert.alert(
+                'Trung Tâm An Toàn EcoGo',
+                `• Đội cứu hộ pin & kỹ thuật lốp 24/7: 1900 6868\n• 100% xe tự lái được trang bị cảm biến áp suất lốp TPMS và túi khí an toàn\n• Nút SOS khẩn cấp được tích hợp trực tiếp trên Chìa khóa số (Digital Key).`,
+                [{ text: 'Đã hiểu' }]
+              )
+            }
+          >
             <View style={[styles.taskIcon3D, { backgroundColor: theme.primarySoft }]}>
               <Ionicons name="shield-checkmark" size={20} color={theme.primary} />
             </View>
@@ -356,28 +526,58 @@ export default function ProfileScreen({
            ============================================================ */}
         <Text style={styles.sectionTitle}>Tiện ích & Ưu đãi</Text>
         <View style={styles.grid2x2}>
-          <TouchableOpacity style={styles.taskCardItem} onPress={onOpenGreenRace}>
+          <TouchableOpacity style={styles.taskCardItem} onPress={onOpenGreenRace} activeOpacity={0.8}>
             <View style={[styles.greenCircleIcon, { backgroundColor: theme.primarySoft }]}>
               <Ionicons name="ribbon" size={18} color={theme.primary} />
             </View>
             <Text style={styles.taskCardLabel}>Hạng thành viên</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.taskCardItem}>
+          <TouchableOpacity
+            style={styles.taskCardItem}
+            activeOpacity={0.8}
+            onPress={() =>
+              Alert.alert(
+                'Đặc Quyền Hội Viên Eco Elite Ambassador',
+                `Mã số định danh: ${user.membershipId}\n• Miễn 100% thế chấp 15.000.000đ khi nhận xe\n• Ưu tiên giữ xe trong 30 phút cao điểm\n• Miễn phí giao xe bán kính 5km quanh Hub.`,
+                [{ text: 'Đã hiểu' }]
+              )
+            }
+          >
             <View style={[styles.greenCircleIcon, { backgroundColor: theme.primarySoft }]}>
               <Ionicons name="shield" size={18} color={theme.primary} />
             </View>
             <Text style={styles.taskCardLabel}>Hội viên</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.taskCardItem}>
+          <TouchableOpacity
+            style={styles.taskCardItem}
+            activeOpacity={0.8}
+            onPress={() =>
+              Alert.alert(
+                'Thẻ Quà Tặng EcoGo Gift',
+                `Bạn có 0 thẻ quà tặng đang chờ.\nBạn có thể gửi tặng bạn bè voucher thuê xe tự lái trải nghiệm công nghệ xe điện xanh thông minh!`,
+                [{ text: 'Đóng' }]
+              )
+            }
+          >
             <View style={[styles.greenCircleIcon, { backgroundColor: theme.primarySoft }]}>
               <Ionicons name="gift" size={18} color={theme.primary} />
             </View>
             <Text style={styles.taskCardLabel}>Thẻ quà tặng</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.taskCardItem}>
+          <TouchableOpacity
+            style={styles.taskCardItem}
+            activeOpacity={0.8}
+            onPress={() =>
+              Alert.alert(
+                'Giới Thiệu Bạn Bè Nhận 50 Xu',
+                `Mã giới thiệu của bạn: ECOGO-${user.phone.slice(-4)}\n\nKhi bạn bè nhập mã và hoàn thành chuyến xe đầu tiên, cả 2 bạn đều nhận được 50 Eco Xu và voucher giảm giá 50.000đ!`,
+                [{ text: 'Sao chép mã' }, { text: 'Đóng' }]
+              )
+            }
+          >
             <View style={[styles.greenCircleIcon, { backgroundColor: theme.primarySoft }]}>
               <Ionicons name="person-add" size={18} color={theme.primary} />
             </View>
@@ -967,6 +1167,503 @@ export default function ProfileScreen({
                   <ActivityIndicator size="small" color="#FFFFFF" />
                 ) : (
                   <Text style={styles.saveEditBtnText}>Lưu vào CSDL</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* ============================================================
+          MODAL: GIA ĐÌNH (FAMILY MOBILITY PASS & SHARED WALLET)
+         ============================================================ */}
+      <Modal
+        visible={showFamilyModal}
+        animationType="slide"
+        transparent
+        onRequestClose={() => setShowFamilyModal(false)}
+      >
+        <View style={styles.modalBackdrop}>
+          <View style={styles.familyModalContainer}>
+            {/* Header */}
+            <View style={styles.familyModalHeader}>
+              <TouchableOpacity
+                onPress={() => setShowFamilyModal(false)}
+                style={styles.familyCloseBtn}
+                activeOpacity={0.7}
+              >
+                <Ionicons name="close" size={22} color="#1A1D1F" />
+              </TouchableOpacity>
+              <View style={{ flex: 1, alignItems: 'center' }}>
+                <Text style={styles.familyModalHeaderTitle}>Nhóm Di Chuyển Gia Đình</Text>
+                <Text style={styles.familyModalHeaderSub}>Dùng chung ví & Định vị hành trình an toàn</Text>
+              </View>
+              <View style={styles.familyActiveBadge}>
+                <Ionicons name="people" size={13} color="#15803D" />
+                <Text style={styles.familyActiveBadgeText}>{familyMembers.length}/5 TV</Text>
+              </View>
+            </View>
+
+            <ScrollView style={styles.familyModalScroll} showsVerticalScrollIndicator={false}>
+              {/* Executive Overview Card */}
+              <View style={styles.familyHeroCard}>
+                <View style={styles.familyHeroTopRow}>
+                  <View style={styles.familyHeroIconBox}>
+                    <Ionicons name="home" size={22} color="#D4AF37" />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.familyHeroTag}>GIA ĐÌNH ECOGO PRIME</Text>
+                    <Text style={styles.familyHeroName}>Nhóm Gia Đình Minh Tài</Text>
+                  </View>
+                  <View style={styles.familyStatusPill}>
+                    <View style={styles.familyStatusDot} />
+                    <Text style={styles.familyStatusText}>Đang hoạt động</Text>
+                  </View>
+                </View>
+
+                <View style={styles.familyQuotaBox}>
+                  <View style={styles.familyQuotaRow}>
+                    <Text style={styles.familyQuotaLabel}>Hạn mức chi tiêu chung:</Text>
+                    <Text style={styles.familyQuotaVal}>10.000.000đ/tháng</Text>
+                  </View>
+                  <View style={styles.familyProgressTrack}>
+                    <View style={[styles.familyProgressBar, { width: '24.5%' }]} />
+                  </View>
+                  <Text style={styles.familyProgressSub}>
+                    Đã sử dụng 2.450.000đ (2 chuyến tự lái) trong tháng 11/2026
+                  </Text>
+                </View>
+              </View>
+
+              {/* Toggles: Cấu hình phân quyền nhóm */}
+              <View style={styles.familySectionBox}>
+                <Text style={styles.familySectionTitle}>Cấu hình quyền lợi nhóm</Text>
+
+                <View style={styles.familyToggleRow}>
+                  <View style={styles.toggleIconCircle}>
+                    <Ionicons name="wallet-outline" size={18} color="#6F4E37" />
+                  </View>
+                  <View style={{ flex: 1, paddingRight: 8 }}>
+                    <Text style={styles.toggleMainLabel}>Dùng chung ví thanh toán</Text>
+                    <Text style={styles.toggleSubLabel}>
+                      Cho phép thành viên nhóm thuê xe và thanh toán trực tiếp qua Thẻ/Ví của chủ nhóm
+                    </Text>
+                  </View>
+                  <Switch
+                    value={familyShareWallet}
+                    onValueChange={setFamilyShareWallet}
+                    trackColor={{ false: '#EBE3D7', true: '#6F4E37' }}
+                    thumbColor={familyShareWallet ? '#D4AF37' : '#FFFFFF'}
+                  />
+                </View>
+
+                <View style={styles.familyDivider} />
+
+                <View style={styles.familyToggleRow}>
+                  <View style={styles.toggleIconCircle}>
+                    <Ionicons name="location-outline" size={18} color="#059669" />
+                  </View>
+                  <View style={{ flex: 1, paddingRight: 8 }}>
+                    <Text style={styles.toggleMainLabel}>Định vị lộ trình an toàn SOS</Text>
+                    <Text style={styles.toggleSubLabel}>
+                      Tự động chia sẻ vị trí xe thời gian thực cho gia đình khi xe di chuyển ban đêm
+                    </Text>
+                  </View>
+                  <Switch
+                    value={familyShareLocation}
+                    onValueChange={setFamilyShareLocation}
+                    trackColor={{ false: '#EBE3D7', true: '#059669' }}
+                    thumbColor={familyShareLocation ? '#D4AF37' : '#FFFFFF'}
+                  />
+                </View>
+              </View>
+
+              {/* Danh sách thành viên */}
+              <View style={styles.familySectionBox}>
+                <View style={styles.sectionHeaderBetween}>
+                  <Text style={styles.familySectionTitle}>
+                    Thành viên nhóm ({familyMembers.length}/5)
+                  </Text>
+                  {!showAddMember && familyMembers.length < 5 && (
+                    <TouchableOpacity
+                      style={styles.addMemberHeaderBtn}
+                      onPress={() => setShowAddMember(true)}
+                    >
+                      <Ionicons name="add-circle" size={16} color="#6F4E37" />
+                      <Text style={styles.addMemberHeaderText}>Thêm người thân</Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
+
+                {familyMembers.map((member) => (
+                  <View key={member.id} style={styles.memberCard}>
+                    <View style={styles.memberAvatarCircle}>
+                      <Text style={styles.memberAvatarInitial}>{member.name.charAt(0)}</Text>
+                    </View>
+                    <View style={{ flex: 1 }}>
+                      <View style={styles.memberNameRow}>
+                        <Text style={styles.memberNameText}>{member.name}</Text>
+                        <View
+                          style={[
+                            styles.memberRolePill,
+                            member.isOwner && styles.memberRoleOwnerPill
+                          ]}
+                        >
+                          <Text
+                            style={[
+                              styles.memberRoleText,
+                              member.isOwner && styles.memberRoleOwnerText
+                            ]}
+                          >
+                            {member.relation}
+                          </Text>
+                        </View>
+                      </View>
+                      <Text style={styles.memberPhoneText}>{member.phone}</Text>
+                      <View style={styles.memberStatusRow}>
+                        <Ionicons
+                          name={member.hasLicense ? 'shield-checkmark' : 'checkmark-circle-outline'}
+                          size={12}
+                          color={member.hasLicense ? '#15803D' : '#6F767E'}
+                        />
+                        <Text style={styles.memberStatusText}>{member.status}</Text>
+                      </View>
+                    </View>
+                    {!member.isOwner && (
+                      <TouchableOpacity
+                        style={styles.removeMemberBtn}
+                        onPress={() => handleRemoveMember(member.id, member.name)}
+                        activeOpacity={0.7}
+                      >
+                        <Ionicons name="trash-outline" size={16} color="#EF4444" />
+                      </TouchableOpacity>
+                    )}
+                  </View>
+                ))}
+
+                {/* Form thêm người thân mới */}
+                {showAddMember && (
+                  <View style={styles.addMemberFormBox}>
+                    <Text style={styles.addMemberFormHeading}>Mời người thân vào nhóm gia đình</Text>
+                    <Text style={styles.formInputLabel}>Họ và tên người thân *</Text>
+                    <TextInput
+                      style={styles.formTextInput}
+                      placeholder="VD: Nguyễn Văn A"
+                      placeholderTextColor="#9A9FA5"
+                      value={newMemberName}
+                      onChangeText={setNewMemberName}
+                    />
+
+                    <Text style={styles.formInputLabel}>Số điện thoại đăng ký EcoGo *</Text>
+                    <TextInput
+                      style={styles.formTextInput}
+                      placeholder="VD: 0912 345 678"
+                      placeholderTextColor="#9A9FA5"
+                      keyboardType="phone-pad"
+                      value={newMemberPhone}
+                      onChangeText={setNewMemberPhone}
+                    />
+
+                    <Text style={styles.formInputLabel}>Mối quan hệ gia đình</Text>
+                    <View style={styles.relationPillsRow}>
+                      {['Vợ / Chồng', 'Con cái', 'Ba / Mẹ', 'Anh / Chị'].map((rel) => (
+                        <TouchableOpacity
+                          key={rel}
+                          style={[
+                            styles.relationPill,
+                            newMemberRelation === rel && styles.relationPillActive
+                          ]}
+                          onPress={() => setNewMemberRelation(rel)}
+                        >
+                          <Text
+                            style={[
+                              styles.relationPillText,
+                              newMemberRelation === rel && styles.relationPillTextActive
+                            ]}
+                          >
+                            {rel}
+                          </Text>
+                        </TouchableOpacity>
+                      ))}
+                    </View>
+
+                    <View style={styles.formButtonsRow}>
+                      <TouchableOpacity
+                        style={styles.formCancelBtn}
+                        onPress={() => setShowAddMember(false)}
+                      >
+                        <Text style={styles.formCancelBtnText}>Hủy</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={styles.formSubmitBtn}
+                        onPress={handleAddMember}
+                        activeOpacity={0.88}
+                      >
+                        <Ionicons name="paper-plane" size={14} color="#FFFFFF" />
+                        <Text style={styles.formSubmitBtnText}>Gửi lời mời</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                )}
+              </View>
+
+              {/* Đặc quyền nhóm gia đình EcoGo */}
+              <View style={styles.familyPerksCard}>
+                <Text style={styles.familyPerksTitle}>Đặc Quyền Hội Viên Gia Đình EcoGo</Text>
+                <View style={styles.perkItemRow}>
+                  <Ionicons name="shield-checkmark" size={16} color="#D4AF37" />
+                  <Text style={styles.perkItemText}>
+                    Miễn 100% cọc thế chấp cho toàn bộ người thân đã định danh GPLX B2
+                  </Text>
+                </View>
+                <View style={styles.perkItemRow}>
+                  <Ionicons name="sparkles" size={16} color="#D4AF37" />
+                  <Text style={styles.perkItemText}>
+                    Tích lũy x1.5 điểm Eco Xu cho các chuyến đi dã ngoại gia đình cuối tuần
+                  </Text>
+                </View>
+                <View style={styles.perkItemRow}>
+                  <Ionicons name="call" size={16} color="#D4AF37" />
+                  <Text style={styles.perkItemText}>
+                    Đường dây nóng SOS ưu tiên và cứu hộ pin / lốp tận nơi 24/7
+                  </Text>
+                </View>
+              </View>
+
+              <View style={{ height: 30 }} />
+            </ScrollView>
+
+            <View style={styles.familyModalFooter}>
+              <TouchableOpacity
+                style={styles.familySaveBtn}
+                onPress={() => {
+                  setShowFamilyModal(false);
+                  Alert.alert('Đã lưu', 'Cấu hình nhóm gia đình đã được cập nhật thành công!');
+                }}
+                activeOpacity={0.88}
+              >
+                <Text style={styles.familySaveBtnText}>Đã Hiểu & Lưu Thiết Lập</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* ============================================================
+          MODAL: DOANH NGHIỆP (CORPORATE MOBILITY & VAT INVOICE)
+         ============================================================ */}
+      <Modal
+        visible={showBusinessModal}
+        animationType="slide"
+        transparent
+        onRequestClose={() => setShowBusinessModal(false)}
+      >
+        <View style={styles.modalBackdrop}>
+          <View style={styles.businessModalContainer}>
+            {/* Header */}
+            <View style={styles.businessModalHeader}>
+              <TouchableOpacity
+                onPress={() => setShowBusinessModal(false)}
+                style={styles.businessCloseBtn}
+                activeOpacity={0.7}
+              >
+                <Ionicons name="close" size={22} color="#1A1D1F" />
+              </TouchableOpacity>
+              <View style={{ flex: 1, alignItems: 'center' }}>
+                <Text style={styles.businessModalHeaderTitle}>Hồ Sơ Doanh Nghiệp & VAT</Text>
+                <Text style={styles.businessModalHeaderSub}>Tự động xuất e-Invoice & Thẻ công ty</Text>
+              </View>
+              <View
+                style={[
+                  styles.businessActiveBadge,
+                  isBusinessTripMode && styles.businessActiveBadgeGreen
+                ]}
+              >
+                <Ionicons
+                  name={isBusinessTripMode ? 'briefcase' : 'briefcase-outline'}
+                  size={12}
+                  color={isBusinessTripMode ? '#15803D' : '#6F4E37'}
+                />
+                <Text
+                  style={[
+                    styles.businessActiveBadgeText,
+                    isBusinessTripMode && styles.businessActiveBadgeGreenText
+                  ]}
+                >
+                  {isBusinessTripMode ? 'Bật công tác' : 'Chế độ cá nhân'}
+                </Text>
+              </View>
+            </View>
+
+            <ScrollView style={styles.businessModalScroll} showsVerticalScrollIndicator={false}>
+              {/* Công tắc chuyển đổi chế độ công tác */}
+              <View style={styles.businessModeSwitchCard}>
+                <View style={{ flex: 1, paddingRight: 10 }}>
+                  <View style={styles.modeSwitchTitleRow}>
+                    <Text style={styles.modeSwitchMainTitle}>Chế độ Chuyến đi Công tác</Text>
+                    <View style={styles.goldVipPill}>
+                      <Text style={styles.goldVipPillText}>DOANH NGHIỆP</Text>
+                    </View>
+                  </View>
+                  <Text style={styles.modeSwitchSubTitle}>
+                    {isBusinessTripMode
+                      ? '✓ Đang kích hoạt: Các chuyến thuê xe sẽ tự động trừ thẻ công ty và gửi hóa đơn VAT về email kế toán.'
+                      : 'Đang tắt: Bạn đang thuê xe ở tư cách Cá nhân. Bật công tắc để chuyển sang chế độ Công tác.'}
+                  </Text>
+                </View>
+                <Switch
+                  value={isBusinessTripMode}
+                  onValueChange={(val) => {
+                    setIsBusinessTripMode(val);
+                    Alert.alert(
+                      val ? 'Đã bật Chế độ Công tác' : 'Đã chuyển sang Cá nhân',
+                      val
+                        ? 'Các chuyến thuê xe tiếp theo sẽ được gắn mã chi phí doanh nghiệp và xuất hóa đơn VAT tự động.'
+                        : 'Các chuyến thuê xe sẽ trở lại tính phí cá nhân của bạn.'
+                    );
+                  }}
+                  trackColor={{ false: '#EBE3D7', true: '#15803D' }}
+                  thumbColor={isBusinessTripMode ? '#FFFFFF' : '#FFFFFF'}
+                />
+              </View>
+
+              {/* Thông tin pháp lý xuất hóa đơn VAT */}
+              <View style={styles.businessSectionBox}>
+                <View style={styles.boxTitleRow}>
+                  <View style={styles.boxTitleGoldBar} />
+                  <Text style={styles.businessSectionHeading}>Thông tin xuất hóa đơn điện tử (VAT)</Text>
+                </View>
+
+                <Text style={styles.formInputLabel}>Tên doanh nghiệp đầy đủ *</Text>
+                <TextInput
+                  style={styles.formTextInput}
+                  value={bizCompanyName}
+                  onChangeText={setBizCompanyName}
+                  placeholder="CÔNG TY TNHH / CỔ PHẦN..."
+                  placeholderTextColor="#9A9FA5"
+                />
+
+                <Text style={styles.formInputLabel}>Mã số thuế (MST) doanh nghiệp *</Text>
+                <TextInput
+                  style={styles.formTextInput}
+                  value={bizTaxId}
+                  onChangeText={setBizTaxId}
+                  placeholder="031xxxxxxx"
+                  placeholderTextColor="#9A9FA5"
+                  keyboardType="numeric"
+                />
+
+                <Text style={styles.formInputLabel}>Địa chỉ đăng ký kinh doanh *</Text>
+                <TextInput
+                  style={[styles.formTextInput, { height: 60, textAlignVertical: 'top' }]}
+                  value={bizAddress}
+                  onChangeText={setBizAddress}
+                  multiline
+                  placeholder="Địa chỉ trụ sở công ty..."
+                  placeholderTextColor="#9A9FA5"
+                />
+
+                <Text style={styles.formInputLabel}>Email kế toán nhận e-Invoice *</Text>
+                <TextInput
+                  style={styles.formTextInput}
+                  value={bizEmail}
+                  onChangeText={setBizEmail}
+                  placeholder="accounting@company.com"
+                  placeholderTextColor="#9A9FA5"
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                />
+
+                <Text style={styles.formInputLabel}>Mã trung tâm chi phí / Cost Center (Tùy chọn)</Text>
+                <TextInput
+                  style={styles.formTextInput}
+                  value={bizCostCenter}
+                  onChangeText={setBizCostCenter}
+                  placeholder="VD: PROJECT-2026-SG"
+                  placeholderTextColor="#9A9FA5"
+                  autoCapitalize="characters"
+                />
+              </View>
+
+              {/* Thẻ thanh toán & Hạn mức công nợ */}
+              <View style={styles.businessSectionBox}>
+                <View style={styles.boxTitleRow}>
+                  <View style={styles.boxTitleGoldBar} />
+                  <Text style={styles.businessSectionHeading}>Phương thức thanh toán doanh nghiệp</Text>
+                </View>
+
+                <View style={styles.corpCardBox}>
+                  <View style={styles.corpCardHeader}>
+                    <Ionicons name="card" size={20} color="#D4AF37" />
+                    <Text style={styles.corpCardTitle}>Corporate Platinum Card</Text>
+                  </View>
+                  <Text style={styles.corpCardNumber}>•••• •••• •••• 8821</Text>
+                  <View style={styles.corpCardFooter}>
+                    <Text style={styles.corpCardHolder}>{user.fullName || 'MINH TÀI'}</Text>
+                    <Text style={styles.corpCardExp}>EXP: 12/28</Text>
+                  </View>
+                </View>
+
+                <View style={styles.corpQuotaRow}>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.corpQuotaLabel}>Hạn mức chi tiêu tháng:</Text>
+                    <Text style={styles.corpQuotaVal}>50.000.000đ</Text>
+                  </View>
+                  <View style={{ alignItems: 'flex-end' }}>
+                    <Text style={styles.corpQuotaLabel}>Đã thanh toán tháng này:</Text>
+                    <Text style={styles.corpSpentVal}>3.480.000đ</Text>
+                  </View>
+                </View>
+              </View>
+
+              {/* Báo cáo chi phí công tác */}
+              <View style={styles.businessSectionBox}>
+                <View style={styles.boxTitleRow}>
+                  <View style={styles.boxTitleGoldBar} />
+                  <Text style={styles.businessSectionHeading}>Báo cáo chi phí công tác tháng 11/2026</Text>
+                </View>
+
+                <View style={styles.expenseSummaryGrid}>
+                  <View style={styles.expenseStatBox}>
+                    <Text style={styles.expenseStatNum}>3</Text>
+                    <Text style={styles.expenseStatLabel}>Chuyến công tác</Text>
+                  </View>
+                  <View style={styles.expenseStatBox}>
+                    <Text style={styles.expenseStatNum}>142 km</Text>
+                    <Text style={styles.expenseStatLabel}>Lộ trình di chuyển</Text>
+                  </View>
+                  <View style={styles.expenseStatBox}>
+                    <Text style={styles.expenseStatNum}>64.2 kg</Text>
+                    <Text style={styles.expenseStatLabel}>CO2 giảm cho cty</Text>
+                  </View>
+                </View>
+
+                <TouchableOpacity
+                  style={styles.exportReportBtn}
+                  onPress={handleExportExpenseReport}
+                  activeOpacity={0.85}
+                >
+                  <Ionicons name="cloud-download-outline" size={16} color="#6F4E37" />
+                  <Text style={styles.exportReportBtnText}>
+                    Xuất bảng kê chi phí & e-Invoice (Excel / PDF)
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
+              <View style={{ height: 30 }} />
+            </ScrollView>
+
+            <View style={styles.businessModalFooter}>
+              <TouchableOpacity
+                style={styles.businessSaveBtn}
+                onPress={handleSaveBusinessProfile}
+                disabled={isSavingBiz}
+                activeOpacity={0.88}
+              >
+                {isSavingBiz ? (
+                  <ActivityIndicator size="small" color="#FFFFFF" />
+                ) : (
+                  <Text style={styles.businessSaveBtnText}>Lưu Hồ Sơ Doanh Nghiệp & VAT</Text>
                 )}
               </TouchableOpacity>
             </View>
@@ -2187,5 +2884,739 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: '#6F767E',
     marginTop: 2
+  },
+
+  /* Multi-profile: Gia đình & Doanh nghiệp styles */
+  accountCardTopRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  cardBadgeSmall: {
+    backgroundColor: '#EBE3D7',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 8
+  },
+  cardBadgeSmallText: {
+    fontFamily: FONTS.family,
+    fontSize: 9,
+    fontWeight: '700',
+    color: '#6F4E37'
+  },
+  accountTypeSub: {
+    fontFamily: FONTS.family,
+    fontSize: 10,
+    color: '#8C6239',
+    marginTop: 2
+  },
+
+  /* Family Modal */
+  familyModalContainer: {
+    width: '100%',
+    maxWidth: 440,
+    height: '100%',
+    backgroundColor: '#FAF7F2',
+    alignSelf: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 16,
+    elevation: 8
+  },
+  familyModalHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 14,
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#EBE3D7',
+    gap: 10
+  },
+  familyCloseBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#F5EFEB',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  familyModalHeaderTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#1A1D1F'
+  },
+  familyModalHeaderSub: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    color: '#6F767E',
+    marginTop: 1
+  },
+  familyActiveBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: '#DCFCE7',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12
+  },
+  familyActiveBadgeText: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#15803D'
+  },
+  familyModalScroll: {
+    flex: 1,
+    padding: 16
+  },
+  familyHeroCard: {
+    backgroundColor: '#2B180D',
+    borderRadius: 18,
+    padding: 16,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#D4AF37'
+  },
+  familyHeroTopRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginBottom: 12
+  },
+  familyHeroIconBox: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    backgroundColor: 'rgba(212, 175, 55, 0.15)',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  familyHeroTag: {
+    fontFamily: FONTS.family,
+    fontSize: 9,
+    fontWeight: '800',
+    color: '#D4AF37',
+    letterSpacing: 0.8
+  },
+  familyHeroName: {
+    fontFamily: FONTS.family,
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    marginTop: 2
+  },
+  familyStatusPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    backgroundColor: 'rgba(21, 128, 61, 0.2)',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 10
+  },
+  familyStatusDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#22C55E'
+  },
+  familyStatusText: {
+    fontFamily: FONTS.family,
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#86EFAC'
+  },
+  familyQuotaBox: {
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    borderRadius: 12,
+    padding: 12
+  },
+  familyQuotaRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 6
+  },
+  familyQuotaLabel: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    color: '#EBE3D7'
+  },
+  familyQuotaVal: {
+    fontFamily: FONTS.family,
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#D4AF37'
+  },
+  familyProgressTrack: {
+    height: 6,
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    borderRadius: 3,
+    overflow: 'hidden',
+    marginBottom: 6
+  },
+  familyProgressBar: {
+    height: '100%',
+    backgroundColor: '#D4AF37',
+    borderRadius: 3
+  },
+  familyProgressSub: {
+    fontFamily: FONTS.family,
+    fontSize: 10,
+    color: '#A89F91'
+  },
+  familySectionBox: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 18,
+    padding: 16,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#EBE3D7'
+  },
+  familySectionTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#2B180D',
+    marginBottom: 12
+  },
+  familyToggleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12
+  },
+  toggleIconCircle: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#FAF7F2',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  toggleMainLabel: {
+    fontFamily: FONTS.family,
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#1A1D1F'
+  },
+  toggleSubLabel: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    color: '#6F767E',
+    marginTop: 2
+  },
+  familyDivider: {
+    height: 1,
+    backgroundColor: '#F0EBE3',
+    marginVertical: 12
+  },
+  sectionHeaderBetween: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12
+  },
+  addMemberHeaderBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+    backgroundColor: '#F5EFEB'
+  },
+  addMemberHeaderText: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#6F4E37'
+  },
+  memberCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 12,
+    borderRadius: 12,
+    backgroundColor: '#FAF7F2',
+    marginBottom: 10,
+    gap: 12,
+    borderWidth: 1,
+    borderColor: '#EBE3D7'
+  },
+  memberAvatarCircle: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: '#6F4E37',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  memberAvatarInitial: {
+    fontFamily: FONTS.family,
+    fontSize: 15,
+    fontWeight: '800',
+    color: '#FAF7F2'
+  },
+  memberNameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6
+  },
+  memberNameText: {
+    fontFamily: FONTS.family,
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#1A1D1F'
+  },
+  memberRolePill: {
+    backgroundColor: '#EBE3D7',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 6
+  },
+  memberRoleOwnerPill: {
+    backgroundColor: '#FEF3C7'
+  },
+  memberRoleText: {
+    fontFamily: FONTS.family,
+    fontSize: 10,
+    fontWeight: '600',
+    color: '#6F4E37'
+  },
+  memberRoleOwnerText: {
+    color: '#B45309'
+  },
+  memberPhoneText: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    color: '#6F767E',
+    marginTop: 2
+  },
+  memberStatusRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    marginTop: 4
+  },
+  memberStatusText: {
+    fontFamily: FONTS.family,
+    fontSize: 10,
+    color: '#6F767E'
+  },
+  removeMemberBtn: {
+    padding: 6
+  },
+  addMemberFormBox: {
+    backgroundColor: '#F6EFE9',
+    borderRadius: 14,
+    padding: 14,
+    marginTop: 8,
+    borderWidth: 1,
+    borderColor: '#D4AF37'
+  },
+  addMemberFormHeading: {
+    fontFamily: FONTS.family,
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#2B180D',
+    marginBottom: 10
+  },
+  formInputLabel: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#4E3322',
+    marginTop: 8,
+    marginBottom: 4
+  },
+  formTextInput: {
+    fontFamily: FONTS.family,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#EBE3D7',
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 9,
+    fontSize: 13,
+    color: '#1A1D1F'
+  },
+  relationPillsRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginTop: 6,
+    marginBottom: 12
+  },
+  relationPill: {
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 8,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#EBE3D7'
+  },
+  relationPillActive: {
+    backgroundColor: '#6F4E37',
+    borderColor: '#6F4E37'
+  },
+  relationPillText: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#6F767E'
+  },
+  relationPillTextActive: {
+    color: '#FFFFFF'
+  },
+  formButtonsRow: {
+    flexDirection: 'row',
+    gap: 10,
+    marginTop: 6
+  },
+  formCancelBtn: {
+    flex: 1,
+    paddingVertical: 10,
+    borderRadius: 10,
+    backgroundColor: '#EBE3D7',
+    alignItems: 'center'
+  },
+  formCancelBtnText: {
+    fontFamily: FONTS.family,
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#6F4E37'
+  },
+  formSubmitBtn: {
+    flex: 2,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    paddingVertical: 10,
+    borderRadius: 10,
+    backgroundColor: '#6F4E37'
+  },
+  formSubmitBtnText: {
+    fontFamily: FONTS.family,
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#FFFFFF'
+  },
+  familyPerksCard: {
+    backgroundColor: '#2B180D',
+    borderRadius: 16,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: '#D4AF37',
+    gap: 10
+  },
+  familyPerksTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 13,
+    fontWeight: '800',
+    color: '#D4AF37',
+    letterSpacing: 0.5
+  },
+  perkItemRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10
+  },
+  perkItemText: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    color: '#F6EFE9',
+    flex: 1
+  },
+  familyModalFooter: {
+    padding: 16,
+    backgroundColor: '#FFFFFF',
+    borderTopWidth: 1,
+    borderTopColor: '#EBE3D7'
+  },
+  familySaveBtn: {
+    backgroundColor: '#6F4E37',
+    borderRadius: 14,
+    paddingVertical: 14,
+    alignItems: 'center'
+  },
+  familySaveBtnText: {
+    fontFamily: FONTS.family,
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#FFFFFF'
+  },
+
+  /* Business Modal */
+  businessModalContainer: {
+    width: '100%',
+    maxWidth: 440,
+    height: '100%',
+    backgroundColor: '#FAF7F2',
+    alignSelf: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 16,
+    elevation: 8
+  },
+  businessModalHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 14,
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#EBE3D7',
+    gap: 10
+  },
+  businessCloseBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#F5EFEB',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  businessModalHeaderTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#1A1D1F'
+  },
+  businessModalHeaderSub: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    color: '#6F767E',
+    marginTop: 1
+  },
+  businessActiveBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: '#F5EFEB',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12
+  },
+  businessActiveBadgeGreen: {
+    backgroundColor: '#DCFCE7'
+  },
+  businessActiveBadgeText: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#6F4E37'
+  },
+  businessActiveBadgeGreenText: {
+    color: '#15803D'
+  },
+  businessModalScroll: {
+    flex: 1,
+    padding: 16
+  },
+  businessModeSwitchCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 18,
+    padding: 16,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#EBE3D7',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2
+  },
+  modeSwitchTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 4
+  },
+  modeSwitchMainTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 14,
+    fontWeight: '800',
+    color: '#1A1D1F'
+  },
+  goldVipPill: {
+    backgroundColor: '#FEF3C7',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 6
+  },
+  goldVipPillText: {
+    fontFamily: FONTS.family,
+    fontSize: 9,
+    fontWeight: '800',
+    color: '#B45309'
+  },
+  modeSwitchSubTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    color: '#6F767E',
+    lineHeight: 16
+  },
+  businessSectionBox: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 18,
+    padding: 16,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#EBE3D7'
+  },
+  boxTitleGoldBar: {
+    width: 3,
+    height: 14,
+    backgroundColor: '#D4AF37',
+    borderRadius: 2
+  },
+  businessSectionHeading: {
+    fontFamily: FONTS.family,
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#2B180D'
+  },
+  corpCardBox: {
+    backgroundColor: '#2B180D',
+    borderRadius: 14,
+    padding: 16,
+    marginTop: 10,
+    borderWidth: 1,
+    borderColor: '#D4AF37'
+  },
+  corpCardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 12
+  },
+  corpCardTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#D4AF37'
+  },
+  corpCardNumber: {
+    fontFamily: FONTS.family,
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    letterSpacing: 2,
+    marginBottom: 12
+  },
+  corpCardFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  corpCardHolder: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#EBE3D7'
+  },
+  corpCardExp: {
+    fontFamily: FONTS.family,
+    fontSize: 10,
+    color: '#A89F91'
+  },
+  corpQuotaRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 12,
+    paddingTop: 10,
+    borderTopWidth: 1,
+    borderTopColor: '#F0EBE3'
+  },
+  corpQuotaLabel: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    color: '#6F767E'
+  },
+  corpQuotaVal: {
+    fontFamily: FONTS.family,
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#1A1D1F',
+    marginTop: 2
+  },
+  corpSpentVal: {
+    fontFamily: FONTS.family,
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#15803D',
+    marginTop: 2
+  },
+  expenseSummaryGrid: {
+    flexDirection: 'row',
+    gap: 8,
+    marginTop: 12,
+    marginBottom: 14
+  },
+  expenseStatBox: {
+    flex: 1,
+    backgroundColor: '#FAF7F2',
+    borderRadius: 12,
+    padding: 10,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#EBE3D7'
+  },
+  expenseStatNum: {
+    fontFamily: FONTS.family,
+    fontSize: 15,
+    fontWeight: '800',
+    color: '#6F4E37'
+  },
+  expenseStatLabel: {
+    fontFamily: FONTS.family,
+    fontSize: 10,
+    color: '#6F767E',
+    marginTop: 2,
+    textAlign: 'center'
+  },
+  exportReportBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    backgroundColor: '#FAF7F2',
+    borderWidth: 1,
+    borderColor: '#6F4E37',
+    borderRadius: 12,
+    paddingVertical: 12
+  },
+  exportReportBtnText: {
+    fontFamily: FONTS.family,
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#6F4E37'
+  },
+  businessModalFooter: {
+    padding: 16,
+    backgroundColor: '#FFFFFF',
+    borderTopWidth: 1,
+    borderTopColor: '#EBE3D7'
+  },
+  businessSaveBtn: {
+    backgroundColor: '#2B180D',
+    borderRadius: 14,
+    paddingVertical: 14,
+    alignItems: 'center'
+  },
+  businessSaveBtnText: {
+    fontFamily: FONTS.family,
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#FFFFFF'
   }
 });
