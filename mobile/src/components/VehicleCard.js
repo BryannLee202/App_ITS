@@ -29,9 +29,9 @@ export default function VehicleCard({
           resizeMode="cover"
         />
         <View style={styles.batteryBadge}>
-          <View style={[styles.batteryDot, { backgroundColor: accentColor }]} />
+          <View style={[styles.batteryDot, { backgroundColor: isElectric ? accentColor : '#F59E0B' }]} />
           <Text style={styles.batteryText}>
-            {isElectric ? `${batteryPct}%` : 'HEV'}
+            {isElectric ? `${batteryPct}%` : vehicle.powerType === 'HYBRID' ? 'HEV' : 'Xăng'}
           </Text>
         </View>
       </View>
@@ -39,9 +39,17 @@ export default function VehicleCard({
       {/* Right Content Column: Spacious, Easy to Scan & Tap */}
       <View style={styles.infoCol}>
         <View style={styles.topTitleRow}>
-          <Text style={styles.vehicleName} numberOfLines={1}>
-            {vehicle.name}
-          </Text>
+          <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+            <Text style={styles.vehicleName} numberOfLines={1}>
+              {vehicle.name}
+            </Text>
+            {vehicle.category === 'LUXURY' && (
+              <View style={styles.luxuryVipTag}>
+                <Ionicons name="sparkles" size={10} color="#D4AF37" />
+                <Text style={styles.luxuryVipTagText}>VIP</Text>
+              </View>
+            )}
+          </View>
           <View style={styles.ratingBox}>
             <Ionicons name="star" size={12} color="#F59E0B" />
             <Text style={styles.ratingText}>{vehicle.rating}</Text>
@@ -49,7 +57,7 @@ export default function VehicleCard({
         </View>
 
         <Text style={styles.specsLine} numberOfLines={1}>
-          {vehicle.seats} chỗ · {vehicle.rangeKm} km · {vehicle.plateNumber}
+          {vehicle.category === 'BICYCLE' ? 'Xe đạp thông minh' : `${vehicle.seats} chỗ`} · {vehicle.rangeKm} km · {vehicle.plateNumber || 'EcoGo Hub'}
         </Text>
 
         <View style={styles.bottomActionRow}>
@@ -204,5 +212,22 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 12,
     fontWeight: '600'
+  },
+  luxuryVipTag: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#2B180D',
+    paddingHorizontal: 6,
+    paddingVertical: 1.5,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#D4AF37',
+    gap: 3
+  },
+  luxuryVipTagText: {
+    fontFamily: FONTS.family,
+    color: '#D4AF37',
+    fontSize: 9,
+    fontWeight: '800'
   }
 });

@@ -17,11 +17,14 @@ import VehicleCard from '../components/VehicleCard';
 import BookingModal from '../components/BookingModal';
 import VoucherWalletModal from '../components/VoucherWalletModal';
 import ApiService from '../services/api';
+import { DEFAULT_VEHICLES } from '../data/defaultVehicles';
 
 const CATEGORIES = [
   { id: 'ALL', label: 'Tất cả xe' },
-  { id: 'CAR', label: 'Ô tô tự lái' },
-  { id: 'MOTORBIKE', label: 'Xe máy điện' }
+  { id: 'CAR', label: 'Ô tô phổ thông' },
+  { id: 'LUXURY', label: 'Hạng sang VIP' },
+  { id: 'MOTORBIKE', label: 'Xe máy' },
+  { id: 'BICYCLE', label: 'Xe đạp & e-Bike' }
 ];
 
 const SORT_OPTIONS = [
@@ -306,7 +309,7 @@ export default function HomeScreen({
   appliedVoucherCode,
   onClearAppliedVoucher
 }) {
-  const [vehicles, setVehicles] = useState([]);
+  const [vehicles, setVehicles] = useState(DEFAULT_VEHICLES);
   const [selectedCategory, setSelectedCategory] = useState('ALL');
   const [rentalPackageTab, setRentalPackageTab] = useState('HOURLY'); // 'HOURLY' | 'DAILY'
   const [glosaAdvisory, setGlosaAdvisory] = useState(null);
@@ -543,7 +546,7 @@ export default function HomeScreen({
         ApiService.getGreenWaveAdvisory(300, 42),
         ApiService.getCheckInStatus('user-001').catch(() => null)
       ]);
-      setVehicles(vehRes.vehicles || []);
+      setVehicles(vehRes && vehRes.vehicles && vehRes.vehicles.length > 0 ? vehRes.vehicles : DEFAULT_VEHICLES);
       setGlosaAdvisory(glosaRes.data || null);
       if (checkinRes && checkinRes.success) {
         if (checkinRes.cycleDays) setCheckinDays(checkinRes.cycleDays);
@@ -556,7 +559,8 @@ export default function HomeScreen({
         }
       }
     } catch (err) {
-      console.warn('Error loading home data:', err.message);
+      console.warn('Error loading home data, falling back to local dataset:', err.message);
+      setVehicles(DEFAULT_VEHICLES);
     } finally {
       setLoading(false);
       setRefreshing(false);

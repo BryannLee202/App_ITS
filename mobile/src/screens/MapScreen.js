@@ -15,6 +15,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { FONTS, THEME_PRESETS } from '../styles/theme';
 import ApiService from '../services/api';
 import BookingModal from '../components/BookingModal';
+import { DEFAULT_VEHICLES } from '../data/defaultVehicles';
 
 function calcHaversineKm(lat1, lon1, lat2, lon2) {
   const R = 6371;
@@ -203,7 +204,7 @@ export default function MapScreen({
   // Filter: 'ALL' | 'RENTAL' | 'CHARGER'
   const [mapFilter, setMapFilter] = useState('ALL');
   const [stations, setStations] = useState(INITIAL_SAIGON_STATIONS);
-  const [vehicles, setVehicles] = useState([]);
+  const [vehicles, setVehicles] = useState(DEFAULT_VEHICLES);
   const [selectedStation, setSelectedStation] = useState(INITIAL_SAIGON_STATIONS[0]);
   const [routeSummary, setRouteSummary] = useState({ distanceKm: '0.3', durationMin: 2 });
 
@@ -311,8 +312,10 @@ export default function MapScreen({
         ApiService.getVehicles().catch(() => null)
       ]);
 
-      if (vRes && Array.isArray(vRes.vehicles)) {
+      if (vRes && Array.isArray(vRes.vehicles) && vRes.vehicles.length > 0) {
         setVehicles(vRes.vehicles);
+      } else {
+        setVehicles(DEFAULT_VEHICLES);
       }
 
       const backendStations =

@@ -18,11 +18,11 @@ exports.getVehicles = (req, res) => {
   const { category, powerType, stationId, status } = req.query;
   let vehicles = telematicsService.getAllVehicles();
 
-  if (category) {
+  if (category && category.toUpperCase() !== 'ALL') {
     vehicles = vehicles.filter((v) => v.category.toLowerCase() === category.toLowerCase());
   }
 
-  if (powerType) {
+  if (powerType && powerType.toUpperCase() !== 'ALL') {
     vehicles = vehicles.filter((v) => v.powerType.toLowerCase() === powerType.toLowerCase());
   }
 

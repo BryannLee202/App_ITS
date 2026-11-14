@@ -181,7 +181,7 @@ export default function BookingModal({
       }
     } catch (e) {
       // Offline fallback calculation
-      const isCar = vehicle.type === 'CAR';
+      const isCar = vehicle.type === 'CAR' || vehicle.category === 'CAR' || vehicle.category === 'LUXURY';
       const baseRentalFee =
         rentalType === 'DAILY'
           ? vehicle.dailyPrice * durationDays
@@ -333,7 +333,7 @@ export default function BookingModal({
 
   const photos = vehicle.images && vehicle.images.length > 0 ? vehicle.images : [vehicle.thumbnail];
   const batteryPct = Math.round(vehicle.telematics?.batteryLevelPct || 94);
-  const isCar = vehicle.type === 'CAR';
+  const isCar = vehicle.type === 'CAR' || vehicle.category === 'CAR' || vehicle.category === 'LUXURY';
 
   const formatTimer = (secs) => {
     const m = Math.floor(secs / 60);

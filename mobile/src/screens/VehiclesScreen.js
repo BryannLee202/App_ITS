@@ -15,6 +15,7 @@ import { FONTS, THEME_PRESETS } from '../styles/theme';
 import VehicleCard from '../components/VehicleCard';
 import BookingModal from '../components/BookingModal';
 import ApiService from '../services/api';
+import { DEFAULT_VEHICLES } from '../data/defaultVehicles';
 
 const SORT_OPTIONS = [
   { id: 'PRICE_ASC', label: 'Giá thuê thấp nhất', shortLabel: 'Giá thấp nhất' },
@@ -31,8 +32,8 @@ export default function VehiclesScreen({
   appliedVoucherCode,
   onClearAppliedVoucher
 }) {
-  const [vehicles, setVehicles] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [vehicles, setVehicles] = useState(DEFAULT_VEHICLES);
+  const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [categoryMode, setCategoryMode] = useState(initialCategory || 'CAR');
   const [brandFilter, setBrandFilter] = useState('ALL');
@@ -59,9 +60,14 @@ export default function VehiclesScreen({
     try {
       setLoading(true);
       const res = await ApiService.getVehicles('ALL');
-      setVehicles(res.vehicles || []);
+      if (res && res.vehicles && res.vehicles.length > 0) {
+        setVehicles(res.vehicles);
+      } else {
+        setVehicles(DEFAULT_VEHICLES);
+      }
     } catch (err) {
-      console.warn('Error fetching vehicles:', err.message);
+      console.warn('Error fetching vehicles, falling back to local dataset:', err.message);
+      setVehicles(DEFAULT_VEHICLES);
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -73,6 +79,10 @@ export default function VehiclesScreen({
     const brands = Array.from(new Set(list.map((v) => v.brand))).sort((a, b) => {
       if (a === 'VinFast') return -1;
       if (b === 'VinFast') return 1;
+      if (a === 'Mercedes-Benz') return -1;
+      if (b === 'Mercedes-Benz') return 1;
+      if (a === 'Honda') return -1;
+      if (b === 'Honda') return 1;
       return a.localeCompare(b);
     });
     return ['ALL', ...brands];
@@ -155,59 +165,121 @@ export default function VehiclesScreen({
         </TouchableOpacity>
       </View>
 
-      {/* 2. Top Category Switcher Tabs */}
-      <View style={styles.categoryToggleRow}>
-        <TouchableOpacity
-          style={[
-            styles.categoryToggleBtn,
-            categoryMode === 'CAR' && styles.categoryToggleBtnActive
-          ]}
-          onPress={() => {
-            setCategoryMode('CAR');
-            setBrandFilter('ALL');
-          }}
-          activeOpacity={0.85}
+      {/* 2. Top Category Switcher Tabs (4 Categories) */}
+      <View style={styles.categoryToggleContainer}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.categoryToggleScroll}
         >
-          <Ionicons
-            name="car-sport"
-            size={16}
-            color={categoryMode === 'CAR' ? '#FAF7F2' : '#6F4E37'}
-          />
-          <Text
+          {/* CAR */}
+          <TouchableOpacity
             style={[
-              styles.categoryToggleText,
-              categoryMode === 'CAR' && styles.categoryToggleTextActive
+              styles.categoryToggleBtn,
+              categoryMode === 'CAR' && styles.categoryToggleBtnActive
             ]}
+            onPress={() => {
+              setCategoryMode('CAR');
+              setBrandFilter('ALL');
+            }}
+            activeOpacity={0.85}
           >
-            Ô tô tự lái ({vehicles.filter((v) => v.category === 'CAR').length})
-          </Text>
-        </TouchableOpacity>
+            <Ionicons
+              name="car-sport"
+              size={15}
+              color={categoryMode === 'CAR' ? '#FAF7F2' : '#6F4E37'}
+            />
+            <Text
+              style={[
+                styles.categoryToggleText,
+                categoryMode === 'CAR' && styles.categoryToggleTextActive
+              ]}
+            >
+              Ô tô phổ thông ({vehicles.filter((v) => v.category === 'CAR').length})
+            </Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[
-            styles.categoryToggleBtn,
-            categoryMode === 'MOTORBIKE' && styles.categoryToggleBtnActive
-          ]}
-          onPress={() => {
-            setCategoryMode('MOTORBIKE');
-            setBrandFilter('ALL');
-          }}
-          activeOpacity={0.85}
-        >
-          <Ionicons
-            name="bicycle"
-            size={16}
-            color={categoryMode === 'MOTORBIKE' ? '#FAF7F2' : '#6F4E37'}
-          />
-          <Text
+          {/* LUXURY */}
+          <TouchableOpacity
             style={[
-              styles.categoryToggleText,
-              categoryMode === 'MOTORBIKE' && styles.categoryToggleTextActive
+              styles.categoryToggleBtn,
+              categoryMode === 'LUXURY' && styles.categoryToggleBtnActive
             ]}
+            onPress={() => {
+              setCategoryMode('LUXURY');
+              setBrandFilter('ALL');
+            }}
+            activeOpacity={0.85}
           >
-            Xe máy điện ({vehicles.filter((v) => v.category === 'MOTORBIKE').length})
-          </Text>
-        </TouchableOpacity>
+            <Ionicons
+              name="sparkles"
+              size={15}
+              color={categoryMode === 'LUXURY' ? '#FAF7F2' : '#D4AF37'}
+            />
+            <Text
+              style={[
+                styles.categoryToggleText,
+                categoryMode === 'LUXURY' && styles.categoryToggleTextActive
+              ]}
+            >
+              Hạng sang VIP ({vehicles.filter((v) => v.category === 'LUXURY').length})
+            </Text>
+          </TouchableOpacity>
+
+          {/* MOTORBIKE */}
+          <TouchableOpacity
+            style={[
+              styles.categoryToggleBtn,
+              categoryMode === 'MOTORBIKE' && styles.categoryToggleBtnActive
+            ]}
+            onPress={() => {
+              setCategoryMode('MOTORBIKE');
+              setBrandFilter('ALL');
+            }}
+            activeOpacity={0.85}
+          >
+            <Ionicons
+              name="bicycle"
+              size={15}
+              color={categoryMode === 'MOTORBIKE' ? '#FAF7F2' : '#6F4E37'}
+            />
+            <Text
+              style={[
+                styles.categoryToggleText,
+                categoryMode === 'MOTORBIKE' && styles.categoryToggleTextActive
+              ]}
+            >
+              Xe máy ({vehicles.filter((v) => v.category === 'MOTORBIKE').length})
+            </Text>
+          </TouchableOpacity>
+
+          {/* BICYCLE */}
+          <TouchableOpacity
+            style={[
+              styles.categoryToggleBtn,
+              categoryMode === 'BICYCLE' && styles.categoryToggleBtnActive
+            ]}
+            onPress={() => {
+              setCategoryMode('BICYCLE');
+              setBrandFilter('ALL');
+            }}
+            activeOpacity={0.85}
+          >
+            <Ionicons
+              name="leaf"
+              size={15}
+              color={categoryMode === 'BICYCLE' ? '#FAF7F2' : '#15803D'}
+            />
+            <Text
+              style={[
+                styles.categoryToggleText,
+                categoryMode === 'BICYCLE' && styles.categoryToggleTextActive
+              ]}
+            >
+              Xe đạp & e-Bike ({vehicles.filter((v) => v.category === 'BICYCLE').length})
+            </Text>
+          </TouchableOpacity>
+        </ScrollView>
       </View>
 
       {/* 3. Search Bar */}
@@ -217,8 +289,12 @@ export default function VehiclesScreen({
           style={styles.searchInput}
           placeholder={
             categoryMode === 'CAR'
-              ? 'Tìm xe ô tô (VF 8, Ioniq 5, CX-5, Corolla Cross...)'
-              : 'Tìm xe máy điện (Feliz S, Klara S, Evo 200...)'
+              ? 'Tìm xe ô tô (VF 3, VF 5, VF 7, Vios, CX-5...)'
+              : categoryMode === 'LUXURY'
+              ? 'Tìm xe sang VIP (S 450, Maybach, EQS, Taycan, i7, LM 500h...)'
+              : categoryMode === 'MOTORBIKE'
+              ? 'Tìm xe máy (Vision, Air Blade, SH, Evo200, Feliz...)'
+              : 'Tìm xe đạp (DrgnFly, Giant, Phoenix, Trek...)'
           }
           placeholderTextColor="#9C8B7E"
           value={searchQuery}
@@ -492,19 +568,20 @@ const styles = StyleSheet.create({
   },
 
   /* Category Switcher Tabs */
-  categoryToggleRow: {
-    flexDirection: 'row',
-    paddingHorizontal: 16,
-    gap: 8,
+  categoryToggleContainer: {
     marginVertical: 8
   },
+  categoryToggleScroll: {
+    paddingHorizontal: 16,
+    gap: 8
+  },
   categoryToggleBtn: {
-    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#FFFFFF',
-    paddingVertical: 10,
+    paddingVertical: 9,
+    paddingHorizontal: 14,
     borderRadius: 14,
     borderWidth: 1,
     borderColor: '#EBE3D7',
