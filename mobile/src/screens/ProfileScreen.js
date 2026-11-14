@@ -15,6 +15,7 @@ import {
 import ApiService from '../services/api';
 import { Ionicons } from '@expo/vector-icons';
 import { FONTS, THEME_PRESETS } from '../styles/theme';
+import VoucherWalletModal from '../components/VoucherWalletModal';
 
 export default function ProfileScreen({
   currentUser,
@@ -33,6 +34,26 @@ export default function ProfileScreen({
   const [showEditModal, setShowEditModal] = useState(false);
   const [isSavingProfile, setIsSavingProfile] = useState(false);
   const [verifySlideIndex, setVerifySlideIndex] = useState(0);
+
+  // Các Modal nghiệp vụ thực tế
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [showVoucherModal, setShowVoucherModal] = useState(false);
+  const [showSafetyModal, setShowSafetyModal] = useState(false);
+  const [showReferralModal, setShowReferralModal] = useState(false);
+  const [showSuggestHubModal, setShowSuggestHubModal] = useState(false);
+  const [showTermsModal, setShowTermsModal] = useState(false);
+
+  // State Ví & Thanh toán
+  const [walletBalance, setWalletBalance] = useState(1500000);
+  const [autoDeductRental, setAutoDeductRental] = useState(true);
+
+  // State Đề xuất trạm Hub
+  const [suggestDistrict, setSuggestDistrict] = useState('Bình Thạnh');
+  const [suggestLocationName, setSuggestLocationName] = useState('');
+  const [isSubmittingHub, setIsSubmittingHub] = useState(false);
+
+  // State Giới thiệu bạn bè
+  const [copiedReferral, setCopiedReferral] = useState(false);
 
   const activeUser = userState || currentUser || {};
   const user = {
@@ -458,226 +479,132 @@ export default function ProfileScreen({
         </View>
 
         {/* ============================================================
-            5. "TÁC VỤ" (2x2 GRID)
+            5. "TÁC VỤ & ĐẶC QUYỀN" (2x2 GRID TINH GỌN, SANG TRỌNG)
            ============================================================ */}
-        <Text style={styles.sectionTitle}>Tác vụ</Text>
+        <Text style={styles.sectionTitle}>Tác vụ & Đặc quyền</Text>
         <View style={styles.grid2x2}>
+          {/* 1. Thanh toán & Ví */}
           <TouchableOpacity
             style={styles.taskCardItem}
             activeOpacity={0.8}
-            onPress={() =>
-              Alert.alert(
-                'Ví EcoGo & Phương Thức Thanh Toán',
-                `Số dư khả dụng: 1.500.000đ\n• Thẻ liên kết: Visa/Mastercard (•••• 3892)\n• Phương thức nhanh: VietQR Napas 24/7 & MoMo\n• Đã bật thanh toán tự động khi kết thúc chuyến thuê.`,
-                [{ text: 'Đóng' }]
-              )
-            }
+            onPress={() => setShowPaymentModal(true)}
           >
             <View style={[styles.taskIcon3D, { backgroundColor: theme.primarySoft }]}>
               <Ionicons name="card" size={20} color={theme.primary} />
             </View>
-            <Text style={styles.taskCardLabel}>Thanh toán</Text>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.taskCardLabel}>Thanh toán</Text>
+              <Text style={styles.taskCardSubLabel}>Ví {Number(walletBalance).toLocaleString('vi-VN')}đ</Text>
+            </View>
           </TouchableOpacity>
 
+          {/* 2. Mã khuyến mại (Voucher Wallet) */}
           <TouchableOpacity
             style={styles.taskCardItem}
             activeOpacity={0.8}
-            onPress={() =>
-              Alert.alert(
-                'Ví Voucher Ưu Đãi EcoGo',
-                `Bạn đang có 3 mã ưu đãi sẵn sàng:\n• PRIME50K: Giảm 50.000đ thành viên Prime\n• BANMOI30: Giảm 30% chuyến đầu\n• ECOGO20: Giảm 20% mọi dòng xe\n\nMã sẽ tự động hiển thị gợi ý khi bạn đặt xe.`,
-                [{ text: 'Đã hiểu' }]
-              )
-            }
+            onPress={() => setShowVoucherModal(true)}
           >
             <View style={[styles.taskIcon3D, { backgroundColor: theme.beigeSoft }]}>
               <Ionicons name="ticket" size={20} color="#8C6239" />
             </View>
-            <Text style={styles.taskCardLabel}>Mã khuyến mại</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.taskCardItem} onPress={handleOpenSurvey} activeOpacity={0.8}>
-            <View style={[styles.taskIcon3D, { backgroundColor: theme.beigeSoft }]}>
-              <Ionicons name="headset" size={20} color="#D97706" />
+            <View style={{ flex: 1 }}>
+              <Text style={styles.taskCardLabel}>Mã khuyến mại</Text>
+              <Text style={styles.taskCardSubLabel}>3 mã khả dụng</Text>
             </View>
-            <Text style={styles.taskCardLabel}>Trung tâm hỗ trợ</Text>
           </TouchableOpacity>
 
+          {/* 3. Trung tâm an toàn */}
           <TouchableOpacity
             style={styles.taskCardItem}
             activeOpacity={0.8}
-            onPress={() =>
-              Alert.alert(
-                'Trung Tâm An Toàn EcoGo',
-                `• Đội cứu hộ pin & kỹ thuật lốp 24/7: 1900 6868\n• 100% xe tự lái được trang bị cảm biến áp suất lốp TPMS và túi khí an toàn\n• Nút SOS khẩn cấp được tích hợp trực tiếp trên Chìa khóa số (Digital Key).`,
-                [{ text: 'Đã hiểu' }]
-              )
-            }
+            onPress={() => setShowSafetyModal(true)}
           >
             <View style={[styles.taskIcon3D, { backgroundColor: theme.primarySoft }]}>
               <Ionicons name="shield-checkmark" size={20} color={theme.primary} />
             </View>
-            <Text style={styles.taskCardLabel}>Trung tâm an toàn</Text>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.taskCardLabel}>Trung tâm an toàn</Text>
+              <Text style={styles.taskCardSubLabel}>SOS 24/7 & Cứu hộ</Text>
+            </View>
+          </TouchableOpacity>
+
+          {/* 4. Giới thiệu bạn bè */}
+          <TouchableOpacity
+            style={styles.taskCardItem}
+            activeOpacity={0.8}
+            onPress={() => setShowReferralModal(true)}
+          >
+            <View style={[styles.taskIcon3D, { backgroundColor: theme.beigeSoft }]}>
+              <Ionicons name="gift" size={20} color="#8C6239" />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.taskCardLabel}>Giới thiệu bạn bè</Text>
+              <Text style={styles.taskCardSubLabel}>Nhận ngay 50K</Text>
+            </View>
           </TouchableOpacity>
         </View>
 
         {/* ============================================================
-            6. "TIỆN ÍCH & ƯU ĐÃI" (2x2 GRID + GIFT BANNER)
-           ============================================================ */}
-        <Text style={styles.sectionTitle}>Tiện ích & Ưu đãi</Text>
-        <View style={styles.grid2x2}>
-          <TouchableOpacity style={styles.taskCardItem} onPress={onOpenGreenRace} activeOpacity={0.8}>
-            <View style={[styles.greenCircleIcon, { backgroundColor: theme.primarySoft }]}>
-              <Ionicons name="ribbon" size={18} color={theme.primary} />
-            </View>
-            <Text style={styles.taskCardLabel}>Hạng thành viên</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.taskCardItem}
-            activeOpacity={0.8}
-            onPress={() =>
-              Alert.alert(
-                'Đặc Quyền Hội Viên Eco Elite Ambassador',
-                `Mã số định danh: ${user.membershipId}\n• Miễn 100% thế chấp 15.000.000đ khi nhận xe\n• Ưu tiên giữ xe trong 30 phút cao điểm\n• Miễn phí giao xe bán kính 5km quanh Hub.`,
-                [{ text: 'Đã hiểu' }]
-              )
-            }
-          >
-            <View style={[styles.greenCircleIcon, { backgroundColor: theme.primarySoft }]}>
-              <Ionicons name="shield" size={18} color={theme.primary} />
-            </View>
-            <Text style={styles.taskCardLabel}>Hội viên</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.taskCardItem}
-            activeOpacity={0.8}
-            onPress={() =>
-              Alert.alert(
-                'Thẻ Quà Tặng EcoGo Gift',
-                `Bạn có 0 thẻ quà tặng đang chờ.\nBạn có thể gửi tặng bạn bè voucher thuê xe tự lái trải nghiệm công nghệ xe điện xanh thông minh!`,
-                [{ text: 'Đóng' }]
-              )
-            }
-          >
-            <View style={[styles.greenCircleIcon, { backgroundColor: theme.primarySoft }]}>
-              <Ionicons name="gift" size={18} color={theme.primary} />
-            </View>
-            <Text style={styles.taskCardLabel}>Thẻ quà tặng</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.taskCardItem}
-            activeOpacity={0.8}
-            onPress={() =>
-              Alert.alert(
-                'Giới Thiệu Bạn Bè Nhận 50 Xu',
-                `Mã giới thiệu của bạn: ECOGO-${user.phone.slice(-4)}\n\nKhi bạn bè nhập mã và hoàn thành chuyến xe đầu tiên, cả 2 bạn đều nhận được 50 Eco Xu và voucher giảm giá 50.000đ!`,
-                [{ text: 'Sao chép mã' }, { text: 'Đóng' }]
-              )
-            }
-          >
-            <View style={[styles.greenCircleIcon, { backgroundColor: theme.primarySoft }]}>
-              <Ionicons name="person-add" size={18} color={theme.primary} />
-            </View>
-            <Text style={styles.taskCardLabel}>Giới thiệu bạn bè</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Gift Promo Banner */}
-        <TouchableOpacity style={styles.giftPromoBanner} activeOpacity={0.9}>
-          <View style={styles.giftBannerIconBox}>
-            <Text style={styles.giftBannerPercent}>%</Text>
-          </View>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.giftBannerTitle}>Quà tặng xịn tặng người thân</Text>
-            <Text style={styles.giftBannerSub}>Quà nho nhỏ, cho niềm vui to</Text>
-          </View>
-          <Ionicons name="chevron-forward" size={18} color="#1A1D1F" />
-        </TouchableOpacity>
-
-        {/* ============================================================
-            7. "HỖ TRỢ & HỢP TÁC" + "CÀI ĐẶT CHUNG"
+            6. "HỖ TRỢ & HỢP TÁC" (3 DÒNG THỰC TẾ)
            ============================================================ */}
         <Text style={styles.sectionTitle}>Hỗ trợ & Hợp tác</Text>
         <View style={styles.menuListGroup}>
-          <TouchableOpacity style={styles.menuListRow} onPress={handleOpenSurvey}>
-            <Ionicons name="id-card-outline" size={20} color="#6F767E" />
+          <TouchableOpacity style={styles.menuListRow} onPress={handleOpenSurvey} activeOpacity={0.7}>
+            <Ionicons name="chatbubbles-outline" size={20} color="#6F767E" />
             <Text style={styles.menuListText}>Đóng góp ý kiến dịch vụ EcoGo Mobility</Text>
-            <Ionicons name="chevron-forward" size={18} color="#9A9FA5" />
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.menuListRow}>
-            <Ionicons name="map-outline" size={20} color="#6F767E" />
-            <Text style={styles.menuListText}>Đề xuất mở trạm EcoGo Hub mới</Text>
-            <Ionicons name="chevron-forward" size={18} color="#9A9FA5" />
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.menuListRow}>
-            <Ionicons name="information-circle-outline" size={20} color="#6F767E" />
-            <Text style={styles.menuListText}>Điều khoản & Chính sách</Text>
             <Ionicons name="chevron-forward" size={18} color="#9A9FA5" />
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.menuListRow}
-            onPress={() => setShowGSMContractModal(true)}
+            onPress={() => setShowSuggestHubModal(true)}
+            activeOpacity={0.7}
           >
-            <Ionicons name="document-text-outline" size={20} color="#6F767E" />
-            <Text style={styles.menuListText}>Hợp đồng sử dụng dịch vụ</Text>
+            <Ionicons name="location-outline" size={20} color="#6F767E" />
+            <Text style={styles.menuListText}>Đề xuất mở trạm EcoGo Hub mới</Text>
             <Ionicons name="chevron-forward" size={18} color="#9A9FA5" />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuListRow}>
-            <Ionicons name="shield-outline" size={20} color="#6F767E" />
-            <Text style={styles.menuListText}>Kiểm soát quyền riêng tư</Text>
+          <TouchableOpacity
+            style={styles.menuListRow}
+            onPress={() => setShowTermsModal(true)}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="shield-checkmark-outline" size={20} color="#6F767E" />
+            <Text style={styles.menuListText}>Điều khoản dịch vụ & Chính sách bảo mật</Text>
             <Ionicons name="chevron-forward" size={18} color="#9A9FA5" />
           </TouchableOpacity>
         </View>
 
-        <Text style={styles.sectionTitle}>Cài đặt chung</Text>
+        {/* ============================================================
+            7. "CÀI ĐẶT HỆ THỐNG" (CHUYỂN NGÔN NGỮ VI/EN)
+           ============================================================ */}
+        <Text style={styles.sectionTitle}>Cài đặt hệ thống</Text>
         <View style={styles.menuListGroup}>
-          <TouchableOpacity style={styles.menuListRow}>
-            <Ionicons name="earth-outline" size={20} color="#6F767E" />
-            <Text style={styles.menuListText}>Quốc gia (Việt Nam)</Text>
-            <Ionicons name="chevron-forward" size={18} color="#9A9FA5" />
-          </TouchableOpacity>
-
           <TouchableOpacity style={styles.menuListRow} activeOpacity={0.7} onPress={toggleLanguage}>
             <Ionicons name="language-outline" size={20} color={theme.primary} />
             <Text style={styles.menuListText}>
-              {language === 'vi' ? 'Ngôn ngữ: Tiếng Việt (VI)' : 'Language: English (EN)'}
+              {language === 'vi' ? 'Ngôn ngữ hiển thị' : 'Display Language'}
             </Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-              <Text style={{ fontSize: 13, color: theme.primary, fontWeight: '700' }}>
-                {language === 'vi' ? 'VI' : 'EN'}
+              <Text style={{ fontSize: 13, color: theme.primary, fontWeight: '700', fontFamily: FONTS.family }}>
+                {language === 'vi' ? 'Tiếng Việt (VI)' : 'English (EN)'}
               </Text>
               <Ionicons name="swap-horizontal" size={16} color={theme.primary} />
             </View>
           </TouchableOpacity>
-
-          <TouchableOpacity style={styles.menuListRow}>
-            <Ionicons name="receipt-outline" size={20} color="#6F767E" />
-            <Text style={styles.menuListText}>Hóa đơn điện tử</Text>
-            <Ionicons name="chevron-forward" size={18} color="#9A9FA5" />
-          </TouchableOpacity>
         </View>
 
-        {/* Logout & Version + Bộ Công Thương Badges */}
+        {/* Đăng xuất & 1 Dấu Đã Đăng Ký Bộ Công Thương */}
         <View style={styles.footerVersionBlock}>
-          <TouchableOpacity style={styles.logoutRow} onPress={onLogout}>
-            <Ionicons name="log-out-outline" size={20} color="#1A1D1F" />
-            <Text style={styles.logoutText}>Đăng xuất (Chạy lại màn hình mở App)</Text>
+          <TouchableOpacity style={styles.logoutRow} onPress={onLogout} activeOpacity={0.7}>
+            <Ionicons name="log-out-outline" size={20} color="#E03131" />
+            <Text style={[styles.logoutText, { color: '#E03131' }]}>Đăng xuất tài khoản</Text>
           </TouchableOpacity>
           <Text style={styles.versionText}>EcoGo Smart - v2.4.0 • Ứng dụng di chuyển xanh & Thuê xe 24/7</Text>
 
           <View style={styles.bctBadgesRow}>
-            <View style={styles.bctBlueBadge}>
-              <Ionicons name="checkmark-circle" size={18} color="#FFFFFF" />
-              <Text style={styles.bctBadgeText}>ĐÃ THÔNG BÁO{'\n'}BỘ CÔNG THƯƠNG</Text>
-            </View>
-            <View style={styles.bctRedBadge}>
+            <View style={styles.bctRedBadgeSingle}>
               <Ionicons name="checkmark-circle" size={18} color="#FFFFFF" />
               <Text style={styles.bctBadgeText}>ĐÃ ĐĂNG KÝ{'\n'}BỘ CÔNG THƯƠNG</Text>
             </View>
@@ -992,8 +919,8 @@ export default function ProfileScreen({
                   <Ionicons name="at-outline" size={18} color="#6F767E" />
                   <Text style={styles.emailDisplayText}>{user.email}</Text>
                 </View>
-                <View style={styles.uthBadgePill}>
-                  <Text style={styles.uthBadgePillText}>Hội Viên Tiên Phong</Text>
+                <View style={styles.ecoBadgePill}>
+                  <Text style={styles.ecoBadgePillText}>Hội Viên Tiên Phong</Text>
                 </View>
               </View>
 
@@ -1665,6 +1592,671 @@ export default function ProfileScreen({
                 ) : (
                   <Text style={styles.businessSaveBtnText}>Lưu Hồ Sơ Doanh Nghiệp & VAT</Text>
                 )}
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* ============================================================
+          MODAL 1: VÍ VOUCHER & MÃ KHUYẾN MẠI
+         ============================================================ */}
+      <VoucherWalletModal
+        visible={showVoucherModal}
+        onClose={() => setShowVoucherModal(false)}
+        ecoCoins={user.points || 340}
+        savedVouchers={['BANMOI30', 'ECOGO20', 'PRIME50K']}
+        onApplyVoucher={(v) => {
+          setShowVoucherModal(false);
+          const code = typeof v === 'object' ? v.code : v;
+          Alert.alert('Áp dụng ưu đãi thành công', `Đã kích hoạt mã ${code}. Ưu đãi sẽ được tự động khấu trừ vào chuyến thuê xe tiếp theo của bạn!`);
+        }}
+      />
+
+      {/* ============================================================
+          MODAL 2: QUẢN LÝ VÍ & THANH TOÁN
+         ============================================================ */}
+      <Modal
+        visible={showPaymentModal}
+        animationType="slide"
+        transparent
+        onRequestClose={() => setShowPaymentModal(false)}
+      >
+        <View style={styles.modalBackdrop}>
+          <View style={styles.appModalContainer}>
+            <View style={styles.appModalHeader}>
+              <TouchableOpacity
+                onPress={() => setShowPaymentModal(false)}
+                style={styles.appModalCloseBtn}
+                activeOpacity={0.7}
+              >
+                <Ionicons name="close" size={20} color="#1A1D1F" />
+              </TouchableOpacity>
+              <View style={{ flex: 1, alignItems: 'center' }}>
+                <Text style={styles.appModalTitle}>Ví & Thanh Toán EcoGo</Text>
+                <Text style={styles.appModalSub}>Quản lý số dư & thẻ thanh toán</Text>
+              </View>
+              <View style={{ width: 36 }} />
+            </View>
+
+            <ScrollView style={styles.appModalBody} showsVerticalScrollIndicator={false}>
+              {/* Thẻ số dư ví */}
+              <View style={styles.walletCardLuxury}>
+                <View style={styles.walletCardTop}>
+                  <View>
+                    <Text style={styles.walletBalanceLabel}>Số dư Ví EcoGo khả dụng</Text>
+                    <Text style={styles.walletBalanceNumber}>{Number(walletBalance).toLocaleString('vi-VN')}đ</Text>
+                  </View>
+                  <View style={styles.walletIconCircle}>
+                    <Ionicons name="wallet" size={24} color="#D4AF37" />
+                  </View>
+                </View>
+                <Text style={styles.walletCardDesc}>
+                  Dùng để cọc xe tự động, thanh toán cước thuê và nhận hoàn cọc tức thì 30 giây.
+                </Text>
+              </View>
+
+              {/* Nạp tiền nhanh */}
+              <View style={styles.businessSectionBox}>
+                <View style={styles.boxTitleRow}>
+                  <View style={styles.boxTitleGoldBar} />
+                  <Text style={styles.businessSectionHeading}>Nạp tiền nhanh vào Ví (VietQR 24/7)</Text>
+                </View>
+
+                <View style={styles.topUpChipsGrid}>
+                  {[100000, 200000, 500000, 1000000].map((amt) => (
+                    <TouchableOpacity
+                      key={amt}
+                      style={styles.topUpChip}
+                      activeOpacity={0.75}
+                      onPress={() => {
+                        const newBal = walletBalance + amt;
+                        setWalletBalance(newBal);
+                        Alert.alert(
+                          'Nạp tiền thành công!',
+                          `Đã nạp +${amt.toLocaleString('vi-VN')}đ vào Ví EcoGo qua Napas VietQR 24/7.\nSố dư khả dụng mới: ${newBal.toLocaleString('vi-VN')}đ`
+                        );
+                      }}
+                    >
+                      <Text style={styles.topUpChipText}>+{amt.toLocaleString('vi-VN')}đ</Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </View>
+
+              {/* Phương thức liên kết */}
+              <View style={styles.businessSectionBox}>
+                <View style={styles.boxTitleRow}>
+                  <View style={styles.boxTitleGoldBar} />
+                  <Text style={styles.businessSectionHeading}>Phương thức liên kết</Text>
+                </View>
+
+                <View style={styles.paymentMethodRow}>
+                  <View style={[styles.methodIconBox, { backgroundColor: '#1E293B' }]}>
+                    <Ionicons name="card" size={20} color="#38BDF8" />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                      <Text style={styles.methodName}>Visa Platinum</Text>
+                      <View style={styles.defaultMethodBadge}>
+                        <Text style={styles.defaultMethodText}>Mặc định</Text>
+                      </View>
+                    </View>
+                    <Text style={styles.methodSub}>•••• •••• •••• 3892</Text>
+                  </View>
+                  <Ionicons name="checkmark-circle" size={20} color="#15803D" />
+                </View>
+
+                <View style={styles.paymentMethodRow}>
+                  <View style={[styles.methodIconBox, { backgroundColor: '#FDF2F8' }]}>
+                    <Ionicons name="phone-portrait-outline" size={20} color="#A21CAF" />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.methodName}>Ví Điện Tử MoMo</Text>
+                    <Text style={styles.methodSub}>{user.phone || '0838 672 664'}</Text>
+                  </View>
+                  <Ionicons name="checkmark-circle" size={20} color="#15803D" />
+                </View>
+
+                <TouchableOpacity
+                  style={styles.addPaymentBtn}
+                  activeOpacity={0.8}
+                  onPress={() =>
+                    Alert.alert(
+                      'Thêm Thẻ / Ví Mới',
+                      'Cổng thanh toán Napas / 3D-Secure sẽ mở để liên kết thẻ Quốc tế hoặc ATM nội địa.',
+                      [{ text: 'Đóng' }]
+                    )
+                  }
+                >
+                  <Ionicons name="add-circle-outline" size={18} color="#6F4E37" />
+                  <Text style={styles.addPaymentBtnText}>Thêm thẻ tín dụng / thẻ ghi nợ mới</Text>
+                </TouchableOpacity>
+              </View>
+
+              {/* Tự động thanh toán */}
+              <View style={styles.businessSectionBox}>
+                <View style={styles.autoPayRow}>
+                  <View style={{ flex: 1, paddingRight: 12 }}>
+                    <Text style={styles.autoPayTitle}>Tự động thanh toán khi kết thúc</Text>
+                    <Text style={styles.autoPayDesc}>
+                      Khấu trừ cước thuê từ Ví EcoGo hoặc thẻ mặc định ngay khi khóa trả xe tại trạm Hub.
+                    </Text>
+                  </View>
+                  <Switch
+                    value={autoDeductRental}
+                    onValueChange={setAutoDeductRental}
+                    trackColor={{ false: '#E2E8F0', true: '#15803D' }}
+                    thumbColor="#FFFFFF"
+                  />
+                </View>
+              </View>
+
+              {/* Lịch sử giao dịch ví */}
+              <View style={styles.businessSectionBox}>
+                <View style={styles.boxTitleRow}>
+                  <View style={styles.boxTitleGoldBar} />
+                  <Text style={styles.businessSectionHeading}>Giao dịch gần đây</Text>
+                </View>
+
+                <View style={styles.txRow}>
+                  <View style={styles.txLeft}>
+                    <Text style={styles.txTitle}>Nạp Ví qua Napas VietQR</Text>
+                    <Text style={styles.txDate}>12/11/2026 • 15:42</Text>
+                  </View>
+                  <Text style={styles.txAmountPlus}>+500.000đ</Text>
+                </View>
+
+                <View style={styles.txRow}>
+                  <View style={styles.txLeft}>
+                    <Text style={styles.txTitle}>Cước thuê VinFast VF 7 (4 giờ)</Text>
+                    <Text style={styles.txDate}>10/11/2026 • 18:30</Text>
+                  </View>
+                  <Text style={styles.txAmountMinus}>-240.000đ</Text>
+                </View>
+
+                <View style={styles.txRow}>
+                  <View style={styles.txLeft}>
+                    <Text style={styles.txTitle}>Hoàn cọc thế chấp xe tự lái</Text>
+                    <Text style={styles.txDate}>10/11/2026 • 18:32</Text>
+                  </View>
+                  <Text style={styles.txAmountPlus}>+15.000.000đ</Text>
+                </View>
+              </View>
+
+              <View style={{ height: 40 }} />
+            </ScrollView>
+
+            <View style={styles.appModalFooter}>
+              <TouchableOpacity
+                style={styles.appModalPrimaryBtn}
+                onPress={() => setShowPaymentModal(false)}
+                activeOpacity={0.88}
+              >
+                <Text style={styles.appModalPrimaryBtnText}>Đóng & Quay Lại</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* ============================================================
+          MODAL 3: TRUNG TÂM AN TOÀN & CỨU HỘ SOS 24/7
+         ============================================================ */}
+      <Modal
+        visible={showSafetyModal}
+        animationType="slide"
+        transparent
+        onRequestClose={() => setShowSafetyModal(false)}
+      >
+        <View style={styles.modalBackdrop}>
+          <View style={styles.appModalContainer}>
+            <View style={styles.appModalHeader}>
+              <TouchableOpacity
+                onPress={() => setShowSafetyModal(false)}
+                style={styles.appModalCloseBtn}
+                activeOpacity={0.7}
+              >
+                <Ionicons name="close" size={20} color="#1A1D1F" />
+              </TouchableOpacity>
+              <View style={{ flex: 1, alignItems: 'center' }}>
+                <Text style={styles.appModalTitle}>Trung Tâm An Toàn 24/7</Text>
+                <Text style={styles.appModalSub}>Cứu hộ khẩn cấp & Bảo hiểm PVI</Text>
+              </View>
+              <View style={{ width: 36 }} />
+            </View>
+
+            <ScrollView style={styles.appModalBody} showsVerticalScrollIndicator={false}>
+              {/* Emergency SOS Card */}
+              <View style={styles.emergencySosCard}>
+                <View style={styles.emergencySosIconBox}>
+                  <Ionicons name="warning" size={26} color="#DC2626" />
+                </View>
+                <Text style={styles.emergencySosTitle}>Đường Dây Nóng Khẩn Cấp SOS 24/7</Text>
+                <Text style={styles.emergencySosDesc}>
+                  Hỗ trợ ứng cứu khẩn cấp, sự cố kỹ thuật xe hoặc va quẹt trên mọi cung đường toàn thành phố.
+                </Text>
+                <TouchableOpacity
+                  style={styles.callHotlineBtn}
+                  activeOpacity={0.85}
+                  onPress={() => {
+                    Linking.openURL('tel:19006868').catch(() => {
+                      Alert.alert('Hotline Khẩn Cấp', 'Vui lòng gọi tổng đài: 1900 6868');
+                    });
+                  }}
+                >
+                  <Ionicons name="call" size={18} color="#FFFFFF" />
+                  <Text style={styles.callHotlineBtnText}>Gọi Ngay: 1900 6868</Text>
+                </TouchableOpacity>
+              </View>
+
+              {/* Quy chuẩn an toàn */}
+              <View style={styles.businessSectionBox}>
+                <View style={styles.boxTitleRow}>
+                  <View style={styles.boxTitleGoldBar} />
+                  <Text style={styles.businessSectionHeading}>Tiêu chuẩn bảo vệ khách hàng EcoGo</Text>
+                </View>
+
+                <View style={styles.safetyPillarItem}>
+                  <View style={[styles.safetyPillarIcon, { backgroundColor: '#ECFDF5' }]}>
+                    <Ionicons name="battery-charging" size={20} color="#059669" />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.safetyPillarTitle}>Đội Cứu Hộ Pin Lưu Động Trong 20 Phút</Text>
+                    <Text style={styles.safetyPillarDesc}>
+                      Xe cứu hộ chuyên dụng trang bị sạc nhanh DC lưu động hỗ trợ ngay khi xe cạn pin trên hành trình.
+                    </Text>
+                  </View>
+                </View>
+
+                <View style={styles.safetyPillarItem}>
+                  <View style={[styles.safetyPillarIcon, { backgroundColor: '#EFF6FF' }]}>
+                    <Ionicons name="shield-checkmark" size={20} color="#2563EB" />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.safetyPillarTitle}>Bảo Hiểm Vật Chất & TNDS PVI 500 Triệu</Text>
+                    <Text style={styles.safetyPillarDesc}>
+                      100% chuyến đi được tự động bảo hiểm thân vỏ xe, người ngồi trên xe và trách nhiệm dân sự.
+                    </Text>
+                  </View>
+                </View>
+
+                <View style={styles.safetyPillarItem}>
+                  <View style={[styles.safetyPillarIcon, { backgroundColor: '#FEF3C7' }]}>
+                    <Ionicons name="key" size={20} color="#D97706" />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.safetyPillarTitle}>Nút SOS Tích Hợp Trên Chìa Khóa Số</Text>
+                    <Text style={styles.safetyPillarDesc}>
+                      Bấm nút SOS trên màn hình Chìa khóa xe để tự động truyền tọa độ GPS về Trung tâm Điều phối.
+                    </Text>
+                  </View>
+                </View>
+
+                <View style={styles.safetyPillarItem}>
+                  <View style={[styles.safetyPillarIcon, { backgroundColor: '#F3E8FF' }]}>
+                    <Ionicons name="speedometer" size={20} color="#7E22CE" />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.safetyPillarTitle}>Giám Sát Cảm Biến Áp Suất Lốp (TPMS)</Text>
+                    <Text style={styles.safetyPillarDesc}>
+                      Tự động kiểm định áp suất và nhiệt độ lốp trước mỗi lượt khách nhận xe tại trạm Hub.
+                    </Text>
+                  </View>
+                </View>
+              </View>
+
+              <View style={{ height: 40 }} />
+            </ScrollView>
+
+            <View style={styles.appModalFooter}>
+              <TouchableOpacity
+                style={styles.appModalPrimaryBtn}
+                onPress={() => setShowSafetyModal(false)}
+                activeOpacity={0.88}
+              >
+                <Text style={styles.appModalPrimaryBtnText}>Đã Hiểu & Quay Lại</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* ============================================================
+          MODAL 4: GIỚI THIỆU BẠN BÈ
+         ============================================================ */}
+      <Modal
+        visible={showReferralModal}
+        animationType="slide"
+        transparent
+        onRequestClose={() => setShowReferralModal(false)}
+      >
+        <View style={styles.modalBackdrop}>
+          <View style={styles.appModalContainer}>
+            <View style={styles.appModalHeader}>
+              <TouchableOpacity
+                onPress={() => setShowReferralModal(false)}
+                style={styles.appModalCloseBtn}
+                activeOpacity={0.7}
+              >
+                <Ionicons name="close" size={20} color="#1A1D1F" />
+              </TouchableOpacity>
+              <View style={{ flex: 1, alignItems: 'center' }}>
+                <Text style={styles.appModalTitle}>Giới Thiệu Bạn Bè</Text>
+                <Text style={styles.appModalSub}>Nhận thưởng đôi bên cùng vui</Text>
+              </View>
+              <View style={{ width: 36 }} />
+            </View>
+
+            <ScrollView style={styles.appModalBody} showsVerticalScrollIndicator={false}>
+              {/* Banner */}
+              <View style={styles.referralBannerCard}>
+                <View style={styles.referralGiftIconCircle}>
+                  <Ionicons name="gift" size={30} color="#D4AF37" />
+                </View>
+                <Text style={styles.referralBannerHeading}>Mời Bạn Bè Trải Nghiệm Xe Điện</Text>
+                <Text style={styles.referralBannerDesc}>
+                  Lan tỏa lối sống xanh. Nhận quà ngay khi bạn bè hoàn thành chuyến xe tự lái đầu tiên!
+                </Text>
+
+                {/* Mã giới thiệu */}
+                <View style={styles.referralCodeBox}>
+                  <View>
+                    <Text style={styles.referralCodeLabel}>MÃ GIỚI THIỆU CỦA BẠN</Text>
+                    <Text style={styles.referralCodeText}>ECOGO-{user.phone ? user.phone.slice(-4) : '8891'}</Text>
+                  </View>
+                  <TouchableOpacity
+                    style={[styles.copyCodeBtn, copiedReferral && styles.copyCodeBtnActive]}
+                    activeOpacity={0.8}
+                    onPress={() => {
+                      setCopiedReferral(true);
+                      Alert.alert(
+                        'Đã sao chép mã!',
+                        `Mã giới thiệu ECOGO-${user.phone ? user.phone.slice(-4) : '8891'} đã được sao chép. Hãy gửi mã này cho bạn bè!`
+                      );
+                      setTimeout(() => setCopiedReferral(false), 2500);
+                    }}
+                  >
+                    <Ionicons
+                      name={copiedReferral ? 'checkmark' : 'copy-outline'}
+                      size={15}
+                      color={copiedReferral ? '#FFFFFF' : '#6F4E37'}
+                    />
+                    <Text style={[styles.copyCodeBtnText, copiedReferral && styles.copyCodeBtnTextActive]}>
+                      {copiedReferral ? 'Đã chép' : 'Sao chép'}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+              {/* Quyền lợi nhận thưởng */}
+              <View style={styles.businessSectionBox}>
+                <View style={styles.boxTitleRow}>
+                  <View style={styles.boxTitleGoldBar} />
+                  <Text style={styles.businessSectionHeading}>Đặc quyền quà tặng 2 chiều</Text>
+                </View>
+
+                <View style={styles.rewardBenefitRow}>
+                  <View style={[styles.rewardBenefitIcon, { backgroundColor: '#ECFDF5' }]}>
+                    <Ionicons name="ticket" size={20} color="#059669" />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.rewardBenefitTitle}>Bạn bè nhận Voucher 50.000đ</Text>
+                    <Text style={styles.rewardBenefitDesc}>
+                      Áp dụng trực tiếp vào chuyến thuê xe đầu tiên tại bất kỳ trạm EcoGo Hub nào.
+                    </Text>
+                  </View>
+                </View>
+
+                <View style={styles.rewardBenefitRow}>
+                  <View style={[styles.rewardBenefitIcon, { backgroundColor: '#FEF3C7' }]}>
+                    <Ionicons name="sparkles" size={20} color="#D97706" />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.rewardBenefitTitle}>Bạn nhận 50 Eco Xu (+50.000đ)</Text>
+                    <Text style={styles.rewardBenefitDesc}>
+                      Tự động cộng vào ví điểm thưởng ngay khi chuyến xe đầu tiên của bạn bè kết thúc thành công.
+                    </Text>
+                  </View>
+                </View>
+              </View>
+
+              {/* Danh sách đã mời */}
+              <View style={styles.businessSectionBox}>
+                <View style={styles.boxTitleRow}>
+                  <View style={styles.boxTitleGoldBar} />
+                  <Text style={styles.businessSectionHeading}>Bạn bè đã tham gia (3)</Text>
+                </View>
+
+                <View style={styles.referredUserItem}>
+                  <View style={styles.referredAvatar}>
+                    <Text style={styles.referredAvatarText}>NA</Text>
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.referredName}>Nguyễn Nam Anh</Text>
+                    <Text style={styles.referredDate}>Đã thuê VinFast VF 6 • Nhận +50 Xu</Text>
+                  </View>
+                  <Text style={styles.referredStatus}>Hoàn thành</Text>
+                </View>
+
+                <View style={styles.referredUserItem}>
+                  <View style={styles.referredAvatar}>
+                    <Text style={styles.referredAvatarText}>TH</Text>
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.referredName}>Trần Hoàng Hải</Text>
+                    <Text style={styles.referredDate}>Đã thuê Hyundai Ioniq 5 • Nhận +50 Xu</Text>
+                  </View>
+                  <Text style={styles.referredStatus}>Hoàn thành</Text>
+                </View>
+
+                <View style={styles.referredUserItem}>
+                  <View style={styles.referredAvatar}>
+                    <Text style={styles.referredAvatarText}>LM</Text>
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.referredName}>Lê Minh Quân</Text>
+                    <Text style={styles.referredDate}>Đã nhận mã • Chưa kích hoạt</Text>
+                  </View>
+                  <Text style={[styles.referredStatus, { color: '#B45309' }]}>Đang chờ</Text>
+                </View>
+              </View>
+
+              <View style={{ height: 40 }} />
+            </ScrollView>
+
+            <View style={styles.appModalFooter}>
+              <TouchableOpacity
+                style={styles.appModalPrimaryBtn}
+                onPress={() => setShowReferralModal(false)}
+                activeOpacity={0.88}
+              >
+                <Text style={styles.appModalPrimaryBtnText}>Xong</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* ============================================================
+          MODAL 5: ĐỀ XUẤT MỞ TRẠM ECOGO HUB MỚI
+         ============================================================ */}
+      <Modal
+        visible={showSuggestHubModal}
+        animationType="slide"
+        transparent
+        onRequestClose={() => setShowSuggestHubModal(false)}
+      >
+        <View style={styles.modalBackdrop}>
+          <View style={styles.appModalContainer}>
+            <View style={styles.appModalHeader}>
+              <TouchableOpacity
+                onPress={() => setShowSuggestHubModal(false)}
+                style={styles.appModalCloseBtn}
+                activeOpacity={0.7}
+              >
+                <Ionicons name="close" size={20} color="#1A1D1F" />
+              </TouchableOpacity>
+              <View style={{ flex: 1, alignItems: 'center' }}>
+                <Text style={styles.appModalTitle}>Đề Xuất Mở Trạm EcoGo Hub</Text>
+                <Text style={styles.appModalSub}>Góp ý vị trí đặt trạm mới</Text>
+              </View>
+              <View style={{ width: 36 }} />
+            </View>
+
+            <ScrollView style={styles.appModalBody} showsVerticalScrollIndicator={false}>
+              <View style={styles.suggestHubBanner}>
+                <Ionicons name="location" size={26} color="#D4AF37" />
+                <Text style={styles.suggestHubBannerTitle}>Bạn muốn mở trạm EcoGo ở đâu?</Text>
+                <Text style={styles.suggestHubBannerDesc}>
+                  EcoGo liên tục mở rộng mạng lưới trạm sạc & giao nhận xe. Đề xuất của bạn sẽ giúp ưu tiên vị trí triển khai tiếp theo!
+                </Text>
+              </View>
+
+              <View style={styles.businessSectionBox}>
+                <Text style={styles.formInputLabel}>Chọn Quận / Khu vực *</Text>
+                <View style={styles.districtChipsGrid}>
+                  {['Bình Thạnh', 'Quận 1', 'Thủ Thiêm', 'Quận 7', 'TP. Thủ Đức', 'Tân Bình', 'Gò Vấp'].map((dist) => (
+                    <TouchableOpacity
+                      key={dist}
+                      style={[styles.districtChip, suggestDistrict === dist && styles.districtChipActive]}
+                      onPress={() => setSuggestDistrict(dist)}
+                      activeOpacity={0.75}
+                    >
+                      <Text style={[styles.districtChipText, suggestDistrict === dist && styles.districtChipTextActive]}>
+                        {dist}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+
+                <Text style={[styles.formInputLabel, { marginTop: 16 }]}>Địa điểm / Tòa nhà / Khu dân cư đề xuất *</Text>
+                <TextInput
+                  style={styles.formTextInput}
+                  value={suggestLocationName}
+                  onChangeText={setSuggestLocationName}
+                  placeholder="VD: Chung cư Masteri Thảo Điền, Bitexco, Landmark 81..."
+                  placeholderTextColor="#9A9FA5"
+                />
+
+                <Text style={[styles.formInputLabel, { marginTop: 14 }]}>Ghi chú thêm (Tùy chọn)</Text>
+                <TextInput
+                  style={[styles.formTextInput, { height: 70, textAlignVertical: 'top' }]}
+                  placeholder="VD: Khu vực đông cư dân, bãi xe rộng rãi, nhu cầu thuê cao..."
+                  placeholderTextColor="#9A9FA5"
+                  multiline
+                />
+              </View>
+
+              <View style={{ height: 40 }} />
+            </ScrollView>
+
+            <View style={styles.appModalFooter}>
+              <TouchableOpacity
+                style={styles.appModalPrimaryBtn}
+                disabled={isSubmittingHub}
+                activeOpacity={0.88}
+                onPress={() => {
+                  if (!suggestLocationName.trim()) {
+                    Alert.alert('Thông báo', 'Vui lòng nhập tên địa điểm hoặc tòa nhà bạn mong muốn mở trạm Hub.');
+                    return;
+                  }
+                  setIsSubmittingHub(true);
+                  setTimeout(() => {
+                    setIsSubmittingHub(false);
+                    setShowSuggestHubModal(false);
+                    setSuggestLocationName('');
+                    Alert.alert(
+                      'Gửi đề xuất thành công!',
+                      `Cảm ơn bạn! Ban Quản lý Hạ tầng EcoGo đã tiếp nhận đề xuất mở trạm tại khu vực ${suggestDistrict} (${suggestLocationName}). Đội ngũ kỹ thuật sẽ khảo sát trong 48 giờ làm việc!`
+                    );
+                  }, 600);
+                }}
+              >
+                {isSubmittingHub ? (
+                  <ActivityIndicator size="small" color="#FFFFFF" />
+                ) : (
+                  <Text style={styles.appModalPrimaryBtnText}>Gửi Đề Xuất Mở Trạm</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* ============================================================
+          MODAL 6: ĐIỀU KHOẢN DỊCH VỤ & CHÍNH SÁCH BẢO MẬT
+         ============================================================ */}
+      <Modal
+        visible={showTermsModal}
+        animationType="slide"
+        transparent
+        onRequestClose={() => setShowTermsModal(false)}
+      >
+        <View style={styles.modalBackdrop}>
+          <View style={styles.appModalContainer}>
+            <View style={styles.appModalHeader}>
+              <TouchableOpacity
+                onPress={() => setShowTermsModal(false)}
+                style={styles.appModalCloseBtn}
+                activeOpacity={0.7}
+              >
+                <Ionicons name="close" size={20} color="#1A1D1F" />
+              </TouchableOpacity>
+              <View style={{ flex: 1, alignItems: 'center' }}>
+                <Text style={styles.appModalTitle}>Điều Khoản & Bảo Mật</Text>
+                <Text style={styles.appModalSub}>Quy chế vận hành & Pháp lý dữ liệu</Text>
+              </View>
+              <View style={{ width: 36 }} />
+            </View>
+
+            <ScrollView style={styles.appModalBody} showsVerticalScrollIndicator={false}>
+              <View style={styles.businessSectionBox}>
+                <View style={styles.boxTitleRow}>
+                  <View style={styles.boxTitleGoldBar} />
+                  <Text style={styles.businessSectionHeading}>1. Quy Chế Thuê Xe Điện Tự Lái 24/7</Text>
+                </View>
+                <Text style={styles.termsContentText}>
+                  • Khách hàng phải từ đủ 18 tuổi trở lên, sở hữu Giấy phép lái xe ô tô hạng B2 trở lên còn thời hạn.{'\n'}
+                  • Miễn 100% tiền thế chấp xe trị giá 15.000.000đ đối với tài khoản hoàn tất eKYC và có lịch sử di chuyển tốt.{'\n'}
+                  • Xe tự lái được bàn giao với dung lượng pin tối thiểu 80%. Khách hàng vui lòng trả xe với mức pin tối thiểu 20% tại bất kỳ trạm EcoGo Hub nào.{'\n'}
+                  • Nghiêm cấm hút thuốc, vận chuyển chất cấm, chất dễ cháy nổ và giao xe cho người chưa xác thực điều khiển.
+                </Text>
+              </View>
+
+              <View style={styles.businessSectionBox}>
+                <View style={styles.boxTitleRow}>
+                  <View style={styles.boxTitleGoldBar} />
+                  <Text style={styles.businessSectionHeading}>2. Bảo Mật Dữ Liệu (Nghị định 13/2023/NĐ-CP)</Text>
+                </View>
+                <Text style={styles.termsContentText}>
+                  • Cam kết bảo vệ an toàn tuyệt đối hình ảnh CCCD, GPLX và thông tin cá nhân của khách hàng theo đúng Nghị định 13/2023/NĐ-CP.{'\n'}
+                  • Dữ liệu viễn trắc GPS và tiêu thụ năng lượng chỉ được dùng để tính cước hành trình, lượng phát thải CO2 tiết giảm và hỗ trợ ứng cứu an toàn.{'\n'}
+                  • EcoGo cam kết không chia sẻ hoặc kinh doanh dữ liệu khách hàng cho bất kỳ bên thứ ba nào vì mục đích quảng cáo thương mại.
+                </Text>
+              </View>
+
+              <View style={styles.businessSectionBox}>
+                <View style={styles.boxTitleRow}>
+                  <View style={styles.boxTitleGoldBar} />
+                  <Text style={styles.businessSectionHeading}>3. Xử Lý Sự Cố & Bảo Hiểm Xe Toàn Diện</Text>
+                </View>
+                <Text style={styles.termsContentText}>
+                  • Mọi xe trong hệ thống đều được bảo hiểm vật chất xe và trách nhiệm dân sự PVI lên tới 500.000.000đ/vụ.{'\n'}
+                  • Khi gặp va chạm hoặc sự cố kỹ thuật, khách hàng liên hệ ngay Hotline 1900 6868 để chuyên viên cứu hộ và giám định bảo hiểm hỗ trợ tại hiện trường.
+                </Text>
+              </View>
+
+              <View style={{ height: 40 }} />
+            </ScrollView>
+
+            <View style={styles.appModalFooter}>
+              <TouchableOpacity
+                style={styles.appModalPrimaryBtn}
+                onPress={() => setShowTermsModal(false)}
+                activeOpacity={0.88}
+              >
+                <Text style={styles.appModalPrimaryBtnText}>Tôi Đã Hiểu & Đồng Ý</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -2782,13 +3374,13 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#1A1D1F'
   },
-  uthBadgePill: {
+  ecoBadgePill: {
     backgroundColor: 'rgba(111, 78, 55, 0.1)',
     paddingHorizontal: 7,
     paddingVertical: 2,
     borderRadius: 5
   },
-  uthBadgePillText: {
+  ecoBadgePillText: {
     fontFamily: FONTS.family,
     fontSize: 10,
     fontWeight: '700',
@@ -3618,5 +4210,561 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '700',
     color: '#FFFFFF'
+  },
+
+  /* Streamlined Grid & Badges */
+  taskCardSubLabel: {
+    fontFamily: FONTS.family,
+    fontSize: 10.5,
+    color: '#6F767E',
+    marginTop: 2
+  },
+  bctRedBadgeSingle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#DC2626',
+    paddingHorizontal: 16,
+    paddingVertical: 7,
+    borderRadius: 8,
+    gap: 6
+  },
+
+  /* Generic Luxury App Modals */
+  appModalContainer: {
+    width: '100%',
+    maxWidth: 440,
+    height: '100%',
+    backgroundColor: '#FAF7F2',
+    alignSelf: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 16,
+    elevation: 8
+  },
+  appModalHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 14,
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#EBE3D7',
+    gap: 10
+  },
+  appModalCloseBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#F5EFEB',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  appModalTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 16,
+    fontWeight: '800',
+    color: '#2B180D'
+  },
+  appModalSub: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    color: '#8C6239',
+    marginTop: 2
+  },
+  appModalBody: {
+    flex: 1,
+    padding: 16
+  },
+  appModalFooter: {
+    padding: 16,
+    backgroundColor: '#FFFFFF',
+    borderTopWidth: 1,
+    borderTopColor: '#EBE3D7'
+  },
+  appModalPrimaryBtn: {
+    backgroundColor: '#2B180D',
+    borderRadius: 14,
+    paddingVertical: 14,
+    alignItems: 'center'
+  },
+  appModalPrimaryBtnText: {
+    fontFamily: FONTS.family,
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#FFFFFF'
+  },
+
+  /* Wallet & Payment Modal Styles */
+  walletCardLuxury: {
+    backgroundColor: '#2B180D',
+    borderRadius: 18,
+    padding: 18,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#D4AF37'
+  },
+  walletCardTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10
+  },
+  walletBalanceLabel: {
+    fontFamily: FONTS.family,
+    fontSize: 11.5,
+    color: '#D4AF37',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    fontWeight: '700'
+  },
+  walletBalanceNumber: {
+    fontFamily: FONTS.family,
+    fontSize: 26,
+    fontWeight: '900',
+    color: '#FFFFFF',
+    marginTop: 4
+  },
+  walletIconCircle: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: 'rgba(212, 175, 55, 0.15)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(212, 175, 55, 0.4)'
+  },
+  walletCardDesc: {
+    fontFamily: FONTS.family,
+    fontSize: 11.5,
+    color: '#C8BDB0',
+    lineHeight: 16
+  },
+  topUpChipsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginTop: 10
+  },
+  topUpChip: {
+    flex: 1,
+    minWidth: '46%',
+    backgroundColor: '#FAF7F2',
+    borderWidth: 1,
+    borderColor: '#EBE3D7',
+    borderRadius: 12,
+    paddingVertical: 10,
+    alignItems: 'center'
+  },
+  topUpChipText: {
+    fontFamily: FONTS.family,
+    fontSize: 12.5,
+    fontWeight: '700',
+    color: '#2B180D'
+  },
+  paymentMethodRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0EBE3',
+    gap: 12
+  },
+  methodIconBox: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  methodName: {
+    fontFamily: FONTS.family,
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#1A1D1F'
+  },
+  defaultMethodBadge: {
+    backgroundColor: '#DCFCE7',
+    paddingHorizontal: 6,
+    paddingVertical: 1.5,
+    borderRadius: 6
+  },
+  defaultMethodText: {
+    fontFamily: FONTS.family,
+    fontSize: 9.5,
+    fontWeight: '700',
+    color: '#15803D'
+  },
+  methodSub: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    color: '#6F767E',
+    marginTop: 2
+  },
+  addPaymentBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    paddingVertical: 12,
+    marginTop: 6
+  },
+  addPaymentBtnText: {
+    fontFamily: FONTS.family,
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#6F4E37'
+  },
+  autoPayRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between'
+  },
+  autoPayTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#1A1D1F',
+    marginBottom: 2
+  },
+  autoPayDesc: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    color: '#6F767E',
+    lineHeight: 15
+  },
+  txRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F5EFEB'
+  },
+  txLeft: {
+    flex: 1
+  },
+  txTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 12.5,
+    fontWeight: '600',
+    color: '#1A1D1F'
+  },
+  txDate: {
+    fontFamily: FONTS.family,
+    fontSize: 10.5,
+    color: '#9A9FA5',
+    marginTop: 2
+  },
+  txAmountPlus: {
+    fontFamily: FONTS.family,
+    fontSize: 13,
+    fontWeight: '800',
+    color: '#15803D'
+  },
+  txAmountMinus: {
+    fontFamily: FONTS.family,
+    fontSize: 13,
+    fontWeight: '800',
+    color: '#1A1D1F'
+  },
+
+  /* Safety Modal Styles */
+  emergencySosCard: {
+    backgroundColor: '#FEF2F2',
+    borderRadius: 18,
+    padding: 18,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#FCA5A5',
+    marginBottom: 16
+  },
+  emergencySosIconBox: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#FEE2E2',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 10
+  },
+  emergencySosTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 15,
+    fontWeight: '800',
+    color: '#991B1B',
+    marginBottom: 6,
+    textAlign: 'center'
+  },
+  emergencySosDesc: {
+    fontFamily: FONTS.family,
+    fontSize: 11.5,
+    color: '#7F1D1D',
+    textAlign: 'center',
+    lineHeight: 16,
+    marginBottom: 14
+  },
+  callHotlineBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    backgroundColor: '#DC2626',
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 12,
+    width: '100%'
+  },
+  callHotlineBtnText: {
+    fontFamily: FONTS.family,
+    fontSize: 14,
+    fontWeight: '800',
+    color: '#FFFFFF'
+  },
+  safetyPillarItem: {
+    flexDirection: 'row',
+    gap: 12,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0EBE3'
+  },
+  safetyPillarIcon: {
+    width: 38,
+    height: 38,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  safetyPillarTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 12.5,
+    fontWeight: '700',
+    color: '#1A1D1F'
+  },
+  safetyPillarDesc: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    color: '#6F767E',
+    marginTop: 2,
+    lineHeight: 15
+  },
+
+  /* Referral Modal Styles */
+  referralBannerCard: {
+    backgroundColor: '#2B180D',
+    borderRadius: 18,
+    padding: 18,
+    alignItems: 'center',
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#D4AF37'
+  },
+  referralGiftIconCircle: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    backgroundColor: 'rgba(212, 175, 55, 0.15)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: 'rgba(212, 175, 55, 0.4)'
+  },
+  referralBannerHeading: {
+    fontFamily: FONTS.family,
+    fontSize: 15,
+    fontWeight: '800',
+    color: '#FAF7F2',
+    textAlign: 'center',
+    marginBottom: 6
+  },
+  referralBannerDesc: {
+    fontFamily: FONTS.family,
+    fontSize: 11.5,
+    color: '#C8BDB0',
+    textAlign: 'center',
+    lineHeight: 16,
+    marginBottom: 14
+  },
+  referralCodeBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    width: '100%',
+    borderWidth: 1,
+    borderColor: 'rgba(212, 175, 55, 0.3)'
+  },
+  referralCodeLabel: {
+    fontFamily: FONTS.family,
+    fontSize: 9,
+    color: '#D4AF37',
+    fontWeight: '800',
+    letterSpacing: 0.5
+  },
+  referralCodeText: {
+    fontFamily: FONTS.family,
+    fontSize: 18,
+    fontWeight: '900',
+    color: '#FFFFFF',
+    letterSpacing: 2,
+    marginTop: 2
+  },
+  copyCodeBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: '#FAF7F2',
+    paddingHorizontal: 10,
+    paddingVertical: 7,
+    borderRadius: 8
+  },
+  copyCodeBtnActive: {
+    backgroundColor: '#15803D'
+  },
+  copyCodeBtnText: {
+    fontFamily: FONTS.family,
+    fontSize: 11.5,
+    fontWeight: '700',
+    color: '#6F4E37'
+  },
+  copyCodeBtnTextActive: {
+    color: '#FFFFFF'
+  },
+  rewardBenefitRow: {
+    flexDirection: 'row',
+    gap: 12,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0EBE3'
+  },
+  rewardBenefitIcon: {
+    width: 38,
+    height: 38,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  rewardBenefitTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 12.5,
+    fontWeight: '700',
+    color: '#1A1D1F'
+  },
+  rewardBenefitDesc: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    color: '#6F767E',
+    marginTop: 2,
+    lineHeight: 15
+  },
+  referredUserItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F5EFEB'
+  },
+  referredAvatar: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#2B180D',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  referredAvatarText: {
+    fontFamily: FONTS.family,
+    fontSize: 11.5,
+    fontWeight: '800',
+    color: '#D4AF37'
+  },
+  referredName: {
+    fontFamily: FONTS.family,
+    fontSize: 12.5,
+    fontWeight: '700',
+    color: '#1A1D1F'
+  },
+  referredDate: {
+    fontFamily: FONTS.family,
+    fontSize: 10.5,
+    color: '#6F767E',
+    marginTop: 1
+  },
+  referredStatus: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#15803D'
+  },
+
+  /* Suggest Hub Modal Styles */
+  suggestHubBanner: {
+    backgroundColor: '#2B180D',
+    borderRadius: 18,
+    padding: 16,
+    marginBottom: 16,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#D4AF37'
+  },
+  suggestHubBannerTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 14.5,
+    fontWeight: '800',
+    color: '#FFFFFF',
+    marginTop: 6,
+    marginBottom: 4,
+    textAlign: 'center'
+  },
+  suggestHubBannerDesc: {
+    fontFamily: FONTS.family,
+    fontSize: 11.5,
+    color: '#C8BDB0',
+    textAlign: 'center',
+    lineHeight: 16
+  },
+  districtChipsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginTop: 6
+  },
+  districtChip: {
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderRadius: 20,
+    backgroundColor: '#FAF7F2',
+    borderWidth: 1,
+    borderColor: '#EBE3D7'
+  },
+  districtChipActive: {
+    backgroundColor: '#2B180D',
+    borderColor: '#D4AF37'
+  },
+  districtChipText: {
+    fontFamily: FONTS.family,
+    fontSize: 11.5,
+    fontWeight: '600',
+    color: '#6F767E'
+  },
+  districtChipTextActive: {
+    color: '#FAF7F2',
+    fontWeight: '700'
+  },
+
+  /* Terms Modal Styles */
+  termsContentText: {
+    fontFamily: FONTS.family,
+    fontSize: 12,
+    color: '#475569',
+    lineHeight: 19,
+    marginTop: 8
   }
 });

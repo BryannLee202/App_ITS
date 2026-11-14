@@ -1,7 +1,7 @@
 {
-  "name": "its-vehicle-rental-backend",
+  "name": "ecogo-smart-mobility-backend",
   "version": "1.0.0",
-  "description": "Enterprise Backend API & Real-time ITS Telematics Engine for Smart Vehicle Rental System",
+  "description": "Enterprise Backend API & Real-time Telematics Engine for EcoGo Smart Vehicle Rental System",
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
@@ -16,13 +16,13 @@
     "uuid": "^10.0.0"
   },
   "keywords": [
-    "its",
+    "ecogo",
     "telematics",
     "vehicle-rental",
     "iot",
     "green-wave",
     "smart-mobility"
   ],
-  "author": "ITS Engineering Team - UTH",
+  "author": "EcoGo Engineering Team",
   "license": "MIT"
 }

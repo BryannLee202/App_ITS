@@ -73,7 +73,7 @@ const ECOGO_RACE_BADGES = [
   },
   {
     id: 'badge_polar',
-    title: 'Chứng nhận\nĐại Sứ EcoGo UTH',
+    title: 'Chứng nhận\nĐại Sứ Xanh EcoGo',
     outerColor: '#F59E0B',
     innerBg: '#FEF3C7',
     icon: 'ribbon',
@@ -461,7 +461,7 @@ function AppContent() {
                       <Text style={styles.grSeedlingTagText}>Hạng hiện tại: Thành Viên Tiên Phong (340 Pts)</Text>
                     </View>
                     <Text style={styles.grProgressSub}>
-                      Hoàn thành các chuyến thuê xe tự lái tại hệ thống trạm EcoGo Smart (UTH) để mở khóa
+                      Hoàn thành các chuyến thuê xe tự lái tại hệ thống trạm EcoGo Smart để mở khóa
                       trọn bộ chứng nhận và nhận ưu đãi giảm giá trực tiếp.
                     </Text>
                   </View>

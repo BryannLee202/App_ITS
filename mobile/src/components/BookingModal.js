@@ -199,7 +199,7 @@ export default function BookingModal({
         discountAmount = Math.min(Math.round(baseRentalFee * 0.2), 120000);
       } else if (code === 'GIOVANG25') {
         discountAmount = 25000;
-      } else if (code === 'PRIME50K' || code === 'UTH50K') {
+      } else if (code === 'PRIME50K' || code === 'ECO50K') {
         discountAmount = 50000;
       } else if (code === 'THUENGAY200' || code === 'CUOITUAN200') {
         discountAmount = rentalType === 'DAILY' ? 200000 : 100000;
