@@ -18,5 +18,25 @@
     "totalCo2SavedKg": 42.8,
     "memberTier": "DIAMOND_GREEN",
     "createdAt": "2026-10-15T08:00:00.000Z"
+  },
+  {
+    "id": "usr_6476_7473",
+    "phone": "+84386726476",
+    "fullName": "Khách hàng 6476",
+    "email": "user.6476@ecogo.vn",
+    "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80",
+    "isEkycVerified": true,
+    "drivingLicense": "GPLX B2 - 790123456789",
+    "licenseNumber": "790123456789",
+    "drivingLicenseExpiry": "15/08/2032",
+    "cccdNumber": "079201018891",
+    "memberRank": "Eco Elite Ambassador",
+    "membershipId": "ESG-ECOGO-2026-6476",
+    "walletBalance": 1500000,
+    "ecoPoints": 340,
+    "ecoCoins": 180,
+    "totalCo2SavedKg": 42.8,
+    "memberTier": "DIAMOND_GREEN",
+    "createdAt": "2026-11-14T11:46:57.473Z"
   }
 ]

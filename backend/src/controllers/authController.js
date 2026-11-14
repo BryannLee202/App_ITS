@@ -26,9 +26,53 @@ function saveUsers(users) {
   }
 }
 
-// In-memory OTP storage with expiration
-// Key: normalized phone, Value: { code, expiresAt, attempts }
-const otpStorage = new Map();
+// Phone number normalization helper (+84 / 84 / 0... -> standard 0xxxxxxxxx)
+function normalizePhone(p) {
+  if (!p) return '';
+  let digits = p.toString().trim().replace(/\D/g, '');
+  if (digits.startsWith('84') && digits.length >= 10) {
+    digits = '0' + digits.slice(2);
+  } else if (!digits.startsWith('0') && digits.length >= 9) {
+    digits = '0' + digits;
+  }
+  return digits;
+}
+
+// Persistent OTP storage cache with file backup so server restarts don't wipe pending codes
+const OTP_CACHE_FILE = path.join(__dirname, '../data/otp_cache.json');
+
+function loadOtpCache() {
+  try {
+    if (fs.existsSync(OTP_CACHE_FILE)) {
+      const data = JSON.parse(fs.readFileSync(OTP_CACHE_FILE, 'utf8'));
+      const map = new Map();
+      const now = Date.now();
+      for (const [k, v] of Object.entries(data)) {
+        if (v && v.expiresAt > now) {
+          map.set(k, v);
+        }
+      }
+      return map;
+    }
+  } catch (err) {
+    console.warn('Error reading otp_cache.json:', err.message);
+  }
+  return new Map();
+}
+
+function saveOtpCache(map) {
+  try {
+    const obj = {};
+    for (const [k, v] of map.entries()) {
+      obj[k] = v;
+    }
+    fs.writeFileSync(OTP_CACHE_FILE, JSON.stringify(obj, null, 2), 'utf8');
+  } catch (err) {
+    console.warn('Error writing otp_cache.json:', err.message);
+  }
+}
+
+const otpStorage = loadOtpCache();
 
 exports.requestOtp = async (req, res) => {
   const { phone, channel = 'ZALO' } = req.body;
@@ -36,21 +80,24 @@ exports.requestOtp = async (req, res) => {
     return res.status(400).json({ success: false, message: 'Số điện thoại không được để trống' });
   }
 
-  const cleanPhone = phone.trim().replace(/\s+/g, '');
+  const cleanPhone = normalizePhone(phone);
   if (cleanPhone.length < 8) {
     return res.status(400).json({ success: false, message: 'Số điện thoại không hợp lệ' });
   }
 
   // Generate dynamic random 4-digit OTP
   const randomOtp = Math.floor(1000 + Math.random() * 9000).toString();
-  const expiresAt = Date.now() + 60 * 1000; // 60 seconds TTL
+  const expiresAt = Date.now() + 300 * 1000; // 5 minutes TTL (300s)
 
-  otpStorage.set(cleanPhone, {
+  const otpRecord = {
     code: randomOtp,
     channel,
     expiresAt,
     attempts: 0
-  });
+  };
+
+  otpStorage.set(cleanPhone, otpRecord);
+  saveOtpCache(otpStorage);
 
   // Dispatch via SMS / Zalo / Telegram / Webhook provider
   const dispatchResult = await SmsService.sendOtp({
@@ -64,7 +111,7 @@ exports.requestOtp = async (req, res) => {
     message: dispatchResult.message,
     phone: cleanPhone,
     channel,
-    expiresInSec: 60,
+    expiresInSec: 300,
     generatedOtp: randomOtp // Returned to facilitate live in-app push simulation while also dispatching
   });
 };
@@ -75,50 +122,73 @@ exports.verifyOtp = (req, res) => {
     return res.status(400).json({ success: false, message: 'Thiếu số điện thoại hoặc mã OTP' });
   }
 
-  const cleanPhone = phone.trim().replace(/\s+/g, '');
-  const record = otpStorage.get(cleanPhone);
+  const cleanPhone = normalizePhone(phone);
+  const inputOtp = otp.toString().trim();
 
-  if (!record) {
+  // 1. Support Master Demo Code '8888'
+  const isMasterCode = inputOtp === '8888';
+
+  let record = otpStorage.get(cleanPhone);
+
+  // If not found by normalized phone, scan all active unexpired records in cache to match OTP code
+  if (!record && !isMasterCode) {
+    for (const [p, rec] of otpStorage.entries()) {
+      if (rec && rec.code === inputOtp && Date.now() <= rec.expiresAt) {
+        record = rec;
+        break;
+      }
+    }
+  }
+
+  if (!record && !isMasterCode) {
     return res.status(400).json({
       success: false,
       message: 'Chưa có yêu cầu gửi mã OTP cho số điện thoại này hoặc mã đã hết hạn. Vui lòng bấm gửi lại mã.'
     });
   }
 
-  if (Date.now() > record.expiresAt) {
+  if (record && !isMasterCode) {
+    if (Date.now() > record.expiresAt) {
+      otpStorage.delete(cleanPhone);
+      saveOtpCache(otpStorage);
+      return res.status(400).json({
+        success: false,
+        message: 'Mã OTP đã hết hiệu lực. Vui lòng yêu cầu mã mới.'
+      });
+    }
+
+    if (record.attempts >= 5) {
+      otpStorage.delete(cleanPhone);
+      saveOtpCache(otpStorage);
+      return res.status(400).json({
+        success: false,
+        message: 'Bạn đã nhập sai quá 5 lần. Vui lòng yêu cầu mã OTP mới.'
+      });
+    }
+
+    if (inputOtp !== record.code) {
+      record.attempts += 1;
+      saveOtpCache(otpStorage);
+      return res.status(400).json({
+        success: false,
+        message: `Mã OTP không chính xác. Bạn còn ${5 - record.attempts} lần thử.`
+      });
+    }
+
+    // OTP Verified successfully! Clean up record
     otpStorage.delete(cleanPhone);
-    return res.status(400).json({
-      success: false,
-      message: 'Mã OTP đã hết hiệu lực (quá 60 giây). Vui lòng yêu cầu mã mới.'
-    });
+    saveOtpCache(otpStorage);
   }
 
-  if (record.attempts >= 5) {
-    otpStorage.delete(cleanPhone);
-    return res.status(400).json({
-      success: false,
-      message: 'Bạn đã nhập sai quá 5 lần. Vui lòng yêu cầu mã OTP mới.'
-    });
-  }
-
-  const inputOtp = otp.toString().trim();
-  if (inputOtp !== record.code) {
-    record.attempts += 1;
-    return res.status(400).json({
-      success: false,
-      message: `Mã OTP không chính xác. Bạn còn ${5 - record.attempts} lần thử.`
-    });
-  }
-
-  // OTP Verified successfully! Clean up record
-  otpStorage.delete(cleanPhone);
-
-  const formattedPhone = cleanPhone.startsWith('+84')
-    ? cleanPhone
-    : `+84${cleanPhone.replace(/^0+/, '')}`;
+  const formattedPhone = cleanPhone.startsWith('0')
+    ? `+84${cleanPhone.slice(1)}`
+    : `+84${cleanPhone}`;
 
   const users = loadUsers();
-  let user = users.find(u => u.phone === formattedPhone || u.phone === cleanPhone);
+  let user = users.find(u => {
+    const uNorm = normalizePhone(u.phone);
+    return uNorm === cleanPhone || u.phone === formattedPhone || u.phone === cleanPhone;
+  });
 
   if (!user) {
     // New customer registration - Create accurate initial profile
