@@ -14,8 +14,9 @@ import { FONTS, THEME_PRESETS } from '../styles/theme';
 import CO2Widget from '../components/CO2Widget';
 import CancelTripModal from '../components/CancelTripModal';
 import ApiService from '../services/api';
+import { getBackendHost } from '../config';
 
-const SOCKET_URL = 'http://localhost:5000';
+const SOCKET_URL = getBackendHost();
 
 export default function DigitalKeyScreen({ theme = THEME_PRESETS.MINT, onNavigateHome }) {
   const [activeTrip, setActiveTrip] = useState(null);

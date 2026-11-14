@@ -1,6 +1,5 @@
 // API Service for ITS Vehicle Rental System
-
-const API_BASE_URL = 'http://localhost:5000/api';
+import { API_BASE_URL } from '../config';
 
 class ApiService {
   constructor() {

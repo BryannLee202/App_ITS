@@ -1,11 +1,12 @@
 // Real-time WebSocket / Telematics Streamer
+import { getBackendHost } from '../config';
 
 let socket = null;
 
 export const initSocket = (onTelemetryUpdate, onControlAck) => {
   try {
     const io = require('socket.io-client');
-    socket = io('http://localhost:5000', {
+    socket = io(getBackendHost(), {
       transports: ['websocket', 'polling'],
       reconnectionAttempts: 5,
       timeout: 5000
