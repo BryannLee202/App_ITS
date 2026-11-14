@@ -1,7 +1,14 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { FONTS } from '../styles/theme';
+
+const FALLBACK_THUMBNAILS = {
+  CAR: 'https://images.unsplash.com/photo-1698883157078-b7032ec657db?auto=format&fit=crop&w=800&q=80',
+  LUXURY: 'https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=800&q=80',
+  MOTORBIKE: 'https://images.unsplash.com/photo-1558981285-6f0c94958bb6?auto=format&fit=crop&w=800&q=80',
+  BICYCLE: 'https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&w=800&q=80'
+};
 
 export default function VehicleCard({
   vehicle,
@@ -15,18 +22,38 @@ export default function VehicleCard({
   const formattedDailyPrice = Math.round(vehicle.dailyPrice / 1000) + 'k';
   const batteryPct = Math.round(vehicle.telematics?.batteryLevelPct || 90);
 
+  const defaultImg = vehicle.thumbnail || FALLBACK_THUMBNAILS[vehicle.category] || FALLBACK_THUMBNAILS.CAR;
+  const [imgUri, setImgUri] = useState(defaultImg);
+  const [hasError, setHasError] = useState(false);
+
+  useEffect(() => {
+    setImgUri(vehicle.thumbnail || FALLBACK_THUMBNAILS[vehicle.category] || FALLBACK_THUMBNAILS.CAR);
+    setHasError(false);
+  }, [vehicle.thumbnail, vehicle.category]);
+
+  const handleImageError = () => {
+    if (!hasError) {
+      setHasError(true);
+      const fallback = FALLBACK_THUMBNAILS[vehicle.category] || FALLBACK_THUMBNAILS.CAR;
+      if (imgUri !== fallback) {
+        setImgUri(fallback);
+      }
+    }
+  };
+
   return (
     <TouchableOpacity
       style={[styles.card, customStyle]}
       activeOpacity={0.92}
       onPress={() => onSelect(vehicle)}
     >
-      {/* Compact Left Thumbnail (No Giant Full-Screen Photo Overload) */}
+      {/* Compact Left Thumbnail */}
       <View style={styles.thumbWrapper}>
         <Image
-          source={{ uri: vehicle.thumbnail }}
+          source={{ uri: imgUri }}
           style={styles.thumbImage}
           resizeMode="cover"
+          onError={handleImageError}
         />
         <View style={styles.batteryBadge}>
           <View style={[styles.batteryDot, { backgroundColor: isElectric ? accentColor : '#F59E0B' }]} />
