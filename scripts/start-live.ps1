@@ -1,4 +1,4 @@
-$ErrorActionPreference = "SilentlyContinue"
+﻿$ErrorActionPreference = "SilentlyContinue"
 $root = (Get-Item $PSScriptRoot).Parent.FullName
 
 Write-Host "==========================================================" -ForegroundColor Cyan
@@ -39,7 +39,7 @@ Write-Host "[3/4] Dang khoi dong Mobile Web App (Port 8081)..." -ForegroundColor
 Start-Process cmd.exe -ArgumentList "/c cd /d `"$mobileDir`" && npx expo start --web --port 8081" -WindowStyle Minimized
 
 # 3. Kiem tra san sang va tu dong mo trinh duyet
-Write-Host "[3/3] Dang khoi chay Metro Bundler (khoang 5-8s)..." -ForegroundColor Gray
+Write-Host "[4/4] Dang kiem tra ket noi Metro Bundler (khoang 5-8s)..." -ForegroundColor Gray
 $maxWait = 20
 $ready = $false
 for ($i = 1; $i -le $maxWait; $i++) {
@@ -56,6 +56,25 @@ for ($i = 1; $i -le $maxWait; $i++) {
 }
 Write-Host ""
 
-Write-Host "`n[THANH CONG] Dang tu dong mo trinh duyet tai http://localhost:8081..." -ForegroundColor Green
+# Lay dia chi IP Wi-Fi thuc te cua may tinh
+$wifiIp = (Get-NetIPAddress -AddressFamily IPv4 | Where-Object { $_.InterfaceAlias -like "*Wi-Fi*" -or $_.InterfaceAlias -like "*Wireless*" -or ($_.IPAddress -like "192.168.*" -and $_.InterfaceAlias -notlike "*VMware*" -and $_.InterfaceAlias -notlike "*Virtual*") } | Select-Object -ExpandProperty IPAddress -First 1)
+if (-not $wifiIp) { $wifiIp = "192.168.1.26" }
+
+Write-Host "==========================================================" -ForegroundColor Green
+Write-Host "   HE THONG DA SAN SANG TEST TREN DIEN THOAI THAT!" -ForegroundColor Green
+Write-Host "==========================================================" -ForegroundColor Green
+Write-Host "💻 May tinh (Local):      http://localhost:8081" -ForegroundColor Cyan
+Write-Host "📱 Dien thoai (Wifi LAN): http://$($wifiIp):8081" -ForegroundColor Yellow
+Write-Host "⚡ AUTO-RELOAD (HOT REFRESH): DANG BAT" -ForegroundColor Magenta
+Write-Host "   -> Khi ban sua file tren may tinh, dien thoai se tu dong cap nhat ngay!" -ForegroundColor Gray
+Write-Host "==========================================================" -ForegroundColor Green
+
+# Mo trinh duyet tren may tinh
 Start-Process "http://localhost:8081"
+
+# Mo trang Quet ma QR de dien thoai de dang quet vao app
+$qrHtml = Join-Path $root "scripts\mobile_connect.html"
+if (Test-Path $qrHtml) {
+    Start-Process "$qrHtml?ip=$wifiIp"
+}
 Start-Sleep -Seconds 2

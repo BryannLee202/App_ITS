@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EcoGo Smart · Quét Mã Kết Nối Điện Thoại Thật (Live Test & Hot Reload)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    body {
+      background: linear-gradient(135deg, #FAF7F2 0%, #EFE8DE 100%);
+      color: #2B180D;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .card {
+      background: #FFFFFF;
+      max-width: 580px;
+      width: 100%;
+      border-radius: 28px;
+      padding: 36px 32px;
+      box-shadow: 0 20px 40px rgba(78, 51, 34, 0.12);
+      border: 1px solid #EBE3D7;
+      text-align: center;
+      position: relative;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #E8F5E9;
+      color: #15803D;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      border: 1px solid #C8E6C9;
+    }
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #15803D;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0% { opacity: 0.4; transform: scale(0.9); }
+      50% { opacity: 1; transform: scale(1.15); }
+      100% { opacity: 0.4; transform: scale(0.9); }
+    }
+    h1 {
+      font-size: 24px;
+      font-weight: 800;
+      color: #2B180D;
+      margin-bottom: 8px;
+    }
+    p.subtitle {
+      font-size: 14.5px;
+      color: #6F4E37;
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+    .qr-container {
+      background: #FAF7F2;
+      border: 2px dashed #D4AF37;
+      border-radius: 24px;
+      padding: 24px;
+      display: inline-block;
+      margin-bottom: 24px;
+      box-shadow: 0 8px 24px rgba(212, 175, 55, 0.12);
+    }
+    .qr-img {
+      width: 240px;
+      height: 240px;
+      display: block;
+      margin: 0 auto;
+      border-radius: 12px;
+    }
+    .url-box {
+      background: #F5EFEB;
+      border: 1px solid #E5DCD2;
+      border-radius: 14px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .url-text {
+      font-size: 16px;
+      font-weight: 700;
+      color: #4E3322;
+      letter-spacing: 0.3px;
+      word-break: break-all;
+    }
+    .copy-btn {
+      background: #4E3322;
+      color: #FAF7F2;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .copy-btn:hover {
+      background: #6F4E37;
+      transform: translateY(-1px);
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      text-align: left;
+      margin-bottom: 24px;
+    }
+    .feature-item {
+      background: #FAF7F2;
+      border: 1px solid #EFE8DE;
+      border-radius: 14px;
+      padding: 12px 14px;
+    }
+    .feature-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #2B180D;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+    .feature-desc {
+      font-size: 11.5px;
+      color: #6F4E37;
+      line-height: 1.4;
+    }
+    .instructions {
+      background: #FFFDF9;
+      border-left: 4px solid #D4AF37;
+      border-radius: 0 12px 12px 0;
+      padding: 14px 16px;
+      text-align: left;
+      font-size: 13px;
+      color: #4E3322;
+      line-height: 1.6;
+    }
+    .instructions strong {
+      color: #2B180D;
+    }
+    .instructions ol {
+      margin-left: 18px;
+      margin-top: 6px;
+    }
+    .footer {
+      margin-top: 20px;
+      font-size: 12px;
+      color: #8C6239;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="badge">
+      <div class="badge-dot"></div>
+      FAST REFRESH & HOT RELOAD LIVE
+    </div>
+    <h1>Kết Nối Điện Thoại Thật Test App</h1>
+    <p class="subtitle">Mở camera trên điện thoại của bạn và các thành viên để quét mã QR bên dưới.<br>Mọi chỉnh sửa mã nguồn sẽ <strong>tự động cập nhật tức thì</strong> trên điện thoại!</p>
+
+    <!-- QR Code Container -->
+    <div class="qr-container">
+      <img id="qrImage" class="qr-img" src="" alt="Mã QR Mở App EcoGo" />
+    </div>
+
+    <!-- Direct URL Box -->
+    <div class="url-box">
+      <div id="urlDisplay" class="url-text">Đang tải địa chỉ IP...</div>
+      <button class="copy-btn" onclick="copyLink()">Sao chép</button>
+    </div>
+
+    <!-- Features -->
+    <div class="features-grid">
+      <div class="feature-item">
+        <div class="feature-title">⚡ Tự động Reload</div>
+        <div class="feature-desc">Khi bạn sửa file và Save, màn hình điện thoại tự cập nhật ngay trong 0.5s.</div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-title">📱 Chuẩn tỉ lệ 100%</div>
+        <div class="feature-desc">Tự động vừa vặn mọi màn hình iPhone, Samsung, Xiaomi không bị lệch hay hở viền.</div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-title">🌐 Không cần cài App</div>
+        <div class="feature-desc">Mở trực tiếp trên Safari hoặc Chrome mượt mà như app native đã tải từ App Store.</div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-title">👥 Nhiều người cùng test</div>
+        <div class="feature-desc">Cả nhóm chỉ cần cùng mạng Wi-Fi là đều xem và thao tác độc lập cùng lúc.</div>
+      </div>
+    </div>
+
+    <!-- Instructions -->
+    <div class="instructions">
+      <strong>📌 Hướng dẫn dành cho các thành viên trong nhóm:</strong>
+      <ol>
+        <li>Kết nối điện thoại vào cùng mạng <strong>Wi-Fi</strong> với máy tính.</li>
+        <li>Bật <strong>Camera</strong> trên iPhone hoặc Android quét mã QR ở trên để mở app.</li>
+        <li><strong>Mẹo hay:</strong> Trên Safari (iPhone), bấm nút <em>Chia sẻ</em> ➔ Chọn <em>"Thêm vào màn hình chính" (Add to Home Screen)</em> để app hiện icon và mở toàn màn hình 100% như app tải từ App Store!</li>
+      </ol>
+    </div>
+
+    <div class="footer">
+      Hệ thống EcoGo Mobility Platform · Metro Bundler & Fast Refresh Active
+    </div>
+  </div>
+
+  <script>
+    // Tự động nhận diện host IP hiện tại nếu mở qua web hoặc truyền param
+    const urlParams = new URLSearchParams(window.location.search);
+    const ipParam = urlParams.get('ip');
+    
+    // Mặc định lấy hostname hiện tại nếu mở qua server, hoặc IP LAN máy
+    let targetIp = ipParam || window.location.hostname || '192.168.1.26';
+    if (targetIp === 'localhost' || targetIp === '127.0.0.1' || !targetIp) {
+      targetIp = '192.168.1.26';
+    }
+
+    const appUrl = 'http://' + targetIp + ':8081';
+    document.getElementById('urlDisplay').innerText = appUrl;
+
+    // Tạo mã QR chất lượng cao
+    const qrApiUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=10&data=' + encodeURIComponent(appUrl);
+    document.getElementById('qrImage').src = qrApiUrl;
+
+    function copyLink() {
+      navigator.clipboard.writeText(appUrl).then(() => {
+        alert('Đã sao chép link test: ' + appUrl + '\nBạn có thể gửi qua Zalo / Telegram cho cả nhóm!');
+      }).catch(() => {
+        prompt('Sao chép link này:', appUrl);
+      });
+    }
+  </script>
+</body>
+</html>
