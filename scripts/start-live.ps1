@@ -39,27 +39,23 @@ Write-Host "[3/4] Dang khoi dong Mobile Web App (Port 8081)..." -ForegroundColor
 Start-Process cmd.exe -ArgumentList "/c cd /d `"$mobileDir`" && npx expo start --web --port 8081" -WindowStyle Minimized
 
 # 3. Kiem tra san sang va tu dong mo trinh duyet
-Write-Host "[4/4] Dang cho Web App san sang (khoang 6-10s)..." -ForegroundColor Gray
-$maxWait = 35
+Write-Host "[3/3] Dang khoi chay Metro Bundler (khoang 5-8s)..." -ForegroundColor Gray
+$maxWait = 20
 $ready = $false
 for ($i = 1; $i -le $maxWait; $i++) {
-    try {
-        $res = Invoke-WebRequest -Uri "http://localhost:8081" -UseBasicParsing -TimeoutSec 1 -ErrorAction SilentlyContinue
-        if ($res.StatusCode -eq 200) {
-            $ready = $true
-            break
-        }
-    } catch {}
+    $listening = Get-NetTCPConnection -LocalPort 8081 -State Listen -ErrorAction SilentlyContinue
+    if (-not $listening) {
+        $listening = netstat -ano | Select-String ":8081\s+.*LISTENING"
+    }
+    if ($listening) {
+        $ready = $true
+        break
+    }
     Start-Sleep -Seconds 1
     Write-Host "." -NoNewline -ForegroundColor DarkYellow
 }
 Write-Host ""
 
-if ($ready) {
-    Write-Host "`n[THANH CONG] He thong da san sang! Dang mo trinh duyet Chrome/Edge..." -ForegroundColor Green
-    Start-Process "http://localhost:8081"
-    Start-Sleep -Seconds 2
-} else {
-    Write-Host "`n[CANH BAO] Qua 35s ma Web chua phan hoi. Ban hay thu chay lai file." -ForegroundColor Red
-    Start-Sleep -Seconds 3
-}
+Write-Host "`n[THANH CONG] Dang tu dong mo trinh duyet tai http://localhost:8081..." -ForegroundColor Green
+Start-Process "http://localhost:8081"
+Start-Sleep -Seconds 2
