@@ -249,7 +249,7 @@ exports.verifySession = (req, res) => {
 
 exports.updateProfile = (req, res) => {
   const userId = req.user ? req.user.id : null;
-  const { fullName, email, phone, licenseNumber, cccdNumber } = req.body;
+  const { fullName, email, phone, licenseNumber, cccdNumber, avatar, birthYear, age } = req.body;
 
   const users = loadUsers();
   let userIndex = users.findIndex(u => (userId && u.id === userId) || (phone && u.phone === phone));
@@ -261,6 +261,11 @@ exports.updateProfile = (req, res) => {
   if (userIndex !== -1) {
     if (fullName && fullName.trim()) users[userIndex].fullName = fullName.trim();
     if (email && email.trim()) users[userIndex].email = email.trim();
+    if (avatar && avatar.trim()) users[userIndex].avatar = avatar.trim();
+    if (birthYear) {
+      users[userIndex].birthYear = parseInt(birthYear, 10);
+      users[userIndex].age = age ? parseInt(age, 10) : (new Date().getFullYear() - parseInt(birthYear, 10));
+    }
     if (licenseNumber && licenseNumber.trim()) {
       users[userIndex].licenseNumber = licenseNumber.trim();
       users[userIndex].drivingLicense = `GPLX B2 - ${licenseNumber.trim()}`;
@@ -280,6 +285,122 @@ exports.updateProfile = (req, res) => {
   }
 
   return res.status(404).json({ success: false, message: 'Không tìm thấy hồ sơ người dùng trong hệ thống' });
+};
+
+exports.updateAvatar = (req, res) => {
+  const userId = req.user ? req.user.id : null;
+  const { avatar } = req.body;
+
+  if (!avatar || !avatar.trim()) {
+    return res.status(400).json({ success: false, message: 'Đường dẫn ảnh đại diện không hợp lệ' });
+  }
+
+  const users = loadUsers();
+  let userIndex = users.findIndex(u => (userId && u.id === userId));
+  if (userIndex === -1 && users.length > 0) {
+    userIndex = 0;
+  }
+
+  if (userIndex !== -1) {
+    users[userIndex].avatar = avatar.trim();
+    saveUsers(users);
+    const updatedUser = users[userIndex];
+    const newToken = jwt.sign(updatedUser, JWT_SECRET, { expiresIn: '7d' });
+
+    return res.json({
+      success: true,
+      message: 'Cập nhật ảnh đại diện thành công!',
+      user: updatedUser,
+      token: newToken
+    });
+  }
+
+  return res.status(404).json({ success: false, message: 'Không tìm thấy hồ sơ người dùng' });
+};
+
+exports.googleLogin = (req, res) => {
+  const {
+    googleId,
+    email,
+    fullName,
+    avatar,
+    birthYear = 1998,
+    age,
+    phone = '+84386726647'
+  } = req.body;
+
+  if (!email && !fullName && !googleId) {
+    return res.status(400).json({ success: false, message: 'Thiếu thông tin xác thực Google' });
+  }
+
+  const users = loadUsers();
+  const cleanPhone = normalizePhone(phone);
+  const formattedPhone = cleanPhone.startsWith('0')
+    ? `+84${cleanPhone.slice(1)}`
+    : `+84${cleanPhone}`;
+
+  // Match existing user by email, googleId, or phone
+  let userIndex = users.findIndex(u => {
+    if (email && u.email && u.email.toLowerCase() === email.toLowerCase()) return true;
+    if (googleId && u.googleId === googleId) return true;
+    if (phone && normalizePhone(u.phone) === cleanPhone) return true;
+    return false;
+  });
+
+  const parsedBirthYear = parseInt(birthYear, 10) || 1998;
+  const currentYear = new Date().getFullYear();
+  const calculatedAge = age ? parseInt(age, 10) : (currentYear - parsedBirthYear);
+
+  let user;
+  if (userIndex !== -1) {
+    // Existing user: Synchronize latest Google profile info (avatar, fullName, email, birthYear, age)
+    users[userIndex].fullName = fullName || users[userIndex].fullName;
+    users[userIndex].email = email || users[userIndex].email;
+    if (avatar) users[userIndex].avatar = avatar;
+    users[userIndex].birthYear = parsedBirthYear;
+    users[userIndex].age = calculatedAge;
+    users[userIndex].authProvider = 'GOOGLE';
+    if (googleId) users[userIndex].googleId = googleId;
+    saveUsers(users);
+    user = users[userIndex];
+  } else {
+    // New user via Google: Create complete enriched profile
+    user = {
+      id: `usr_gg_${Date.now().toString().slice(-6)}`,
+      googleId: googleId || `gid_${Date.now()}`,
+      phone: formattedPhone,
+      fullName: fullName || 'Minh Tài',
+      email: email || 'minhtai.ecogo@gmail.com',
+      avatar: avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
+      birthYear: parsedBirthYear,
+      age: calculatedAge,
+      authProvider: 'GOOGLE',
+      isEkycVerified: true,
+      drivingLicense: 'GPLX B2 - 790123456789',
+      licenseNumber: '790123456789',
+      drivingLicenseExpiry: '15/08/2032',
+      cccdNumber: '079201018891',
+      memberRank: 'Eco Elite Ambassador',
+      membershipId: `ESG-ECOGO-2026-GG${Date.now().toString().slice(-4)}`,
+      walletBalance: 1500000,
+      ecoPoints: 340,
+      ecoCoins: 180,
+      totalCo2SavedKg: 42.8,
+      memberTier: 'DIAMOND_GREEN',
+      createdAt: new Date().toISOString()
+    };
+    users.push(user);
+    saveUsers(users);
+  }
+
+  const token = jwt.sign(user, JWT_SECRET, { expiresIn: '7d' });
+
+  return res.json({
+    success: true,
+    message: 'Đăng nhập bằng tài khoản Google thành công! Thông tin cá nhân đã được đồng bộ.',
+    token,
+    user
+  });
 };
 
 exports.updateEkyc = (req, res) => {

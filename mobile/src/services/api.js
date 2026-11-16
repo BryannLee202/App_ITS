@@ -11,10 +11,14 @@ class ApiService {
   }
 
   saveSession(token, user) {
-    this.setToken(token);
+    if (token) {
+      this.setToken(token);
+    }
     try {
       if (typeof localStorage !== 'undefined') {
-        localStorage.setItem('ecogo_session_token', token);
+        if (token) {
+          localStorage.setItem('ecogo_session_token', token);
+        }
         if (user) {
           localStorage.setItem('ecogo_user_profile', JSON.stringify(user));
         }
@@ -102,6 +106,30 @@ class ApiService {
     });
     if (data.token) {
       this.saveSession(data.token, data.user);
+    }
+    return data;
+  }
+
+  async googleLogin(profileData) {
+    const data = await this.request('/auth/google-login', {
+      method: 'POST',
+      body: JSON.stringify(profileData)
+    });
+    if (data.token && data.user) {
+      this.saveSession(data.token, data.user);
+    }
+    return data;
+  }
+
+  async updateAvatar(avatarUrl, userId = null) {
+    const data = await this.request('/auth/update-avatar', {
+      method: 'PUT',
+      body: JSON.stringify({ avatar: avatarUrl, userId })
+    });
+    if (data.token && data.user) {
+      this.saveSession(data.token, data.user);
+    } else if (data.user) {
+      this.saveSession(null, data.user);
     }
     return data;
   }
@@ -252,10 +280,16 @@ class ApiService {
   }
 
   async updateProfile(profileData) {
-    return this.request('/auth/update-profile', {
+    const data = await this.request('/auth/update-profile', {
       method: 'POST',
       body: JSON.stringify(profileData)
     });
+    if (data.token && data.user) {
+      this.saveSession(data.token, data.user);
+    } else if (data.user) {
+      this.saveSession(null, data.user);
+    }
+    return data;
   }
 
   async updateEkyc(ekycData) {

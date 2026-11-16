@@ -5,6 +5,8 @@
     "fullName": "Minh Tài",
     "email": "minhtai@ecogo.vn",
     "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80",
+    "birthYear": 1998,
+    "age": 28,
     "isEkycVerified": true,
     "drivingLicense": "GPLX B2 - 790123456789",
     "licenseNumber": "790123456789",
@@ -17,7 +19,9 @@
     "ecoCoins": 180,
     "totalCo2SavedKg": 42.8,
     "memberTier": "DIAMOND_GREEN",
-    "createdAt": "2026-10-15T08:00:00.000Z"
+    "createdAt": "2026-10-15T08:00:00.000Z",
+    "authProvider": "GOOGLE",
+    "googleId": "gg_123456"
   },
   {
     "id": "usr_6476_7473",

@@ -10,12 +10,47 @@ import {
   Linking,
   Alert,
   Modal,
-  Switch
+  Switch,
+  Image,
+  Platform
 } from 'react-native';
 import ApiService from '../services/api';
 import { Ionicons } from '@expo/vector-icons';
 import { FONTS, THEME_PRESETS } from '../styles/theme';
 import VoucherWalletModal from '../components/VoucherWalletModal';
+
+const LUXURY_AVATARS = [
+  {
+    id: 'ceo_male',
+    title: 'Doanh nhân Lịch lãm',
+    url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80'
+  },
+  {
+    id: 'ceo_female',
+    title: 'Nữ Doanh nhân',
+    url: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80'
+  },
+  {
+    id: 'pilot_male',
+    title: 'Tay lái VIP EcoGo',
+    url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80'
+  },
+  {
+    id: 'tech_creator',
+    title: 'Chuyên gia Công nghệ',
+    url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'
+  },
+  {
+    id: 'traveler_adventurer',
+    title: 'Du lịch & Khám phá',
+    url: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=400&q=80'
+  },
+  {
+    id: 'chic_modern',
+    title: 'Thanh lịch Trẻ trung',
+    url: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80'
+  }
+];
 
 export default function ProfileScreen({
   currentUser,
@@ -34,6 +69,12 @@ export default function ProfileScreen({
   const [showEditModal, setShowEditModal] = useState(false);
   const [isSavingProfile, setIsSavingProfile] = useState(false);
   const [verifySlideIndex, setVerifySlideIndex] = useState(0);
+
+  // State Modal Đổi Avatar
+  const [showAvatarModal, setShowAvatarModal] = useState(false);
+  const [selectedAvatar, setSelectedAvatar] = useState('');
+  const [customAvatarUrl, setCustomAvatarUrl] = useState('');
+  const [isSavingAvatar, setIsSavingAvatar] = useState(false);
 
   // Các Modal nghiệp vụ thực tế
   const [showPaymentModal, setShowPaymentModal] = useState(false);
@@ -60,6 +101,10 @@ export default function ProfileScreen({
     fullName: activeUser.fullName || 'Minh Tài',
     phone: activeUser.phone || '+84386726647',
     email: activeUser.email || 'minhtai@ecogo.vn',
+    avatar: activeUser.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
+    birthYear: activeUser.birthYear || 1998,
+    age: activeUser.age || (activeUser.birthYear ? (new Date().getFullYear() - activeUser.birthYear) : 28),
+    authProvider: activeUser.authProvider || null,
     licenseNumber: activeUser.licenseNumber || activeUser.drivingLicense || '790123456789',
     memberRank: activeUser.memberRank || 'Eco Elite Ambassador',
     membershipId: activeUser.membershipId || 'ESG-ECOGO-2026-8891',
@@ -76,8 +121,85 @@ export default function ProfileScreen({
   // State cho form chỉnh sửa hồ sơ
   const [formName, setFormName] = useState(user.fullName);
   const [formEmail, setFormEmail] = useState(user.email);
+  const [formBirthYear, setFormBirthYear] = useState(String(user.birthYear || 1998));
   const [formLicense, setFormLicense] = useState(user.licenseNumber.replace('GPLX B2 - ', ''));
   const [formCccd, setFormCccd] = useState(user.cccdNumber);
+
+  // Hàm chọn file ảnh từ máy (hỗ trợ Web, Mobile Web)
+  const handlePickFile = () => {
+    if (Platform.OS === 'web' && typeof document !== 'undefined') {
+      let input = document.getElementById('ecogo-avatar-file-input');
+      if (!input) {
+        input = document.createElement('input');
+        input.type = 'file';
+        input.id = 'ecogo-avatar-file-input';
+        input.accept = 'image/*';
+        input.style.display = 'none';
+        document.body.appendChild(input);
+      }
+      input.onchange = (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = () => {
+            if (reader.result) {
+              setSelectedAvatar(reader.result);
+            }
+          };
+          reader.readAsDataURL(file);
+        }
+      };
+      input.click();
+    } else {
+      Alert.alert(
+        'Chọn ảnh đại diện',
+        'Vui lòng chọn từ Bộ sưu tập avatar VIP EcoGo có sẵn bên dưới hoặc dán đường dẫn ảnh.'
+      );
+    }
+  };
+
+  // Hàm lưu ảnh đại diện mới
+  const handleSaveAvatar = async () => {
+    const avatarToSave = selectedAvatar || user.avatar;
+    if (!avatarToSave) {
+      Alert.alert('Chưa chọn ảnh', 'Vui lòng chọn một ảnh đại diện từ bộ sưu tập hoặc tải lên từ thiết bị.');
+      return;
+    }
+    try {
+      setIsSavingAvatar(true);
+      const res = await ApiService.updateAvatar(avatarToSave, activeUser.id);
+      const updatedUser = {
+        ...activeUser,
+        ...user,
+        avatar: avatarToSave
+      };
+      if (res && res.user) {
+        Object.assign(updatedUser, res.user);
+      }
+      setUserState(updatedUser);
+      if (onUpdateUser) {
+        onUpdateUser(updatedUser);
+      }
+      setShowAvatarModal(false);
+      Alert.alert('Thành công', 'Ảnh đại diện của bạn đã được cập nhật đồng bộ!');
+    } catch (err) {
+      console.warn('Update avatar error:', err.message);
+      // Fallback update locally
+      const localUpdated = {
+        ...activeUser,
+        ...user,
+        avatar: avatarToSave
+      };
+      setUserState(localUpdated);
+      if (onUpdateUser) {
+        onUpdateUser(localUpdated);
+      }
+      setShowAvatarModal(false);
+      Alert.alert('Đã cập nhật', 'Ảnh đại diện đã được lưu thành công trên thiết bị!');
+    } finally {
+      setIsSavingAvatar(false);
+    }
+  };
 
   const handleSaveProfile = async () => {
     if (!formName.trim()) {
@@ -86,12 +208,17 @@ export default function ProfileScreen({
     }
     try {
       setIsSavingProfile(true);
+      const parsedYr = parseInt(formBirthYear, 10) || 1998;
+      const parsedAge = new Date().getFullYear() - parsedYr;
       const res = await ApiService.updateProfile({
         fullName: formName.trim(),
         email: formEmail.trim(),
+        birthYear: parsedYr,
+        age: parsedAge,
         licenseNumber: formLicense.trim(),
         cccdNumber: formCccd.trim(),
-        phone: user.phone
+        phone: user.phone,
+        avatar: user.avatar
       });
 
       if (res && res.success && res.user) {
@@ -105,6 +232,8 @@ export default function ProfileScreen({
           ...user,
           fullName: formName.trim(),
           email: formEmail.trim(),
+          birthYear: parsedYr,
+          age: parsedAge,
           licenseNumber: formLicense.trim(),
           cccdNumber: formCccd.trim()
         };
@@ -115,10 +244,14 @@ export default function ProfileScreen({
       }
     } catch (err) {
       console.warn('Update profile error:', err.message);
+      const parsedYr = parseInt(formBirthYear, 10) || 1998;
+      const parsedAge = new Date().getFullYear() - parsedYr;
       const localUpdated = {
         ...user,
         fullName: formName.trim(),
         email: formEmail.trim(),
+        birthYear: parsedYr,
+        age: parsedAge,
         licenseNumber: formLicense.trim(),
         cccdNumber: formCccd.trim()
       };
@@ -289,12 +422,33 @@ export default function ProfileScreen({
             1. TOP PROFILE HEADER ("Minh Tài" + Rank Badge + "+84386726647")
            ============================================================ */}
         <View style={styles.topUserRow}>
-          <View style={[styles.avatarCyanCircle, { backgroundColor: theme.primary }]}>
-            <Ionicons name="person" size={28} color="#FFFFFF" />
-            <View style={styles.avatarVerifiedBadge}>
-              <Ionicons name="shield-checkmark" size={11} color="#FFFFFF" />
+          <TouchableOpacity
+            style={styles.avatarTouchable}
+            activeOpacity={0.85}
+            onPress={() => {
+              setSelectedAvatar(user.avatar);
+              setShowAvatarModal(true);
+            }}
+          >
+            <View style={[styles.avatarCyanCircle, { backgroundColor: theme.primary }]}>
+              {user.avatar ? (
+                <Image
+                  source={{ uri: user.avatar }}
+                  style={styles.avatarImg}
+                  resizeMode="cover"
+                />
+              ) : (
+                <Ionicons name="person" size={28} color="#FFFFFF" />
+              )}
+              {/* Badge Camera để biểu thị người dùng có chỗ đổi avatar */}
+              <View style={[styles.avatarCameraBadge, { backgroundColor: theme.primary }]}>
+                <Ionicons name="camera" size={10} color="#FFFFFF" />
+              </View>
+              <View style={styles.avatarVerifiedBadge}>
+                <Ionicons name="shield-checkmark" size={11} color="#FFFFFF" />
+              </View>
             </View>
-          </View>
+          </TouchableOpacity>
 
           <View style={styles.userInfoCol}>
             <View style={styles.userNameRow}>
@@ -315,15 +469,23 @@ export default function ProfileScreen({
             <View style={styles.userSubRow}>
               <Text style={styles.userPhoneText}>{user.phone}</Text>
               <Text style={styles.userSubDot}>•</Text>
+              <Text style={styles.userAgeText}>{user.age ? `${user.age} tuổi` : '28 tuổi'}</Text>
+              <Text style={styles.userSubDot}>•</Text>
               <TouchableOpacity
                 style={styles.gplxVerifiedPill}
                 onPress={() => setShowVerificationModal(true)}
                 activeOpacity={0.75}
               >
                 <Ionicons name="checkmark-circle" size={12} color="#15803D" />
-                <Text style={styles.gplxVerifiedText}>GPLX B2 Đã duyệt</Text>
+                <Text style={styles.gplxVerifiedText}>GPLX B2</Text>
                 <Ionicons name="chevron-forward" size={10} color="#15803D" />
               </TouchableOpacity>
+              {user.authProvider === 'GOOGLE' && (
+                <View style={styles.googleSyncPill}>
+                  <Ionicons name="logo-google" size={10} color="#4285F4" />
+                  <Text style={styles.googleSyncText}>Google</Text>
+                </View>
+              )}
             </View>
           </View>
         </View>
@@ -1027,6 +1189,26 @@ export default function ProfileScreen({
             </View>
 
             <ScrollView style={{ maxHeight: 420 }} showsVerticalScrollIndicator={false}>
+              {/* Avatar Quick Switch Row */}
+              <View style={styles.editAvatarRow}>
+                <Image source={{ uri: user.avatar }} style={styles.editAvatarThumb} />
+                <View style={{ flex: 1, marginLeft: 12 }}>
+                  <Text style={styles.editAvatarTitle}>Ảnh đại diện hồ sơ</Text>
+                  <Text style={styles.editAvatarSub}>Hiển thị trên hợp đồng thuê xe & ứng dụng</Text>
+                </View>
+                <TouchableOpacity
+                  style={[styles.editAvatarBtn, { backgroundColor: theme.primarySoft }]}
+                  onPress={() => {
+                    setShowEditModal(false);
+                    setSelectedAvatar(user.avatar);
+                    setShowAvatarModal(true);
+                  }}
+                >
+                  <Ionicons name="camera" size={14} color={theme.primary} />
+                  <Text style={[styles.editAvatarBtnText, { color: theme.primary, marginLeft: 4 }]}>Đổi avatar</Text>
+                </TouchableOpacity>
+              </View>
+
               <Text style={styles.editFieldLabel}>Họ và tên tài xế *</Text>
               <TextInput
                 style={styles.editInput}
@@ -1053,6 +1235,19 @@ export default function ProfileScreen({
                 keyboardType="email-address"
                 autoCapitalize="none"
               />
+
+              <Text style={styles.editFieldLabel}>Năm sinh / Tuổi *</Text>
+              <TextInput
+                style={styles.editInput}
+                value={formBirthYear}
+                onChangeText={setFormBirthYear}
+                placeholder="1998"
+                placeholderTextColor="#9A9FA5"
+                keyboardType="numeric"
+              />
+              <Text style={styles.editFieldHelper}>
+                Độ tuổi hiện tại: {parseInt(formBirthYear, 10) ? `${new Date().getFullYear() - parseInt(formBirthYear, 10)} tuổi` : 'Chưa xác định'} (Đạt chuẩn pháp lý điều khiển ô tô)
+              </Text>
 
               <Text style={styles.editFieldLabel}>Số GPLX Hạng B2 *</Text>
               <TextInput
@@ -1094,6 +1289,149 @@ export default function ProfileScreen({
                   <ActivityIndicator size="small" color="#FFFFFF" />
                 ) : (
                   <Text style={styles.saveEditBtnText}>Lưu vào CSDL</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* ============================================================
+          MODAL: ĐỔI ẢNH ĐẠI DIỆN ECOGO (AVATAR PICKER & UPLOAD)
+         ============================================================ */}
+      <Modal
+        visible={showAvatarModal}
+        animationType="fade"
+        transparent
+        onRequestClose={() => setShowAvatarModal(false)}
+      >
+        <View style={styles.modalBackdrop}>
+          <View style={styles.avatarModalContainer}>
+            {/* Header */}
+            <View style={styles.avatarModalHeader}>
+              <View>
+                <Text style={styles.avatarModalTitle}>Đổi ảnh đại diện</Text>
+                <Text style={styles.avatarModalSub}>Tùy chỉnh diện mạo hồ sơ EcoGo Mobility</Text>
+              </View>
+              <TouchableOpacity
+                style={styles.closeBtnSmall}
+                onPress={() => setShowAvatarModal(false)}
+              >
+                <Ionicons name="close" size={20} color="#1A1D1F" />
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView showsVerticalScrollIndicator={false} style={{ maxHeight: 460 }}>
+              {/* Preview Circle */}
+              <View style={styles.avatarPreviewCenter}>
+                <View style={[styles.avatarPreviewOuterRing, { borderColor: theme.primary }]}>
+                  <Image
+                    source={{ uri: selectedAvatar || user.avatar }}
+                    style={styles.avatarPreviewImg}
+                    resizeMode="cover"
+                  />
+                  <View style={[styles.avatarPreviewBadge, { backgroundColor: theme.primary }]}>
+                    <Ionicons name="camera" size={13} color="#FFFFFF" />
+                  </View>
+                </View>
+                <Text style={styles.avatarPreviewNote}>Ảnh đại diện hồ sơ và hợp đồng thuê xe điện tử</Text>
+              </View>
+
+              {/* Option 1: Upload from device / take photo */}
+              <TouchableOpacity
+                style={styles.uploadFromDeviceBtn}
+                activeOpacity={0.85}
+                onPress={handlePickFile}
+              >
+                <View style={[styles.uploadIconCircle, { backgroundColor: theme.primarySoft }]}>
+                  <Ionicons name="cloud-upload" size={20} color={theme.primary} />
+                </View>
+                <View style={{ flex: 1, marginLeft: 12 }}>
+                  <Text style={styles.uploadBtnTitle}>Tải ảnh từ máy / Chụp ảnh mới</Text>
+                  <Text style={styles.uploadBtnSub}>Mở thư viện ảnh thiết bị hoặc máy ảnh</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={18} color="#9A9FA5" />
+              </TouchableOpacity>
+
+              {/* Option 2: Curated Luxury VIP Gallery */}
+              <Text style={styles.avatarSectionHeading}>Bộ sưu tập Avatar VIP EcoGo</Text>
+              <View style={styles.avatarPresetGrid}>
+                {LUXURY_AVATARS.map((item) => {
+                  const isSelected = (selectedAvatar || user.avatar) === item.url;
+                  return (
+                    <TouchableOpacity
+                      key={item.id}
+                      style={[
+                        styles.avatarPresetItem,
+                        isSelected && { borderColor: theme.primary, borderWidth: 2, backgroundColor: theme.primarySoft }
+                      ]}
+                      activeOpacity={0.8}
+                      onPress={() => setSelectedAvatar(item.url)}
+                    >
+                      <Image source={{ uri: item.url }} style={styles.presetImg} />
+                      <Text
+                        style={[styles.presetTitle, isSelected && { color: theme.primary, fontWeight: '700' }]}
+                        numberOfLines={1}
+                      >
+                        {item.title}
+                      </Text>
+                      {isSelected && (
+                        <View style={[styles.presetCheckmark, { backgroundColor: theme.primary }]}>
+                          <Ionicons name="checkmark" size={10} color="#FFFFFF" />
+                        </View>
+                      )}
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+
+              {/* Option 3: Direct URL */}
+              <Text style={styles.avatarSectionHeading}>Hoặc dán link ảnh trực tiếp</Text>
+              <View style={styles.urlInputRow}>
+                <TextInput
+                  style={styles.urlInput}
+                  value={customAvatarUrl}
+                  onChangeText={setCustomAvatarUrl}
+                  placeholder="https://... (dán liên kết ảnh)"
+                  placeholderTextColor="#9A9FA5"
+                  autoCapitalize="none"
+                />
+                <TouchableOpacity
+                  style={[styles.applyUrlBtn, { backgroundColor: theme.primary }]}
+                  onPress={() => {
+                    if (customAvatarUrl.trim()) {
+                      setSelectedAvatar(customAvatarUrl.trim());
+                      setCustomAvatarUrl('');
+                    } else {
+                      Alert.alert('Chưa nhập link', 'Vui lòng dán link ảnh hợp lệ');
+                    }
+                  }}
+                >
+                  <Text style={styles.applyUrlBtnText}>Áp dụng</Text>
+                </TouchableOpacity>
+              </View>
+            </ScrollView>
+
+            {/* Footer Buttons */}
+            <View style={styles.avatarModalFooter}>
+              <TouchableOpacity
+                style={styles.cancelAvatarBtn}
+                onPress={() => setShowAvatarModal(false)}
+                disabled={isSavingAvatar}
+              >
+                <Text style={styles.cancelAvatarBtnText}>Hủy</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.saveAvatarBtn, { backgroundColor: theme.primary }]}
+                onPress={handleSaveAvatar}
+                disabled={isSavingAvatar}
+                activeOpacity={0.88}
+              >
+                {isSavingAvatar ? (
+                  <ActivityIndicator size="small" color="#FFFFFF" />
+                ) : (
+                  <Text style={styles.saveAvatarBtnText}>Lưu ảnh đại diện</Text>
                 )}
               </TouchableOpacity>
             </View>
@@ -2280,6 +2618,9 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     gap: 12
   },
+  avatarTouchable: {
+    position: 'relative'
+  },
   avatarCyanCircle: {
     width: 58,
     height: 58,
@@ -2290,6 +2631,25 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#FFFFFF',
     position: 'relative'
+  },
+  avatarImg: {
+    width: 54,
+    height: 54,
+    borderRadius: 27
+  },
+  avatarCameraBadge: {
+    position: 'absolute',
+    bottom: -2,
+    left: -2,
+    width: 19,
+    height: 19,
+    borderRadius: 10,
+    backgroundColor: '#6F4E37',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1.5,
+    borderColor: '#FFFFFF',
+    zIndex: 2
   },
   avatarVerifiedBadge: {
     position: 'absolute',
@@ -2303,6 +2663,27 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderWidth: 2,
     borderColor: '#FFFFFF'
+  },
+  userAgeText: {
+    fontFamily: FONTS.family,
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#6F767E'
+  },
+  googleSyncPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#E8F0FE',
+    paddingHorizontal: 6,
+    paddingVertical: 1.5,
+    borderRadius: 6,
+    gap: 3
+  },
+  googleSyncText: {
+    fontFamily: FONTS.family,
+    fontSize: 10.5,
+    fontWeight: '700',
+    color: '#1967D2'
   },
   headerRankBadge: {
     flexDirection: 'row',
@@ -2537,6 +2918,276 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center'
+  },
+  saveEditBtnText: {
+    fontFamily: FONTS.family,
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#FFFFFF'
+  },
+  editAvatarRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FAF7F2',
+    padding: 10,
+    borderRadius: 12,
+    marginBottom: 14,
+    borderWidth: 1,
+    borderColor: '#EFE9E1'
+  },
+  editAvatarThumb: {
+    width: 46,
+    height: 46,
+    borderRadius: 23,
+    borderWidth: 1.5,
+    borderColor: '#D4AF37'
+  },
+  editAvatarTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#1A1D1F'
+  },
+  editAvatarSub: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    color: '#6F767E',
+    marginTop: 2
+  },
+  editAvatarBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 8
+  },
+  editAvatarBtnText: {
+    fontFamily: FONTS.family,
+    fontSize: 11.5,
+    fontWeight: '700'
+  },
+  editFieldHelper: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    color: '#15803D',
+    marginTop: -8,
+    marginBottom: 12,
+    fontWeight: '500'
+  },
+
+  // Styles cho Modal Avatar Picker
+  avatarModalContainer: {
+    width: '92%',
+    maxWidth: 420,
+    backgroundColor: '#FAF7F2',
+    borderRadius: 24,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.18,
+    shadowRadius: 24,
+    elevation: 8,
+    borderWidth: 1,
+    borderColor: '#EFE9E1'
+  },
+  avatarModalHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 16
+  },
+  avatarModalTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 18,
+    fontWeight: '800',
+    color: '#2B180D'
+  },
+  avatarModalSub: {
+    fontFamily: FONTS.family,
+    fontSize: 12,
+    color: '#6F767E',
+    marginTop: 2
+  },
+  avatarPreviewCenter: {
+    alignItems: 'center',
+    marginBottom: 18
+  },
+  avatarPreviewOuterRing: {
+    width: 90,
+    height: 90,
+    borderRadius: 45,
+    borderWidth: 3,
+    padding: 3,
+    position: 'relative',
+    backgroundColor: '#FFFFFF',
+    shadowColor: '#4E3322',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 10
+  },
+  avatarPreviewImg: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 42
+  },
+  avatarPreviewBadge: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: '#FFFFFF'
+  },
+  avatarPreviewNote: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    color: '#6F767E',
+    marginTop: 8
+  },
+  uploadFromDeviceBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    padding: 12,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#EFE9E1',
+    marginBottom: 16
+  },
+  uploadIconCircle: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  uploadBtnTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 13.5,
+    fontWeight: '700',
+    color: '#2B180D'
+  },
+  uploadBtnSub: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    color: '#6F767E',
+    marginTop: 2
+  },
+  avatarSectionHeading: {
+    fontFamily: FONTS.family,
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#2B180D',
+    marginBottom: 10
+  },
+  avatarPresetGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginBottom: 16
+  },
+  avatarPresetItem: {
+    width: '31%',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 8,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#EFE9E1',
+    position: 'relative'
+  },
+  presetImg: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    marginBottom: 6
+  },
+  presetTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 10,
+    color: '#6F767E',
+    textAlign: 'center',
+    fontWeight: '600'
+  },
+  presetCheckmark: {
+    position: 'absolute',
+    top: 4,
+    right: 4,
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  urlInputRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 16
+  },
+  urlInput: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#EFE9E1',
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 9,
+    fontSize: 12.5,
+    fontFamily: FONTS.family,
+    color: '#1A1D1F'
+  },
+  applyUrlBtn: {
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  applyUrlBtnText: {
+    fontFamily: FONTS.family,
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#FFFFFF'
+  },
+  avatarModalFooter: {
+    flexDirection: 'row',
+    gap: 12,
+    marginTop: 14,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#EFE9E1'
+  },
+  cancelAvatarBtn: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: 12,
+    backgroundColor: '#F0EBE3',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  cancelAvatarBtnText: {
+    fontFamily: FONTS.family,
+    fontSize: 13.5,
+    fontWeight: '700',
+    color: '#6F767E'
+  },
+  saveAvatarBtn: {
+    flex: 1.5,
+    paddingVertical: 12,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  saveAvatarBtnText: {
+    fontFamily: FONTS.family,
+    fontSize: 13.5,
+    fontWeight: '700',
+    color: '#FFFFFF'
   },
   saveEditBtnText: {
     fontFamily: FONTS.family,
