@@ -17,14 +17,13 @@ import { Ionicons } from '@expo/vector-icons';
 import { FONTS, THEME_PRESETS } from '../styles/theme';
 import ApiService from '../services/api';
 
-// Danh mục biểu tượng chính (giống ảnh mẫu người dùng)
+// Danh mục biểu tượng chính (Chuẩn Quiet Luxury Thuê xe & Di chuyển)
 const OFFER_CATEGORIES = [
-  { id: 'ALL', label: 'Tất cả', icon: 'apps', color: '#7C3AED', bg: '#EDE9FE' },
-  { id: 'ECOGO', label: 'ECOGO', icon: 'flash', color: '#6F4E37', bg: '#F5EFEB' },
-  { id: 'HOME', label: 'Gia dụng', icon: 'cube-outline', color: '#2563EB', bg: '#DBEAFE' },
-  { id: 'SHOPPING', label: 'Mua sắm', icon: 'cart-outline', color: '#9333EA', bg: '#F3E8FF' },
-  { id: 'SERVICES', label: 'Dịch vụ', icon: 'pricetag-outline', color: '#059669', bg: '#D1FAE5' },
-  { id: 'FOOD', label: 'Ăn uống', icon: 'cafe-outline', color: '#DC2626', bg: '#FEE2E2' }
+  { id: 'ALL', label: 'Tất cả', icon: 'apps-outline', color: '#4E3322', bg: '#F5EFEB' },
+  { id: 'ECOGO', label: 'Thuê xe', icon: 'car-sport-outline', color: '#6F4E37', bg: '#FAF0E6' },
+  { id: 'CHARGE', label: 'Trạm sạc', icon: 'flash-outline', color: '#52735E', bg: '#EEF5F0' },
+  { id: 'ROAD', label: 'Cứu hộ', icon: 'shield-checkmark-outline', color: '#8C6239', bg: '#FDF6EC' },
+  { id: 'VIP', label: 'Đặc quyền', icon: 'ribbon-outline', color: '#B45309', bg: '#FEF3C7' }
 ];
 
 // Danh mục bộ lọc Đổi quà Di chuyển & Năng lượng xanh
@@ -194,8 +193,8 @@ const OTHER_GIFTS = [
     coins: 25,
     originalValue: '5.000đ',
     badge: 'TIẾT KIỆM',
-    badgeBg: '#EDE9FE',
-    badgeColor: '#7C3AED',
+    badgeBg: '#FAF0E6',
+    badgeColor: '#4E3322',
     expiry: 'Còn 30 ngày',
     image: 'https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=600&q=80',
     code: 'ECOBIKE5K',
@@ -209,8 +208,8 @@ const OTHER_GIFTS = [
     coins: 50,
     originalValue: '10.000đ',
     badge: 'GIẢM 10K',
-    badgeBg: '#EDE9FE',
-    badgeColor: '#7C3AED',
+    badgeBg: '#FAF0E6',
+    badgeColor: '#4E3322',
     expiry: 'Còn 30 ngày',
     image: 'https://images.unsplash.com/photo-1593941707882-a5bba14938c7?auto=format&fit=crop&w=600&q=80',
     code: 'ECOCAR10K',
@@ -407,15 +406,15 @@ export default function OffersScreen({
         {/* Header Top Bar */}
         <View style={styles.headerTopRow}>
           <View style={styles.headerTitleBox}>
-            <Text style={styles.headerAppBrand}>EcoGo Rewards & Deals</Text>
-            <Text style={styles.headerAppSub}>Trung tâm Ưu đãi & Đổi quà sinh thái</Text>
+            <Text style={styles.headerAppBrand}>Đặc quyền & Ưu đãi</Text>
+            <Text style={styles.headerAppSub}>Trung tâm tích điểm và quy đổi dịch vụ EcoGo</Text>
           </View>
           <TouchableOpacity
             style={styles.dailyCheckInPill}
             activeOpacity={0.85}
             onPress={() => setShowCheckInModal(true)}
           >
-            <Ionicons name="calendar" size={13} color="#D4AF37" />
+            <Ionicons name="calendar-outline" size={13} color="#D4AF37" />
             <Text style={styles.dailyCheckInPillText}>Điểm danh +25</Text>
           </TouchableOpacity>
         </View>
@@ -423,14 +422,14 @@ export default function OffersScreen({
         {/* Big Coin Counter Card */}
         <View style={styles.coinCounterCard}>
           <View style={styles.coinCircleBig}>
-            <Text style={styles.coinLetterM}>⚡</Text>
+            <Ionicons name="flash" size={22} color="#2B180D" />
           </View>
           <View style={{ flex: 1, marginLeft: 14 }}>
             <View style={styles.coinBalanceRow}>
               <Text style={styles.coinBalanceNumber}>{userCoins}</Text>
-              <Text style={styles.coinUnitText}>EcoCoin</Text>
+              <Text style={styles.coinUnitText}>EcoXu</Text>
             </View>
-            <Text style={styles.coinPromptText}>Hãy thu thập thật nhiều EcoCoin bạn nhé!</Text>
+            <Text style={styles.coinPromptText}>Tích lũy điểm thưởng qua mỗi hành trình xanh</Text>
           </View>
           <TouchableOpacity
             style={styles.historyBtn}
@@ -447,20 +446,20 @@ export default function OffersScreen({
           </TouchableOpacity>
         </View>
 
-        {/* 3 Quick Navigation Pills Card (Giống hệt ảnh 1 của người dùng) */}
+        {/* 3 Quick Navigation Pills Card */}
         <View style={styles.quickNavFloatContainer}>
           <TouchableOpacity
             style={styles.quickNavItem}
             activeOpacity={0.8}
             onPress={() =>
               Alert.alert(
-                'Bảng Xếp Hạng EcoGo',
-                'Bạn đang xếp hạng: Eco Elite Ambassador (Top 5% người dùng đóng góp giảm phát thải CO2 nhiều nhất tháng này)!'
+                'Hạng thành viên EcoGo',
+                'Bạn đang ở hạng Eco Elite VIP (Top 5% thành viên đóng góp giảm phát thải CO2 nhiều nhất tháng).'
               )
             }
           >
-            <View style={[styles.quickNavIconBox, { backgroundColor: '#F3E8FF' }]}>
-              <Ionicons name="ribbon" size={16} color="#9333EA" />
+            <View style={[styles.quickNavIconBox, { backgroundColor: '#F5EFEB' }]}>
+              <Ionicons name="ribbon" size={16} color="#6F4E37" />
             </View>
             <View style={{ flex: 1, marginLeft: 8 }}>
               <Text style={styles.quickNavTitle}>Xếp hạng</Text>
@@ -475,12 +474,12 @@ export default function OffersScreen({
             activeOpacity={0.8}
             onPress={() => setShowCheckInModal(true)}
           >
-            <View style={[styles.quickNavIconBox, { backgroundColor: '#FCE7F3' }]}>
-              <Ionicons name="disc" size={16} color="#DB2777" />
+            <View style={[styles.quickNavIconBox, { backgroundColor: '#EEF5F0' }]}>
+              <Ionicons name="calendar-number" size={16} color="#52735E" />
             </View>
             <View style={{ flex: 1, marginLeft: 8 }}>
-              <Text style={styles.quickNavTitle}>Thử thách</Text>
-              <Text style={styles.quickNavSub}>Nhận EcoCoin</Text>
+              <Text style={styles.quickNavTitle}>Điểm danh</Text>
+              <Text style={styles.quickNavSub}>Nhận EcoXu</Text>
             </View>
           </TouchableOpacity>
 
@@ -494,12 +493,12 @@ export default function OffersScreen({
               else setActiveTabMode('MY_VOUCHERS');
             }}
           >
-            <View style={[styles.quickNavIconBox, { backgroundColor: '#EDE9FE' }]}>
-              <Ionicons name="ticket" size={16} color="#7C3AED" />
+            <View style={[styles.quickNavIconBox, { backgroundColor: '#FEF3C7' }]}>
+              <Ionicons name="ticket" size={16} color="#B45309" />
             </View>
             <View style={{ flex: 1, marginLeft: 8 }}>
-              <Text style={styles.quickNavTitle}>Ưu đãi</Text>
-              <Text style={styles.quickNavSub}>Bạn có {myVouchers.length} ưu đãi</Text>
+              <Text style={styles.quickNavTitle}>Ví ưu đãi</Text>
+              <Text style={styles.quickNavSub}>{myVouchers.length} mã khả dụng</Text>
             </View>
           </TouchableOpacity>
         </View>
@@ -646,11 +645,11 @@ export default function OffersScreen({
             <View style={styles.flashSaleBanner}>
               <View style={styles.flashSaleLeft}>
                 <View style={styles.flashSaleTagRow}>
-                  <Text style={styles.flashSaleTag}>⚡ GIỜ VÀNG SĂN DEAL</Text>
+                  <Text style={styles.flashSaleTag}>ƯU ĐÃI ĐẶC QUYỀN</Text>
                   <Text style={styles.flashSaleTimer}>02:45:18</Text>
                 </View>
-                <Text style={styles.flashSaleTitle}>Giảm 50% số xu đổi voucher</Text>
-                <Text style={styles.flashSaleSub}>Dành riêng cho thành viên EcoGo hôm nay</Text>
+                <Text style={styles.flashSaleTitle}>Giảm 50% điểm quy đổi voucher</Text>
+                <Text style={styles.flashSaleSub}>Áp dụng cho thành viên EcoGo Smart hôm nay</Text>
               </View>
               <View style={styles.flashSaleRight}>
                 <View style={styles.flashSaleCoinPill}>
@@ -1139,7 +1138,7 @@ const styles = StyleSheet.create({
   },
   // Header Hero
   headerHeroGradient: {
-    backgroundColor: '#7C3AED',
+    backgroundColor: '#4E3322',
     paddingTop: Platform.OS === 'ios' ? 44 : 20,
     paddingHorizontal: 16,
     paddingBottom: 28,
@@ -1197,10 +1196,10 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: '#FACC15',
+    backgroundColor: '#D4AF37',
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#FACC15',
+    shadowColor: '#D4AF37',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.5,
     shadowRadius: 6,
@@ -1360,7 +1359,7 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   categoryLabelActive: {
-    color: '#7C3AED',
+    color: '#4E3322',
     fontWeight: '800'
   },
   // Flash Sale Banner
@@ -1368,12 +1367,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#2E1065',
+    backgroundColor: '#2B180D',
     borderRadius: 18,
     padding: 14,
     marginBottom: 20,
     borderWidth: 1,
-    borderColor: '#A855F7'
+    borderColor: '#D4AF37'
   },
   flashSaleLeft: {
     flex: 1
@@ -1388,7 +1387,7 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.family,
     fontSize: 10,
     fontWeight: '900',
-    color: '#FACC15',
+    color: '#D4AF37',
     letterSpacing: 0.5
   },
   flashSaleTimer: {
@@ -1415,7 +1414,7 @@ const styles = StyleSheet.create({
   },
   flashSaleRight: {},
   flashSaleCoinPill: {
-    backgroundColor: '#FACC15',
+    backgroundColor: '#D4AF37',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 12
@@ -1443,7 +1442,7 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.family,
     fontSize: 12.5,
     fontWeight: '700',
-    color: '#7C3AED'
+    color: '#4E3322'
   },
   // Exclusive Carousel (Quà tặng độc quyền)
   exclusiveScrollContent: {
@@ -1530,13 +1529,13 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.family,
     fontSize: 14,
     fontWeight: '900',
-    color: '#7C3AED'
+    color: '#4E3322'
   },
   coinMiniIcon: {
     width: 17,
     height: 17,
     borderRadius: 8.5,
-    backgroundColor: '#FACC15',
+    backgroundColor: '#D4AF37',
     alignItems: 'center',
     justifyContent: 'center'
   },
@@ -1546,11 +1545,11 @@ const styles = StyleSheet.create({
     color: '#713F12'
   },
   redeemYellowBtn: {
-    backgroundColor: '#FACC15',
+    backgroundColor: '#D4AF37',
     paddingHorizontal: 14,
     paddingVertical: 5,
     borderRadius: 10,
-    shadowColor: '#FACC15',
+    shadowColor: '#D4AF37',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 3,
@@ -1570,19 +1569,19 @@ const styles = StyleSheet.create({
     gap: 8
   },
   urboxFilterPill: {
-    backgroundColor: '#F3E8FF',
+    backgroundColor: '#F5EFEB',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 20
   },
   urboxFilterPillActive: {
-    backgroundColor: '#7C3AED'
+    backgroundColor: '#4E3322'
   },
   urboxFilterText: {
     fontFamily: FONTS.family,
     fontSize: 11,
     fontWeight: '600',
-    color: '#7C3AED'
+    color: '#4E3322'
   },
   urboxFilterTextActive: {
     color: '#FFFFFF',
@@ -1654,7 +1653,7 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.family,
     fontSize: 10,
     fontWeight: '700',
-    color: '#7C3AED',
+    color: '#4E3322',
     marginBottom: 2
   },
   gridCardTitle: {
@@ -1683,7 +1682,7 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.family,
     fontSize: 12,
     fontWeight: '700',
-    color: '#7C3AED'
+    color: '#4E3322'
   },
   emptyVoucherBox: {
     alignItems: 'center',
@@ -1861,7 +1860,7 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.family,
     fontSize: 11,
     fontWeight: '700',
-    color: '#7C3AED'
+    color: '#4E3322'
   },
   redeemGiftTitle: {
     fontFamily: FONTS.family,
@@ -1903,7 +1902,7 @@ const styles = StyleSheet.create({
     color: '#1A1D1F'
   },
   costCoinPill: {
-    backgroundColor: '#F3E8FF',
+    backgroundColor: '#F5EFEB',
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 6
@@ -1912,7 +1911,7 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.family,
     fontSize: 12,
     fontWeight: '800',
-    color: '#7C3AED'
+    color: '#4E3322'
   },
   redeemCostVal: {
     fontFamily: FONTS.family,
@@ -1962,7 +1961,7 @@ const styles = StyleSheet.create({
     flex: 2,
     paddingVertical: 11,
     borderRadius: 12,
-    backgroundColor: '#7C3AED',
+    backgroundColor: '#4E3322',
     alignItems: 'center',
     justifyContent: 'center'
   },
@@ -2021,7 +2020,7 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.family,
     fontSize: 11,
     fontWeight: '800',
-    color: '#7C3AED'
+    color: '#4E3322'
   },
   ticketTitle: {
     fontFamily: FONTS.family,
@@ -2152,10 +2151,10 @@ const styles = StyleSheet.create({
   },
   dayTileToday: {
     backgroundColor: '#FEF3C7',
-    borderColor: '#FACC15'
+    borderColor: '#D4AF37'
   },
   dayTileGrand: {
-    borderColor: '#A855F7'
+    borderColor: '#D4AF37'
   },
   dayLabel: {
     fontFamily: FONTS.family,
@@ -2178,10 +2177,10 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.family,
     fontSize: 9,
     fontWeight: '800',
-    color: '#7C3AED'
+    color: '#4E3322'
   },
   checkInActionBtn: {
-    backgroundColor: '#7C3AED',
+    backgroundColor: '#4E3322',
     paddingVertical: 12,
     borderRadius: 12,
     alignItems: 'center',

@@ -155,22 +155,22 @@ export default function NotificationsScreen({
     playNotificationChime();
     const demoNotifs = [
       {
-        title: '⚡ CHUYẾN ĐI GIỜ VÀNG - GIẢM 20% VF3',
-        body: 'Hệ thống EcoGo vừa mở thêm 10 xe VinFast VF3 tại trạm Landmark 81. Đặt ngay nhận ưu đãi 20%!',
+        title: 'Ưu đãi giờ vàng: Giảm 20% phí thuê VinFast VF3',
+        body: 'Hệ thống EcoGo vừa bổ sung 10 xe VinFast VF3 tại trạm Landmark 81. Đặt xe ngay để nhận ưu đãi 20%.',
         category: 'OFFERS',
         actionType: 'VEHICLES',
         actionPayload: 'CAR'
       },
       {
-        title: '🎁 BẠN VỪA NHẬN ĐƯỢC +50 ECOCOIN',
-        body: 'Chúc mừng bạn đã hoàn thành thử thách di chuyển xanh giảm phát thải CO2 hôm nay!',
+        title: 'Cộng thưởng 50 EcoXu từ hành trình di chuyển xanh',
+        body: 'Chúc mừng bạn đã hoàn thành mục tiêu di chuyển không phát thải CO2 trong ngày hôm nay.',
         category: 'OFFERS',
         actionType: 'OFFERS',
-        actionPayload: 'FOOD'
+        actionPayload: 'CAR'
       },
       {
-        title: '🛡️ BẢO HIỂM CHUYẾN ĐI ĐÃ ĐƯỢC KÍCH HOẠT',
-        body: 'Hợp đồng điện tử và bảo hiểm chuyến đi BIC đã được đồng bộ cho tài khoản của bạn.',
+        title: 'Kích hoạt bảo hiểm chuyến đi & Hợp đồng điện tử',
+        body: 'Hợp đồng điện tử và gói bảo hiểm toàn diện BIC đã được đồng bộ cho tài khoản của bạn.',
         category: 'SYSTEM',
         actionType: 'PROFILE',
         actionPayload: 'EKYC'
@@ -230,16 +230,16 @@ export default function NotificationsScreen({
   return (
     <View style={styles.container}>
       {/* ============================================================
-          1. HEADER TÍM SANG TRỌNG (GIỐNG HỆT ẢNH MẪU CỦA NGƯỜI DÙNG)
+          1. HEADER ESPRESSO SANG TRỌNG (ĐỒNG BỘ QUIET LUXURY)
          ============================================================ */}
       <View style={styles.headerHeroGradient}>
         <View style={styles.headerTopRow}>
           <View style={styles.headerTitleBox}>
-            <Text style={styles.headerMainTitle}>Danh sách thông báo</Text>
+            <Text style={styles.headerMainTitle}>Trung tâm thông báo</Text>
             {unreadCount > 0 ? (
               <Text style={styles.headerSubTitle}>Bạn có {unreadCount} thông báo chưa đọc</Text>
             ) : (
-              <Text style={styles.headerSubTitle}>Đã cập nhật tất cả thông báo mới nhất</Text>
+              <Text style={styles.headerSubTitle}>Cập nhật thông tin vận hành và đặc quyền thành viên</Text>
             )}
           </View>
 
@@ -253,8 +253,8 @@ export default function NotificationsScreen({
                 setSoundEnabled(nextState);
                 if (nextState) playNotificationChime();
                 Alert.alert(
-                  'Âm thanh chuông',
-                  nextState ? 'Đã BẬT tiếng chuông thông báo 🔔' : 'Đã TẮT tiếng chuông thông báo 🔕'
+                  'Âm thanh thông báo',
+                  nextState ? 'Đã bật âm báo thông báo.' : 'Đã tắt âm báo thông báo.'
                 );
               }}
               activeOpacity={0.8}
@@ -262,7 +262,7 @@ export default function NotificationsScreen({
               <Ionicons
                 name={soundEnabled ? 'volume-high' : 'volume-mute'}
                 size={16}
-                color={soundEnabled ? '#FACC15' : 'rgba(255, 255, 255, 0.6)'}
+                color={soundEnabled ? '#D4AF37' : 'rgba(255, 255, 255, 0.65)'}
               />
             </TouchableOpacity>
 
@@ -325,7 +325,7 @@ export default function NotificationsScreen({
          ============================================================ */}
       {loading ? (
         <View style={styles.centerLoading}>
-          <ActivityIndicator size="large" color="#7C3AED" />
+          <ActivityIndicator size="large" color="#6F4E37" />
           <Text style={styles.loadingText}>Đang tải thông báo...</Text>
         </View>
       ) : (
@@ -337,8 +337,8 @@ export default function NotificationsScreen({
             <RefreshControl
               refreshing={refreshing}
               onRefresh={onRefresh}
-              colors={['#7C3AED']}
-              tintColor="#7C3AED"
+              colors={['#6F4E37']}
+              tintColor="#6F4E37"
             />
           }
         >
@@ -499,12 +499,12 @@ const styles = StyleSheet.create({
   },
   // Header Hero
   headerHeroGradient: {
-    backgroundColor: '#7C3AED',
+    backgroundColor: '#4E3322',
     paddingTop: Platform.OS === 'ios' ? 44 : 20,
     paddingHorizontal: 16,
     paddingBottom: 16,
-    borderBottomLeftRadius: 28,
-    borderBottomRightRadius: 28
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24
   },
   headerTopRow: {
     flexDirection: 'row',
@@ -518,13 +518,14 @@ const styles = StyleSheet.create({
   headerMainTitle: {
     fontFamily: FONTS.family,
     fontSize: 20,
-    fontWeight: '900',
-    color: '#FFFFFF'
+    fontWeight: '800',
+    color: '#FFFFFF',
+    letterSpacing: -0.2
   },
   headerSubTitle: {
     fontFamily: FONTS.family,
-    fontSize: 11,
-    color: 'rgba(255, 255, 255, 0.85)',
+    fontSize: 11.5,
+    color: 'rgba(250, 247, 242, 0.82)',
     marginTop: 2
   },
   headerActionsRow: {
@@ -536,17 +537,17 @@ const styles = StyleSheet.create({
     width: 34,
     height: 34,
     borderRadius: 17,
-    backgroundColor: 'rgba(255, 255, 255, 0.18)',
+    backgroundColor: 'rgba(255, 255, 255, 0.14)',
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 0.5,
-    borderColor: 'rgba(255, 255, 255, 0.3)'
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.25)'
   },
   headerIconBtnActive: {
-    backgroundColor: 'rgba(250, 204, 21, 0.25)',
-    borderColor: '#FACC15'
+    backgroundColor: 'rgba(212, 175, 55, 0.22)',
+    borderColor: '#D4AF37'
   },
-  // Filter Pills (Giống ảnh)
+  // Filter Pills
   filterScroll: {
     marginHorizontal: -16
   },
@@ -555,26 +556,26 @@ const styles = StyleSheet.create({
     gap: 8
   },
   filterPill: {
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    backgroundColor: 'rgba(255, 255, 255, 0.14)',
     paddingHorizontal: 16,
     paddingVertical: 7,
     borderRadius: 20,
-    borderWidth: 0.5,
-    borderColor: 'rgba(255, 255, 255, 0.3)'
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.22)'
   },
   filterPillActive: {
-    backgroundColor: '#FFFFFF',
-    borderColor: '#FFFFFF'
+    backgroundColor: '#FAF7F2',
+    borderColor: '#FAF7F2'
   },
   filterPillText: {
     fontFamily: FONTS.family,
     fontSize: 12,
     fontWeight: '700',
-    color: '#FFFFFF'
+    color: '#FAF7F2'
   },
   filterPillTextActive: {
-    color: '#7C3AED',
-    fontWeight: '900'
+    color: '#4E3322',
+    fontWeight: '800'
   },
   // List
   listScrollView: {
@@ -582,7 +583,7 @@ const styles = StyleSheet.create({
   },
   listContentContainer: {
     paddingHorizontal: 16,
-    paddingTop: 12,
+    paddingTop: 14,
     paddingBottom: 110
   },
   centerLoading: {
@@ -594,30 +595,30 @@ const styles = StyleSheet.create({
   loadingText: {
     fontFamily: FONTS.family,
     fontSize: 13,
-    color: '#6F767E',
+    color: '#6F5C50',
     marginTop: 10
   },
-  // Notif Card Item (Giống ảnh)
+  // Notif Card Item
   notifItemCard: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     backgroundColor: '#FFFFFF',
     borderRadius: 18,
-    padding: 12,
+    padding: 13,
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: '#F0E8DC',
-    shadowColor: '#000',
+    borderColor: '#EAE2D5',
+    shadowColor: '#2B180D',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.03,
-    shadowRadius: 5,
+    shadowOpacity: 0.04,
+    shadowRadius: 6,
     elevation: 2
   },
   notifItemCardUnread: {
-    backgroundColor: '#FDFBFF',
-    borderColor: '#DDD6FE',
+    backgroundColor: '#FFFDF9',
+    borderColor: '#D5C7B6',
     borderLeftWidth: 4,
-    borderLeftColor: '#7C3AED'
+    borderLeftColor: '#6F4E37'
   },
   thumbnailBox: {
     width: 60,
@@ -625,7 +626,7 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     overflow: 'hidden',
     position: 'relative',
-    backgroundColor: '#F3E8FF'
+    backgroundColor: '#F6EFE9'
   },
   thumbnailImg: {
     width: '100%',
@@ -638,7 +639,7 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: '#EF4444',
+    backgroundColor: '#D4AF37',
     borderWidth: 1.5,
     borderColor: '#FFFFFF'
   },
@@ -654,9 +655,9 @@ const styles = StyleSheet.create({
   },
   categoryTagText: {
     fontFamily: FONTS.family,
-    fontSize: 10,
+    fontSize: 10.5,
     fontWeight: '700',
-    color: '#7C3AED'
+    color: '#6F4E37'
   },
   metaDotDivider: {
     fontFamily: FONTS.family,
@@ -667,21 +668,21 @@ const styles = StyleSheet.create({
   timeAgoText: {
     fontFamily: FONTS.family,
     fontSize: 10,
-    color: '#9CA3AF'
+    color: '#8C7A68'
   },
   notifTitle: {
     fontFamily: FONTS.family,
-    fontSize: 12.5,
-    fontWeight: '800',
-    color: '#1A1D1F',
-    lineHeight: 17,
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#2D1E16',
+    lineHeight: 18,
     marginBottom: 3
   },
   notifBodyText: {
     fontFamily: FONTS.family,
-    fontSize: 11,
-    color: '#6F767E',
-    lineHeight: 15
+    fontSize: 11.5,
+    color: '#6F5C50',
+    lineHeight: 16
   },
   deleteSingleBtn: {
     padding: 6,
@@ -698,7 +699,7 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: '#EDE9FE',
+    backgroundColor: '#F6EFE9',
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 16
@@ -707,12 +708,12 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.family,
     fontSize: 16,
     fontWeight: '800',
-    color: '#1A1D1F'
+    color: '#2D1E16'
   },
   emptySub: {
     fontFamily: FONTS.family,
     fontSize: 12,
-    color: '#6F767E',
+    color: '#6F5C50',
     textAlign: 'center',
     marginTop: 6,
     lineHeight: 18,
@@ -721,7 +722,7 @@ const styles = StyleSheet.create({
   simulateTestBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#7C3AED',
+    backgroundColor: '#4E3322',
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 14,
@@ -736,7 +737,7 @@ const styles = StyleSheet.create({
   // Modal Detail
   modalBackdrop: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    backgroundColor: 'rgba(43, 24, 13, 0.7)',
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 20
@@ -747,7 +748,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderRadius: 24,
     padding: 18,
-    shadowColor: '#000',
+    shadowColor: '#2B180D',
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.2,
     shadowRadius: 12,
@@ -760,7 +761,7 @@ const styles = StyleSheet.create({
     marginBottom: 12
   },
   modalCategoryBadge: {
-    backgroundColor: '#EDE9FE',
+    backgroundColor: '#F6EFE9',
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 8
@@ -769,7 +770,7 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.family,
     fontSize: 11,
     fontWeight: '800',
-    color: '#7C3AED'
+    color: '#6F4E37'
   },
   modalCloseBtn: {
     width: 30,
@@ -787,23 +788,23 @@ const styles = StyleSheet.create({
   },
   modalDetailTitle: {
     fontFamily: FONTS.family,
-    fontSize: 15,
+    fontSize: 15.5,
     fontWeight: '800',
-    color: '#1A1D1F',
-    lineHeight: 20
+    color: '#2D1E16',
+    lineHeight: 21
   },
   modalDetailTime: {
     fontFamily: FONTS.family,
     fontSize: 11,
-    color: '#9CA3AF',
+    color: '#8C7A68',
     marginTop: 4,
     marginBottom: 8
   },
   modalDetailBody: {
     fontFamily: FONTS.family,
-    fontSize: 12.5,
-    color: '#4B5563',
-    lineHeight: 18
+    fontSize: 13,
+    color: '#6F5C50',
+    lineHeight: 19
   },
   modalBottomActions: {
     marginTop: 16,
@@ -813,7 +814,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#7C3AED',
+    backgroundColor: '#4E3322',
     paddingVertical: 12,
     borderRadius: 14,
     gap: 6

@@ -597,7 +597,7 @@ function AppContent() {
                         <Ionicons
                           name={isActive ? tab.activeIcon : tab.icon}
                           size={22}
-                          color={isActive ? '#7C3AED' : '#8C7A6B'}
+                          color={isActive ? '#4E3322' : '#8C7A6B'}
                         />
                         {tab.hasBadge && unreadNotifCount > 0 && (
                           <View style={styles.dockBadgeRed}>
@@ -1007,13 +1007,13 @@ const styles = StyleSheet.create({
     position: 'relative'
   },
   dockIconPillActive: {
-    backgroundColor: '#F3E8FF'
+    backgroundColor: '#F5EFEB'
   },
   dockActiveDot: {
     width: 4,
     height: 4,
     borderRadius: 2,
-    backgroundColor: '#7C3AED',
+    backgroundColor: '#4E3322',
     position: 'absolute',
     bottom: 4
   },
