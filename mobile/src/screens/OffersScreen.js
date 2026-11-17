@@ -280,6 +280,9 @@ export default function OffersScreen({
   const [checkInStreak, setCheckInStreak] = useState(3);
   const [hasCheckedInToday, setHasCheckedInToday] = useState(false);
 
+  // Modal Hạng Thành Viên & Đặc Quyền
+  const [showRankModal, setShowRankModal] = useState(false);
+
   // Danh sách voucher đã đổi của tôi
   const [myVouchers, setMyVouchers] = useState([
     {
@@ -454,12 +457,7 @@ export default function OffersScreen({
           <TouchableOpacity
             style={styles.quickNavItem}
             activeOpacity={0.8}
-            onPress={() =>
-              Alert.alert(
-                'Hạng thành viên EcoGo',
-                'Bạn đang ở hạng Eco Elite VIP (Top 5% thành viên đóng góp giảm phát thải CO2 nhiều nhất tháng).'
-              )
-            }
+            onPress={() => setShowRankModal(true)}
           >
             <View style={[styles.quickNavIconBox, { backgroundColor: '#EFE7DF', borderColor: '#DFD0C0' }]}>
               <MaterialCommunityIcons name="medal" size={18} color="#6F4E37" />
@@ -1133,6 +1131,123 @@ export default function OffersScreen({
               <Text style={styles.checkInActionText}>
                 {hasCheckedInToday ? '✓ Hôm nay bạn đã nhận +25 Xu' : 'Điểm danh ngay (+25 EcoCoin)'}
               </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      {/* ============================================================
+          MODAL: HẠNG THÀNH VIÊN & ĐẶC QUYỀN ECOGO
+         ============================================================ */}
+      <Modal
+        visible={showRankModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowRankModal(false)}
+      >
+        <View style={styles.modalBackdrop}>
+          <View style={styles.rankModalBox}>
+            <View style={styles.rankHeroBanner}>
+              <View style={styles.rankHeroTopRow}>
+                <View style={styles.rankMedallionWrap}>
+                  <Image source={ICON_CAT_VIP} style={styles.rankMedallionImg} resizeMode="cover" />
+                </View>
+                <View style={{ flex: 1, marginLeft: 12 }}>
+                  <Text style={styles.rankHeroEyebrow}>HẠNG THÀNH VIÊN HIỆN TẠI</Text>
+                  <Text style={styles.rankHeroTitle}>Eco Elite VIP</Text>
+                  <Text style={styles.rankHeroSub}>
+                    Top 5% thành viên giảm phát thải CO₂ nhiều nhất tháng
+                  </Text>
+                </View>
+                <TouchableOpacity
+                  onPress={() => setShowRankModal(false)}
+                  style={styles.rankCloseBtn}
+                >
+                  <Ionicons name="close" size={18} color="#FAF7F2" />
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.rankMetricsRow}>
+                <View style={styles.rankMetricPill}>
+                  <Text style={styles.rankMetricLabel}>Số dư tích lũy</Text>
+                  <Text style={styles.rankMetricValue}>{userCoins} EcoXu</Text>
+                </View>
+                <View style={styles.rankMetricPill}>
+                  <Text style={styles.rankMetricLabel}>CO₂ đã tiết kiệm</Text>
+                  <Text style={styles.rankMetricValue}>14,8 kg</Text>
+                </View>
+              </View>
+            </View>
+
+            <ScrollView style={styles.rankTiersScroll} showsVerticalScrollIndicator={false}>
+              {[
+                {
+                  name: 'Eco Starter',
+                  range: '0 – 99 EcoXu',
+                  perks: 'Tích điểm mỗi chuyến đi xanh & điểm danh 7 ngày nhận xu.',
+                  unlocked: true,
+                  current: false
+                },
+                {
+                  name: 'Eco Silver',
+                  range: '100 – 149 EcoXu',
+                  perks: 'Giảm 10% điểm quy đổi voucher & ưu tiên giữ xe 15 phút.',
+                  unlocked: userCoins >= 100,
+                  current: userCoins >= 100 && userCoins < 150
+                },
+                {
+                  name: 'Eco Gold',
+                  range: '150 – 179 EcoXu',
+                  perks: 'Miễn phí giao xe tận nơi 5km (FREESHIP) & tặng 30kWh sạc nhanh.',
+                  unlocked: userCoins >= 150,
+                  current: userCoins >= 150 && userCoins < 180
+                },
+                {
+                  name: 'Eco Elite VIP',
+                  range: '180+ EcoXu',
+                  perks: 'Giảm 50% điểm đổi voucher giờ vàng, cứu hộ 24/7 & ưu tiên xe hạng sang.',
+                  unlocked: userCoins >= 180,
+                  current: userCoins >= 180
+                }
+              ].map((tier) => (
+                <View
+                  key={tier.name}
+                  style={[
+                    styles.rankTierCard,
+                    tier.current && styles.rankTierCardCurrent
+                  ]}
+                >
+                  <View style={styles.rankTierHeader}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                      <MaterialCommunityIcons
+                        name={tier.current ? 'crown' : tier.unlocked ? 'check-circle' : 'lock-outline'}
+                        size={16}
+                        color={tier.current ? '#B45309' : tier.unlocked ? '#1E5631' : '#9A9FA5'}
+                      />
+                      <Text style={styles.rankTierName}>{tier.name}</Text>
+                    </View>
+                    <View style={[styles.rankRangeBadge, tier.current && styles.rankRangeBadgeCurrent]}>
+                      <Text style={[styles.rankRangeText, tier.current && styles.rankRangeTextCurrent]}>
+                        {tier.current ? 'Đang đạt' : tier.range}
+                      </Text>
+                    </View>
+                  </View>
+                  <Text style={styles.rankTierPerks}>{tier.perks}</Text>
+                </View>
+              ))}
+            </ScrollView>
+
+            <TouchableOpacity
+              style={styles.rankCtaBtn}
+              activeOpacity={0.88}
+              onPress={() => {
+                setShowRankModal(false);
+                setActiveTabMode('DISCOVER');
+                setSelectedCategory('VIP');
+              }}
+            >
+              <Text style={styles.rankCtaText}>Xem ưu đãi dành riêng cho VIP</Text>
+              <Ionicons name="arrow-forward" size={16} color="#FFFFFF" />
             </TouchableOpacity>
           </View>
         </View>
@@ -2221,6 +2336,159 @@ const styles = StyleSheet.create({
   checkInActionText: {
     fontFamily: FONTS.family,
     fontSize: 13,
+    fontWeight: '700',
+    color: '#FFFFFF'
+  },
+  rankModalBox: {
+    width: '100%',
+    maxWidth: 380,
+    maxHeight: '86%',
+    backgroundColor: '#FAF7F2',
+    borderRadius: 24,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#E5DDD3'
+  },
+  rankHeroBanner: {
+    backgroundColor: '#4E3322',
+    padding: 18
+  },
+  rankHeroTopRow: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  rankMedallionWrap: {
+    width: 52,
+    height: 52,
+    borderRadius: 16,
+    overflow: 'hidden',
+    borderWidth: 1.5,
+    borderColor: 'rgba(212, 175, 55, 0.75)'
+  },
+  rankMedallionImg: {
+    width: '100%',
+    height: '100%'
+  },
+  rankHeroEyebrow: {
+    fontFamily: FONTS.family,
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#D4AF37',
+    letterSpacing: 0.7
+  },
+  rankHeroTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 20,
+    fontWeight: '900',
+    color: '#FFFFFF',
+    marginTop: 2
+  },
+  rankHeroSub: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    color: 'rgba(255, 255, 255, 0.78)',
+    marginTop: 2
+  },
+  rankCloseBtn: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: 'rgba(255, 255, 255, 0.14)',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  rankMetricsRow: {
+    flexDirection: 'row',
+    gap: 10,
+    marginTop: 14
+  },
+  rankMetricPill: {
+    flex: 1,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(212, 175, 55, 0.28)'
+  },
+  rankMetricLabel: {
+    fontFamily: FONTS.family,
+    fontSize: 10.5,
+    color: 'rgba(255, 255, 255, 0.72)'
+  },
+  rankMetricValue: {
+    fontFamily: FONTS.family,
+    fontSize: 14,
+    fontWeight: '800',
+    color: '#FDE68A',
+    marginTop: 2
+  },
+  rankTiersScroll: {
+    padding: 16,
+    maxHeight: 310
+  },
+  rankTierCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 14,
+    padding: 12,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#EAE2D7'
+  },
+  rankTierCardCurrent: {
+    borderColor: '#D4AF37',
+    backgroundColor: '#FFFBEB'
+  },
+  rankTierHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 5
+  },
+  rankTierName: {
+    fontFamily: FONTS.family,
+    fontSize: 13.5,
+    fontWeight: '800',
+    color: '#2B180D'
+  },
+  rankRangeBadge: {
+    backgroundColor: '#F3EEE7',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 8
+  },
+  rankRangeBadgeCurrent: {
+    backgroundColor: '#FEF3C7'
+  },
+  rankRangeText: {
+    fontFamily: FONTS.family,
+    fontSize: 10.5,
+    fontWeight: '700',
+    color: '#6F4E37'
+  },
+  rankRangeTextCurrent: {
+    color: '#B45309'
+  },
+  rankTierPerks: {
+    fontFamily: FONTS.family,
+    fontSize: 12,
+    lineHeight: 17,
+    color: '#5C4D42'
+  },
+  rankCtaBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    backgroundColor: '#4E3322',
+    marginHorizontal: 16,
+    marginBottom: 16,
+    paddingVertical: 13,
+    borderRadius: 14
+  },
+  rankCtaText: {
+    fontFamily: FONTS.family,
+    fontSize: 13.5,
     fontWeight: '700',
     color: '#FFFFFF'
   }
