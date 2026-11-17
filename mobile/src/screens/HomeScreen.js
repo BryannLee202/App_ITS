@@ -16,6 +16,7 @@ import { FONTS, THEME_PRESETS } from '../styles/theme';
 import VehicleCard from '../components/VehicleCard';
 import BookingModal from '../components/BookingModal';
 import VoucherWalletModal from '../components/VoucherWalletModal';
+import HomePromoPopupModal from '../components/HomePromoPopupModal';
 import ApiService from '../services/api';
 import { DEFAULT_VEHICLES } from '../data/defaultVehicles';
 
@@ -306,6 +307,7 @@ export default function HomeScreen({
   onNavigateToProfile,
   onOpenRewards,
   onOpenGreenRace,
+  onNavigateToOffers,
   appliedVoucherCode,
   onClearAppliedVoucher
 }) {
@@ -1815,6 +1817,20 @@ export default function HomeScreen({
             message: `Mã ưu đãi ${code} đã sẵn sàng trong đơn thuê xe!`
           });
           setTimeout(() => setBookingToast(null), 3000);
+        }}
+      />
+
+      {/* Pop-up quảng cáo ngẫu nhiên khi vào app & khi out ra vào lại (Home Promo Popup) */}
+      <HomePromoPopupModal
+        onNavigateToVehicles={(cat = 'BIKE') => {
+          if (onNavigateToVehicles) onNavigateToVehicles(cat);
+        }}
+        onNavigateToOffers={() => {
+          if (onNavigateToOffers) onNavigateToOffers();
+          else if (onOpenRewards) onOpenRewards();
+        }}
+        onOpenReferral={() => {
+          if (onOpenRewards) onOpenRewards();
         }}
       />
     </View>
