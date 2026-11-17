@@ -93,8 +93,8 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
   const [latestGeneratedOtp, setLatestGeneratedOtp] = useState('');
   const [showCountryModal, setShowCountryModal] = useState(false);
 
-  // State xác thực Google & Apple ID (OAuth 2.0 Thật + Fallback mọi tài khoản)
-  const [oauthConfig, setOauthConfig] = useState({ googleClientId: '', appleClientId: '' });
+  // State xác thực Google (OAuth 2.0 Thật + Fallback mọi Gmail)
+  const [oauthConfig, setOauthConfig] = useState({ googleClientId: '' });
   const [showGoogleModal, setShowGoogleModal] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [showCustomGoogleForm, setShowCustomGoogleForm] = useState(true);
@@ -103,20 +103,14 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
   const [customGoogleBirthYear, setCustomGoogleBirthYear] = useState('1998');
   const [customGooglePhone, setCustomGooglePhone] = useState('');
 
-  const [showAppleModal, setShowAppleModal] = useState(false);
-  const [appleLoading, setAppleLoading] = useState(false);
-  const [appleEmail, setAppleEmail] = useState('');
-  const [appleName, setAppleName] = useState('');
-
-  // Tải cấu hình OAuth & nhúng SDK chính thức của Google / Apple trên Web nếu đã có Client ID
+  // Tải cấu hình Google OAuth & nhúng Google Identity Services SDK trên Web
   useEffect(() => {
     let mounted = true;
     ApiService.getOAuthConfig()
       .then((cfg) => {
         if (!mounted || !cfg || !cfg.success) return;
         setOauthConfig({
-          googleClientId: cfg.googleClientId || '',
-          appleClientId: cfg.appleClientId || ''
+          googleClientId: cfg.googleClientId || ''
         });
         if (Platform.OS === 'web' && typeof document !== 'undefined') {
           if (cfg.googleClientId && !document.getElementById('google-gsi-sdk')) {
@@ -126,14 +120,6 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
             gScript.async = true;
             gScript.defer = true;
             document.body.appendChild(gScript);
-          }
-          if (cfg.appleClientId && !document.getElementById('apple-auth-sdk')) {
-            const aScript = document.createElement('script');
-            aScript.id = 'apple-auth-sdk';
-            aScript.src = 'https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js';
-            aScript.async = true;
-            aScript.defer = true;
-            document.body.appendChild(aScript);
           }
         }
       })
@@ -181,67 +167,6 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
     }
     setShowCustomGoogleForm(true);
     setShowGoogleModal(true);
-  };
-
-  // Xử lý bấm nút Apple (iOS): Không bao giờ đẩy sang nhập SĐT nữa!
-  const handleAppleButtonPress = async () => {
-    if (
-      Platform.OS === 'web' &&
-      oauthConfig.appleClientId &&
-      typeof window !== 'undefined' &&
-      window.AppleID?.auth
-    ) {
-      try {
-        setAppleLoading(true);
-        window.AppleID.auth.init({
-          clientId: oauthConfig.appleClientId,
-          scope: 'name email',
-          redirectURI: window.location.origin,
-          usePopup: true
-        });
-        const response = await window.AppleID.auth.signIn();
-        const idToken = response?.authorization?.id_token;
-        const userFullName = response?.user?.name
-          ? `${response.user.name.lastName || ''} ${response.user.name.firstName || ''}`.trim()
-          : '';
-        const res = await ApiService.appleLogin({
-          idToken,
-          email: response?.user?.email || '',
-          fullName: userFullName
-        });
-        setAppleLoading(false);
-        if (res && res.success && res.user && onComplete) {
-          onComplete(res.user, res.token);
-          return;
-        }
-      } catch (err) {
-        setAppleLoading(false);
-      }
-    }
-    setShowAppleModal(true);
-  };
-
-  const handleAppleIdSubmit = async () => {
-    const cleanEmail = appleEmail.trim();
-    if (!cleanEmail || !cleanEmail.includes('@')) {
-      Alert.alert('Thiếu Apple ID', 'Vui lòng nhập email Apple ID (ví dụ: tenban@icloud.com hoặc Gmail liên kết Apple ID).');
-      return;
-    }
-    try {
-      setAppleLoading(true);
-      const res = await ApiService.appleLogin({
-        email: cleanEmail,
-        fullName: appleName.trim() || cleanEmail.split('@')[0]
-      });
-      setAppleLoading(false);
-      setShowAppleModal(false);
-      if (res && res.success && res.user && onComplete) {
-        onComplete(res.user, res.token);
-      }
-    } catch (err) {
-      setAppleLoading(false);
-      Alert.alert('Lỗi đăng nhập Apple ID', err.message || 'Vui lòng thử lại.');
-    }
   };
 
   const handleGoogleSignIn = async (account) => {
@@ -967,19 +892,14 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
 
           <View style={styles.socialBtnsRow}>
             <TouchableOpacity
-              style={styles.appleBtn}
-              activeOpacity={0.85}
-              onPress={handleAppleButtonPress}
-            >
-              <Ionicons name="logo-apple" size={21} color="#FFFFFF" />
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.googleBtn}
+              style={[styles.googleBtn, { width: '100%', flexDirection: 'row', gap: 10, paddingHorizontal: 18 }]}
               activeOpacity={0.85}
               onPress={handleGoogleButtonPress}
             >
               <Image source={GOOGLE_ICON} style={styles.googleLogoImg} resizeMode="contain" />
+              <Text style={{ fontFamily: FONTS.family, fontSize: 14, fontWeight: '700', color: '#1F2937' }}>
+                {language === 'vi' ? 'Tiếp tục với Google' : 'Continue with Google'}
+              </Text>
             </TouchableOpacity>
           </View>
 
@@ -1150,77 +1070,6 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
                     </Text>
                   </View>
                 </ScrollView>
-              )}
-            </View>
-          </View>
-        </Modal>
-
-        {/* ============================================================
-            MODAL: APPLE ID (iOS) SIGN-IN
-           ============================================================ */}
-        <Modal
-          visible={showAppleModal}
-          animationType="fade"
-          transparent
-          onRequestClose={() => !appleLoading && setShowAppleModal(false)}
-        >
-          <View style={styles.googleModalBackdrop}>
-            <View style={[styles.googleModalContainer, { backgroundColor: '#1C1C1E', borderColor: '#3A3A3C', borderWidth: 1 }]}>
-              <View style={styles.googleModalHeader}>
-                <View style={styles.googleHeaderTitleRow}>
-                  <View style={{ width: 28, height: 28, borderRadius: 8, backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'center' }}>
-                    <Ionicons name="logo-apple" size={18} color="#000000" />
-                  </View>
-                  <Text style={[styles.googleModalTitle, { color: '#FFFFFF' }]}>Đăng nhập với Apple ID</Text>
-                </View>
-                <TouchableOpacity
-                  style={[styles.googleCloseBtn, { backgroundColor: '#2C2C2E' }]}
-                  onPress={() => !appleLoading && setShowAppleModal(false)}
-                  disabled={appleLoading}
-                >
-                  <Ionicons name="close" size={20} color="#AEAEB2" />
-                </TouchableOpacity>
-              </View>
-
-              <Text style={[styles.googleModalSub, { color: '#AEAEB2' }]}>
-                Sử dụng bất kỳ tài khoản Apple ID hoặc email iCloud nào để đăng nhập nhanh và bảo mật vào EcoGo Smart.
-              </Text>
-
-              {appleLoading ? (
-                <View style={styles.googleLoadingBox}>
-                  <ActivityIndicator size="large" color="#FFFFFF" />
-                  <Text style={[styles.googleLoadingText, { color: '#FFFFFF' }]}>Đang xác thực Apple ID...</Text>
-                </View>
-              ) : (
-                <View>
-                  <Text style={[styles.googleInputLabel, { color: '#D1D1D6' }]}>Email Apple ID / iCloud *</Text>
-                  <TextInput
-                    style={[styles.googleInput, { backgroundColor: '#2C2C2E', borderColor: '#3A3A3C', color: '#FFFFFF' }]}
-                    value={appleEmail}
-                    onChangeText={setAppleEmail}
-                    placeholder="tenban@icloud.com hoặc email Apple ID"
-                    placeholderTextColor="#8E8E93"
-                    keyboardType="email-address"
-                    autoCapitalize="none"
-                  />
-
-                  <Text style={[styles.googleInputLabel, { color: '#D1D1D6', marginTop: 10 }]}>Họ và tên hiển thị</Text>
-                  <TextInput
-                    style={[styles.googleInput, { backgroundColor: '#2C2C2E', borderColor: '#3A3A3C', color: '#FFFFFF' }]}
-                    value={appleName}
-                    onChangeText={setAppleName}
-                    placeholder="Nhập họ tên của bạn"
-                    placeholderTextColor="#8E8E93"
-                  />
-
-                  <TouchableOpacity
-                    style={[styles.submitCustomGoogleBtn, { backgroundColor: '#FFFFFF', marginTop: 16 }]}
-                    activeOpacity={0.85}
-                    onPress={handleAppleIdSubmit}
-                  >
-                    <Text style={[styles.submitCustomGoogleText, { color: '#000000' }]}>Tiếp tục với Apple ID</Text>
-                  </TouchableOpacity>
-                </View>
               )}
             </View>
           </View>

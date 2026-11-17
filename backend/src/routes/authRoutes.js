@@ -9,7 +9,6 @@ router.post('/verify-otp', authController.verifyOtp);
 router.post('/google-login', authController.googleLogin);
 router.get('/oauth-config', authController.getOAuthConfig);
 router.post('/google-oauth', authController.googleOAuthVerify);
-router.post('/apple-login', authController.appleLogin);
 router.get('/verify-session', authMiddleware.requireAuth, authController.verifySession);
 router.get('/profile', authMiddleware, authController.getProfile);
 router.post('/update-profile', authMiddleware, authController.updateProfile);

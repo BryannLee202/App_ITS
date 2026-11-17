@@ -457,14 +457,12 @@ exports.googleLogin = (req, res) => {
   });
 };
 
-// Trả về cấu hình OAuth (Google Client ID & Apple Services ID) để Frontend tự động kích hoạt popup thật khi có Key
+// Trả về cấu hình OAuth (Google Client ID) để Frontend tự động kích hoạt popup Google thật
 exports.getOAuthConfig = (req, res) => {
   return res.json({
     success: true,
     googleClientId: oauthConfig.GOOGLE_CLIENT_ID || '',
-    appleClientId: oauthConfig.APPLE_CLIENT_ID || '',
-    googleEnabled: Boolean(oauthConfig.GOOGLE_CLIENT_ID),
-    appleEnabled: Boolean(oauthConfig.APPLE_CLIENT_ID)
+    googleEnabled: Boolean(oauthConfig.GOOGLE_CLIENT_ID)
   });
 };
 
@@ -510,85 +508,6 @@ exports.googleOAuthVerify = async (req, res) => {
   } catch (err) {
     return res.status(500).json({ success: false, message: `Lỗi xác thực Google OAuth: ${err.message}` });
   }
-};
-
-// Đăng nhập bằng Apple ID (iOS) — Hỗ trợ cả idToken Apple thật lẫn Apple ID Email bất kỳ
-exports.appleLogin = (req, res) => {
-  const { appleId, idToken, email, fullName } = req.body;
-
-  let resolvedEmail = email;
-  let resolvedSub = appleId;
-  let resolvedName = fullName;
-
-  // Nếu có idToken JWT từ Apple JS SDK, giải mã payload lấy sub & email
-  if (idToken && typeof idToken === 'string' && idToken.includes('.')) {
-    try {
-      const parts = idToken.split('.');
-      if (parts.length === 3) {
-        const decoded = JSON.parse(Buffer.from(parts[1], 'base64url').toString('utf8'));
-        if (decoded.sub) resolvedSub = `apple_${decoded.sub}`;
-        if (decoded.email) resolvedEmail = decoded.email;
-      }
-    } catch (e) {}
-  }
-
-  if (!resolvedEmail && !resolvedSub) {
-    return res.status(400).json({ success: false, message: 'Vui lòng nhập Apple ID hoặc Email iCloud hợp lệ.' });
-  }
-
-  const users = loadUsers();
-  let userIndex = users.findIndex(u => {
-    if (resolvedEmail && u.email && u.email.toLowerCase() === resolvedEmail.toLowerCase()) return true;
-    if (resolvedSub && u.appleId === resolvedSub) return true;
-    return false;
-  });
-
-  const displayName = resolvedName || (resolvedEmail ? resolvedEmail.split('@')[0] : 'Khách hàng Apple');
-  let user;
-
-  if (userIndex !== -1) {
-    users[userIndex].fullName = displayName || users[userIndex].fullName;
-    if (resolvedEmail) users[userIndex].email = resolvedEmail;
-    users[userIndex].authProvider = 'APPLE';
-    if (resolvedSub) users[userIndex].appleId = resolvedSub;
-    saveUsers(users);
-    user = users[userIndex];
-  } else {
-    user = {
-      id: `usr_apple_${Date.now().toString().slice(-6)}`,
-      appleId: resolvedSub || `apple_${Date.now()}`,
-      phone: '+84386726647',
-      fullName: displayName,
-      email: resolvedEmail || 'apple.user@privaterelay.appleid.com',
-      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
-      birthYear: 1998,
-      age: 28,
-      authProvider: 'APPLE',
-      isEkycVerified: true,
-      drivingLicense: 'GPLX B2 - 790123456789',
-      licenseNumber: '790123456789',
-      drivingLicenseExpiry: '15/08/2032',
-      cccdNumber: '079201018891',
-      memberRank: 'Eco Elite Ambassador',
-      membershipId: `ESG-ECOGO-2026-AP${Date.now().toString().slice(-4)}`,
-      walletBalance: 1500000,
-      ecoPoints: 340,
-      ecoCoins: 180,
-      totalCo2SavedKg: 42.8,
-      memberTier: 'DIAMOND_GREEN',
-      createdAt: new Date().toISOString()
-    };
-    users.push(user);
-    saveUsers(users);
-  }
-
-  const token = jwt.sign(user, JWT_SECRET, { expiresIn: '7d' });
-  return res.json({
-    success: true,
-    message: 'Đăng nhập bằng Apple ID thành công!',
-    token,
-    user
-  });
 };
 
 exports.updateEkyc = (req, res) => {
