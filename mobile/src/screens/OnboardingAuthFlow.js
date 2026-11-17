@@ -210,22 +210,22 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
       wheelRotation.setValue(0);
 
       Animated.parallel([
-        // 1. Chiếc xe cute chạy vù qua màn hình từ trái sang phải trong 950ms
+        // 1. Chiếc xe cute chạy lướt qua màn hình êm ái, rõ nét (1700ms)
         Animated.timing(vehicleAnim, {
           toValue: 1,
-          duration: 950,
-          easing: Easing.bezier(0.22, 1, 0.36, 1),
+          duration: 1700,
+          easing: Easing.bezier(0.25, 1, 0.5, 1),
           useNativeDriver: useNative
         }),
         Animated.timing(wheelRotation, {
           toValue: 1,
-          duration: 950,
+          duration: 1700,
           easing: Easing.linear,
           useNativeDriver: useNative
         }),
-        // 2. Khi xe vừa lướt qua tâm (350ms), Logo EcoGo Smart bung nhẹ ra
+        // 2. Khi xe vừa lướt qua tâm (700ms), Logo EcoGo Smart bung nhẹ ra
         Animated.sequence([
-          Animated.delay(350),
+          Animated.delay(700),
           Animated.parallel([
             Animated.spring(splashScale, {
               toValue: 1,
@@ -235,7 +235,7 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
             }),
             Animated.timing(splashOpacity, {
               toValue: 1,
-              duration: 450,
+              duration: 500,
               useNativeDriver: useNative
             })
           ])
@@ -250,10 +250,10 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
       );
       glowLoop.start();
 
-      // Tự động chuyển cảnh sau 2.3s
+      // Tự động chuyển cảnh sau 3.0s (đủ thời gian thấy rõ xe chạy và ngắm logo)
       const autoTimer = setTimeout(() => {
         handleProceedFromSplash();
-      }, 2300);
+      }, 3000);
 
       return () => {
         glowLoop.stop();
@@ -461,7 +461,7 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
                   {
                     translateX: vehicleAnim.interpolate({
                       inputRange: [0, 1],
-                      outputRange: [-240, SCREEN_WIDTH + 240]
+                      outputRange: [-260, SCREEN_WIDTH + 260]
                     })
                   }
                 ]
@@ -513,7 +513,7 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
                         {
                           rotate: wheelRotation.interpolate({
                             inputRange: [0, 1],
-                            outputRange: ['0deg', '1440deg']
+                            outputRange: ['0deg', '2160deg']
                           })
                         }
                       ]
@@ -534,7 +534,7 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
                         {
                           rotate: wheelRotation.interpolate({
                             inputRange: [0, 1],
-                            outputRange: ['0deg', '1440deg']
+                            outputRange: ['0deg', '2160deg']
                           })
                         }
                       ]
@@ -1659,55 +1659,55 @@ const styles = StyleSheet.create({
   speedTrailBox: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginRight: 6
+    marginRight: 8
   },
   speedLine: {
-    height: 3,
+    height: 3.5,
     backgroundColor: '#8C6239',
     borderRadius: 2
   },
   speedPuffText: {
-    fontSize: 20,
+    fontSize: 24,
     marginLeft: 4
   },
   cuteCarBody: {
-    width: 105,
-    height: 60,
+    width: 124,
+    height: 70,
     position: 'relative'
   },
   cuteCarRoof: {
     position: 'absolute',
     top: 0,
-    left: 20,
-    width: 58,
-    height: 28,
+    left: 24,
+    width: 68,
+    height: 33,
     backgroundColor: '#4E3322',
-    borderTopLeftRadius: 18,
-    borderTopRightRadius: 18,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1.5,
     borderColor: '#D4AF37'
   },
   cuteCarWindow: {
-    width: 44,
-    height: 18,
+    width: 52,
+    height: 22,
     backgroundColor: '#BAE6FD',
-    borderRadius: 8,
+    borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center'
   },
   cuteDriverFace: {
-    fontSize: 12
+    fontSize: 15
   },
   cuteCarChassis: {
     position: 'absolute',
-    bottom: 8,
+    bottom: 9,
     left: 0,
-    width: 105,
-    height: 30,
+    width: 124,
+    height: 35,
     backgroundColor: '#6F4E37',
-    borderRadius: 12,
+    borderRadius: 14,
     borderWidth: 1.5,
     borderColor: '#D4AF37',
     flexDirection: 'row',
@@ -1718,82 +1718,82 @@ const styles = StyleSheet.create({
   cuteHeadlightBox: {
     position: 'absolute',
     right: -2,
-    top: 7,
+    top: 8,
     flexDirection: 'row',
     alignItems: 'center'
   },
   cuteHeadlightBulb: {
-    width: 8,
-    height: 12,
+    width: 9,
+    height: 14,
     backgroundColor: '#FDE047',
-    borderTopRightRadius: 6,
-    borderBottomRightRadius: 6
+    borderTopRightRadius: 7,
+    borderBottomRightRadius: 7
   },
   cuteLightBeam: {
-    width: 28,
-    height: 18,
+    width: 34,
+    height: 22,
     backgroundColor: 'rgba(253, 224, 71, 0.35)',
-    borderTopRightRadius: 14,
-    borderBottomRightRadius: 14
+    borderTopRightRadius: 16,
+    borderBottomRightRadius: 16
   },
   cuteEcoBadge: {
     position: 'absolute',
-    left: 44,
-    top: 4
+    left: 52,
+    top: 5
   },
   cuteEcoText: {
-    fontSize: 14
+    fontSize: 15
   },
   cuteTaillight: {
     position: 'absolute',
     left: -2,
-    top: 8,
-    width: 6,
-    height: 10,
+    top: 9,
+    width: 7,
+    height: 12,
     backgroundColor: '#EF4444',
-    borderTopLeftRadius: 4,
-    borderBottomLeftRadius: 4
+    borderTopLeftRadius: 5,
+    borderBottomLeftRadius: 5
   },
   cuteWheelsRow: {
     position: 'absolute',
     bottom: 0,
-    left: 14,
-    right: 14,
+    left: 16,
+    right: 16,
     flexDirection: 'row',
     justifyContent: 'space-between'
   },
   cuteWheel: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
+    width: 25,
+    height: 25,
+    borderRadius: 12.5,
     backgroundColor: '#1C1917',
-    borderWidth: 2,
+    borderWidth: 2.5,
     borderColor: '#D4AF37',
     justifyContent: 'center',
     alignItems: 'center'
   },
   wheelRimCenter: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
+    width: 9,
+    height: 9,
+    borderRadius: 4.5,
     backgroundColor: '#F5F5F4',
     position: 'relative'
   },
   wheelSpokeH: {
     position: 'absolute',
-    width: 14,
-    height: 2,
+    width: 16,
+    height: 2.5,
     backgroundColor: '#78716C',
-    left: -3,
-    top: 3
+    left: -3.5,
+    top: 3.5
   },
   wheelSpokeV: {
     position: 'absolute',
-    width: 2,
-    height: 14,
+    width: 2.5,
+    height: 16,
     backgroundColor: '#78716C',
-    left: 3,
-    top: -3
+    left: 3.5,
+    top: -3.5
   },
   splashBrandTitle: {
     fontFamily: FONTS.family,
