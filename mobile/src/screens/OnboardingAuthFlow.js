@@ -11,7 +11,8 @@ import {
   Easing,
   Image,
   Modal,
-  ScrollView
+  ScrollView,
+  Dimensions
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { FONTS, THEME_PRESETS } from '../styles/theme';
@@ -29,6 +30,8 @@ import {
   toE164,
   toNational
 } from '../utils/vietnamPhoneHelper';
+
+const { width: SCREEN_WIDTH = 400 } = Dimensions.get('window');
 
 const ECOGO_LOGO = require('../../assets/logo.png');
 const GOOGLE_ICON = require('../../assets/google_icon.png');
@@ -176,12 +179,13 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
     }
   };
 
-  // Animated values for Step 0 Logo Splash Screen
+  // Animated values for Step 0 Logo Splash Screen & Cute Vehicle Zoom
   const useNative = Platform.OS !== 'web';
-  const splashScale = useRef(new Animated.Value(0.7)).current;
+  const splashScale = useRef(new Animated.Value(0.5)).current;
   const splashOpacity = useRef(new Animated.Value(0)).current;
-  const pathDrawAnim = useRef(new Animated.Value(0)).current;
   const splashGlow = useRef(new Animated.Value(0.3)).current;
+  const vehicleAnim = useRef(new Animated.Value(0)).current;
+  const wheelRotation = useRef(new Animated.Value(0)).current;
 
   // Animated value for Shake Error & Red Border
   const shakeAnim = useRef(new Animated.Value(0)).current;
@@ -197,31 +201,45 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
     ]).start();
   };
 
-  // Run Splash animation on Step 0
+  // Run Splash animation on Step 0: Xe cute lướt qua màn hình & Logo bung nở
   useEffect(() => {
     if (step === 0) {
-      splashScale.setValue(0.7);
+      splashScale.setValue(0.5);
       splashOpacity.setValue(0);
-      pathDrawAnim.setValue(0);
+      vehicleAnim.setValue(0);
+      wheelRotation.setValue(0);
 
       Animated.parallel([
-        Animated.spring(splashScale, {
+        // 1. Chiếc xe cute chạy vù qua màn hình từ trái sang phải trong 950ms
+        Animated.timing(vehicleAnim, {
           toValue: 1,
-          friction: 6,
-          tension: 40,
+          duration: 950,
+          easing: Easing.bezier(0.22, 1, 0.36, 1),
           useNativeDriver: useNative
         }),
-        Animated.timing(splashOpacity, {
+        Animated.timing(wheelRotation, {
           toValue: 1,
-          duration: 600,
+          duration: 950,
+          easing: Easing.linear,
           useNativeDriver: useNative
         }),
-        Animated.timing(pathDrawAnim, {
-          toValue: 1,
-          duration: 1800,
-          easing: Easing.out(Easing.cubic),
-          useNativeDriver: false
-        })
+        // 2. Khi xe vừa lướt qua tâm (350ms), Logo EcoGo Smart bung nhẹ ra
+        Animated.sequence([
+          Animated.delay(350),
+          Animated.parallel([
+            Animated.spring(splashScale, {
+              toValue: 1,
+              friction: 5,
+              tension: 40,
+              useNativeDriver: useNative
+            }),
+            Animated.timing(splashOpacity, {
+              toValue: 1,
+              duration: 450,
+              useNativeDriver: useNative
+            })
+          ])
+        ])
       ]).start();
 
       const glowLoop = Animated.loop(
@@ -232,9 +250,10 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
       );
       glowLoop.start();
 
+      // Tự động chuyển cảnh sau 2.3s
       const autoTimer = setTimeout(() => {
         handleProceedFromSplash();
-      }, 2800);
+      }, 2300);
 
       return () => {
         glowLoop.stop();
@@ -245,8 +264,8 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
 
   const handleProceedFromSplash = () => {
     Animated.parallel([
-      Animated.timing(splashScale, { toValue: 1.25, duration: 350, useNativeDriver: useNative }),
-      Animated.timing(splashOpacity, { toValue: 0, duration: 350, useNativeDriver: useNative })
+      Animated.timing(splashScale, { toValue: 1.15, duration: 300, useNativeDriver: useNative }),
+      Animated.timing(splashOpacity, { toValue: 0, duration: 300, useNativeDriver: useNative })
     ]).start(() => {
       setStep(1);
     });
@@ -423,7 +442,7 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
   };
 
   // ============================================================================
-  // STEP 0: ANIMATED VECTOR LOGO SPLASH SCREEN (VIDEO 1 STYLE)
+  // STEP 0: ANIMATED VECTOR LOGO SPLASH SCREEN (MINIMALIST LUXURY + CUTE CAR ZOOM)
   // ============================================================================
   if (step === 0) {
     return (
@@ -433,6 +452,105 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
           activeOpacity={1}
           onPress={handleProceedFromSplash}
         >
+          {/* 1. Chiếc xe cute chạy nhanh vù qua màn hình trước khi logo hiện */}
+          <Animated.View
+            style={[
+              styles.cuteVehicleTrack,
+              {
+                transform: [
+                  {
+                    translateX: vehicleAnim.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [-240, SCREEN_WIDTH + 240]
+                    })
+                  }
+                ]
+              }
+            ]}
+            pointerEvents="none"
+          >
+            {/* Vệt khói & gió lướt vút */}
+            <View style={styles.speedTrailBox}>
+              <View style={[styles.speedLine, { width: 42, opacity: 0.8 }]} />
+              <View style={[styles.speedLine, { width: 60, opacity: 0.5, marginTop: 4 }]} />
+              <View style={[styles.speedLine, { width: 30, opacity: 0.3, marginTop: 4 }]} />
+              <Text style={styles.speedPuffText}>💨</Text>
+            </View>
+
+            {/* Chiếc xe điện Cute */}
+            <View style={styles.cuteCarBody}>
+              {/* Mui xe & Cửa kính người lái */}
+              <View style={styles.cuteCarRoof}>
+                <View style={styles.cuteCarWindow}>
+                  <Text style={styles.cuteDriverFace}>😊</Text>
+                </View>
+              </View>
+
+              {/* Thân xe */}
+              <View style={styles.cuteCarChassis}>
+                {/* Đèn pha trước & tia sáng */}
+                <View style={styles.cuteHeadlightBox}>
+                  <View style={styles.cuteHeadlightBulb} />
+                  <View style={styles.cuteLightBeam} />
+                </View>
+
+                {/* Biểu tượng lá xanh Eco */}
+                <View style={styles.cuteEcoBadge}>
+                  <Text style={styles.cuteEcoText}>🌱</Text>
+                </View>
+
+                {/* Đèn hậu đỏ */}
+                <View style={styles.cuteTaillight} />
+              </View>
+
+              {/* Bánh xe quay tít khi chạy */}
+              <View style={styles.cuteWheelsRow}>
+                <Animated.View
+                  style={[
+                    styles.cuteWheel,
+                    {
+                      transform: [
+                        {
+                          rotate: wheelRotation.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: ['0deg', '1440deg']
+                          })
+                        }
+                      ]
+                    }
+                  ]}
+                >
+                  <View style={styles.wheelRimCenter}>
+                    <View style={styles.wheelSpokeH} />
+                    <View style={styles.wheelSpokeV} />
+                  </View>
+                </Animated.View>
+
+                <Animated.View
+                  style={[
+                    styles.cuteWheel,
+                    {
+                      transform: [
+                        {
+                          rotate: wheelRotation.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: ['0deg', '1440deg']
+                          })
+                        }
+                      ]
+                    }
+                  ]}
+                >
+                  <View style={styles.wheelRimCenter}>
+                    <View style={styles.wheelSpokeH} />
+                    <View style={styles.wheelSpokeV} />
+                  </View>
+                </Animated.View>
+              </View>
+            </View>
+          </Animated.View>
+
+          {/* 2. CHỈ CÓ DUY NHẤT LOGO TỐI GIẢN NỔI BẬT Ở TRUNG TÂM */}
           <Animated.View
             style={[
               styles.splashCardInner,
@@ -442,12 +560,14 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
               }
             ]}
           >
-            {/* Hero Brand Logo Master - Luxury Automotive Squircle */}
             <View style={styles.splashEmblemWrap}>
-              <View
+              <Animated.View
                 style={[
                   styles.splashOuterGlowRing,
-                  { shadowColor: theme.primary }
+                  {
+                    shadowColor: theme.primary,
+                    shadowOpacity: splashGlow
+                  }
                 ]}
               >
                 <Image
@@ -455,59 +575,12 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
                   style={styles.splashLogoImage}
                   resizeMode="cover"
                 />
-              </View>
+              </Animated.View>
 
-              {/* Orbiting Ambient Ring Arc */}
+              {/* Vòng hào quang sang trọng bao quanh */}
               <View style={[styles.splashOrbitRing, { borderColor: theme.primaryBorder }]} />
+              <View style={[styles.splashOrbitRingOuter, { borderColor: 'rgba(212, 175, 55, 0.16)' }]} />
             </View>
-
-            {/* Brand Typography */}
-            <Text style={styles.splashBrandTitle}>EcoGo Smart</Text>
-            <View
-              style={[
-                styles.splashBadgePill,
-                { backgroundColor: theme.primarySoft, borderColor: theme.primaryBorder }
-              ]}
-            >
-              <Ionicons name="car-sport" size={13} color={theme.primary} style={{ marginRight: 5 }} />
-              <Text style={[styles.splashBadgePillText, { color: theme.primary }]}>
-                {t('splash.badge')}
-              </Text>
-            </View>
-
-            {/* High-impact Slogan for Multi-Vehicle Rental */}
-            <Text style={[styles.splashSloganMain, { color: theme.primary }]}>
-              {t('splash.slogan_main')}
-            </Text>
-            <Text style={styles.splashSloganSub}>
-              {t('splash.slogan_sub')}
-            </Text>
-
-            {/* Animated Vector Drawing Path Line */}
-            <View style={styles.splashDrawingLineWrap}>
-              <Animated.View
-                style={[
-                  styles.splashDrawingLineFill,
-                  {
-                    backgroundColor: theme.primary,
-                    width: pathDrawAnim.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: ['0%', '100%']
-                    })
-                  }
-                ]}
-              />
-            </View>
-
-            {/* Premium CTA Button */}
-            <TouchableOpacity
-              style={[styles.splashCtaBtn, { backgroundColor: theme.primary }]}
-              activeOpacity={0.85}
-              onPress={handleProceedFromSplash}
-            >
-              <Text style={styles.splashCtaBtnText}>{t('splash.cta')}</Text>
-              <Ionicons name="arrow-forward" size={15} color="#FAF7F2" style={{ marginLeft: 6 }} />
-            </TouchableOpacity>
           </Animated.View>
         </TouchableOpacity>
       </View>
@@ -1530,17 +1603,16 @@ const styles = StyleSheet.create({
     maxWidth: 340
   },
   splashEmblemWrap: {
-    width: 154,
-    height: 154,
+    width: 176,
+    height: 176,
     alignItems: 'center',
     justifyContent: 'center',
-    position: 'relative',
-    marginBottom: 26
+    position: 'relative'
   },
   splashOuterGlowRing: {
-    width: 140,
-    height: 140,
-    borderRadius: 36,
+    width: 156,
+    height: 156,
+    borderRadius: 40,
     backgroundColor: '#352115',
     borderWidth: 2.5,
     borderColor: '#D4AF37',
@@ -1549,23 +1621,179 @@ const styles = StyleSheet.create({
     shadowColor: '#2B180D',
     shadowOffset: { width: 0, height: 12 },
     shadowOpacity: 0.35,
-    shadowRadius: 26,
+    shadowRadius: 28,
     elevation: 12,
     overflow: 'hidden'
   },
   splashLogoImage: {
-    width: 135,
-    height: 135,
-    borderRadius: 33
+    width: 150,
+    height: 150,
+    borderRadius: 37
   },
   splashOrbitRing: {
     position: 'absolute',
-    width: 168,
-    height: 168,
-    borderRadius: 84,
+    width: 188,
+    height: 188,
+    borderRadius: 94,
     borderWidth: 1.5,
     borderStyle: 'dashed',
     borderColor: 'rgba(111, 78, 55, 0.22)'
+  },
+  splashOrbitRingOuter: {
+    position: 'absolute',
+    width: 220,
+    height: 220,
+    borderRadius: 110,
+    borderWidth: 1,
+    borderStyle: 'dashed'
+  },
+
+  /* CUTE VEHICLE ZOOM ANIMATION */
+  cuteVehicleTrack: {
+    position: 'absolute',
+    top: '42%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    zIndex: 10
+  },
+  speedTrailBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginRight: 6
+  },
+  speedLine: {
+    height: 3,
+    backgroundColor: '#8C6239',
+    borderRadius: 2
+  },
+  speedPuffText: {
+    fontSize: 20,
+    marginLeft: 4
+  },
+  cuteCarBody: {
+    width: 105,
+    height: 60,
+    position: 'relative'
+  },
+  cuteCarRoof: {
+    position: 'absolute',
+    top: 0,
+    left: 20,
+    width: 58,
+    height: 28,
+    backgroundColor: '#4E3322',
+    borderTopLeftRadius: 18,
+    borderTopRightRadius: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1.5,
+    borderColor: '#D4AF37'
+  },
+  cuteCarWindow: {
+    width: 44,
+    height: 18,
+    backgroundColor: '#BAE6FD',
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  cuteDriverFace: {
+    fontSize: 12
+  },
+  cuteCarChassis: {
+    position: 'absolute',
+    bottom: 8,
+    left: 0,
+    width: 105,
+    height: 30,
+    backgroundColor: '#6F4E37',
+    borderRadius: 12,
+    borderWidth: 1.5,
+    borderColor: '#D4AF37',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 8
+  },
+  cuteHeadlightBox: {
+    position: 'absolute',
+    right: -2,
+    top: 7,
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  cuteHeadlightBulb: {
+    width: 8,
+    height: 12,
+    backgroundColor: '#FDE047',
+    borderTopRightRadius: 6,
+    borderBottomRightRadius: 6
+  },
+  cuteLightBeam: {
+    width: 28,
+    height: 18,
+    backgroundColor: 'rgba(253, 224, 71, 0.35)',
+    borderTopRightRadius: 14,
+    borderBottomRightRadius: 14
+  },
+  cuteEcoBadge: {
+    position: 'absolute',
+    left: 44,
+    top: 4
+  },
+  cuteEcoText: {
+    fontSize: 14
+  },
+  cuteTaillight: {
+    position: 'absolute',
+    left: -2,
+    top: 8,
+    width: 6,
+    height: 10,
+    backgroundColor: '#EF4444',
+    borderTopLeftRadius: 4,
+    borderBottomLeftRadius: 4
+  },
+  cuteWheelsRow: {
+    position: 'absolute',
+    bottom: 0,
+    left: 14,
+    right: 14,
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  },
+  cuteWheel: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    backgroundColor: '#1C1917',
+    borderWidth: 2,
+    borderColor: '#D4AF37',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  wheelRimCenter: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#F5F5F4',
+    position: 'relative'
+  },
+  wheelSpokeH: {
+    position: 'absolute',
+    width: 14,
+    height: 2,
+    backgroundColor: '#78716C',
+    left: -3,
+    top: 3
+  },
+  wheelSpokeV: {
+    position: 'absolute',
+    width: 2,
+    height: 14,
+    backgroundColor: '#78716C',
+    left: 3,
+    top: -3
   },
   splashBrandTitle: {
     fontFamily: FONTS.family,
