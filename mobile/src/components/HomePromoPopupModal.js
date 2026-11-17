@@ -85,21 +85,21 @@ const PROMO_CAMPAIGNS = [
     vectorType: 'DEAL'
   },
   {
-    id: 'promo_newgym_15d',
-    brand: 'THE NEW GYM x ECOGO',
-    tagline: 'SỐNG KHỎE CÙNG NĂNG LƯỢNG XANH',
-    title: 'BẬT MOOD THỂ THAO\nTẶNG 15 NGÀY TẬP 0Đ',
-    subtitle: 'TẬP KHÔNG GIỚI HẠN GIỜ\nKÈM HUẤN LUYỆN VIÊN HƯỚNG DẪN',
-    bgGradient: ['#581C87', '#7E22CE', '#9333EA'],
-    cardBg: '#7E22CE',
-    btnBg: '#38BDF8',
-    btnTextColor: '#0C4A6E',
-    btnText: 'NHẬN THẺ TẬP NGAY!',
-    badge: 'MIỄN PHÍ 100%',
-    badgeColor: '#38BDF8',
-    type: 'OFFERS',
-    image: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=600&q=80',
-    vectorType: 'GYM'
+    id: 'promo_roadtrip_weekend',
+    brand: 'ECOGO ROADTRIP · VINFAST EV',
+    tagline: 'TIẾP SỨC HÀNH TRÌNH KHÁM PHÁ',
+    title: 'THUÊ XE CUỐI TUẦN\nGIẢM NGAY 35%',
+    subtitle: 'GIAO XE TẬN CỬA MIỄN PHÍ\nKHÔNG GIỚI HẠN KM · TỰ DO VI VU',
+    bgGradient: ['#0F172A', '#1E3A8A', '#2563EB'],
+    cardBg: '#1E3A8A',
+    btnBg: '#FACC15',
+    btnTextColor: '#0F172A',
+    btnText: 'LÊN XE VI VU NGAY!',
+    badge: 'DEAL HOT CUỐI TUẦN',
+    badgeColor: '#F59E0B',
+    type: 'CAR',
+    image: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=600&q=80',
+    vectorType: 'ROADTRIP'
   }
 ];
 
@@ -218,10 +218,10 @@ export default function HomePromoPopupModal({
                     <Text style={styles.mascotSpeechText}>Deal từ 25 Xu</Text>
                   </View>
                 )}
-                {currentAd.vectorType === 'GYM' && (
+                {currentAd.vectorType === 'ROADTRIP' && (
                   <View style={styles.mascotSpeechBubble}>
-                    <Ionicons name="barbell" size={18} color="#9333EA" />
-                    <Text style={styles.mascotSpeechText}>Free 15 Ngày</Text>
+                    <Ionicons name="compass" size={18} color="#2563EB" />
+                    <Text style={styles.mascotSpeechText}>Vi vu cuối tuần</Text>
                   </View>
                 )}
               </View>

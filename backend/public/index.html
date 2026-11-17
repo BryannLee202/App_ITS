@@ -1,181 +1,35 @@
 <!doctype html>
-<html lang="vi">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, viewport-fit=cover" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <title>EcoGo Smart · Thuê Xe Tự Lái Đa Dạng 24/7</title>
-    
-    <!-- iOS Home Screen App (PWA) Optimizations -->
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <meta name="apple-mobile-web-app-title" content="EcoGo" />
-    <meta name="theme-color" content="#4E3322" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <link rel="manifest" href="/manifest.json" />
-    <link rel="icon" href="/favicon.ico"/>
-
+    <!-- The `react-native-web` recommended style reset: https://necolas.github.io/react-native-web/docs/setup/#root-element -->
     <style id="expo-reset">
-      html, body {
+      /* These styles make the body full-height */
+      html,
+      body {
         height: 100%;
-        margin: 0;
-        padding: 0;
-        background-color: #FAF7F2;
       }
+      /* These styles disable body scrolling if you are using <ScrollView> */
       body {
         overflow: hidden;
-        -webkit-tap-highlight-color: transparent;
       }
+      /* These styles make the root element full-height */
       #root {
         display: flex;
         height: 100%;
         flex: 1;
       }
-      #ecogo-error-boundary {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: #FAF7F2;
-        z-index: 99999;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 24px;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        text-align: center;
-      }
     </style>
-    <style id="expo-vector-icons">
-      @font-face {
-        font-family: 'ionicons';
-        src: url('/fonts/Ionicons.ttf') format('truetype'),
-             url('https://cdn.jsdelivr.net/npm/@expo/vector-icons@14.0.0/build/vendor/react-native-vector-icons/Fonts/Ionicons.ttf') format('truetype');
-        font-display: swap;
-      }
-      @font-face {
-        font-family: 'Ionicons';
-        src: url('/fonts/Ionicons.ttf') format('truetype'),
-             url('https://cdn.jsdelivr.net/npm/@expo/vector-icons@14.0.0/build/vendor/react-native-vector-icons/Fonts/Ionicons.ttf') format('truetype');
-        font-display: swap;
-      }
-      @font-face {
-        font-family: 'material-community';
-        src: url('/fonts/MaterialCommunityIcons.ttf') format('truetype'),
-             url('https://cdn.jsdelivr.net/npm/@expo/vector-icons@14.0.0/build/vendor/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf') format('truetype');
-        font-display: swap;
-      }
-      @font-face {
-        font-family: 'MaterialCommunityIcons';
-        src: url('/fonts/MaterialCommunityIcons.ttf') format('truetype'),
-             url('https://cdn.jsdelivr.net/npm/@expo/vector-icons@14.0.0/build/vendor/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf') format('truetype');
-        font-display: swap;
-      }
-      @font-face {
-        font-family: 'material';
-        src: url('/fonts/MaterialIcons.ttf') format('truetype'),
-             url('https://cdn.jsdelivr.net/npm/@expo/vector-icons@14.0.0/build/vendor/react-native-vector-icons/Fonts/MaterialIcons.ttf') format('truetype');
-        font-display: swap;
-      }
-      @font-face {
-        font-family: 'MaterialIcons';
-        src: url('/fonts/MaterialIcons.ttf') format('truetype'),
-             url('https://cdn.jsdelivr.net/npm/@expo/vector-icons@14.0.0/build/vendor/react-native-vector-icons/Fonts/MaterialIcons.ttf') format('truetype');
-        font-display: swap;
-      }
-      @font-face {
-        font-family: 'FontAwesome';
-        src: url('/fonts/FontAwesome.ttf') format('truetype'),
-             url('https://cdn.jsdelivr.net/npm/@expo/vector-icons@14.0.0/build/vendor/react-native-vector-icons/Fonts/FontAwesome.ttf') format('truetype');
-        font-display: swap;
-      }
-      @font-face {
-        font-family: 'fontawesome';
-        src: url('/fonts/FontAwesome.ttf') format('truetype'),
-             url('https://cdn.jsdelivr.net/npm/@expo/vector-icons@14.0.0/build/vendor/react-native-vector-icons/Fonts/FontAwesome.ttf') format('truetype');
-        font-display: swap;
-      }
-      @font-face {
-        font-family: 'feather';
-        src: url('/fonts/Feather.ttf') format('truetype'),
-             url('https://cdn.jsdelivr.net/npm/@expo/vector-icons@14.0.0/build/vendor/react-native-vector-icons/Fonts/Feather.ttf') format('truetype');
-        font-display: swap;
-      }
-      @font-face {
-        font-family: 'Feather';
-        src: url('/fonts/Feather.ttf') format('truetype'),
-             url('https://cdn.jsdelivr.net/npm/@expo/vector-icons@14.0.0/build/vendor/react-native-vector-icons/Fonts/Feather.ttf') format('truetype');
-        font-display: swap;
-      }
-      @font-face {
-        font-family: 'anticon';
-        src: url('/fonts/AntDesign.ttf') format('truetype'),
-             url('https://cdn.jsdelivr.net/npm/@expo/vector-icons@14.0.0/build/vendor/react-native-vector-icons/Fonts/AntDesign.ttf') format('truetype');
-        font-display: swap;
-      }
-      @font-face {
-        font-family: 'AntDesign';
-        src: url('/fonts/AntDesign.ttf') format('truetype'),
-             url('https://cdn.jsdelivr.net/npm/@expo/vector-icons@14.0.0/build/vendor/react-native-vector-icons/Fonts/AntDesign.ttf') format('truetype');
-        font-display: swap;
-      }
-      @font-face {
-        font-family: 'octicons';
-        src: url('/fonts/Octicons.ttf') format('truetype'),
-             url('https://cdn.jsdelivr.net/npm/@expo/vector-icons@14.0.0/build/vendor/react-native-vector-icons/Fonts/Octicons.ttf') format('truetype');
-        font-display: swap;
-      }
-      @font-face {
-        font-family: 'simple-line-icons';
-        src: url('/fonts/SimpleLineIcons.ttf') format('truetype'),
-             url('https://cdn.jsdelivr.net/npm/@expo/vector-icons@14.0.0/build/vendor/react-native-vector-icons/Fonts/SimpleLineIcons.ttf') format('truetype');
-        font-display: swap;
-      }
-      @font-face {
-        font-family: 'entypo';
-        src: url('/fonts/Entypo.ttf') format('truetype'),
-             url('https://cdn.jsdelivr.net/npm/@expo/vector-icons@14.0.0/build/vendor/react-native-vector-icons/Fonts/Entypo.ttf') format('truetype');
-        font-display: swap;
-      }
-      @font-face {
-        font-family: 'evilicons';
-        src: url('/fonts/EvilIcons.ttf') format('truetype'),
-             url('https://cdn.jsdelivr.net/npm/@expo/vector-icons@14.0.0/build/vendor/react-native-vector-icons/Fonts/EvilIcons.ttf') format('truetype');
-        font-display: swap;
-      }
-      @font-face {
-        font-family: 'Fontisto';
-        src: url('/fonts/Fontisto.ttf') format('truetype'),
-             url('https://cdn.jsdelivr.net/npm/@expo/vector-icons@14.0.0/build/vendor/react-native-vector-icons/Fonts/Fontisto.ttf') format('truetype');
-        font-display: swap;
-      }
-    </style>
-  </head>
+  <link rel="icon" href="/favicon.ico"/></head>
+
   <body>
-    <noscript>Vui lòng kích hoạt JavaScript để chạy EcoGo Smart Mobility.</noscript>
+    <!-- Use static rendering with Expo Router to support running without JavaScript. -->
+    <noscript> You need to enable JavaScript to run this app. </noscript>
+    <!-- The root element for your Expo app. -->
     <div id="root"></div>
-
-    <div id="ecogo-error-boundary">
-      <div style="font-size: 40px; margin-bottom: 12px;">🌱</div>
-      <h3 style="color: #4E3322; margin: 0 0 8px 0; font-size: 18px;">EcoGo Smart Mobility</h3>
-      <p style="color: #6F4E37; font-size: 14px; max-width: 320px; margin-bottom: 20px;">Đang tải phiên bản mới nhất từ máy chủ...</p>
-      <button onclick="window.location.reload(true)" style="background: #4E3322; color: #fff; border: none; padding: 10px 24px; border-radius: 99px; font-weight: bold; cursor: pointer; font-size: 14px;">Tải lại ngay</button>
-    </div>
-
-    <script>
-      // Anti-white screen fallback
-      window.addEventListener('error', function(e) {
-        console.error('Captured window error:', e);
-        var root = document.getElementById('root');
-        if (!root || root.children.length === 0) {
-          var fb = document.getElementById('ecogo-error-boundary');
-          if (fb) fb.style.display = 'flex';
-        }
-      });
-    </script>
-    <script src="/bundle.js?v=1.1.2" defer></script>
-  </body>
+  <script src="/_expo/static/js/web/index-ba66d0c96eef516ce9b298211f0b91b0.js" defer></script>
+</body>
 </html>
