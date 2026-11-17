@@ -1,0 +1,840 @@
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Image,
+  Modal,
+  Alert,
+  ActivityIndicator,
+  Platform,
+  RefreshControl
+} from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { FONTS, THEME_PRESETS } from '../styles/theme';
+import ApiService from '../services/api';
+import { playNotificationChime } from '../utils/audioChime';
+
+const NOTIF_FILTERS = [
+  { id: 'ALL', label: 'Tất cả' },
+  { id: 'OFFERS', label: 'Ưu đãi' },
+  { id: 'NEWS', label: 'Tin tức' },
+  { id: 'SYSTEM', label: 'Hệ thống' }
+];
+
+export default function NotificationsScreen({
+  theme = THEME_PRESETS.BE_SUA_CAFE,
+  onNavigateToVehicles,
+  onNavigateToOffers,
+  onNavigateToMap,
+  onNavigateToProfile
+}) {
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [activeFilter, setActiveFilter] = useState('ALL');
+  const [selectedNotif, setSelectedNotif] = useState(null);
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [soundEnabled, setSoundEnabled] = useState(true);
+
+  // Tải danh sách thông báo từ Backend API
+  const fetchNotifications = async (shouldChime = false) => {
+    try {
+      const res = await ApiService.getNotifications();
+      if (res && res.success && res.notifications) {
+        setNotifications(res.notifications);
+        if (shouldChime && soundEnabled) {
+          playNotificationChime();
+        }
+      }
+    } catch (err) {
+      console.warn('Lỗi tải thông báo:', err.message);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchNotifications();
+
+    // Tự động kiểm tra thông báo mới mỗi 25 giây
+    const interval = setInterval(() => {
+      fetchNotifications(false);
+    }, 25000);
+
+    return () => clearInterval(interval);
+  }, [soundEnabled]);
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    fetchNotifications(true);
+  };
+
+  // Đánh dấu 1 thông báo là đã đọc
+  const handleItemClick = async (item) => {
+    setSelectedNotif(item);
+    setShowDetailModal(true);
+
+    if (!item.isRead) {
+      if (soundEnabled) playNotificationChime();
+      // Cập nhật local
+      setNotifications((prev) =>
+        prev.map((n) => (n.id === item.id ? { ...n, isRead: true } : n))
+      );
+      // Gọi API backend
+      try {
+        await ApiService.markNotificationRead(item.id);
+      } catch (e) {}
+    }
+  };
+
+  // Đánh dấu tất cả là đã đọc
+  const handleMarkAllRead = async () => {
+    if (notifications.every((n) => n.isRead)) {
+      Alert.alert('Thông báo', 'Tất cả thông báo đều đã được đọc.');
+      return;
+    }
+    setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
+    try {
+      await ApiService.markAllNotificationsRead();
+      if (soundEnabled) playNotificationChime();
+      Alert.alert('Thành công', 'Đã đánh dấu tất cả thông báo là đã đọc!');
+    } catch (e) {
+      Alert.alert('Đã cập nhật', 'Đã đánh dấu đã đọc trên thiết bị!');
+    }
+  };
+
+  // Xóa 1 thông báo
+  const handleDeleteItem = async (id, e) => {
+    if (e && e.stopPropagation) e.stopPropagation();
+    Alert.alert('Xóa thông báo', 'Bạn có chắc chắn muốn xóa thông báo này?', [
+      { text: 'Hủy', style: 'cancel' },
+      {
+        text: 'Xóa',
+        style: 'destructive',
+        onPress: async () => {
+          setNotifications((prev) => prev.filter((n) => n.id !== id));
+          if (selectedNotif && selectedNotif.id === id) {
+            setShowDetailModal(false);
+          }
+          try {
+            await ApiService.deleteNotification(id);
+          } catch (e) {}
+        }
+      }
+    ]);
+  };
+
+  // Xóa toàn bộ thông báo
+  const handleClearAll = () => {
+    if (notifications.length === 0) {
+      Alert.alert('Thông báo', 'Danh sách thông báo hiện đang trống.');
+      return;
+    }
+    Alert.alert('Xóa tất cả', 'Bạn có chắc muốn xóa toàn bộ lịch sử thông báo không?', [
+      { text: 'Hủy', style: 'cancel' },
+      {
+        text: 'Xóa hết',
+        style: 'destructive',
+        onPress: async () => {
+          setNotifications([]);
+          try {
+            await ApiService.clearAllNotifications();
+            Alert.alert('Đã xóa', 'Toàn bộ danh sách thông báo đã được dọn sạch!');
+          } catch (e) {}
+        }
+      }
+    ]);
+  };
+
+  // Bắn thông báo thử nghiệm kèm tiếng chuông (Simulate real notification)
+  const handleTriggerSimulatedNotif = async () => {
+    playNotificationChime();
+    const demoNotifs = [
+      {
+        title: '⚡ CHUYẾN ĐI GIỜ VÀNG - GIẢM 20% VF3',
+        body: 'Hệ thống EcoGo vừa mở thêm 10 xe VinFast VF3 tại trạm Landmark 81. Đặt ngay nhận ưu đãi 20%!',
+        category: 'OFFERS',
+        actionType: 'VEHICLES',
+        actionPayload: 'CAR'
+      },
+      {
+        title: '🎁 BẠN VỪA NHẬN ĐƯỢC +50 ECOCOIN',
+        body: 'Chúc mừng bạn đã hoàn thành thử thách di chuyển xanh giảm phát thải CO2 hôm nay!',
+        category: 'OFFERS',
+        actionType: 'OFFERS',
+        actionPayload: 'FOOD'
+      },
+      {
+        title: '🛡️ BẢO HIỂM CHUYẾN ĐI ĐÃ ĐƯỢC KÍCH HOẠT',
+        body: 'Hợp đồng điện tử và bảo hiểm chuyến đi BIC đã được đồng bộ cho tài khoản của bạn.',
+        category: 'SYSTEM',
+        actionType: 'PROFILE',
+        actionPayload: 'EKYC'
+      }
+    ];
+
+    const pick = demoNotifs[Math.floor(Math.random() * demoNotifs.length)];
+    try {
+      const res = await ApiService.createNotification(pick);
+      if (res && res.success && res.notification) {
+        setNotifications((prev) => [res.notification, ...prev]);
+        Alert.alert('🔔 Ding-Dong!', `Thông báo mới: "${pick.title}" kèm tiếng chuông đã được gửi tự động!`);
+      }
+    } catch (e) {
+      const localItem = {
+        id: `notif_${Date.now()}`,
+        category: pick.category,
+        categoryLabel: pick.category === 'OFFERS' ? 'Ưu đãi' : 'Hệ thống',
+        title: pick.title,
+        body: pick.body,
+        timeAgo: 'Vừa xong',
+        createdAt: new Date().toISOString(),
+        image: 'https://images.unsplash.com/photo-1593941707882-a5bba14938c7?auto=format&fit=crop&w=400&q=80',
+        isRead: false,
+        actionType: pick.actionType,
+        actionPayload: pick.actionPayload
+      };
+      setNotifications((prev) => [localItem, ...prev]);
+      Alert.alert('🔔 Ding-Dong!', `Thông báo mới: "${pick.title}" kèm tiếng chuông!`);
+    }
+  };
+
+  // Điều hướng khi bấm nút hành động trong modal chi tiết
+  const handleModalAction = () => {
+    setShowDetailModal(false);
+    if (!selectedNotif) return;
+
+    if (selectedNotif.actionType === 'VEHICLES' && onNavigateToVehicles) {
+      onNavigateToVehicles(selectedNotif.actionPayload || 'CAR');
+    } else if (selectedNotif.actionType === 'OFFERS' && onNavigateToOffers) {
+      onNavigateToOffers();
+    } else if (selectedNotif.actionType === 'MAP' && onNavigateToMap) {
+      onNavigateToMap();
+    } else if (selectedNotif.actionType === 'PROFILE' && onNavigateToProfile) {
+      onNavigateToProfile();
+    }
+  };
+
+  // Lọc theo tabs: Tất cả, Ưu đãi, Tin tức, Hệ thống
+  const filteredList = notifications.filter((item) => {
+    if (activeFilter === 'ALL') return true;
+    return item.category === activeFilter;
+  });
+
+  const unreadCount = notifications.filter((n) => !n.isRead).length;
+
+  return (
+    <View style={styles.container}>
+      {/* ============================================================
+          1. HEADER TÍM SANG TRỌNG (GIỐNG HỆT ẢNH MẪU CỦA NGƯỜI DÙNG)
+         ============================================================ */}
+      <View style={styles.headerHeroGradient}>
+        <View style={styles.headerTopRow}>
+          <View style={styles.headerTitleBox}>
+            <Text style={styles.headerMainTitle}>Danh sách thông báo</Text>
+            {unreadCount > 0 ? (
+              <Text style={styles.headerSubTitle}>Bạn có {unreadCount} thông báo chưa đọc</Text>
+            ) : (
+              <Text style={styles.headerSubTitle}>Đã cập nhật tất cả thông báo mới nhất</Text>
+            )}
+          </View>
+
+          {/* Action Buttons: Chuông âm thanh, Đọc tất cả, Xóa tất cả */}
+          <View style={styles.headerActionsRow}>
+            {/* Toggle Âm thanh Chuông */}
+            <TouchableOpacity
+              style={[styles.headerIconBtn, soundEnabled && styles.headerIconBtnActive]}
+              onPress={() => {
+                const nextState = !soundEnabled;
+                setSoundEnabled(nextState);
+                if (nextState) playNotificationChime();
+                Alert.alert(
+                  'Âm thanh chuông',
+                  nextState ? 'Đã BẬT tiếng chuông thông báo 🔔' : 'Đã TẮT tiếng chuông thông báo 🔕'
+                );
+              }}
+              activeOpacity={0.8}
+            >
+              <Ionicons
+                name={soundEnabled ? 'volume-high' : 'volume-mute'}
+                size={16}
+                color={soundEnabled ? '#FACC15' : 'rgba(255, 255, 255, 0.6)'}
+              />
+            </TouchableOpacity>
+
+            {/* Bắn thông báo thử nghiệm */}
+            <TouchableOpacity
+              style={styles.headerIconBtn}
+              onPress={handleTriggerSimulatedNotif}
+              activeOpacity={0.8}
+            >
+              <Ionicons name="notifications" size={16} color="#FFFFFF" />
+            </TouchableOpacity>
+
+            {/* Đọc tất cả */}
+            <TouchableOpacity
+              style={styles.headerIconBtn}
+              onPress={handleMarkAllRead}
+              activeOpacity={0.8}
+            >
+              <Ionicons name="checkmark-done" size={16} color="#FFFFFF" />
+            </TouchableOpacity>
+
+            {/* Xóa tất cả */}
+            <TouchableOpacity
+              style={styles.headerIconBtn}
+              onPress={handleClearAll}
+              activeOpacity={0.8}
+            >
+              <Ionicons name="trash-outline" size={16} color="#FFFFFF" />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* 4 Filter Pills Horizontally (Giống hệt ảnh của bạn) */}
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.filterScroll}
+          contentContainerStyle={styles.filterScrollContent}
+        >
+          {NOTIF_FILTERS.map((f) => {
+            const isActive = activeFilter === f.id;
+            return (
+              <TouchableOpacity
+                key={f.id}
+                style={[styles.filterPill, isActive && styles.filterPillActive]}
+                activeOpacity={0.8}
+                onPress={() => setActiveFilter(f.id)}
+              >
+                <Text style={[styles.filterPillText, isActive && styles.filterPillTextActive]}>
+                  {f.label}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </ScrollView>
+      </View>
+
+      {/* ============================================================
+          2. NOTIFICATION LIST BODY
+         ============================================================ */}
+      {loading ? (
+        <View style={styles.centerLoading}>
+          <ActivityIndicator size="large" color="#7C3AED" />
+          <Text style={styles.loadingText}>Đang tải thông báo...</Text>
+        </View>
+      ) : (
+        <ScrollView
+          style={styles.listScrollView}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.listContentContainer}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={['#7C3AED']}
+              tintColor="#7C3AED"
+            />
+          }
+        >
+          {filteredList.length === 0 ? (
+            <View style={styles.emptyContainer}>
+              <View style={styles.emptyIconCircle}>
+                <Ionicons name="notifications-off-outline" size={44} color="#C4B5FD" />
+              </View>
+              <Text style={styles.emptyTitle}>Không có thông báo nào</Text>
+              <Text style={styles.emptySub}>
+                {activeFilter === 'ALL'
+                  ? 'Bạn đã đọc hết mọi thông báo hoặc chưa có tin mới.'
+                  : `Chưa có thông báo nào trong mục ${NOTIF_FILTERS.find((f) => f.id === activeFilter)?.label}.`}
+              </Text>
+              <TouchableOpacity
+                style={styles.simulateTestBtn}
+                activeOpacity={0.85}
+                onPress={handleTriggerSimulatedNotif}
+              >
+                <Ionicons name="notifications" size={16} color="#FFFFFF" />
+                <Text style={styles.simulateTestBtnText}>Gửi thử 1 thông báo chuông</Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            filteredList.map((item, idx) => {
+              const isUnread = !item.isRead;
+              return (
+                <TouchableOpacity
+                  key={item.id || idx}
+                  style={[styles.notifItemCard, isUnread && styles.notifItemCardUnread]}
+                  activeOpacity={0.82}
+                  onPress={() => handleItemClick(item)}
+                >
+                  {/* Left Thumbnail Image */}
+                  <View style={styles.thumbnailBox}>
+                    <Image
+                      source={{ uri: item.image }}
+                      style={styles.thumbnailImg}
+                      resizeMode="cover"
+                    />
+                    {isUnread && <View style={styles.unreadRedDot} />}
+                  </View>
+
+                  {/* Center Content */}
+                  <View style={styles.notifContentCol}>
+                    <View style={styles.metaTopRow}>
+                      <Text style={styles.categoryTagText}>{item.categoryLabel || 'Ưu đãi'}</Text>
+                      <Text style={styles.metaDotDivider}>•</Text>
+                      <Text style={styles.timeAgoText}>{item.timeAgo || 'Vừa xong'}</Text>
+                    </View>
+
+                    <Text style={styles.notifTitle} numberOfLines={2}>
+                      {item.title}
+                    </Text>
+
+                    <Text style={styles.notifBodyText} numberOfLines={2}>
+                      {item.body}
+                    </Text>
+                  </View>
+
+                  {/* Right Action: Delete Icon */}
+                  <TouchableOpacity
+                    style={styles.deleteSingleBtn}
+                    onPress={(e) => handleDeleteItem(item.id, e)}
+                    activeOpacity={0.7}
+                  >
+                    <Ionicons name="trash-outline" size={16} color="#9CA3AF" />
+                  </TouchableOpacity>
+                </TouchableOpacity>
+              );
+            })
+          )}
+        </ScrollView>
+      )}
+
+      {/* ============================================================
+          MODAL CHI TIẾT THÔNG BÁO (NOTIFICATION DETAIL MODAL)
+         ============================================================ */}
+      <Modal
+        visible={showDetailModal}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setShowDetailModal(false)}
+      >
+        <View style={styles.modalBackdrop}>
+          <View style={styles.detailCard}>
+            {selectedNotif && (
+              <>
+                {/* Modal Header */}
+                <View style={styles.modalHeaderRow}>
+                  <View style={styles.modalCategoryBadge}>
+                    <Text style={styles.modalCategoryText}>
+                      {selectedNotif.categoryLabel || 'Ưu đãi EcoGo'}
+                    </Text>
+                  </View>
+                  <TouchableOpacity
+                    style={styles.modalCloseBtn}
+                    onPress={() => setShowDetailModal(false)}
+                  >
+                    <Ionicons name="close" size={20} color="#1A1D1F" />
+                  </TouchableOpacity>
+                </View>
+
+                {/* Banner Photo */}
+                <Image
+                  source={{ uri: selectedNotif.image }}
+                  style={styles.modalBannerImg}
+                  resizeMode="cover"
+                />
+
+                <ScrollView style={{ maxHeight: 220 }} showsVerticalScrollIndicator={false}>
+                  <Text style={styles.modalDetailTitle}>{selectedNotif.title}</Text>
+                  <Text style={styles.modalDetailTime}>
+                    Thời gian: {selectedNotif.timeAgo || 'Vừa xong'}
+                  </Text>
+                  <Text style={styles.modalDetailBody}>{selectedNotif.body}</Text>
+                </ScrollView>
+
+                {/* Bottom Actions */}
+                <View style={styles.modalBottomActions}>
+                  <TouchableOpacity
+                    style={styles.modalActionPrimaryBtn}
+                    activeOpacity={0.88}
+                    onPress={handleModalAction}
+                  >
+                    <Ionicons name="arrow-forward-circle" size={18} color="#FFFFFF" />
+                    <Text style={styles.modalActionPrimaryText}>
+                      {selectedNotif.actionType === 'VEHICLES'
+                        ? 'Đặt xe nhận ưu đãi ngay'
+                        : selectedNotif.actionType === 'OFFERS'
+                        ? 'Khám phá mục Ưu đãi'
+                        : 'Xem chi tiết'}
+                    </Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={styles.modalDeleteBtn}
+                    activeOpacity={0.8}
+                    onPress={() => handleDeleteItem(selectedNotif.id)}
+                  >
+                    <Ionicons name="trash-outline" size={16} color="#DC2626" />
+                    <Text style={styles.modalDeleteBtnText}>Xóa thông báo</Text>
+                  </TouchableOpacity>
+                </View>
+              </>
+            )}
+          </View>
+        </View>
+      </Modal>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#FAF7F2'
+  },
+  // Header Hero
+  headerHeroGradient: {
+    backgroundColor: '#7C3AED',
+    paddingTop: Platform.OS === 'ios' ? 44 : 20,
+    paddingHorizontal: 16,
+    paddingBottom: 16,
+    borderBottomLeftRadius: 28,
+    borderBottomRightRadius: 28
+  },
+  headerTopRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 14
+  },
+  headerTitleBox: {
+    flex: 1
+  },
+  headerMainTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 20,
+    fontWeight: '900',
+    color: '#FFFFFF'
+  },
+  headerSubTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    color: 'rgba(255, 255, 255, 0.85)',
+    marginTop: 2
+  },
+  headerActionsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8
+  },
+  headerIconBtn: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: 'rgba(255, 255, 255, 0.18)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 0.5,
+    borderColor: 'rgba(255, 255, 255, 0.3)'
+  },
+  headerIconBtnActive: {
+    backgroundColor: 'rgba(250, 204, 21, 0.25)',
+    borderColor: '#FACC15'
+  },
+  // Filter Pills (Giống ảnh)
+  filterScroll: {
+    marginHorizontal: -16
+  },
+  filterScrollContent: {
+    paddingHorizontal: 16,
+    gap: 8
+  },
+  filterPill: {
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    paddingHorizontal: 16,
+    paddingVertical: 7,
+    borderRadius: 20,
+    borderWidth: 0.5,
+    borderColor: 'rgba(255, 255, 255, 0.3)'
+  },
+  filterPillActive: {
+    backgroundColor: '#FFFFFF',
+    borderColor: '#FFFFFF'
+  },
+  filterPillText: {
+    fontFamily: FONTS.family,
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#FFFFFF'
+  },
+  filterPillTextActive: {
+    color: '#7C3AED',
+    fontWeight: '900'
+  },
+  // List
+  listScrollView: {
+    flex: 1
+  },
+  listContentContainer: {
+    paddingHorizontal: 16,
+    paddingTop: 12,
+    paddingBottom: 110
+  },
+  centerLoading: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: 80
+  },
+  loadingText: {
+    fontFamily: FONTS.family,
+    fontSize: 13,
+    color: '#6F767E',
+    marginTop: 10
+  },
+  // Notif Card Item (Giống ảnh)
+  notifItemCard: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 18,
+    padding: 12,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#F0E8DC',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.03,
+    shadowRadius: 5,
+    elevation: 2
+  },
+  notifItemCardUnread: {
+    backgroundColor: '#FDFBFF',
+    borderColor: '#DDD6FE',
+    borderLeftWidth: 4,
+    borderLeftColor: '#7C3AED'
+  },
+  thumbnailBox: {
+    width: 60,
+    height: 60,
+    borderRadius: 14,
+    overflow: 'hidden',
+    position: 'relative',
+    backgroundColor: '#F3E8FF'
+  },
+  thumbnailImg: {
+    width: '100%',
+    height: '100%'
+  },
+  unreadRedDot: {
+    position: 'absolute',
+    top: 3,
+    right: 3,
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: '#EF4444',
+    borderWidth: 1.5,
+    borderColor: '#FFFFFF'
+  },
+  notifContentCol: {
+    flex: 1,
+    marginLeft: 12,
+    marginRight: 6
+  },
+  metaTopRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 3
+  },
+  categoryTagText: {
+    fontFamily: FONTS.family,
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#7C3AED'
+  },
+  metaDotDivider: {
+    fontFamily: FONTS.family,
+    fontSize: 10,
+    color: '#9CA3AF',
+    marginHorizontal: 4
+  },
+  timeAgoText: {
+    fontFamily: FONTS.family,
+    fontSize: 10,
+    color: '#9CA3AF'
+  },
+  notifTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 12.5,
+    fontWeight: '800',
+    color: '#1A1D1F',
+    lineHeight: 17,
+    marginBottom: 3
+  },
+  notifBodyText: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    color: '#6F767E',
+    lineHeight: 15
+  },
+  deleteSingleBtn: {
+    padding: 6,
+    marginLeft: 2
+  },
+  // Empty State
+  emptyContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 50,
+    paddingHorizontal: 20
+  },
+  emptyIconCircle: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: '#EDE9FE',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 16
+  },
+  emptyTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 16,
+    fontWeight: '800',
+    color: '#1A1D1F'
+  },
+  emptySub: {
+    fontFamily: FONTS.family,
+    fontSize: 12,
+    color: '#6F767E',
+    textAlign: 'center',
+    marginTop: 6,
+    lineHeight: 18,
+    marginBottom: 18
+  },
+  simulateTestBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#7C3AED',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 14,
+    gap: 6
+  },
+  simulateTestBtnText: {
+    fontFamily: FONTS.family,
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#FFFFFF'
+  },
+  // Modal Detail
+  modalBackdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20
+  },
+  detailCard: {
+    width: '100%',
+    maxWidth: 390,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 24,
+    padding: 18,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.2,
+    shadowRadius: 12,
+    elevation: 8
+  },
+  modalHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12
+  },
+  modalCategoryBadge: {
+    backgroundColor: '#EDE9FE',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 8
+  },
+  modalCategoryText: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    fontWeight: '800',
+    color: '#7C3AED'
+  },
+  modalCloseBtn: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: '#F5EFEB',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  modalBannerImg: {
+    width: '100%',
+    height: 150,
+    borderRadius: 16,
+    marginBottom: 12
+  },
+  modalDetailTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 15,
+    fontWeight: '800',
+    color: '#1A1D1F',
+    lineHeight: 20
+  },
+  modalDetailTime: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    color: '#9CA3AF',
+    marginTop: 4,
+    marginBottom: 8
+  },
+  modalDetailBody: {
+    fontFamily: FONTS.family,
+    fontSize: 12.5,
+    color: '#4B5563',
+    lineHeight: 18
+  },
+  modalBottomActions: {
+    marginTop: 16,
+    gap: 8
+  },
+  modalActionPrimaryBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#7C3AED',
+    paddingVertical: 12,
+    borderRadius: 14,
+    gap: 6
+  },
+  modalActionPrimaryText: {
+    fontFamily: FONTS.family,
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#FFFFFF'
+  },
+  modalDeleteBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 8,
+    gap: 4
+  },
+  modalDeleteBtnText: {
+    fontFamily: FONTS.family,
+    fontSize: 11.5,
+    fontWeight: '600',
+    color: '#DC2626'
+  }
+});

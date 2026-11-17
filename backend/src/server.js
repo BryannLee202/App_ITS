@@ -11,6 +11,7 @@ const vehicleRoutes = require('./routes/vehicleRoutes');
 const rentalRoutes = require('./routes/rentalRoutes');
 const itsRoutes = require('./routes/itsRoutes');
 const rewardRoutes = require('./routes/rewardRoutes');
+const notificationRoutes = require('./routes/notificationRoutes');
 const telematicsService = require('./services/telematicsService');
 
 const app = express();
@@ -37,6 +38,7 @@ app.use('/api/vehicles', vehicleRoutes);
 app.use('/api/rentals', rentalRoutes);
 app.use('/api/its', itsRoutes);
 app.use('/api/rewards', rewardRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // Build timestamp tracking: auto-updates on every new deployment/build
 let buildInfo = { buildTime: '1794890008153', version: '1.0.3' };

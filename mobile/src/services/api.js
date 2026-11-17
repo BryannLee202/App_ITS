@@ -323,6 +323,34 @@ class ApiService {
   async getCorridors() {
     return this.request('/its/corridors');
   }
+
+  // Notifications API
+  async getNotifications() {
+    return this.request('/notifications');
+  }
+
+  async markNotificationRead(id) {
+    return this.request(`/notifications/read/${id}`, { method: 'POST' });
+  }
+
+  async markAllNotificationsRead() {
+    return this.request('/notifications/read-all', { method: 'POST' });
+  }
+
+  async deleteNotification(id) {
+    return this.request(`/notifications/${id}`, { method: 'DELETE' });
+  }
+
+  async clearAllNotifications() {
+    return this.request('/notifications/clear-all', { method: 'DELETE' });
+  }
+
+  async createNotification(payload) {
+    return this.request('/notifications/create', {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+  }
 }
 
 export default new ApiService();

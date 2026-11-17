@@ -25,15 +25,16 @@ import DigitalKeyScreen from './src/screens/DigitalKeyScreen';
 import TripsHistoryScreen from './src/screens/TripsHistoryScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
 import OffersScreen from './src/screens/OffersScreen';
+import NotificationsScreen from './src/screens/NotificationsScreen';
 import OnboardingAuthFlow from './src/screens/OnboardingAuthFlow';
 import VoucherWalletModal from './src/components/VoucherWalletModal';
 
 const DOCK_TABS = [
-  { id: 'HOME', icon: 'compass-outline', activeIcon: 'compass', label: 'Trang chủ' },
-  { id: 'VEHICLES', icon: 'car-sport-outline', activeIcon: 'car-sport', label: 'Thuê xe' },
-  { id: 'KEY', icon: 'key-outline', activeIcon: 'key', label: 'Khóa xe', isCenterKey: true },
+  { id: 'HOME', icon: 'home-outline', activeIcon: 'home', label: 'Trang chủ' },
+  { id: 'VEHICLES', icon: 'car-sport-outline', activeIcon: 'car-sport', label: 'Hoạt động' },
   { id: 'OFFERS', icon: 'pricetag-outline', activeIcon: 'pricetag', label: 'Ưu đãi' },
-  { id: 'PROFILE', icon: 'person-outline', activeIcon: 'person', label: 'Tài khoản' }
+  { id: 'NOTIFICATIONS', icon: 'notifications-outline', activeIcon: 'notifications', label: 'Thông báo', hasBadge: true },
+  { id: 'PROFILE', icon: 'person-outline', activeIcon: 'person', label: 'Cá nhân' }
 ];
 
 const ECOGO_RACE_BADGES = [
@@ -111,7 +112,20 @@ function AppContent() {
   const [appliedVoucherFromWallet, setAppliedVoucherFromWallet] = useState(null);
   const [vehiclesInitialCategory, setVehiclesInitialCategory] = useState('CAR');
   const [updateToast, setUpdateToast] = useState('');
+  const [unreadNotifCount, setUnreadNotifCount] = useState(2);
   const initialBuildRef = useRef(null);
+
+  useEffect(() => {
+    const fetchUnread = async () => {
+      try {
+        const res = await ApiService.getNotifications();
+        if (res && res.success && typeof res.unreadCount === 'number') {
+          setUnreadNotifCount(res.unreadCount);
+        }
+      } catch (e) {}
+    };
+    fetchUnread();
+  }, [activeTab]);
 
   const theme = THEME_PRESETS[themeKey] || THEME_PRESETS.BE_SUA_CAFE;
 
@@ -394,6 +408,19 @@ function AppContent() {
             }}
           />
         );
+      case 'NOTIFICATIONS':
+        return (
+          <NotificationsScreen
+            theme={theme}
+            onNavigateToVehicles={(cat = 'CAR') => {
+              setVehiclesInitialCategory(cat);
+              setActiveTab('VEHICLES');
+            }}
+            onNavigateToOffers={() => setActiveTab('OFFERS')}
+            onNavigateToMap={() => setActiveTab('MAP')}
+            onNavigateToProfile={() => setActiveTab('PROFILE')}
+          />
+        );
       case 'KEY':
         return <DigitalKeyScreen theme={theme} onNavigateHome={() => setActiveTab('HOME')} />;
       case 'TRIPS':
@@ -533,8 +560,15 @@ function AppContent() {
                         <Ionicons
                           name={isActive ? tab.activeIcon : tab.icon}
                           size={20}
-                          color={isActive ? '#6F4E37' : '#8C7A6B'}
+                          color={isActive ? '#7C3AED' : '#8C7A6B'}
                         />
+                        {tab.hasBadge && unreadNotifCount > 0 && (
+                          <View style={styles.dockBadgeRed}>
+                            <Text style={styles.dockBadgeText}>
+                              {unreadNotifCount > 9 ? '9+' : unreadNotifCount}
+                            </Text>
+                          </View>
+                        )}
                       </View>
                       <Text
                         style={[
@@ -927,7 +961,28 @@ const styles = StyleSheet.create({
     height: 30,
     borderRadius: 15,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    position: 'relative'
+  },
+  dockBadgeRed: {
+    position: 'absolute',
+    top: -2,
+    right: 2,
+    backgroundColor: '#EF4444',
+    minWidth: 16,
+    height: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 3,
+    borderWidth: 1.5,
+    borderColor: '#FFFFFF'
+  },
+  dockBadgeText: {
+    fontFamily: FONTS.family,
+    fontSize: 9,
+    fontWeight: '800',
+    color: '#FFFFFF'
   },
   dockTabLabel: {
     fontFamily: FONTS.family,

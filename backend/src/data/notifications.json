@@ -1,0 +1,93 @@
+[
+  {
+    "id": "notif_1",
+    "category": "OFFERS",
+    "categoryLabel": "Ưu đãi",
+    "title": "✨ NẮNG TRƯA GAY GẮT? CÓ Ô TÔ GIẢM 14%",
+    "body": "Ngoài trời đang nắng đổ lửa, đừng để khói bụi làm trôi mất lớp trang điểm hay khiến bạn mệt mỏi. Đặt xe điện EcoGo mát rượi giảm 14% ngay hôm nay!",
+    "timeAgo": "2 giờ trước",
+    "createdAt": "2026-11-17T10:50:00.000Z",
+    "image": "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?auto=format&fit=crop&w=400&q=80",
+    "isRead": false,
+    "actionType": "VEHICLES",
+    "actionPayload": "CAR"
+  },
+  {
+    "id": "notif_2",
+    "category": "OFFERS",
+    "categoryLabel": "Ưu đãi",
+    "title": "🎁 ĐỔI 50 ECOCOIN NHẬN DEAL TODAY COFFEE GIẢM 10%",
+    "body": "Đầu giờ chiều cần nạp năng lượng sáng tạo, tự thưởng cho mình một buổi cà phê đổi gió ngay thôi. Giảm 10% tại Highlands & Today Coffee toàn quốc.",
+    "timeAgo": "3 giờ trước",
+    "createdAt": "2026-11-17T09:50:00.000Z",
+    "image": "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=400&q=80",
+    "isRead": false,
+    "actionType": "OFFERS",
+    "actionPayload": "FOOD"
+  },
+  {
+    "id": "notif_3",
+    "category": "OFFERS",
+    "categoryLabel": "Ưu đãi",
+    "title": "🚗 TAN CA NÉ KHÓI BỤI Ô TÔ ECOGO GIẢM NGAY 30K",
+    "body": "Giờ tan tầm đường sá ngột ngạt, bụi bặm dễ khiến bạn mệt nhoài sau ngày dài. Đặt ô tô tự lái nhận mã TANCA30K giảm ngay 30.000đ.",
+    "timeAgo": "19 giờ trước",
+    "createdAt": "2026-11-16T17:50:00.000Z",
+    "image": "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=400&q=80",
+    "isRead": true,
+    "actionType": "VEHICLES",
+    "actionPayload": "CAR"
+  },
+  {
+    "id": "notif_4",
+    "category": "OFFERS",
+    "categoryLabel": "Ưu đãi",
+    "title": "🚗 ĐẶT Ô TÔ HÔM NAY GIẢM NGAY 30K",
+    "body": "Tránh xa nắng bụi và kẹt xe giờ cao điểm tan tầm hôm nay với dàn xe điện VinFast VF3, VF5, VF8 thông minh.",
+    "timeAgo": "19 giờ trước",
+    "createdAt": "2026-11-16T17:40:00.000Z",
+    "image": "https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=400&q=80",
+    "isRead": true,
+    "actionType": "VEHICLES",
+    "actionPayload": "CAR"
+  },
+  {
+    "id": "notif_5",
+    "category": "NEWS",
+    "categoryLabel": "Tin tức",
+    "title": "👥 GIA NHẬP HỘI SĂN DEAL ECOGO TRÊN FACEBOOK",
+    "body": "Tham gia cộng đồng EcoGo Smart Mobility Việt Nam với hơn 85.000 thành viên để nhận voucher quà tặng độc quyền mỗi tuần!",
+    "timeAgo": "1 ngày trước",
+    "createdAt": "2026-11-16T12:00:00.000Z",
+    "image": "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=400&q=80",
+    "isRead": true,
+    "actionType": "OFFERS",
+    "actionPayload": "COMMUNITY"
+  },
+  {
+    "id": "notif_6",
+    "category": "SYSTEM",
+    "categoryLabel": "Hệ thống",
+    "title": "🛡️ HỒ SƠ eKYC GPLX B2 ĐÃ ĐƯỢC DUYỆT THÀNH CÔNG",
+    "body": "Hệ thống xác thực EcoGo Mobility đã đối soát hồ sơ GPLX B2 và CCCD của bạn với CSDL Bộ GTVT. Bạn đã đủ điều kiện thuê tự lái 24/7 và miễn cọc 15.000.000đ!",
+    "timeAgo": "2 ngày trước",
+    "createdAt": "2026-11-15T10:00:00.000Z",
+    "image": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80",
+    "isRead": true,
+    "actionType": "PROFILE",
+    "actionPayload": "EKYC"
+  },
+  {
+    "id": "notif_7",
+    "category": "SYSTEM",
+    "categoryLabel": "Hệ thống",
+    "title": "⚡ LÀN SÓNG XANH GLOSA ITS ĐÃ ĐƯỢC KÍCH HOẠT",
+    "body": "Tuyến đường Điện Biên Phủ - Xô Viết Nghệ Tĩnh đã được tối ưu chu kỳ đèn giao thông xanh. Tiết kiệm 18% thời gian di chuyển!",
+    "timeAgo": "3 ngày trước",
+    "createdAt": "2026-11-14T08:00:00.000Z",
+    "image": "https://images.unsplash.com/photo-1558441719-72f10b277c22?auto=format&fit=crop&w=400&q=80",
+    "isRead": true,
+    "actionType": "MAP",
+    "actionPayload": "GLOSA"
+  }
+]
