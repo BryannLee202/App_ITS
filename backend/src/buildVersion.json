@@ -1,5 +1,5 @@
 {
-  "version": "1.2.6",
-  "buildTime": "1794924100000",
-  "change": "Xoa bo hoan toan dang nhap Apple, chi giu Google OAuth va So dien thoai"
+  "version": "1.2.7",
+  "buildTime": "1794924700000",
+  "change": "Loai bo form nhap tay Google gia lap, chi su dung Google OAuth 2.0 chinh chu (Popup & Redirect)"
 }

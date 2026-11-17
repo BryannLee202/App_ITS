@@ -36,29 +36,6 @@ const { width: SCREEN_WIDTH = 400 } = Dimensions.get('window');
 const ECOGO_LOGO = require('../../assets/logo.png');
 const GOOGLE_ICON = require('../../assets/google_icon.png');
 
-const GOOGLE_PRESET_ACCOUNTS = [
-  {
-    id: 'acc_minhtai',
-    fullName: 'Minh Tài',
-    email: 'minhtai.ecogo@gmail.com',
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
-    birthYear: 1998,
-    age: 28,
-    phone: '+84386726647',
-    badge: 'Tài khoản chính Google'
-  },
-  {
-    id: 'acc_vip',
-    fullName: 'Tài Nguyễn (CEO)',
-    email: 'tai.nguyen.mobility@gmail.com',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
-    birthYear: 1996,
-    age: 30,
-    phone: '+84908123456',
-    badge: 'Google Workspace Enterprise'
-  }
-];
-
 const KEYPAD_KEYS = [
   { num: '1', sub: '' },
   { num: '2', sub: 'ABC' },
@@ -93,64 +70,101 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
   const [latestGeneratedOtp, setLatestGeneratedOtp] = useState('');
   const [showCountryModal, setShowCountryModal] = useState(false);
 
-  // State xác thực Google (OAuth 2.0 Thật + Fallback mọi Gmail)
+  // State xác thực Google OAuth 2.0 chính chủ
   const [oauthConfig, setOauthConfig] = useState({ googleClientId: '' });
-  const [showGoogleModal, setShowGoogleModal] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
-  const [showCustomGoogleForm, setShowCustomGoogleForm] = useState(true);
-  const [customGoogleName, setCustomGoogleName] = useState('');
-  const [customGoogleEmail, setCustomGoogleEmail] = useState('');
-  const [customGoogleBirthYear, setCustomGoogleBirthYear] = useState('1998');
-  const [customGooglePhone, setCustomGooglePhone] = useState('');
 
-  // Tải cấu hình Google OAuth & nhúng Google Identity Services SDK trên Web
+  // Tải sẵn Google Identity Services SDK & xử lý callback khi Google redirect về (#access_token=...)
   useEffect(() => {
     let mounted = true;
+
+    if (Platform.OS === 'web' && typeof document !== 'undefined') {
+      if (!document.getElementById('google-gsi-sdk')) {
+        const gScript = document.createElement('script');
+        gScript.id = 'google-gsi-sdk';
+        gScript.src = 'https://accounts.google.com/gsi/client';
+        gScript.async = true;
+        gScript.defer = true;
+        document.body.appendChild(gScript);
+      }
+
+      // Kiểm tra nếu người dùng vừa đăng nhập xong qua Google OAuth Redirect
+      if (typeof window !== 'undefined' && window.location && window.location.hash) {
+        const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+        const returnedToken = hashParams.get('access_token');
+        if (returnedToken) {
+          window.history.replaceState(null, '', window.location.pathname + window.location.search);
+          setGoogleLoading(true);
+          ApiService.googleOAuthVerify({ accessToken: returnedToken })
+            .then((res) => {
+              if (!mounted) return;
+              setGoogleLoading(false);
+              if (res && res.success && res.user && onComplete) {
+                onComplete(res.user, res.token);
+              }
+            })
+            .catch((err) => {
+              if (!mounted) return;
+              setGoogleLoading(false);
+              Alert.alert('Lỗi xác thực Google', err.message || 'Không thể đăng nhập bằng Google.');
+            });
+        }
+      }
+    }
+
     ApiService.getOAuthConfig()
       .then((cfg) => {
-        if (!mounted || !cfg || !cfg.success) return;
-        setOauthConfig({
-          googleClientId: cfg.googleClientId || ''
-        });
-        if (Platform.OS === 'web' && typeof document !== 'undefined') {
-          if (cfg.googleClientId && !document.getElementById('google-gsi-sdk')) {
-            const gScript = document.createElement('script');
-            gScript.id = 'google-gsi-sdk';
-            gScript.src = 'https://accounts.google.com/gsi/client';
-            gScript.async = true;
-            gScript.defer = true;
-            document.body.appendChild(gScript);
-          }
+        if (mounted && cfg && cfg.success) {
+          setOauthConfig({ googleClientId: cfg.googleClientId || '' });
         }
       })
       .catch(() => {});
+
     return () => {
       mounted = false;
     };
   }, []);
 
-  // Xử lý bấm nút Google: Chạy Google OAuth thật nếu có Client ID, ngược lại mở form nhập mọi Gmail
-  const handleGoogleButtonPress = () => {
-    if (
-      Platform.OS === 'web' &&
-      oauthConfig.googleClientId &&
-      typeof window !== 'undefined' &&
-      window.google?.accounts?.oauth2
-    ) {
+  // Xử lý bấm nút Google: Mở thẳng cửa sổ đăng nhập Google chính chủ (Popup hoặc Redirect)
+  const handleGoogleButtonPress = async () => {
+    if (Platform.OS !== 'web' || typeof window === 'undefined') {
+      Alert.alert('Thông báo', 'Vui lòng sử dụng trình duyệt Web để đăng nhập Google OAuth.');
+      return;
+    }
+
+    let clientId = oauthConfig.googleClientId;
+    if (!clientId) {
+      try {
+        const freshCfg = await ApiService.getOAuthConfig();
+        if (freshCfg && freshCfg.googleClientId) {
+          clientId = freshCfg.googleClientId;
+          setOauthConfig({ googleClientId: clientId });
+        }
+      } catch (e) {}
+    }
+
+    if (!clientId) {
+      Alert.alert(
+        'Chưa cấu hình Google Client ID',
+        'Máy chủ Render chưa có biến GOOGLE_CLIENT_ID. Vui lòng kiểm tra mục Environment trên Render và nhấn Save để kích hoạt cửa sổ Google chính chủ.'
+      );
+      return;
+    }
+
+    // Ưu tiên 1: Bật Popup chọn tài khoản Google ngay tại trang
+    if (window.google?.accounts?.oauth2) {
       try {
         const tokenClient = window.google.accounts.oauth2.initTokenClient({
-          client_id: oauthConfig.googleClientId,
+          client_id: clientId,
           scope: 'profile email',
           callback: async (tokenResponse) => {
             if (tokenResponse && tokenResponse.access_token) {
               setGoogleLoading(true);
-              setShowGoogleModal(true);
               try {
                 const res = await ApiService.googleOAuthVerify({
                   accessToken: tokenResponse.access_token
                 });
                 setGoogleLoading(false);
-                setShowGoogleModal(false);
                 if (res && res.success && res.user && onComplete) {
                   onComplete(res.user, res.token);
                 }
@@ -165,8 +179,17 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
         return;
       } catch (e) {}
     }
-    setShowCustomGoogleForm(true);
-    setShowGoogleModal(true);
+
+    // Ưu tiên 2 (Dự phòng chuẩn mọi app): Chuyển hướng thẳng sang trang đăng nhập Google chính chủ
+    const redirectUri = window.location.origin;
+    const oauthUrl =
+      'https://accounts.google.com/o/oauth2/v2/auth' +
+      `?client_id=${encodeURIComponent(clientId)}` +
+      `&redirect_uri=${encodeURIComponent(redirectUri)}` +
+      '&response_type=token' +
+      `&scope=${encodeURIComponent('profile email')}` +
+      '&prompt=select_account';
+    window.location.href = oauthUrl;
   };
 
   const handleGoogleSignIn = async (account) => {
@@ -910,167 +933,19 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
         </View>
 
         {/* ============================================================
-            MODAL: GOOGLE SIGN-IN & AUTOMATIC PROFILE POPULATION
+            MODAL: LOADING XÁC THỰC GOOGLE OAUTH 2.0 CHÍNH CHỦ
            ============================================================ */}
         <Modal
-          visible={showGoogleModal}
+          visible={googleLoading}
           animationType="fade"
           transparent
-          onRequestClose={() => !googleLoading && setShowGoogleModal(false)}
         >
           <View style={styles.googleModalBackdrop}>
-            <View style={styles.googleModalContainer}>
-              {/* Header */}
-              <View style={styles.googleModalHeader}>
-                <View style={styles.googleHeaderTitleRow}>
-                  <Image source={GOOGLE_ICON} style={styles.googleModalLogo} resizeMode="contain" />
-                  <Text style={styles.googleModalTitle}>Đăng nhập với Google</Text>
-                </View>
-                <TouchableOpacity
-                  style={styles.googleCloseBtn}
-                  onPress={() => !googleLoading && setShowGoogleModal(false)}
-                  disabled={googleLoading}
-                >
-                  <Ionicons name="close" size={20} color="#5F6368" />
-                </TouchableOpacity>
-              </View>
-
-              <Text style={styles.googleModalSub}>
-                Chọn tài khoản Google để tự động đồng bộ hình đại diện, tên, email và độ tuổi với EcoGo Smart:
-              </Text>
-
-              {googleLoading ? (
-                <View style={styles.googleLoadingBox}>
-                  <ActivityIndicator size="large" color="#4285F4" />
-                  <Text style={styles.googleLoadingText}>Đang đồng bộ hồ sơ & kết nối CSDL EcoGo...</Text>
-                  <Text style={styles.googleLoadingSubText}>Tự động cập nhật hình ảnh, tên và độ tuổi lái xe</Text>
-                </View>
-              ) : (
-                <ScrollView style={{ maxHeight: 380 }} showsVerticalScrollIndicator={false}>
-                  {/* Preset Google Accounts */}
-                  {GOOGLE_PRESET_ACCOUNTS.map((acc) => (
-                    <TouchableOpacity
-                      key={acc.id}
-                      style={styles.googleAccountCard}
-                      activeOpacity={0.82}
-                      onPress={() => handleGoogleSignIn(acc)}
-                    >
-                      <Image source={{ uri: acc.avatar }} style={styles.googleAccountAvatar} />
-                      <View style={styles.googleAccountInfo}>
-                        <View style={styles.googleNameRow}>
-                          <Text style={styles.googleAccountName}>{acc.fullName}</Text>
-                          <View style={styles.googleVerifiedPill}>
-                            <Ionicons name="checkmark-circle" size={12} color="#1A73E8" />
-                            <Text style={styles.googleVerifiedPillText}>Đã xác minh</Text>
-                          </View>
-                        </View>
-                        <Text style={styles.googleAccountEmail}>{acc.email}</Text>
-                        <View style={styles.googleMetaRow}>
-                          <Ionicons name="calendar-outline" size={11} color="#5F6368" />
-                          <Text style={styles.googleAccountMeta}>
-                            Sinh năm {acc.birthYear} ({acc.age} tuổi) • SĐT {acc.phone}
-                          </Text>
-                        </View>
-                      </View>
-                      <Ionicons name="chevron-forward" size={18} color="#9AA0A6" />
-                    </TouchableOpacity>
-                  ))}
-
-                  {/* Custom Google Account Toggle */}
-                  {!showCustomGoogleForm ? (
-                    <TouchableOpacity
-                      style={styles.googleAddAccountBtn}
-                      activeOpacity={0.8}
-                      onPress={() => setShowCustomGoogleForm(true)}
-                    >
-                      <View style={styles.googleAddIconCircle}>
-                        <Ionicons name="person-add" size={16} color="#1A73E8" />
-                      </View>
-                      <Text style={styles.googleAddAccountText}>Đăng nhập tài khoản Google khác...</Text>
-                    </TouchableOpacity>
-                  ) : (
-                    <View style={styles.customGoogleBox}>
-                      <Text style={styles.customGoogleHeading}>Nhập thông tin tài khoản Google của bạn:</Text>
-
-                      <Text style={styles.googleInputLabel}>Họ và tên Google</Text>
-                      <TextInput
-                        style={styles.googleInput}
-                        value={customGoogleName}
-                        onChangeText={setCustomGoogleName}
-                        placeholder="VD: Nguyễn Minh Tài"
-                        placeholderTextColor="#9AA0A6"
-                      />
-
-                      <Text style={styles.googleInputLabel}>Email Google (@gmail.com)</Text>
-                      <TextInput
-                        style={styles.googleInput}
-                        value={customGoogleEmail}
-                        onChangeText={setCustomGoogleEmail}
-                        placeholder="VD: minhtai@gmail.com"
-                        placeholderTextColor="#9AA0A6"
-                        keyboardType="email-address"
-                        autoCapitalize="none"
-                      />
-
-                      <View style={{ flexDirection: 'row', gap: 10 }}>
-                        <View style={{ flex: 1 }}>
-                          <Text style={styles.googleInputLabel}>Năm sinh</Text>
-                          <TextInput
-                            style={styles.googleInput}
-                            value={customGoogleBirthYear}
-                            onChangeText={setCustomGoogleBirthYear}
-                            placeholder="1998"
-                            placeholderTextColor="#9AA0A6"
-                            keyboardType="numeric"
-                          />
-                        </View>
-                        <View style={{ flex: 1.2 }}>
-                          <Text style={styles.googleInputLabel}>Số điện thoại</Text>
-                          <TextInput
-                            style={styles.googleInput}
-                            value={customGooglePhone}
-                            onChangeText={setCustomGooglePhone}
-                            placeholder="+84386726647"
-                            placeholderTextColor="#9AA0A6"
-                          />
-                        </View>
-                      </View>
-
-                      <TouchableOpacity
-                        style={styles.submitCustomGoogleBtn}
-                        activeOpacity={0.88}
-                        onPress={() => {
-                          if (!customGoogleEmail.trim() || !customGoogleName.trim()) {
-                            alert('Vui lòng nhập họ tên và email Google');
-                            return;
-                          }
-                          const birthYr = parseInt(customGoogleBirthYear, 10) || 1998;
-                          const currentYr = new Date().getFullYear();
-                          const age = currentYr - birthYr;
-                          handleGoogleSignIn({
-                            id: 'custom_' + Date.now(),
-                            fullName: customGoogleName.trim(),
-                            email: customGoogleEmail.trim(),
-                            birthYear: birthYr,
-                            age: age,
-                            phone: customGooglePhone.trim(),
-                            avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'
-                          });
-                        }}
-                      >
-                        <Text style={styles.submitCustomGoogleText}>Tiếp tục đăng nhập Google</Text>
-                      </TouchableOpacity>
-                    </View>
-                  )}
-
-                  <View style={styles.googleSecurityNote}>
-                    <Ionicons name="shield-checkmark" size={13} color="#1E8E3E" />
-                    <Text style={styles.googleSecurityText}>
-                      EcoGo bảo mật thông tin tài khoản theo tiêu chuẩn Google OAuth 2.0 & Đạo luật An ninh mạng.
-                    </Text>
-                  </View>
-                </ScrollView>
-              )}
+            <View style={[styles.googleModalContainer, { maxWidth: 340, alignItems: 'center' }]}>
+              <Image source={GOOGLE_ICON} style={{ width: 34, height: 34, marginBottom: 12 }} resizeMode="contain" />
+              <ActivityIndicator size="large" color="#4285F4" />
+              <Text style={styles.googleLoadingText}>Đang xác thực tài khoản Google...</Text>
+              <Text style={styles.googleLoadingSubText}>Đồng bộ hồ sơ & kết nối hệ thống EcoGo Smart</Text>
             </View>
           </View>
         </Modal>
