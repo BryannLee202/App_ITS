@@ -94,28 +94,18 @@ export default function NotificationsScreen({
     }
   };
 
+  const [inlineToast, setInlineToast] = useState(null);
+  const [confirmDialog, setConfirmDialog] = useState(null);
+
   const showNotice = (title, message) => {
-    if (Platform.OS === 'web') {
-      if (typeof window !== 'undefined' && typeof window.alert === 'function') {
-        window.alert(`${title}\n\n${message}`);
-      }
-    } else {
-      Alert.alert(title, message);
-    }
+    setInlineToast({ title, message });
+    setTimeout(() => {
+      setInlineToast((prev) => (prev && prev.message === message ? null : prev));
+    }, 2600);
   };
 
   const confirmAction = (title, message, onConfirm, confirmLabel = 'Xác nhận') => {
-    if (Platform.OS === 'web') {
-      const ok = typeof window !== 'undefined' && typeof window.confirm === 'function'
-        ? window.confirm(`${title}\n\n${message}`)
-        : true;
-      if (ok) onConfirm();
-    } else {
-      Alert.alert(title, message, [
-        { text: 'Hủy', style: 'cancel' },
-        { text: confirmLabel, style: 'destructive', onPress: onConfirm }
-      ]);
-    }
+    setConfirmDialog({ title, message, onConfirm, confirmLabel });
   };
 
   // Đánh dấu tất cả là đã đọc
@@ -345,6 +335,24 @@ export default function NotificationsScreen({
         </ScrollView>
       </View>
 
+      {/* Compact In-App Toast Pill (nằm gọn trong khung điện thoại, không che khuất) */}
+      {inlineToast && (
+        <View style={styles.inlineToastCapsule}>
+          <Ionicons name="checkmark-circle" size={16} color="#D4AF37" />
+          <View style={{ flex: 1, marginHorizontal: 8 }}>
+            <Text style={styles.inlineToastTitle} numberOfLines={1}>
+              {inlineToast.title}
+            </Text>
+            <Text style={styles.inlineToastMsg} numberOfLines={2}>
+              {inlineToast.message}
+            </Text>
+          </View>
+          <TouchableOpacity onPress={() => setInlineToast(null)} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+            <Ionicons name="close" size={15} color="rgba(255,255,255,0.7)" />
+          </TouchableOpacity>
+        </View>
+      )}
+
       {/* ============================================================
           2. NOTIFICATION LIST BODY
          ============================================================ */}
@@ -502,6 +510,41 @@ export default function NotificationsScreen({
                 </View>
               </>
             )}
+          </View>
+        </View>
+      </Modal>
+
+      {/* Compact In-App Confirmation Dialog (gọn trong màn hình điện thoại) */}
+      <Modal
+        visible={!!confirmDialog}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setConfirmDialog(null)}
+      >
+        <View style={styles.confirmBackdrop}>
+          <View style={styles.confirmCard}>
+            <Text style={styles.confirmTitle}>{confirmDialog?.title}</Text>
+            <Text style={styles.confirmMessage}>{confirmDialog?.message}</Text>
+            <View style={styles.confirmBtnRow}>
+              <TouchableOpacity
+                style={styles.confirmCancelBtn}
+                activeOpacity={0.8}
+                onPress={() => setConfirmDialog(null)}
+              >
+                <Text style={styles.confirmCancelText}>Hủy</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.confirmDeleteBtn}
+                activeOpacity={0.85}
+                onPress={() => {
+                  const fn = confirmDialog?.onConfirm;
+                  setConfirmDialog(null);
+                  if (fn) fn();
+                }}
+              >
+                <Text style={styles.confirmDeleteText}>{confirmDialog?.confirmLabel || 'Xóa'}</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </Modal>
@@ -854,5 +897,104 @@ const styles = StyleSheet.create({
     fontSize: 11.5,
     fontWeight: '600',
     color: '#DC2626'
+  },
+  inlineToastCapsule: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#2B180D',
+    marginHorizontal: 14,
+    marginTop: 10,
+    marginBottom: 2,
+    paddingHorizontal: 12,
+    paddingVertical: 9,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: 'rgba(212, 175, 55, 0.45)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.16,
+    shadowRadius: 6,
+    elevation: 4
+  },
+  inlineToastTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 11.5,
+    fontWeight: '800',
+    color: '#FDE68A'
+  },
+  inlineToastMsg: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    color: '#FAF7F2',
+    marginTop: 1
+  },
+  confirmBackdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(18, 12, 8, 0.55)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 28
+  },
+  confirmCard: {
+    width: '100%',
+    maxWidth: 300,
+    backgroundColor: '#FAF7F2',
+    borderRadius: 20,
+    padding: 18,
+    borderWidth: 1,
+    borderColor: '#E5DDD3',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.2,
+    shadowRadius: 12,
+    elevation: 6
+  },
+  confirmTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 15,
+    fontWeight: '800',
+    color: '#2B180D',
+    textAlign: 'center'
+  },
+  confirmMessage: {
+    fontFamily: FONTS.family,
+    fontSize: 12.5,
+    color: '#5C4D42',
+    textAlign: 'center',
+    marginTop: 6,
+    marginBottom: 16,
+    lineHeight: 18
+  },
+  confirmBtnRow: {
+    flexDirection: 'row',
+    gap: 10
+  },
+  confirmCancelBtn: {
+    flex: 1,
+    paddingVertical: 10,
+    borderRadius: 12,
+    backgroundColor: '#EFE7DF',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  confirmCancelText: {
+    fontFamily: FONTS.family,
+    fontSize: 12.5,
+    fontWeight: '700',
+    color: '#4E3322'
+  },
+  confirmDeleteBtn: {
+    flex: 1,
+    paddingVertical: 10,
+    borderRadius: 12,
+    backgroundColor: '#DC2626',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  confirmDeleteText: {
+    fontFamily: FONTS.family,
+    fontSize: 12.5,
+    fontWeight: '700',
+    color: '#FFFFFF'
   }
 });
