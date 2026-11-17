@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -10,19 +10,20 @@ import {
   Alert,
   ActivityIndicator,
   Platform,
-  RefreshControl
+  RefreshControl,
+  Animated
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { FONTS, THEME_PRESETS } from '../styles/theme';
 import ApiService from '../services/api';
 import { playNotificationChime } from '../utils/audioChime';
 import { useLanguage } from '../i18n';
 
 const NOTIF_FILTERS = [
-  { id: 'ALL', label: 'Tất cả' },
-  { id: 'OFFERS', label: 'Ưu đãi' },
-  { id: 'NEWS', label: 'Tin tức' },
-  { id: 'SYSTEM', label: 'Hệ thống' }
+  { id: 'ALL', label: 'Tất cả', icon: 'view-grid' },
+  { id: 'OFFERS', label: 'Ưu đãi', icon: 'ticket-percent' },
+  { id: 'NEWS', label: 'Tin tức', icon: 'newspaper-variant-outline' },
+  { id: 'SYSTEM', label: 'Hệ thống', icon: 'shield-check' }
 ];
 
 export default function NotificationsScreen({
@@ -96,16 +97,44 @@ export default function NotificationsScreen({
 
   const [inlineToast, setInlineToast] = useState(null);
   const [confirmDialog, setConfirmDialog] = useState(null);
+  const toastAnim = useRef(new Animated.Value(0)).current;
+  const confirmScale = useRef(new Animated.Value(0.86)).current;
+  const useNative = Platform.OS !== 'web';
+
+  const getToastVisual = (title = '') => {
+    if (title.includes('Ding-Dong')) return { icon: 'bell-ring', bg: '#D4AF37', color: '#2B180D' };
+    if (title.includes('Âm thanh')) return { icon: 'volume-high', bg: '#E6C770', color: '#2B180D' };
+    if (title.includes('Đã xóa')) return { icon: 'delete-sweep', bg: '#FEE2E2', color: '#DC2626' };
+    if (title.includes('Thành công') || title.includes('Đã cập nhật')) {
+      return { icon: 'check-decagram', bg: '#DCFCE7', color: '#15803D' };
+    }
+    return { icon: 'bell-badge', bg: '#FDE68A', color: '#92400E' };
+  };
 
   const showNotice = (title, message) => {
-    setInlineToast({ title, message });
+    setInlineToast({ title: title.replace('🔔 ', ''), message, visual: getToastVisual(title) });
+    toastAnim.setValue(0);
+    Animated.spring(toastAnim, {
+      toValue: 1,
+      friction: 6,
+      tension: 65,
+      useNativeDriver: useNative
+    }).start();
+
     setTimeout(() => {
       setInlineToast((prev) => (prev && prev.message === message ? null : prev));
-    }, 2600);
+    }, 2800);
   };
 
   const confirmAction = (title, message, onConfirm, confirmLabel = 'Xác nhận') => {
     setConfirmDialog({ title, message, onConfirm, confirmLabel });
+    confirmScale.setValue(0.86);
+    Animated.spring(confirmScale, {
+      toValue: 1,
+      friction: 6,
+      tension: 70,
+      useNativeDriver: useNative
+    }).start();
   };
 
   // Đánh dấu tất cả là đã đọc
@@ -326,6 +355,12 @@ export default function NotificationsScreen({
                 activeOpacity={0.8}
                 onPress={() => setActiveFilter(f.id)}
               >
+                <MaterialCommunityIcons
+                  name={f.icon}
+                  size={13}
+                  color={isActive ? '#2B180D' : 'rgba(255,255,255,0.82)'}
+                  style={{ marginRight: 5 }}
+                />
                 <Text style={[styles.filterPillText, isActive && styles.filterPillTextActive]}>
                   {f.label}
                 </Text>
@@ -335,11 +370,43 @@ export default function NotificationsScreen({
         </ScrollView>
       </View>
 
-      {/* Compact In-App Toast Pill (nằm gọn trong khung điện thoại, không che khuất) */}
+      {/* Compact Animated In-App Toast Pill (Dynamic Island style) */}
       {inlineToast && (
-        <View style={styles.inlineToastCapsule}>
-          <Ionicons name="checkmark-circle" size={16} color="#D4AF37" />
-          <View style={{ flex: 1, marginHorizontal: 8 }}>
+        <Animated.View
+          style={[
+            styles.inlineToastCapsule,
+            {
+              opacity: toastAnim,
+              transform: [
+                {
+                  translateY: toastAnim.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [-14, 0]
+                  })
+                },
+                {
+                  scale: toastAnim.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0.94, 1]
+                  })
+                }
+              ]
+            }
+          ]}
+        >
+          <View
+            style={[
+              styles.inlineToastIconBadge,
+              { backgroundColor: inlineToast.visual?.bg || '#D4AF37' }
+            ]}
+          >
+            <MaterialCommunityIcons
+              name={inlineToast.visual?.icon || 'bell-ring'}
+              size={16}
+              color={inlineToast.visual?.color || '#2B180D'}
+            />
+          </View>
+          <View style={{ flex: 1, marginHorizontal: 10 }}>
             <Text style={styles.inlineToastTitle} numberOfLines={1}>
               {inlineToast.title}
             </Text>
@@ -347,10 +414,14 @@ export default function NotificationsScreen({
               {inlineToast.message}
             </Text>
           </View>
-          <TouchableOpacity onPress={() => setInlineToast(null)} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
-            <Ionicons name="close" size={15} color="rgba(255,255,255,0.7)" />
+          <TouchableOpacity
+            style={styles.inlineToastCloseCircle}
+            onPress={() => setInlineToast(null)}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
+            <Ionicons name="close" size={13} color="#FAF7F2" />
           </TouchableOpacity>
-        </View>
+        </Animated.View>
       )}
 
       {/* ============================================================
@@ -522,7 +593,17 @@ export default function NotificationsScreen({
         onRequestClose={() => setConfirmDialog(null)}
       >
         <View style={styles.confirmBackdrop}>
-          <View style={styles.confirmCard}>
+          <Animated.View
+            style={[
+              styles.confirmCard,
+              { transform: [{ scale: confirmScale }] }
+            ]}
+          >
+            <View style={styles.confirmIconOuterHalo}>
+              <View style={styles.confirmIconInnerCircle}>
+                <MaterialCommunityIcons name="trash-can-outline" size={22} color="#DC2626" />
+              </View>
+            </View>
             <Text style={styles.confirmTitle}>{confirmDialog?.title}</Text>
             <Text style={styles.confirmMessage}>{confirmDialog?.message}</Text>
             <View style={styles.confirmBtnRow}>
@@ -531,6 +612,7 @@ export default function NotificationsScreen({
                 activeOpacity={0.8}
                 onPress={() => setConfirmDialog(null)}
               >
+                <Ionicons name="close-circle-outline" size={15} color="#4E3322" />
                 <Text style={styles.confirmCancelText}>Hủy</Text>
               </TouchableOpacity>
               <TouchableOpacity
@@ -542,10 +624,11 @@ export default function NotificationsScreen({
                   if (fn) fn();
                 }}
               >
+                <Ionicons name="trash-outline" size={14} color="#FFFFFF" />
                 <Text style={styles.confirmDeleteText}>{confirmDialog?.confirmLabel || 'Xóa'}</Text>
               </TouchableOpacity>
             </View>
-          </View>
+          </Animated.View>
         </View>
       </Modal>
     </View>
@@ -616,8 +699,10 @@ const styles = StyleSheet.create({
     gap: 8
   },
   filterPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: 'rgba(255, 255, 255, 0.14)',
-    paddingHorizontal: 16,
+    paddingHorizontal: 14,
     paddingVertical: 7,
     borderRadius: 20,
     borderWidth: 1,
@@ -905,16 +990,31 @@ const styles = StyleSheet.create({
     marginHorizontal: 14,
     marginTop: 10,
     marginBottom: 2,
-    paddingHorizontal: 12,
+    paddingHorizontal: 11,
     paddingVertical: 9,
-    borderRadius: 14,
+    borderRadius: 18,
     borderWidth: 1,
-    borderColor: 'rgba(212, 175, 55, 0.45)',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.16,
-    shadowRadius: 6,
-    elevation: 4
+    borderColor: 'rgba(212, 175, 55, 0.5)',
+    shadowColor: '#2B180D',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.22,
+    shadowRadius: 8,
+    elevation: 5
+  },
+  inlineToastIconBadge: {
+    width: 32,
+    height: 32,
+    borderRadius: 11,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  inlineToastCloseCircle: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: 'rgba(255,255,255,0.12)',
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   inlineToastTitle: {
     fontFamily: FONTS.family,
@@ -939,8 +1039,9 @@ const styles = StyleSheet.create({
     width: '100%',
     maxWidth: 300,
     backgroundColor: '#FAF7F2',
-    borderRadius: 20,
+    borderRadius: 22,
     padding: 18,
+    alignItems: 'center',
     borderWidth: 1,
     borderColor: '#E5DDD3',
     shadowColor: '#000',
@@ -948,6 +1049,23 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 12,
     elevation: 6
+  },
+  confirmIconOuterHalo: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    backgroundColor: '#FEE2E2',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 10
+  },
+  confirmIconInnerCircle: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: '#FECACA',
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   confirmTitle: {
     fontFamily: FONTS.family,
@@ -966,11 +1084,14 @@ const styles = StyleSheet.create({
     lineHeight: 18
   },
   confirmBtnRow: {
+    width: '100%',
     flexDirection: 'row',
     gap: 10
   },
   confirmCancelBtn: {
     flex: 1,
+    flexDirection: 'row',
+    gap: 5,
     paddingVertical: 10,
     borderRadius: 12,
     backgroundColor: '#EFE7DF',
@@ -985,6 +1106,8 @@ const styles = StyleSheet.create({
   },
   confirmDeleteBtn: {
     flex: 1,
+    flexDirection: 'row',
+    gap: 5,
     paddingVertical: 10,
     borderRadius: 12,
     backgroundColor: '#DC2626',
