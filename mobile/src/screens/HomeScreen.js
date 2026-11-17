@@ -1259,14 +1259,9 @@ export default function HomeScreen({
                         setSelectedPlace(place);
                         setFilterByStation(true);
                         setShowDestinationModal(false);
-                        setBookingToast({
-                          title: `📍 Trạm: ${place.shortName}`,
-                          message: `Đang hiển thị xe sẵn sàng đón bạn tại trạm này.`
-                        });
-                        setTimeout(() => {
-                          mainScrollRef.current?.scrollTo({ y: 350, animated: true });
-                        }, 250);
-                        setTimeout(() => setBookingToast(null), 3000);
+                        if (onNavigateToVehicles) {
+                          onNavigateToVehicles('ALL');
+                        }
                       }}
                     >
                       <Ionicons name="eye-outline" size={13} color="#4E3322" />
@@ -1284,8 +1279,10 @@ export default function HomeScreen({
                         setShowDestinationModal(false);
                         const bestVeh = vehicles.find((v) => v.stationId === place.id) || vehicles[0];
                         if (bestVeh) {
-                          setBookingVehicle(bestVeh);
-                          setShowBookingModal(true);
+                          setTimeout(() => {
+                            setBookingVehicle(bestVeh);
+                            setShowBookingModal(true);
+                          }, 120);
                         }
                       }}
                     >
@@ -1486,12 +1483,9 @@ export default function HomeScreen({
                       setShowDoorstepModal(false);
                       setBookingDeliveryMode('DOORSTEP');
                       setSelectedVoucherForBooking('FREESHIP');
-                      handleOpenBooking(veh);
-                      setBookingToast({
-                        title: `🚀 Giao tận nơi: ${veh.name}`,
-                        message: 'Mã miễn phí giao nhận FREESHIP đã áp dụng thành công!'
-                      });
-                      setTimeout(() => setBookingToast(null), 3000);
+                      setTimeout(() => {
+                        handleOpenBooking(veh);
+                      }, 120);
                     }}
                   >
                     <Image
@@ -1520,15 +1514,9 @@ export default function HomeScreen({
                 setShowDoorstepModal(false);
                 setBookingDeliveryMode('DOORSTEP');
                 setSelectedVoucherForBooking('FREESHIP');
-                setCatalogMode('CAR');
-                setCatalogBrand('ALL');
-                setCatalogSortBy('PRICE_ASC');
-                setCatalogSearch('');
-                setBookingToast({
-                  title: '🚚 Danh Sách Xe Giao Tận Nơi',
-                  message: 'Miễn phí 5km toàn TP.HCM · Mã FREESHIP đã sẵn sàng cho mọi xe!'
-                });
-                setTimeout(() => setBookingToast(null), 3000);
+                if (onNavigateToVehicles) {
+                  onNavigateToVehicles('ALL');
+                }
               }}
             >
               <Ionicons name="car-sport" size={15} color="#D4AF37" />
