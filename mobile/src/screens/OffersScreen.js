@@ -13,17 +13,20 @@ import {
   Platform,
   Share
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { FONTS, THEME_PRESETS } from '../styles/theme';
 import ApiService from '../services/api';
 
+const ICON_COIN_ECOXU = require('../../assets/icons/coin_ecoxu.jpg');
+const ICON_CAT_VIP = require('../../assets/icons/cat_vip.jpg');
+
 // Danh mục biểu tượng chính (Chuẩn Quiet Luxury Thuê xe & Di chuyển)
 const OFFER_CATEGORIES = [
-  { id: 'ALL', label: 'Tất cả', icon: 'apps-outline', color: '#4E3322', bg: '#F5EFEB' },
-  { id: 'ECOGO', label: 'Thuê xe', icon: 'car-sport-outline', color: '#6F4E37', bg: '#FAF0E6' },
-  { id: 'CHARGE', label: 'Trạm sạc', icon: 'flash-outline', color: '#52735E', bg: '#EEF5F0' },
-  { id: 'ROAD', label: 'Cứu hộ', icon: 'shield-checkmark-outline', color: '#8C6239', bg: '#FDF6EC' },
-  { id: 'VIP', label: 'Đặc quyền', icon: 'ribbon-outline', color: '#B45309', bg: '#FEF3C7' }
+  { id: 'ALL', label: 'Tất cả', icon: 'view-grid', color: '#2B180D', bg: '#EFE7DF', borderColor: '#DFD0C0' },
+  { id: 'ECOGO', label: 'Thuê xe', icon: 'car-electric', color: '#4E3322', bg: '#F7EDE2', borderColor: '#E7D5C0' },
+  { id: 'CHARGE', label: 'Trạm sạc', icon: 'ev-station', color: '#1E5631', bg: '#E6F2EB', borderColor: '#C5E0CF' },
+  { id: 'ROAD', label: 'Cứu hộ', icon: 'shield-car', color: '#7C4D25', bg: '#FAF0E1', borderColor: '#E8D3B5' },
+  { id: 'VIP', label: 'Đặc quyền', image: ICON_CAT_VIP, color: '#92400E', bg: '#FEF3C7', borderColor: '#EED07A' }
 ];
 
 // Danh mục bộ lọc Đổi quà Di chuyển & Năng lượng xanh
@@ -414,7 +417,7 @@ export default function OffersScreen({
             activeOpacity={0.85}
             onPress={() => setShowCheckInModal(true)}
           >
-            <Ionicons name="calendar-outline" size={13} color="#D4AF37" />
+            <MaterialCommunityIcons name="calendar-check" size={14} color="#E6C770" />
             <Text style={styles.dailyCheckInPillText}>Điểm danh +25</Text>
           </TouchableOpacity>
         </View>
@@ -422,7 +425,7 @@ export default function OffersScreen({
         {/* Big Coin Counter Card */}
         <View style={styles.coinCounterCard}>
           <View style={styles.coinCircleBig}>
-            <Ionicons name="flash" size={22} color="#2B180D" />
+            <Image source={ICON_COIN_ECOXU} style={styles.coinCircleImg} resizeMode="cover" />
           </View>
           <View style={{ flex: 1, marginLeft: 14 }}>
             <View style={styles.coinBalanceRow}>
@@ -435,8 +438,8 @@ export default function OffersScreen({
             style={styles.historyBtn}
             onPress={() => setActiveTabMode(activeTabMode === 'DISCOVER' ? 'MY_VOUCHERS' : 'DISCOVER')}
           >
-            <Ionicons
-              name={activeTabMode === 'DISCOVER' ? 'wallet-outline' : 'sparkles-outline'}
+            <MaterialCommunityIcons
+              name={activeTabMode === 'DISCOVER' ? 'wallet-bifold' : 'star-four-points'}
               size={14}
               color="#FFFFFF"
             />
@@ -458,8 +461,8 @@ export default function OffersScreen({
               )
             }
           >
-            <View style={[styles.quickNavIconBox, { backgroundColor: '#F5EFEB' }]}>
-              <Ionicons name="ribbon" size={16} color="#6F4E37" />
+            <View style={[styles.quickNavIconBox, { backgroundColor: '#EFE7DF', borderColor: '#DFD0C0' }]}>
+              <MaterialCommunityIcons name="medal" size={18} color="#6F4E37" />
             </View>
             <View style={{ flex: 1, marginLeft: 8 }}>
               <Text style={styles.quickNavTitle}>Xếp hạng</Text>
@@ -474,8 +477,8 @@ export default function OffersScreen({
             activeOpacity={0.8}
             onPress={() => setShowCheckInModal(true)}
           >
-            <View style={[styles.quickNavIconBox, { backgroundColor: '#EEF5F0' }]}>
-              <Ionicons name="calendar-number" size={16} color="#52735E" />
+            <View style={[styles.quickNavIconBox, { backgroundColor: '#E6F2EB', borderColor: '#C5E0CF' }]}>
+              <MaterialCommunityIcons name="calendar-check" size={18} color="#1E5631" />
             </View>
             <View style={{ flex: 1, marginLeft: 8 }}>
               <Text style={styles.quickNavTitle}>Điểm danh</Text>
@@ -493,8 +496,8 @@ export default function OffersScreen({
               else setActiveTabMode('MY_VOUCHERS');
             }}
           >
-            <View style={[styles.quickNavIconBox, { backgroundColor: '#FEF3C7' }]}>
-              <Ionicons name="ticket" size={16} color="#B45309" />
+            <View style={[styles.quickNavIconBox, { backgroundColor: '#FEF3C7', borderColor: '#EED07A' }]}>
+              <MaterialCommunityIcons name="ticket-percent" size={18} color="#92400E" />
             </View>
             <View style={{ flex: 1, marginLeft: 8 }}>
               <Text style={styles.quickNavTitle}>Ví ưu đãi</Text>
@@ -623,10 +626,17 @@ export default function OffersScreen({
                     <View
                       style={[
                         styles.categoryIconCircle,
-                        { backgroundColor: cat.bg }
+                        {
+                          backgroundColor: cat.bg,
+                          borderColor: isSelected ? cat.color : cat.borderColor
+                        }
                       ]}
                     >
-                      <Ionicons name={cat.icon} size={22} color={cat.color} />
+                      {cat.image ? (
+                        <Image source={cat.image} style={styles.categoryIconImg} resizeMode="cover" />
+                      ) : (
+                        <MaterialCommunityIcons name={cat.icon} size={24} color={cat.color} />
+                      )}
                     </View>
                     <Text
                       style={[
@@ -1196,14 +1206,21 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: '#D4AF37',
+    backgroundColor: '#3A2416',
     alignItems: 'center',
     justifyContent: 'center',
+    overflow: 'hidden',
+    borderWidth: 1.5,
+    borderColor: 'rgba(212, 175, 55, 0.7)',
     shadowColor: '#D4AF37',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.5,
+    shadowOpacity: 0.45,
     shadowRadius: 6,
     elevation: 4
+  },
+  coinCircleImg: {
+    width: '100%',
+    height: '100%'
   },
   coinLetterM: {
     fontFamily: FONTS.family,
@@ -1270,11 +1287,17 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   quickNavIconBox: {
-    width: 32,
-    height: 32,
-    borderRadius: 10,
+    width: 34,
+    height: 34,
+    borderRadius: 11,
+    borderWidth: 1,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    shadowColor: '#2B180D',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 3,
+    elevation: 1
   },
   quickNavTitle: {
     fontFamily: FONTS.family,
@@ -1339,17 +1362,23 @@ const styles = StyleSheet.create({
     transform: [{ scale: 1.05 }]
   },
   categoryIconCircle: {
-    width: 52,
-    height: 52,
-    borderRadius: 16,
+    width: 54,
+    height: 54,
+    borderRadius: 17,
+    borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    overflow: 'hidden',
     marginBottom: 6,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2
+    shadowColor: '#2B180D',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 3
+  },
+  categoryIconImg: {
+    width: '100%',
+    height: '100%'
   },
   categoryLabel: {
     fontFamily: FONTS.family,
