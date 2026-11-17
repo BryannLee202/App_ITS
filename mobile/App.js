@@ -24,14 +24,15 @@ import MapScreen from './src/screens/MapScreen';
 import DigitalKeyScreen from './src/screens/DigitalKeyScreen';
 import TripsHistoryScreen from './src/screens/TripsHistoryScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
+import OffersScreen from './src/screens/OffersScreen';
 import OnboardingAuthFlow from './src/screens/OnboardingAuthFlow';
 import VoucherWalletModal from './src/components/VoucherWalletModal';
 
 const DOCK_TABS = [
-  { id: 'HOME', icon: 'compass-outline', activeIcon: 'compass', label: 'Khám phá' },
+  { id: 'HOME', icon: 'compass-outline', activeIcon: 'compass', label: 'Trang chủ' },
   { id: 'VEHICLES', icon: 'car-sport-outline', activeIcon: 'car-sport', label: 'Thuê xe' },
   { id: 'KEY', icon: 'key-outline', activeIcon: 'key', label: 'Khóa xe', isCenterKey: true },
-  { id: 'MAP', icon: 'map-outline', activeIcon: 'map', label: 'Bản đồ' },
+  { id: 'OFFERS', icon: 'pricetag-outline', activeIcon: 'pricetag', label: 'Ưu đãi' },
   { id: 'PROFILE', icon: 'person-outline', activeIcon: 'person', label: 'Tài khoản' }
 ];
 
@@ -354,8 +355,9 @@ function AppContent() {
             onNavigateToMap={() => setActiveTab('MAP')}
             onNavigateToTrips={() => setActiveTab('TRIPS')}
             onNavigateToProfile={() => setActiveTab('PROFILE')}
-            onOpenRewards={() => setShowRewardsModal(true)}
+            onOpenRewards={() => setActiveTab('OFFERS')}
             onOpenGreenRace={() => setShowGreenRaceModal(true)}
+            onNavigateToOffers={() => setActiveTab('OFFERS')}
             appliedVoucherCode={appliedVoucherFromWallet}
             onClearAppliedVoucher={() => setAppliedVoucherFromWallet(null)}
           />
@@ -373,6 +375,25 @@ function AppContent() {
         );
       case 'MAP':
         return <MapScreen theme={theme} onNavigateToKey={() => setActiveTab('KEY')} />;
+      case 'OFFERS':
+        return (
+          <OffersScreen
+            theme={theme}
+            currentUser={currentUser}
+            onNavigateToVehicles={(cat = 'CAR') => {
+              setVehiclesInitialCategory(cat);
+              setActiveTab('VEHICLES');
+            }}
+            onApplyVoucher={(code) => {
+              setAppliedVoucherFromWallet(code);
+            }}
+            onOpenVoucherWallet={() => setShowRewardsModal(true)}
+            onUpdateUser={(updated) => {
+              setCurrentUser(updated);
+              ApiService.saveSession(null, updated);
+            }}
+          />
+        );
       case 'KEY':
         return <DigitalKeyScreen theme={theme} onNavigateHome={() => setActiveTab('HOME')} />;
       case 'TRIPS':
@@ -400,8 +421,9 @@ function AppContent() {
               ApiService.saveSession(null, updated);
             }}
             onOpenGreenRace={() => setShowGreenRaceModal(true)}
-            onOpenRewards={() => setShowRewardsModal(true)}
+            onOpenRewards={() => setActiveTab('OFFERS')}
             onNavigateToMap={() => setActiveTab('MAP')}
+            onNavigateToOffers={() => setActiveTab('OFFERS')}
             onNavigateToTrips={() => setActiveTab('TRIPS')}
             onLogout={() => {
               ApiService.clearSession();
