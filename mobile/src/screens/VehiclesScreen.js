@@ -17,6 +17,7 @@ import VehicleCard from '../components/VehicleCard';
 import BookingModal from '../components/BookingModal';
 import ApiService from '../services/api';
 import { DEFAULT_VEHICLES } from '../data/defaultVehicles';
+import { useLanguage } from '../i18n';
 
 const SORT_OPTIONS = [
   { id: 'PRICE_ASC', label: 'Giá thấp nhất', shortLabel: 'Giá thấp nhất', icon: 'arrow-down-outline' },
@@ -120,6 +121,8 @@ export default function VehiclesScreen({
   appliedVoucherCode,
   onClearAppliedVoucher
 }) {
+  const { language } = useLanguage();
+  const isEn = language === 'en';
   const [vehicles, setVehicles] = useState(DEFAULT_VEHICLES);
   const [loading, setLoading] = useState(false);
   const VALID_CATEGORIES = ['CAR', 'LUXURY', 'MOTORBIKE', 'BICYCLE'];
@@ -422,7 +425,9 @@ export default function VehiclesScreen({
       <View style={styles.headerBar}>
         <View style={styles.headerLeftCol}>
           <Text style={styles.headerSub}>ECOGO MOBILITY FLEET</Text>
-          <Text style={styles.headerTitle}>Thuê Xe Tự Lái 24/7</Text>
+          <Text style={styles.headerTitle}>
+            {isEn ? '24/7 Self-Drive Fleet' : 'Thuê Xe Tự Lái 24/7'}
+          </Text>
         </View>
         <TouchableOpacity
           style={styles.homeLinkBtn}
@@ -430,7 +435,7 @@ export default function VehiclesScreen({
           activeOpacity={0.8}
         >
           <Ionicons name="home-outline" size={14} color="#6F4E37" />
-          <Text style={styles.homeLinkText}>Trang chủ</Text>
+          <Text style={styles.homeLinkText}>{isEn ? 'Home' : 'Trang chủ'}</Text>
         </TouchableOpacity>
       </View>
 
@@ -442,12 +447,12 @@ export default function VehiclesScreen({
             style={styles.searchInput}
             placeholder={
               categoryMode === 'CAR'
-                ? 'Tìm xe ô tô (VF 3, VF 5, Vios, CX-5...)'
+                ? (isEn ? 'Search cars (VF 3, VF 5, Vios...)' : 'Tìm xe ô tô (VF 3, VF 5, Vios, CX-5...)')
                 : categoryMode === 'LUXURY'
-                ? 'Tìm xe VIP (S 450, Maybach, Taycan...)'
+                ? (isEn ? 'Search luxury (S 450, Maybach, Taycan...)' : 'Tìm xe VIP (S 450, Maybach, Taycan...)')
                 : categoryMode === 'MOTORBIKE'
-                ? 'Tìm xe máy (Vision, Air Blade, SH...)'
-                : 'Tìm xe đạp (DrgnFly, Giant, Trek...)'
+                ? (isEn ? 'Search scooters (Vision, Air Blade, SH...)' : 'Tìm xe máy (Vision, Air Blade, SH...)')
+                : (isEn ? 'Search e-bikes (DrgnFly, Giant, Trek...)' : 'Tìm xe đạp (DrgnFly, Giant, Trek...)')
             }
             placeholderTextColor="#9C8B7E"
             value={searchQuery}
@@ -471,7 +476,7 @@ export default function VehiclesScreen({
             color={activeFiltersCount > 0 ? '#FAF7F2' : '#4E3322'}
           />
           <Text style={[styles.filterTriggerText, activeFiltersCount > 0 && styles.filterTriggerTextActive]}>
-            Lọc
+            {isEn ? 'Filter' : 'Lọc'}
           </Text>
           {activeFiltersCount > 0 && (
             <View style={styles.activeBadge}>
@@ -499,7 +504,7 @@ export default function VehiclesScreen({
               color={categoryMode === 'CAR' ? '#FAF7F2' : '#6F4E37'}
             />
             <Text style={[styles.catText, categoryMode === 'CAR' && styles.catTextActive]}>
-              Ô tô ({vehicles.filter((v) => v.category === 'CAR').length})
+              {isEn ? 'Cars' : 'Ô tô'} ({vehicles.filter((v) => v.category === 'CAR').length})
             </Text>
           </TouchableOpacity>
 
@@ -518,7 +523,7 @@ export default function VehiclesScreen({
               color={categoryMode === 'LUXURY' ? '#D4AF37' : '#B45309'}
             />
             <Text style={[styles.catText, categoryMode === 'LUXURY' && styles.catTextActive]}>
-              Hạng sang ({vehicles.filter((v) => v.category === 'LUXURY').length})
+              {isEn ? 'Luxury' : 'Hạng sang'} ({vehicles.filter((v) => v.category === 'LUXURY').length})
             </Text>
           </TouchableOpacity>
 
@@ -537,7 +542,7 @@ export default function VehiclesScreen({
               color={categoryMode === 'MOTORBIKE' ? '#FAF7F2' : '#6F4E37'}
             />
             <Text style={[styles.catText, categoryMode === 'MOTORBIKE' && styles.catTextActive]}>
-              Xe máy ({vehicles.filter((v) => v.category === 'MOTORBIKE').length})
+              {isEn ? 'Scooters' : 'Xe máy'} ({vehicles.filter((v) => v.category === 'MOTORBIKE').length})
             </Text>
           </TouchableOpacity>
 
@@ -556,7 +561,7 @@ export default function VehiclesScreen({
               color={categoryMode === 'BICYCLE' ? '#FAF7F2' : '#52735E'}
             />
             <Text style={[styles.catText, categoryMode === 'BICYCLE' && styles.catTextActive]}>
-              Xe đạp ({vehicles.filter((v) => v.category === 'BICYCLE').length})
+              {isEn ? 'E-Bikes' : 'Xe đạp'} ({vehicles.filter((v) => v.category === 'BICYCLE').length})
             </Text>
           </TouchableOpacity>
         </DragHorizontalScroll>

@@ -16,6 +16,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { FONTS, THEME_PRESETS } from '../styles/theme';
 import ApiService from '../services/api';
 import { playNotificationChime } from '../utils/audioChime';
+import { useLanguage } from '../i18n';
 
 const NOTIF_FILTERS = [
   { id: 'ALL', label: 'Tất cả' },
@@ -31,6 +32,8 @@ export default function NotificationsScreen({
   onNavigateToMap,
   onNavigateToProfile
 }) {
+  const { language } = useLanguage();
+  const isEn = language === 'en';
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -247,11 +250,21 @@ export default function NotificationsScreen({
       <View style={styles.headerHeroGradient}>
         <View style={styles.headerTopRow}>
           <View style={styles.headerTitleBox}>
-            <Text style={styles.headerMainTitle}>Trung tâm thông báo</Text>
+            <Text style={styles.headerMainTitle}>
+              {isEn ? 'Notification Center' : 'Trung tâm thông báo'}
+            </Text>
             {unreadCount > 0 ? (
-              <Text style={styles.headerSubTitle}>Bạn có {unreadCount} thông báo chưa đọc</Text>
+              <Text style={styles.headerSubTitle}>
+                {isEn
+                  ? `You have ${unreadCount} unread notifications`
+                  : `Bạn có ${unreadCount} thông báo chưa đọc`}
+              </Text>
             ) : (
-              <Text style={styles.headerSubTitle}>Cập nhật thông tin vận hành và đặc quyền thành viên</Text>
+              <Text style={styles.headerSubTitle}>
+                {isEn
+                  ? 'Operations updates and member privileges'
+                  : 'Cập nhật thông tin vận hành và đặc quyền thành viên'}
+              </Text>
             )}
           </View>
 

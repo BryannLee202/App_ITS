@@ -650,7 +650,9 @@ export default function ProfileScreen({
                 <Ionicons name="ribbon" size={11} color="#D4AF37" />
                 <Text style={styles.headerRankText}>{user.memberRank}</Text>
                 <Text style={styles.headerRankDivider}>•</Text>
-                <Text style={styles.headerRankCoins}>{user.ecoCoins} Xu</Text>
+                <Text style={styles.headerRankCoins}>
+                  {user.ecoCoins} {language === 'en' ? 'Coins' : 'Xu'}
+                </Text>
                 <Ionicons name="chevron-forward" size={10} color="#D4AF37" />
               </TouchableOpacity>
             </View>
@@ -658,7 +660,9 @@ export default function ProfileScreen({
             <View style={styles.userSubRow}>
               <Text style={styles.userPhoneText}>{user.phone}</Text>
               <Text style={styles.userSubDot}>•</Text>
-              <Text style={styles.userAgeText}>{user.age ? `${user.age} tuổi` : '28 tuổi'}</Text>
+              <Text style={styles.userAgeText}>
+                {user.age ? `${user.age} ${language === 'en' ? 'yrs' : 'tuổi'}` : (language === 'en' ? '28 yrs' : '28 tuổi')}
+              </Text>
               <Text style={styles.userSubDot}>•</Text>
               <TouchableOpacity
                 style={styles.gplxVerifiedPill}
@@ -743,14 +747,18 @@ export default function ProfileScreen({
               <View style={{ flex: 1 }}>
                 <View style={styles.tripBannerHeaderRow}>
                   <Text style={[styles.tripBannerTitle, { color: theme.primaryDark || theme.primary }]}>
-                    Lịch sử chuyến đi
+                    {language === 'en' ? 'Trip History' : 'Lịch sử chuyến đi'}
                   </Text>
                   <View style={styles.tripKmPill}>
-                    <Text style={styles.tripKmText}>142 km đã đi</Text>
+                    <Text style={styles.tripKmText}>
+                      {language === 'en' ? '142 km driven' : '142 km đã đi'}
+                    </Text>
                   </View>
                 </View>
                 <Text style={styles.tripBannerSub}>
-                  Chi tiết hành trình ô tô tự lái, hóa đơn điện tử & giảm 42.8kg CO₂
+                  {language === 'en'
+                    ? 'Self-drive trip details, e-invoices & 42.8kg CO₂ saved'
+                    : 'Chi tiết hành trình ô tô tự lái, hóa đơn điện tử & giảm 42.8kg CO₂'}
                 </Text>
               </View>
               <Ionicons name="chevron-forward" size={18} color={theme.primary} />
@@ -768,15 +776,19 @@ export default function ProfileScreen({
             <View style={{ flex: 1 }}>
               <View style={styles.tripBannerHeaderRow}>
                 <Text style={styles.contractBannerTitle}>
-                  Hợp đồng thuê xe & Hóa đơn VAT
+                  {language === 'en' ? 'Rental Contract & VAT Invoice' : 'Hợp đồng thuê xe & Hóa đơn VAT'}
                 </Text>
                 <View style={styles.activeContractBadge}>
                   <Ionicons name="shield-checkmark" size={10} color="#15803D" />
-                  <Text style={styles.activeContractBadgeText}>Hợp lệ</Text>
+                  <Text style={styles.activeContractBadgeText}>
+                    {language === 'en' ? 'Valid' : 'Hợp lệ'}
+                  </Text>
                 </View>
               </View>
               <Text style={styles.contractBannerSub}>
-                Hợp đồng điện tử EcoGo Mobility, quy chế tự lái & hoàn cọc minh bạch
+                {language === 'en'
+                  ? 'EcoGo Mobility e-contract, self-drive rules & transparent deposit'
+                  : 'Hợp đồng điện tử EcoGo Mobility, quy chế tự lái & hoàn cọc minh bạch'}
               </Text>
             </View>
             <Ionicons name="chevron-forward" size={18} color="#9A9FA5" />
@@ -793,12 +805,16 @@ export default function ProfileScreen({
             onPress={() => setShowFamilyModal(true)}
           >
             <View style={styles.accountCardTopRow}>
-              <Text style={styles.accountTypeTitle}>Gia đình</Text>
+              <Text style={styles.accountTypeTitle}>{language === 'en' ? 'Family' : 'Gia đình'}</Text>
               <View style={styles.cardBadgeSmall}>
-                <Text style={styles.cardBadgeSmallText}>{familyMembers.length} TV</Text>
+                <Text style={styles.cardBadgeSmallText}>
+                  {familyMembers.length} {language === 'en' ? 'Mem' : 'TV'}
+                </Text>
               </View>
             </View>
-            <Text style={styles.accountTypeSub}>Dùng chung ví & SOS</Text>
+            <Text style={styles.accountTypeSub}>
+              {language === 'en' ? 'Shared wallet & SOS' : 'Dùng chung ví & SOS'}
+            </Text>
             <View style={styles.house3DIllustration}>
               <View style={styles.heartBubbleRed}>
                 <Ionicons name="heart" size={10} color="#FFFFFF" />
@@ -813,14 +829,18 @@ export default function ProfileScreen({
             onPress={() => setShowBusinessModal(true)}
           >
             <View style={styles.accountCardTopRow}>
-              <Text style={styles.accountTypeTitle}>Doanh nghiệp</Text>
+              <Text style={styles.accountTypeTitle}>{language === 'en' ? 'Business' : 'Doanh nghiệp'}</Text>
               <View style={[styles.cardBadgeSmall, { backgroundColor: isBusinessTripMode ? '#15803D' : '#8C6239' }]}>
                 <Text style={[styles.cardBadgeSmallText, { color: '#FFFFFF' }]}>
-                  {isBusinessTripMode ? 'Bật công tác ✓' : 'Xuất VAT'}
+                  {isBusinessTripMode
+                    ? (language === 'en' ? 'Business On ✓' : 'Bật công tác ✓')
+                    : (language === 'en' ? 'VAT Invoice' : 'Xuất VAT')}
                 </Text>
               </View>
             </View>
-            <Text style={styles.accountTypeSub}>Hóa đơn & Thẻ Cty</Text>
+            <Text style={styles.accountTypeSub}>
+              {language === 'en' ? 'Invoices & Corp Card' : 'Hóa đơn & Thẻ Cty'}
+            </Text>
             <View style={styles.briefcase3DIllustration}>
               <Ionicons name="briefcase" size={34} color="#1D1D1F" />
               <View style={styles.claspLeftGold} />
@@ -832,7 +852,9 @@ export default function ProfileScreen({
         {/* ============================================================
             5. "TÁC VỤ & ĐẶC QUYỀN" (2x2 GRID TINH GỌN, SANG TRỌNG)
            ============================================================ */}
-        <Text style={styles.sectionTitle}>Tác vụ & Đặc quyền</Text>
+        <Text style={styles.sectionTitle}>
+          {language === 'en' ? 'Actions & Privileges' : 'Tác vụ & Đặc quyền'}
+        </Text>
         <View style={styles.grid2x2}>
           {/* 1. Thanh toán & Ví */}
           <TouchableOpacity
@@ -844,8 +866,10 @@ export default function ProfileScreen({
               <Ionicons name="card" size={20} color={theme.primary} />
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={styles.taskCardLabel}>Thanh toán</Text>
-              <Text style={styles.taskCardSubLabel}>Ví {Number(walletBalance).toLocaleString('vi-VN')}đ</Text>
+              <Text style={styles.taskCardLabel}>{language === 'en' ? 'Payment' : 'Thanh toán'}</Text>
+              <Text style={styles.taskCardSubLabel}>
+                {language === 'en' ? 'Wallet' : 'Ví'} {Number(walletBalance).toLocaleString('vi-VN')}đ
+              </Text>
             </View>
           </TouchableOpacity>
 
@@ -859,8 +883,10 @@ export default function ProfileScreen({
               <Ionicons name="ticket" size={20} color="#8C6239" />
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={styles.taskCardLabel}>Mã khuyến mại</Text>
-              <Text style={styles.taskCardSubLabel}>3 mã khả dụng</Text>
+              <Text style={styles.taskCardLabel}>{language === 'en' ? 'Promo Codes' : 'Mã khuyến mại'}</Text>
+              <Text style={styles.taskCardSubLabel}>
+                {language === 'en' ? '3 available' : '3 mã khả dụng'}
+              </Text>
             </View>
           </TouchableOpacity>
 
@@ -874,8 +900,10 @@ export default function ProfileScreen({
               <Ionicons name="shield-checkmark" size={20} color={theme.primary} />
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={styles.taskCardLabel}>Trung tâm an toàn</Text>
-              <Text style={styles.taskCardSubLabel}>SOS 24/7 & Cứu hộ</Text>
+              <Text style={styles.taskCardLabel}>{language === 'en' ? 'Safety Center' : 'Trung tâm an toàn'}</Text>
+              <Text style={styles.taskCardSubLabel}>
+                {language === 'en' ? '24/7 SOS & Rescue' : 'SOS 24/7 & Cứu hộ'}
+              </Text>
             </View>
           </TouchableOpacity>
 
@@ -889,8 +917,10 @@ export default function ProfileScreen({
               <Ionicons name="gift" size={20} color="#8C6239" />
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={styles.taskCardLabel}>Giới thiệu bạn bè</Text>
-              <Text style={styles.taskCardSubLabel}>Nhận ngay 50K</Text>
+              <Text style={styles.taskCardLabel}>{language === 'en' ? 'Refer Friends' : 'Giới thiệu bạn bè'}</Text>
+              <Text style={styles.taskCardSubLabel}>
+                {language === 'en' ? 'Get 50K reward' : 'Nhận ngay 50K'}
+              </Text>
             </View>
           </TouchableOpacity>
         </View>
@@ -898,11 +928,15 @@ export default function ProfileScreen({
         {/* ============================================================
             6. "HỖ TRỢ & HỢP TÁC" (3 DÒNG THỰC TẾ)
            ============================================================ */}
-        <Text style={styles.sectionTitle}>Hỗ trợ & Hợp tác</Text>
+        <Text style={styles.sectionTitle}>
+          {language === 'en' ? 'Support & Partnership' : 'Hỗ trợ & Hợp tác'}
+        </Text>
         <View style={styles.menuListGroup}>
           <TouchableOpacity style={styles.menuListRow} onPress={handleOpenSurvey} activeOpacity={0.7}>
             <Ionicons name="chatbubbles-outline" size={20} color="#6F767E" />
-            <Text style={styles.menuListText}>Đóng góp ý kiến dịch vụ EcoGo Mobility</Text>
+            <Text style={styles.menuListText}>
+              {language === 'en' ? 'Send Feedback on EcoGo Mobility' : 'Đóng góp ý kiến dịch vụ EcoGo Mobility'}
+            </Text>
             <Ionicons name="chevron-forward" size={18} color="#9A9FA5" />
           </TouchableOpacity>
 
@@ -912,7 +946,9 @@ export default function ProfileScreen({
             activeOpacity={0.7}
           >
             <Ionicons name="location-outline" size={20} color="#6F767E" />
-            <Text style={styles.menuListText}>Đề xuất mở trạm EcoGo Hub mới</Text>
+            <Text style={styles.menuListText}>
+              {language === 'en' ? 'Suggest a New EcoGo Hub Station' : 'Đề xuất mở trạm EcoGo Hub mới'}
+            </Text>
             <Ionicons name="chevron-forward" size={18} color="#9A9FA5" />
           </TouchableOpacity>
 
@@ -922,7 +958,9 @@ export default function ProfileScreen({
             activeOpacity={0.7}
           >
             <Ionicons name="shield-checkmark-outline" size={20} color="#6F767E" />
-            <Text style={styles.menuListText}>Điều khoản dịch vụ & Chính sách bảo mật</Text>
+            <Text style={styles.menuListText}>
+              {language === 'en' ? 'Terms of Service & Privacy Policy' : 'Điều khoản dịch vụ & Chính sách bảo mật'}
+            </Text>
             <Ionicons name="chevron-forward" size={18} color="#9A9FA5" />
           </TouchableOpacity>
         </View>
@@ -930,7 +968,9 @@ export default function ProfileScreen({
         {/* ============================================================
             7. "CÀI ĐẶT HỆ THỐNG" (CHUYỂN NGÔN NGỮ VI/EN)
            ============================================================ */}
-        <Text style={styles.sectionTitle}>Cài đặt hệ thống</Text>
+        <Text style={styles.sectionTitle}>
+          {language === 'en' ? 'System Settings' : 'Cài đặt hệ thống'}
+        </Text>
         <View style={styles.menuListGroup}>
           <TouchableOpacity style={styles.menuListRow} activeOpacity={0.7} onPress={toggleLanguage}>
             <Ionicons name="language-outline" size={20} color={theme.primary} />
@@ -950,14 +990,22 @@ export default function ProfileScreen({
         <View style={styles.footerVersionBlock}>
           <TouchableOpacity style={styles.logoutRow} onPress={onLogout} activeOpacity={0.7}>
             <Ionicons name="log-out-outline" size={20} color="#E03131" />
-            <Text style={[styles.logoutText, { color: '#E03131' }]}>Đăng xuất tài khoản</Text>
+            <Text style={[styles.logoutText, { color: '#E03131' }]}>
+              {language === 'en' ? 'Sign Out' : 'Đăng xuất tài khoản'}
+            </Text>
           </TouchableOpacity>
-          <Text style={styles.versionText}>EcoGo Smart - v2.4.0 • Ứng dụng di chuyển xanh & Thuê xe 24/7</Text>
+          <Text style={styles.versionText}>
+            {language === 'en'
+              ? 'EcoGo Smart - v2.4.0 • Green Mobility & 24/7 EV Rental'
+              : 'EcoGo Smart - v2.4.0 • Ứng dụng di chuyển xanh & Thuê xe 24/7'}
+          </Text>
 
           <View style={styles.bctBadgesRow}>
             <View style={styles.bctRedBadgeSingle}>
               <Ionicons name="checkmark-circle" size={18} color="#FFFFFF" />
-              <Text style={styles.bctBadgeText}>ĐÃ ĐĂNG KÝ{'\n'}BỘ CÔNG THƯƠNG</Text>
+              <Text style={styles.bctBadgeText}>
+                {language === 'en' ? 'REGISTERED WITH\nMOIT VIETNAM' : 'ĐÃ ĐĂNG KÝ\nBỘ CÔNG THƯƠNG'}
+              </Text>
             </View>
           </View>
         </View>

@@ -18,6 +18,7 @@ import BookingModal from '../components/BookingModal';
 import VoucherWalletModal from '../components/VoucherWalletModal';
 import ApiService from '../services/api';
 import { DEFAULT_VEHICLES } from '../data/defaultVehicles';
+import { useLanguage } from '../i18n';
 
 const CATEGORIES = [
   { id: 'ALL', label: 'Tất cả xe' },
@@ -311,6 +312,8 @@ export default function HomeScreen({
   appliedVoucherCode,
   onClearAppliedVoucher
 }) {
+  const { language } = useLanguage();
+  const isEn = language === 'en';
   const [vehicles, setVehicles] = useState(DEFAULT_VEHICLES);
   const [selectedCategory, setSelectedCategory] = useState('ALL');
   const [rentalPackageTab, setRentalPackageTab] = useState('HOURLY'); // 'HOURLY' | 'DAILY'
@@ -705,10 +708,12 @@ export default function HomeScreen({
               onPress={onNavigateToProfile}
             >
               <Text style={styles.greetingSub} numberOfLines={1}>
-                Chào {currentUser?.fullName || 'Quý khách'} ·{' '}
-                {currentUser?.drivingLicense ? currentUser.drivingLicense.split('-')[0].trim() : 'GPLX B2'}
+                {isEn ? 'Hi' : 'Chào'} {currentUser?.fullName || (isEn ? 'Guest' : 'Quý khách')} ·{' '}
+                {currentUser?.drivingLicense ? currentUser.drivingLicense.split('-')[0].trim() : (isEn ? 'License B2' : 'GPLX B2')}
               </Text>
-              <Text style={styles.greetingTitle}>Bạn cần thuê xe ở đâu?</Text>
+              <Text style={styles.greetingTitle}>
+                {isEn ? 'Where do you need a ride?' : 'Bạn cần thuê xe ở đâu?'}
+              </Text>
             </TouchableOpacity>
 
             <View style={styles.headerRightActions}>
@@ -721,7 +726,7 @@ export default function HomeScreen({
                 }}
               >
                 <Text style={styles.coinPillEmoji}>🪙</Text>
-                <Text style={styles.coinPillText}>{ecoCoins} Xu</Text>
+                <Text style={styles.coinPillText}>{ecoCoins} {isEn ? 'Coins' : 'Xu'}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
@@ -733,7 +738,9 @@ export default function HomeScreen({
                 }}
               >
                 <Ionicons name="ticket" size={14} color="#6F4E37" />
-                <Text style={styles.headerVoucherPillText}>Ví ưu đãi ({savedVouchers.length})</Text>
+                <Text style={styles.headerVoucherPillText}>
+                  {isEn ? 'Vouchers' : 'Ví ưu đãi'} ({savedVouchers.length})
+                </Text>
               </TouchableOpacity>
 
               <TouchableOpacity
@@ -766,8 +773,8 @@ export default function HomeScreen({
             {/* 2-Tab Mode Switcher */}
             <View style={styles.packageTabsRow}>
               {[
-                { id: 'HOURLY', label: 'Thuê theo giờ', icon: 'time-outline' },
-                { id: 'DAILY', label: 'Thuê theo ngày (24h)', icon: 'calendar-outline' }
+                { id: 'HOURLY', label: isEn ? 'Hourly Rental' : 'Thuê theo giờ', icon: 'time-outline' },
+                { id: 'DAILY', label: isEn ? 'Daily Rental (24h)' : 'Thuê theo ngày (24h)', icon: 'calendar-outline' }
               ].map((tab) => {
                 const active = rentalPackageTab === tab.id;
                 return (
@@ -802,7 +809,9 @@ export default function HomeScreen({
                   <View style={[styles.stationPinCircle, { backgroundColor: theme.primarySoft }]}>
                     <Ionicons name="location" size={13} color={theme.primary} />
                   </View>
-                  <Text style={[styles.stationSubLabel, { color: theme.primary }]}>ĐIỂM NHẬN & TRẢ XE</Text>
+                  <Text style={[styles.stationSubLabel, { color: theme.primary }]}>
+                    {isEn ? 'PICKUP & RETURN HUB' : 'ĐIỂM NHẬN & TRẢ XE'}
+                  </Text>
                 </View>
                 <View style={styles.stationHeaderActionsRow}>
                   <TouchableOpacity
@@ -814,10 +823,12 @@ export default function HomeScreen({
                     }}
                   >
                     <Ionicons name="map-outline" size={12} color="#4E3322" />
-                    <Text style={styles.mapShortcutText}>Bản đồ</Text>
+                    <Text style={styles.mapShortcutText}>{isEn ? 'Map' : 'Bản đồ'}</Text>
                   </TouchableOpacity>
                   <View style={[styles.changeHubPill, { backgroundColor: theme.primarySoft }]}>
-                    <Text style={[styles.changeHubLink, { color: theme.primary }]}>Đổi trạm</Text>
+                    <Text style={[styles.changeHubLink, { color: theme.primary }]}>
+                      {isEn ? 'Change' : 'Đổi trạm'}
+                    </Text>
                     <Ionicons name="chevron-forward" size={11} color={theme.primary} />
                   </View>
                 </View>
@@ -831,11 +842,13 @@ export default function HomeScreen({
                 <View style={styles.pulseLiveContainer}>
                   <View style={styles.pulseLiveDot} />
                   <Text style={styles.pulseLiveText}>
-                    {selectedPlace?.availableVehicles || 8} xe sẵn sàng
+                    {selectedPlace?.availableVehicles || 8} {isEn ? 'ready' : 'xe sẵn sàng'}
                   </Text>
                 </View>
                 <Text style={styles.metaDotSep}>•</Text>
-                <Text style={styles.stationDistPill}>Cách {selectedPlace?.distance || '0,4 km'}</Text>
+                <Text style={styles.stationDistPill}>
+                  {isEn ? 'Dist.' : 'Cách'} {selectedPlace?.distance || '0,4 km'}
+                </Text>
                 <Text style={styles.metaDotSep}>•</Text>
                 <Ionicons name="time-outline" size={12} color="#8C6239" style={{ marginRight: 2 }} />
                 <Text style={styles.stationTimeSummaryText} numberOfLines={1}>
@@ -851,7 +864,7 @@ export default function HomeScreen({
                 style={styles.quickSearchInput}
                 value={vehicleSearchQuery}
                 onChangeText={setVehicleSearchQuery}
-                placeholder="Tìm dòng xe (VF 8, Ioniq 5, Feliz S, Klara S...)"
+                placeholder={isEn ? 'Search models (VF 8, Ioniq 5, Feliz S...)' : 'Tìm dòng xe (VF 8, Ioniq 5, Feliz S, Klara S...)'}
                 placeholderTextColor="#A89F91"
               />
               {vehicleSearchQuery.length > 0 && (
@@ -901,12 +914,12 @@ export default function HomeScreen({
               <View style={styles.featureTextCol}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                   <Text style={styles.featureTitle} numberOfLines={1}>
-                    Ô tô tự lái
+                    {isEn ? 'Self-Drive Cars' : 'Ô tô tự lái'}
                   </Text>
                   <Ionicons name="chevron-forward" size={13} color="#8C6239" />
                 </View>
                 <Text style={[styles.featureSub, { color: theme.primary }]} numberOfLines={1}>
-                  Từ 85k/h · {vehicles.filter((v) => v.category === 'CAR').length} xe →
+                  {isEn ? 'From 85k/h' : 'Từ 85k/h'} · {vehicles.filter((v) => v.category === 'CAR').length} {isEn ? 'cars' : 'xe'} →
                 </Text>
               </View>
             </TouchableOpacity>
@@ -926,12 +939,12 @@ export default function HomeScreen({
               <View style={styles.featureTextCol}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                   <Text style={styles.featureTitle} numberOfLines={1}>
-                    Xe máy điện
+                    {isEn ? 'E-Scooters' : 'Xe máy điện'}
                   </Text>
                   <Ionicons name="chevron-forward" size={13} color="#8C6239" />
                 </View>
                 <Text style={[styles.featureSub, { color: '#8C6239' }]} numberOfLines={1}>
-                  Từ 22k/h · {vehicles.filter((v) => v.category === 'MOTORBIKE').length} xe →
+                  {isEn ? 'From 22k/h' : 'Từ 22k/h'} · {vehicles.filter((v) => v.category === 'MOTORBIKE').length} {isEn ? 'bikes' : 'xe'} →
                 </Text>
               </View>
             </TouchableOpacity>
@@ -947,10 +960,10 @@ export default function HomeScreen({
               </View>
               <View style={styles.featureTextCol}>
                 <Text style={styles.featureTitle} numberOfLines={1}>
-                  Giao xe tận nơi
+                  {isEn ? 'Doorstep Delivery' : 'Giao xe tận nơi'}
                 </Text>
                 <Text style={styles.featureSubMuted} numberOfLines={1}>
-                  Miễn phí 5km
+                  {isEn ? 'Free within 5km' : 'Miễn phí 5km'}
                 </Text>
               </View>
             </TouchableOpacity>
@@ -967,7 +980,7 @@ export default function HomeScreen({
               <View style={styles.featureTextCol}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
                   <Text style={styles.featureTitle} numberOfLines={1}>
-                    Làn sóng xanh
+                    {isEn ? 'Green Wave' : 'Làn sóng xanh'}
                   </Text>
                   <View
                     style={{

@@ -16,6 +16,7 @@ import {
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { FONTS, THEME_PRESETS } from '../styles/theme';
 import ApiService from '../services/api';
+import { useLanguage } from '../i18n';
 
 const ICON_COIN_ECOXU = require('../../assets/icons/coin_ecoxu.jpg');
 const ICON_CAT_VIP = require('../../assets/icons/cat_vip.jpg');
@@ -258,6 +259,8 @@ export default function OffersScreen({
   onOpenVoucherWallet,
   onUpdateUser
 }) {
+  const { language } = useLanguage();
+  const isEn = language === 'en';
   const [userCoins, setUserCoins] = useState(
     (currentUser && (currentUser.ecoCoins || currentUser.ecoPoints)) || 180
   );
@@ -412,8 +415,12 @@ export default function OffersScreen({
         {/* Header Top Bar */}
         <View style={styles.headerTopRow}>
           <View style={styles.headerTitleBox}>
-            <Text style={styles.headerAppBrand}>Đặc quyền & Ưu đãi</Text>
-            <Text style={styles.headerAppSub}>Trung tâm tích điểm và quy đổi dịch vụ EcoGo</Text>
+            <Text style={styles.headerAppBrand}>
+              {isEn ? 'Privileges & Offers' : 'Đặc quyền & Ưu đãi'}
+            </Text>
+            <Text style={styles.headerAppSub}>
+              {isEn ? 'EcoGo points & service redemption center' : 'Trung tâm tích điểm và quy đổi dịch vụ EcoGo'}
+            </Text>
           </View>
           <TouchableOpacity
             style={styles.dailyCheckInPill}
@@ -421,7 +428,9 @@ export default function OffersScreen({
             onPress={() => setShowCheckInModal(true)}
           >
             <MaterialCommunityIcons name="calendar-check" size={14} color="#E6C770" />
-            <Text style={styles.dailyCheckInPillText}>Điểm danh +25</Text>
+            <Text style={styles.dailyCheckInPillText}>
+              {isEn ? 'Check-in +25' : 'Điểm danh +25'}
+            </Text>
           </TouchableOpacity>
         </View>
 
@@ -433,9 +442,11 @@ export default function OffersScreen({
           <View style={{ flex: 1, marginLeft: 14 }}>
             <View style={styles.coinBalanceRow}>
               <Text style={styles.coinBalanceNumber}>{userCoins}</Text>
-              <Text style={styles.coinUnitText}>EcoXu</Text>
+              <Text style={styles.coinUnitText}>{isEn ? 'EcoCoins' : 'EcoXu'}</Text>
             </View>
-            <Text style={styles.coinPromptText}>Tích lũy điểm thưởng qua mỗi hành trình xanh</Text>
+            <Text style={styles.coinPromptText}>
+              {isEn ? 'Earn rewards on every green trip' : 'Tích lũy điểm thưởng qua mỗi hành trình xanh'}
+            </Text>
           </View>
           <TouchableOpacity
             style={styles.historyBtn}
@@ -447,7 +458,9 @@ export default function OffersScreen({
               color="#FFFFFF"
             />
             <Text style={styles.historyBtnText}>
-              {activeTabMode === 'DISCOVER' ? 'Ví ưu đãi' : 'Khám phá'}
+              {activeTabMode === 'DISCOVER'
+                ? (isEn ? 'Vouchers' : 'Ví ưu đãi')
+                : (isEn ? 'Discover' : 'Khám phá')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -463,7 +476,7 @@ export default function OffersScreen({
               <MaterialCommunityIcons name="medal" size={18} color="#6F4E37" />
             </View>
             <View style={{ flex: 1, marginLeft: 8 }}>
-              <Text style={styles.quickNavTitle}>Xếp hạng</Text>
+              <Text style={styles.quickNavTitle}>{isEn ? 'Tier Rank' : 'Xếp hạng'}</Text>
               <Text style={styles.quickNavSub}>Eco Elite VIP</Text>
             </View>
           </TouchableOpacity>
@@ -479,8 +492,8 @@ export default function OffersScreen({
               <MaterialCommunityIcons name="calendar-check" size={18} color="#1E5631" />
             </View>
             <View style={{ flex: 1, marginLeft: 8 }}>
-              <Text style={styles.quickNavTitle}>Điểm danh</Text>
-              <Text style={styles.quickNavSub}>Nhận EcoXu</Text>
+              <Text style={styles.quickNavTitle}>{isEn ? 'Check-in' : 'Điểm danh'}</Text>
+              <Text style={styles.quickNavSub}>{isEn ? 'Get EcoCoins' : 'Nhận EcoXu'}</Text>
             </View>
           </TouchableOpacity>
 
@@ -498,8 +511,10 @@ export default function OffersScreen({
               <MaterialCommunityIcons name="ticket-percent" size={18} color="#92400E" />
             </View>
             <View style={{ flex: 1, marginLeft: 8 }}>
-              <Text style={styles.quickNavTitle}>Ví ưu đãi</Text>
-              <Text style={styles.quickNavSub}>{myVouchers.length} mã khả dụng</Text>
+              <Text style={styles.quickNavTitle}>{isEn ? 'Vouchers' : 'Ví ưu đãi'}</Text>
+              <Text style={styles.quickNavSub}>
+                {myVouchers.length} {isEn ? 'available' : 'mã khả dụng'}
+              </Text>
             </View>
           </TouchableOpacity>
         </View>
