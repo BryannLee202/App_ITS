@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import {
   View,
   Text,
@@ -8,7 +8,8 @@ import {
   TextInput,
   ActivityIndicator,
   Modal,
-  RefreshControl
+  RefreshControl,
+  Platform
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { FONTS, THEME_PRESETS } from '../styles/theme';
@@ -45,6 +46,71 @@ const PRICE_OPTIONS = [
   { id: 'UNDER_200K', label: '< 200.000đ/h' },
   { id: 'ABOVE_200K', label: '> 200.000đ/h' }
 ];
+
+// Component cuộn ngang hỗ trợ kéo chuột, lăn chuột trên Web & vuốt chạm mượt trên Mobile
+const DragHorizontalScroll = ({ children, contentContainerStyle }) => {
+  const scrollRef = useRef(null);
+  const dragState = useRef({ isDown: false, startX: 0, scrollLeft: 0 });
+
+  const webProps =
+    Platform.OS === 'web'
+      ? {
+          onWheel: (e) => {
+            if (scrollRef.current) {
+              const node = scrollRef.current.getScrollableNode
+                ? scrollRef.current.getScrollableNode()
+                : scrollRef.current;
+              if (node && typeof node.scrollLeft === 'number' && Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+                node.scrollLeft += e.deltaY;
+              }
+            }
+          },
+          onMouseDown: (e) => {
+            if (scrollRef.current) {
+              const node = scrollRef.current.getScrollableNode
+                ? scrollRef.current.getScrollableNode()
+                : scrollRef.current;
+              if (node) {
+                dragState.current = {
+                  isDown: true,
+                  startX: e.pageX,
+                  scrollLeft: node.scrollLeft || 0
+                };
+              }
+            }
+          },
+          onMouseMove: (e) => {
+            if (!dragState.current.isDown || !scrollRef.current) return;
+            const node = scrollRef.current.getScrollableNode
+              ? scrollRef.current.getScrollableNode()
+              : scrollRef.current;
+            if (node) {
+              const walk = (e.pageX - dragState.current.startX) * 1.25;
+              node.scrollLeft = dragState.current.scrollLeft - walk;
+            }
+          },
+          onMouseUp: () => {
+            dragState.current.isDown = false;
+          },
+          onMouseLeave: () => {
+            dragState.current.isDown = false;
+          }
+        }
+      : {};
+
+  return (
+    <ScrollView
+      ref={scrollRef}
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      nestedScrollEnabled
+      contentContainerStyle={contentContainerStyle}
+      {...webProps}
+    >
+      {children}
+    </ScrollView>
+  );
+};
 
 export default function VehiclesScreen({
   theme = THEME_PRESETS.BE_SUA_CAFE,
@@ -222,99 +288,111 @@ export default function VehiclesScreen({
     }, 1400);
   };
 
-  // Quick Chips logic
+  // Bộ lọc thông minh theo từng phân khúc phương tiện (Không trùng lặp, không emoji thô)
   const quickChips = useMemo(() => {
     const chips = [];
-    chips.push({
+    const addedLabels = new Set();
+    const pushUnique = (chip) => {
+      if (!addedLabels.has(chip.label)) {
+        addedLabels.add(chip.label);
+        chips.push(chip);
+      }
+    };
+
+    pushUnique({
       id: 'ALL_RESET',
       label: 'Tất cả',
+      icon: 'apps-outline',
       active: activeFiltersCount === 0,
       onPress: resetAllFilters
     });
 
-    // EV quick chip
-    chips.push({
-      id: 'QUICK_EV',
-      label: '⚡ Xe điện',
-      active: fuelFilter === 'ELECTRIC',
-      onPress: () => setFuelFilter((prev) => (prev === 'ELECTRIC' ? 'ALL' : 'ELECTRIC'))
-    });
-
     if (categoryMode === 'CAR') {
-      chips.push({
+      pushUnique({
+        id: 'QUICK_EV',
+        label: 'Thuần điện',
+        icon: 'flash-outline',
+        active: fuelFilter === 'ELECTRIC',
+        onPress: () => setFuelFilter((prev) => (prev === 'ELECTRIC' ? 'ALL' : 'ELECTRIC'))
+      });
+      pushUnique({
         id: 'QUICK_HEV',
-        label: '🍃 Hybrid',
+        label: 'Hybrid',
+        icon: 'leaf-outline',
         active: fuelFilter === 'HYBRID',
         onPress: () => setFuelFilter((prev) => (prev === 'HYBRID' ? 'ALL' : 'HYBRID'))
       });
-      chips.push({
-        id: 'QUICK_7SEATS',
-        label: '7 chỗ',
-        active: seatsFilter === '7',
-        onPress: () => setSeatsFilter((prev) => (prev === '7' ? 'ALL' : '7'))
-      });
-      chips.push({
+      pushUnique({
         id: 'QUICK_5SEATS',
-        label: '4-5 chỗ',
+        label: '4–5 chỗ',
+        icon: 'people-outline',
         active: seatsFilter === '4_5',
         onPress: () => setSeatsFilter((prev) => (prev === '4_5' ? 'ALL' : '4_5'))
       });
-      chips.push({
+      pushUnique({
+        id: 'QUICK_7SEATS',
+        label: '7 chỗ',
+        icon: 'people-outline',
+        active: seatsFilter === '7',
+        onPress: () => setSeatsFilter((prev) => (prev === '7' ? 'ALL' : '7'))
+      });
+      pushUnique({
         id: 'QUICK_PRICE',
-        label: '< 100k/h',
+        label: 'Dưới 100k/h',
+        icon: 'pricetag-outline',
         active: priceMaxFilter === 'UNDER_100K',
         onPress: () => setPriceMaxFilter((prev) => (prev === 'UNDER_100K' ? 'ALL' : 'UNDER_100K'))
       });
     } else if (categoryMode === 'LUXURY') {
-      chips.push({
+      pushUnique({
+        id: 'QUICK_EV',
+        label: 'Xe điện VIP',
+        icon: 'flash-outline',
+        active: fuelFilter === 'ELECTRIC',
+        onPress: () => setFuelFilter((prev) => (prev === 'ELECTRIC' ? 'ALL' : 'ELECTRIC'))
+      });
+      pushUnique({
         id: 'QUICK_VIP_SEATS',
-        label: 'VIP 6-7 chỗ',
+        label: '6–7 chỗ',
+        icon: 'people-outline',
         active: seatsFilter === '7',
         onPress: () => setSeatsFilter((prev) => (prev === '7' ? 'ALL' : '7'))
       });
-      chips.push({
-        id: 'QUICK_MERC',
-        label: 'Mercedes-Benz',
-        active: brandFilter === 'Mercedes-Benz',
-        onPress: () => setBrandFilter((prev) => (prev === 'Mercedes-Benz' ? 'ALL' : 'Mercedes-Benz'))
-      });
     } else if (categoryMode === 'MOTORBIKE') {
-      chips.push({
-        id: 'QUICK_HONDA',
-        label: 'Honda',
-        active: brandFilter === 'Honda',
-        onPress: () => setBrandFilter((prev) => (prev === 'Honda' ? 'ALL' : 'Honda'))
+      pushUnique({
+        id: 'QUICK_EV',
+        label: 'Xe máy điện',
+        icon: 'flash-outline',
+        active: fuelFilter === 'ELECTRIC',
+        onPress: () => setFuelFilter((prev) => (prev === 'ELECTRIC' ? 'ALL' : 'ELECTRIC'))
       });
-      chips.push({
-        id: 'QUICK_VF_MOTO',
-        label: 'VinFast',
-        active: brandFilter === 'VinFast',
-        onPress: () => setBrandFilter((prev) => (prev === 'VinFast' ? 'ALL' : 'VinFast'))
-      });
-      chips.push({
+      pushUnique({
         id: 'QUICK_PRICE_MOTO',
-        label: '< 30k/h',
+        label: 'Dưới 30k/h',
+        icon: 'pricetag-outline',
         active: priceMaxFilter === 'UNDER_50K',
         onPress: () => setPriceMaxFilter((prev) => (prev === 'UNDER_50K' ? 'ALL' : 'UNDER_50K'))
       });
     } else if (categoryMode === 'BICYCLE') {
-      chips.push({
+      pushUnique({
         id: 'QUICK_EBIKE',
         label: 'Trợ lực điện',
+        icon: 'flash-outline',
         active: fuelFilter === 'ELECTRIC',
         onPress: () => setFuelFilter((prev) => (prev === 'ELECTRIC' ? 'ALL' : 'ELECTRIC'))
       });
-      chips.push({
+      pushUnique({
         id: 'QUICK_CHEAP_BIKE',
         label: '10.000đ/h',
+        icon: 'pricetag-outline',
         active: priceMaxFilter === 'UNDER_50K',
         onPress: () => setPriceMaxFilter((prev) => (prev === 'UNDER_50K' ? 'ALL' : 'UNDER_50K'))
       });
     }
 
-    // Brands chips
+    // Hãng xe (tự động lọc trùng)
     availableBrands.filter((b) => b !== 'ALL').forEach((brand) => {
-      chips.push({
+      pushUnique({
         id: `BRAND_${brand}`,
         label: brand,
         active: brandFilter === brand,
@@ -401,13 +479,9 @@ export default function VehiclesScreen({
         </TouchableOpacity>
       </View>
 
-      {/* 3. TẦNG 2A: CATEGORY CAPSULE TABS */}
+      {/* 3. TẦNG 2A: PHÂN LOẠI PHƯƠNG TIỆN (HỖ TRỢ KÉO/LĂN CHUỘT & VUỐT NGANG) */}
       <View style={styles.categoryContainer}>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.categoryScroll}
-        >
+        <DragHorizontalScroll contentContainerStyle={styles.categoryScroll}>
           {/* CAR */}
           <TouchableOpacity
             style={[styles.catCapsule, categoryMode === 'CAR' && styles.catCapsuleActive]}
@@ -418,8 +492,8 @@ export default function VehiclesScreen({
             activeOpacity={0.85}
           >
             <Ionicons
-              name="car-sport"
-              size={13}
+              name={categoryMode === 'CAR' ? 'car-sport' : 'car-sport-outline'}
+              size={14}
               color={categoryMode === 'CAR' ? '#FAF7F2' : '#6F4E37'}
             />
             <Text style={[styles.catText, categoryMode === 'CAR' && styles.catTextActive]}>
@@ -437,12 +511,12 @@ export default function VehiclesScreen({
             activeOpacity={0.85}
           >
             <Ionicons
-              name="sparkles"
+              name={categoryMode === 'LUXURY' ? 'diamond' : 'diamond-outline'}
               size={13}
-              color={categoryMode === 'LUXURY' ? '#FAF7F2' : '#D4AF37'}
+              color={categoryMode === 'LUXURY' ? '#D4AF37' : '#B45309'}
             />
             <Text style={[styles.catText, categoryMode === 'LUXURY' && styles.catTextActive]}>
-              Hạng sang VIP ({vehicles.filter((v) => v.category === 'LUXURY').length})
+              Hạng sang ({vehicles.filter((v) => v.category === 'LUXURY').length})
             </Text>
           </TouchableOpacity>
 
@@ -456,8 +530,8 @@ export default function VehiclesScreen({
             activeOpacity={0.85}
           >
             <Ionicons
-              name="bicycle"
-              size={13}
+              name={categoryMode === 'MOTORBIKE' ? 'speedometer' : 'speedometer-outline'}
+              size={14}
               color={categoryMode === 'MOTORBIKE' ? '#FAF7F2' : '#6F4E37'}
             />
             <Text style={[styles.catText, categoryMode === 'MOTORBIKE' && styles.catTextActive]}>
@@ -475,24 +549,20 @@ export default function VehiclesScreen({
             activeOpacity={0.85}
           >
             <Ionicons
-              name="leaf"
-              size={13}
-              color={categoryMode === 'BICYCLE' ? '#FAF7F2' : '#15803D'}
+              name={categoryMode === 'BICYCLE' ? 'leaf' : 'leaf-outline'}
+              size={14}
+              color={categoryMode === 'BICYCLE' ? '#FAF7F2' : '#52735E'}
             />
             <Text style={[styles.catText, categoryMode === 'BICYCLE' && styles.catTextActive]}>
               Xe đạp ({vehicles.filter((v) => v.category === 'BICYCLE').length})
             </Text>
           </TouchableOpacity>
-        </ScrollView>
+        </DragHorizontalScroll>
       </View>
 
-      {/* 4. TẦNG 2B: QUICK CHIPS 1 DÒNG CUỘN TIỆN LỢI */}
+      {/* 4. TẦNG 2B: BỘ LỌC NHANH THÔNG MINH THEO PHÂN KHÚC (KÉO/CUỘN MƯỢT) */}
       <View style={styles.quickChipsContainer}>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.quickChipsScroll}
-        >
+        <DragHorizontalScroll contentContainerStyle={styles.quickChipsScroll}>
           {quickChips.map((chip) => (
             <TouchableOpacity
               key={chip.id}
@@ -500,12 +570,20 @@ export default function VehiclesScreen({
               onPress={chip.onPress}
               activeOpacity={0.78}
             >
+              {chip.icon && (
+                <Ionicons
+                  name={chip.icon}
+                  size={12}
+                  color={chip.active ? '#FAF7F2' : '#6F4E37'}
+                  style={{ marginRight: 4 }}
+                />
+              )}
               <Text style={[styles.quickChipText, chip.active && styles.quickChipTextActive]}>
                 {chip.label}
               </Text>
             </TouchableOpacity>
           ))}
-        </ScrollView>
+        </DragHorizontalScroll>
       </View>
 
       {/* 5. MICRO STATUS ROW: SỐ XE & NÚT SẮP XẾP */}
@@ -929,22 +1007,24 @@ const styles = StyleSheet.create({
 
   /* TẦNG 2A: CATEGORY CAPSULE TABS */
   categoryContainer: {
-    marginBottom: 6
+    marginBottom: 8
   },
   categoryScroll: {
-    paddingHorizontal: 16,
-    gap: 6
+    paddingLeft: 16,
+    paddingRight: 28,
+    gap: 8,
+    alignItems: 'center'
   },
   catCapsule: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 12,
+    paddingVertical: 7,
+    paddingHorizontal: 13,
+    borderRadius: 14,
     borderWidth: 1,
-    borderColor: '#EBE3D7',
-    gap: 5
+    borderColor: '#E5D6C9',
+    gap: 6
   },
   catCapsuleActive: {
     backgroundColor: '#4E3322',
@@ -952,7 +1032,7 @@ const styles = StyleSheet.create({
   },
   catText: {
     fontFamily: FONTS.family,
-    fontSize: 11.5,
+    fontSize: 12,
     fontWeight: '700',
     color: '#6F4E37'
   },
@@ -963,20 +1043,23 @@ const styles = StyleSheet.create({
 
   /* TẦNG 2B: QUICK CHIPS 1 DÒNG */
   quickChipsContainer: {
-    marginBottom: 8
+    marginBottom: 10
   },
   quickChipsScroll: {
-    paddingHorizontal: 16,
-    gap: 6,
+    paddingLeft: 16,
+    paddingRight: 28,
+    gap: 7,
     alignItems: 'center'
   },
   quickChip: {
-    paddingHorizontal: 10,
-    paddingVertical: 4.5,
-    borderRadius: 10,
-    backgroundColor: '#F5EFEB',
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 11,
+    paddingVertical: 5.5,
+    borderRadius: 12,
+    backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#EAE3D9'
+    borderColor: '#E5D6C9'
   },
   quickChipActive: {
     backgroundColor: '#6F4E37',
