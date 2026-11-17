@@ -84,9 +84,38 @@ if (fs.existsSync(publicDir)) {
     }
   }));
 
+  // Endpoint cố định cho gói bundle chính: không bao giờ đổi tên file hash,
+  // luôn gửi gói bundle mới nhất với cấm cache để Safari và PWA luôn chạy bản mới
+  app.get('/bundle.js', (req, res) => {
+    const bundlePath = path.join(publicDir, 'bundle.js');
+    if (fs.existsSync(bundlePath)) {
+      res.setHeader('Content-Type', 'application/javascript; charset=UTF-8');
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+      return res.sendFile(bundlePath);
+    }
+    const jsDir = path.join(publicDir, '_expo/static/js/web');
+    if (fs.existsSync(jsDir)) {
+      const files = fs.readdirSync(jsDir).filter(f => f.endsWith('.js'));
+      if (files.length > 0) {
+        res.setHeader('Content-Type', 'application/javascript; charset=UTF-8');
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+        return res.sendFile(path.join(jsDir, files[0]));
+      }
+    }
+    res.status(404).send('Bundle not found');
+  });
+
   // Cứu hộ Standalone PWA iOS: nếu máy khách vẫn lưu index.html cũ đòi bundle JS hash cũ đã bị xóa,
   // tự động phục vụ bundle JS mới nhất hiện tại thay vì trả về HTML gây SyntaxError (trắng màn hình)
   app.get('/_expo/static/js/web/*', (req, res, next) => {
+    const bundlePath = path.join(publicDir, 'bundle.js');
+    if (fs.existsSync(bundlePath)) {
+      res.setHeader('Content-Type', 'application/javascript; charset=UTF-8');
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      return res.sendFile(bundlePath);
+    }
     const jsDir = path.join(publicDir, '_expo/static/js/web');
     if (fs.existsSync(jsDir)) {
       const files = fs.readdirSync(jsDir).filter(f => f.endsWith('.js'));

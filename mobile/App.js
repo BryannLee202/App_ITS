@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -13,6 +13,7 @@ import {
   ActivityIndicator
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { API_BASE_URL } from './src/config';
 import { FONTS, THEME_PRESETS } from './src/styles/theme';
 import ApiService from './src/services/api';
 import { LanguageProvider, useLanguage } from './src/i18n';

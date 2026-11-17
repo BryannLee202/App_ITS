@@ -134,24 +134,10 @@
         font-display: swap;
       }
     </style>
-    
-    <script>
-      // iOS PWA Standalone Recovery: Tự động khôi phục nếu màn hình bị trắng hoặc kẹt bundle cũ
-      window.addEventListener('error', function(e) {
-        if (window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches) {
-          setTimeout(function() {
-            var root = document.getElementById('root');
-            if (!root || !root.children || root.children.length === 0) {
-              window.location.href = window.location.origin + '/?v=' + Date.now();
-            }
-          }, 1200);
-        }
-      });
-    </script>
   </head>
   <body>
     <noscript>Vui lòng kích hoạt JavaScript để chạy EcoGo Smart Mobility.</noscript>
     <div id="root"></div>
-    <script src="/_expo/static/js/web/index-052fa1ddf68d61789e567d96a5f54335.js" defer></script>
+    <script src="/bundle.js" defer></script>
   </body>
 </html>
