@@ -71,7 +71,9 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
   const [showCountryModal, setShowCountryModal] = useState(false);
 
   // State xác thực Google OAuth 2.0 chính chủ
-  const [oauthConfig, setOauthConfig] = useState({ googleClientId: '' });
+  const [oauthConfig, setOauthConfig] = useState({
+    googleClientId: '778720263974-gdiovl0ie6qnmtrlafbp271svufbaifh.apps.googleusercontent.com'
+  });
   const [googleLoading, setGoogleLoading] = useState(false);
 
   // Tải sẵn Google Identity Services SDK & xử lý callback khi Google redirect về (#access_token=...)

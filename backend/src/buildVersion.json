@@ -1,5 +1,5 @@
 {
-  "version": "1.2.8",
-  "buildTime": "1794925000000",
-  "change": "Hien thi thong bao ro rang tren Web khi Render chua duoc dien GOOGLE_CLIENT_ID"
+  "version": "1.2.9",
+  "buildTime": "1794925300000",
+  "change": "Gan truc tiep GOOGLE_CLIENT_ID chinh chu de bat cua so Google OAuth 2.0 ngay lap tuc"
 }
