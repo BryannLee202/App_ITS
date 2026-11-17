@@ -1260,7 +1260,7 @@ export default function HomeScreen({
                         setFilterByStation(true);
                         setShowDestinationModal(false);
                         if (onNavigateToVehicles) {
-                          onNavigateToVehicles('ALL');
+                          onNavigateToVehicles('CAR');
                         }
                       }}
                     >
@@ -1515,7 +1515,7 @@ export default function HomeScreen({
                 setBookingDeliveryMode('DOORSTEP');
                 setSelectedVoucherForBooking('FREESHIP');
                 if (onNavigateToVehicles) {
-                  onNavigateToVehicles('ALL');
+                  onNavigateToVehicles('CAR');
                 }
               }}
             >

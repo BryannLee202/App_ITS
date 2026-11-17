@@ -122,12 +122,16 @@ export default function VehiclesScreen({
 }) {
   const [vehicles, setVehicles] = useState(DEFAULT_VEHICLES);
   const [loading, setLoading] = useState(false);
+  const VALID_CATEGORIES = ['CAR', 'LUXURY', 'MOTORBIKE', 'BICYCLE'];
+  const normalizeCategory = (cat) => (VALID_CATEGORIES.includes(cat) ? cat : 'CAR');
+
   const [refreshing, setRefreshing] = useState(false);
-  const [categoryMode, setCategoryMode] = useState(initialCategory || 'CAR');
+  const [categoryMode, setCategoryMode] = useState(normalizeCategory(initialCategory));
 
   useEffect(() => {
     if (initialCategory) {
-      setCategoryMode(initialCategory);
+      setCategoryMode(normalizeCategory(initialCategory));
+      resetSecondaryFilters();
     }
   }, [initialCategory]);
   
@@ -144,14 +148,6 @@ export default function VehiclesScreen({
   const [bookingVehicle, setBookingVehicle] = useState(null);
   const [showBookingModal, setShowBookingModal] = useState(false);
   const [bookingToast, setBookingToast] = useState(null);
-
-  // Sync category if prop changes
-  useEffect(() => {
-    if (initialCategory) {
-      setCategoryMode(initialCategory);
-      resetSecondaryFilters();
-    }
-  }, [initialCategory]);
 
   useEffect(() => {
     loadVehicles();

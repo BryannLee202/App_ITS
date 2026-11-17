@@ -1,5 +1,5 @@
 {
-  "version": "1.3.6",
-  "buildTime": "1794930400000",
-  "change": "Sua dieu huong nut Xem xe tai tram, Thue nhanh va Giao tan noi sang trang Thue xe va form dat xe"
+  "version": "1.3.7",
+  "buildTime": "1794930700000",
+  "change": "Sua loi Hien thi 0/0 xe khi dieu huong sang VehiclesScreen tu Trang chu"
 }
