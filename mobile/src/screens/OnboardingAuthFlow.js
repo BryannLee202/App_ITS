@@ -625,9 +625,6 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
                   style={styles.locAppLogoImage}
                   resizeMode="cover"
                 />
-                <View style={styles.locHandBadge}>
-                  <Ionicons name="checkmark" size={11} color="#FFFFFF" />
-                </View>
               </View>
 
               <View style={styles.locHeaderMeta}>
