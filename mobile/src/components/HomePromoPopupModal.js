@@ -4,19 +4,45 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
+  Pressable,
   Modal,
   Image,
-  Platform,
-  AppState
+  Platform
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { FONTS } from '../styles/theme';
 
-// Biến phiên toàn cục: Đảm bảo quảng cáo chỉ hiện 1 lần lúc vào app,
-// và TUYỆT ĐỐI KHÔNG hiện lại khi người dùng chuyển qua lại các chức năng/tab trong app.
-// CHỈ HIỆN KHI THIẾT BỊ THỰC SỰ OUT RA KHỎI APP VÀ VÀO LẠI!
+const PROMO_STORAGE_KEY = 'ecogo_promo_last_shown_date';
 let hasShownInitialAdOnSession = false;
-let wasAppBackgrounded = false;
+
+const getTodayKey = () => {
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = String(now.getMonth() + 1).padStart(2, '0');
+  const d = String(now.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+};
+
+const hasShownPromoToday = () => {
+  if (hasShownInitialAdOnSession) return true;
+  if (Platform.OS === 'web' && typeof window !== 'undefined' && window.localStorage) {
+    try {
+      return window.localStorage.getItem(PROMO_STORAGE_KEY) === getTodayKey();
+    } catch (e) {
+      return false;
+    }
+  }
+  return false;
+};
+
+const markPromoShownToday = () => {
+  hasShownInitialAdOnSession = true;
+  if (Platform.OS === 'web' && typeof window !== 'undefined' && window.localStorage) {
+    try {
+      window.localStorage.setItem(PROMO_STORAGE_KEY, getTodayKey());
+    } catch (e) {}
+  }
+};
 
 // 5 Chiến dịch Quảng cáo với Ảnh chụp thực tế (Photorealistic) & Điều hướng trực tiếp
 const PROMO_CAMPAIGNS = [
@@ -99,13 +125,18 @@ export default function HomePromoPopupModal({
   const pickRandomAd = () => {
     const randomIndex = Math.floor(Math.random() * PROMO_CAMPAIGNS.length);
     setCurrentAd(PROMO_CAMPAIGNS[randomIndex]);
+    markPromoShownToday();
     setVisible(true);
   };
 
+  const handleDismiss = () => {
+    markPromoShownToday();
+    setVisible(false);
+  };
+
   useEffect(() => {
-    // Chỉ hiện 1 lần duy nhất khi mở app lần đầu trong phiên
-    if (!hasShownInitialAdOnSession) {
-      hasShownInitialAdOnSession = true;
+    // Chỉ hiện tối đa 1 lần duy nhất mỗi ngày, không tự bật lại khi chuyển tab hay F5
+    if (!hasShownPromoToday()) {
       const timer = setTimeout(() => {
         pickRandomAd();
       }, 700);
@@ -113,48 +144,9 @@ export default function HomePromoPopupModal({
     }
   }, []);
 
-  useEffect(() => {
-    // Chỉ hiện lại khi thiết bị thực sự out ra ngoài app và quay vào lại
-    const handleAppStateChange = (nextAppState) => {
-      if (nextAppState === 'background' || nextAppState === 'inactive') {
-        wasAppBackgrounded = true;
-      } else if (nextAppState === 'active') {
-        if (wasAppBackgrounded) {
-          wasAppBackgrounded = false;
-          pickRandomAd();
-        }
-      }
-    };
-
-    const appStateSub = AppState.addEventListener('change', handleAppStateChange);
-
-    const handleVisibilityChange = () => {
-      if (typeof document !== 'undefined') {
-        if (document.visibilityState === 'hidden') {
-          wasAppBackgrounded = true;
-        } else if (document.visibilityState === 'visible') {
-          if (wasAppBackgrounded) {
-            wasAppBackgrounded = false;
-            pickRandomAd();
-          }
-        }
-      }
-    };
-
-    if (Platform.OS === 'web' && typeof document !== 'undefined') {
-      document.addEventListener('visibilitychange', handleVisibilityChange);
-    }
-
-    return () => {
-      appStateSub.remove();
-      if (Platform.OS === 'web' && typeof document !== 'undefined') {
-        document.removeEventListener('visibilitychange', handleVisibilityChange);
-      }
-    };
-  }, []);
-
   // Điều hướng chính xác tới mục/chức năng liên quan khi nhấn vào banner hoặc nút CTA
   const handleActionClick = () => {
+    markPromoShownToday();
     setVisible(false);
     if (!currentAd) return;
 
@@ -176,10 +168,10 @@ export default function HomePromoPopupModal({
       visible={visible}
       transparent
       animationType="fade"
-      onRequestClose={() => setVisible(false)}
+      onRequestClose={handleDismiss}
     >
-      <View style={styles.backdrop}>
-        <View style={styles.popupWrapper}>
+      <Pressable style={styles.backdrop} onPress={handleDismiss}>
+        <Pressable style={styles.popupWrapper} onPress={(e) => e.stopPropagation && e.stopPropagation()}>
           {/* Full-bleed Real Photo Editorial Card — Bấm toàn vùng đều điều hướng */}
           <TouchableOpacity
             style={styles.posterCard}
@@ -231,14 +223,21 @@ export default function HomePromoPopupModal({
           <TouchableOpacity
             style={styles.closeCircleBtn}
             activeOpacity={0.75}
-            onPress={() => setVisible(false)}
+            onPress={handleDismiss}
           >
             <View style={styles.closeCircleInner}>
               <Ionicons name="close" size={24} color="#FFFFFF" />
             </View>
           </TouchableOpacity>
-        </View>
-      </View>
+          <TouchableOpacity
+            style={styles.dismissTodayBtn}
+            activeOpacity={0.75}
+            onPress={handleDismiss}
+          >
+            <Text style={styles.dismissTodayText}>Không hiện lại hôm nay</Text>
+          </TouchableOpacity>
+        </Pressable>
+      </Pressable>
     </Modal>
   );
 }
@@ -408,5 +407,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'rgba(24, 14, 9, 0.55)'
+  },
+  dismissTodayBtn: {
+    marginTop: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: 14,
+    backgroundColor: 'rgba(24, 14, 9, 0.5)'
+  },
+  dismissTodayText: {
+    fontFamily: FONTS.family,
+    fontSize: 12,
+    fontWeight: '600',
+    color: 'rgba(255, 255, 255, 0.85)'
   }
 });
