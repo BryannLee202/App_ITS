@@ -91,63 +91,75 @@ export default function NotificationsScreen({
     }
   };
 
+  const showNotice = (title, message) => {
+    if (Platform.OS === 'web') {
+      if (typeof window !== 'undefined' && typeof window.alert === 'function') {
+        window.alert(`${title}\n\n${message}`);
+      }
+    } else {
+      Alert.alert(title, message);
+    }
+  };
+
+  const confirmAction = (title, message, onConfirm, confirmLabel = 'Xác nhận') => {
+    if (Platform.OS === 'web') {
+      const ok = typeof window !== 'undefined' && typeof window.confirm === 'function'
+        ? window.confirm(`${title}\n\n${message}`)
+        : true;
+      if (ok) onConfirm();
+    } else {
+      Alert.alert(title, message, [
+        { text: 'Hủy', style: 'cancel' },
+        { text: confirmLabel, style: 'destructive', onPress: onConfirm }
+      ]);
+    }
+  };
+
   // Đánh dấu tất cả là đã đọc
   const handleMarkAllRead = async () => {
     if (notifications.every((n) => n.isRead)) {
-      Alert.alert('Thông báo', 'Tất cả thông báo đều đã được đọc.');
+      showNotice('Thông báo', 'Tất cả thông báo đều đã được đọc.');
       return;
     }
     setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
     try {
       await ApiService.markAllNotificationsRead();
       if (soundEnabled) playNotificationChime();
-      Alert.alert('Thành công', 'Đã đánh dấu tất cả thông báo là đã đọc!');
+      showNotice('Thành công', 'Đã đánh dấu tất cả thông báo là đã đọc!');
     } catch (e) {
-      Alert.alert('Đã cập nhật', 'Đã đánh dấu đã đọc trên thiết bị!');
+      showNotice('Đã cập nhật', 'Đã đánh dấu đã đọc trên thiết bị!');
     }
   };
 
   // Xóa 1 thông báo
   const handleDeleteItem = async (id, e) => {
     if (e && e.stopPropagation) e.stopPropagation();
-    Alert.alert('Xóa thông báo', 'Bạn có chắc chắn muốn xóa thông báo này?', [
-      { text: 'Hủy', style: 'cancel' },
-      {
-        text: 'Xóa',
-        style: 'destructive',
-        onPress: async () => {
-          setNotifications((prev) => prev.filter((n) => n.id !== id));
-          if (selectedNotif && selectedNotif.id === id) {
-            setShowDetailModal(false);
-          }
-          try {
-            await ApiService.deleteNotification(id);
-          } catch (e) {}
-        }
+    confirmAction('Xóa thông báo', 'Bạn có chắc chắn muốn xóa thông báo này?', async () => {
+      setNotifications((prev) => prev.filter((n) => n.id !== id));
+      if (selectedNotif && selectedNotif.id === id) {
+        setShowDetailModal(false);
       }
-    ]);
+      try {
+        await ApiService.deleteNotification(id);
+      } catch (err) {}
+    }, 'Xóa');
   };
 
   // Xóa toàn bộ thông báo
   const handleClearAll = () => {
     if (notifications.length === 0) {
-      Alert.alert('Thông báo', 'Danh sách thông báo hiện đang trống.');
+      showNotice('Thông báo', 'Danh sách thông báo hiện đang trống.');
       return;
     }
-    Alert.alert('Xóa tất cả', 'Bạn có chắc muốn xóa toàn bộ lịch sử thông báo không?', [
-      { text: 'Hủy', style: 'cancel' },
-      {
-        text: 'Xóa hết',
-        style: 'destructive',
-        onPress: async () => {
-          setNotifications([]);
-          try {
-            await ApiService.clearAllNotifications();
-            Alert.alert('Đã xóa', 'Toàn bộ danh sách thông báo đã được dọn sạch!');
-          } catch (e) {}
-        }
-      }
-    ]);
+    confirmAction('Xóa tất cả', 'Bạn có chắc muốn xóa toàn bộ lịch sử thông báo không?', async () => {
+      setNotifications([]);
+      setSelectedNotif(null);
+      setShowDetailModal(false);
+      try {
+        await ApiService.clearAllNotifications();
+        showNotice('Đã xóa', 'Toàn bộ danh sách thông báo đã được dọn sạch!');
+      } catch (err) {}
+    }, 'Xóa hết');
   };
 
   // Bắn thông báo thử nghiệm kèm tiếng chuông (Simulate real notification)
@@ -182,7 +194,7 @@ export default function NotificationsScreen({
       const res = await ApiService.createNotification(pick);
       if (res && res.success && res.notification) {
         setNotifications((prev) => [res.notification, ...prev]);
-        Alert.alert('🔔 Ding-Dong!', `Thông báo mới: "${pick.title}" kèm tiếng chuông đã được gửi tự động!`);
+        showNotice('🔔 Ding-Dong!', `Thông báo mới: "${pick.title}" kèm tiếng chuông đã được gửi tự động!`);
       }
     } catch (e) {
       const localItem = {
@@ -199,7 +211,7 @@ export default function NotificationsScreen({
         actionPayload: pick.actionPayload
       };
       setNotifications((prev) => [localItem, ...prev]);
-      Alert.alert('🔔 Ding-Dong!', `Thông báo mới: "${pick.title}" kèm tiếng chuông!`);
+      showNotice('🔔 Ding-Dong!', `Thông báo mới: "${pick.title}" kèm tiếng chuông!`);
     }
   };
 
@@ -252,7 +264,7 @@ export default function NotificationsScreen({
                 const nextState = !soundEnabled;
                 setSoundEnabled(nextState);
                 if (nextState) playNotificationChime();
-                Alert.alert(
+                showNotice(
                   'Âm thanh thông báo',
                   nextState ? 'Đã bật âm báo thông báo.' : 'Đã tắt âm báo thông báo.'
                 );
