@@ -27,24 +27,24 @@ const SORT_OPTIONS = [
 
 const FUEL_OPTIONS = [
   { id: 'ALL', label: 'Tất cả', icon: null },
-  { id: 'ELECTRIC', label: 'Thuần điện (EV)', icon: 'flash-outline' },
-  { id: 'HYBRID', label: 'Hybrid (HEV)', icon: 'leaf-outline' },
-  { id: 'GASOLINE', label: 'Động cơ xăng', icon: 'flame-outline' }
+  { id: 'ELECTRIC', label: 'Xe điện', icon: 'flash-outline' },
+  { id: 'HYBRID', label: 'Hybrid', icon: 'leaf-outline' },
+  { id: 'GASOLINE', label: 'Xăng', icon: 'flame-outline' }
 ];
 
 const SEAT_OPTIONS = [
   { id: 'ALL', label: 'Tất cả' },
   { id: '2', label: '2 chỗ' },
-  { id: '4_5', label: '4 - 5 chỗ' },
-  { id: '7', label: '6 - 7 chỗ' }
+  { id: '4_5', label: '4–5 chỗ' },
+  { id: '7', label: '6–7 chỗ' }
 ];
 
 const PRICE_OPTIONS = [
   { id: 'ALL', label: 'Tất cả' },
-  { id: 'UNDER_50K', label: '< 50.000đ/h' },
-  { id: 'UNDER_100K', label: '< 100.000đ/h' },
-  { id: 'UNDER_200K', label: '< 200.000đ/h' },
-  { id: 'ABOVE_200K', label: '> 200.000đ/h' }
+  { id: 'UNDER_50K', label: '< 50k/h' },
+  { id: 'UNDER_100K', label: '< 100k/h' },
+  { id: 'UNDER_200K', label: '< 200k/h' },
+  { id: 'ABOVE_200K', label: '> 200k/h' }
 ];
 
 // Component cuộn ngang hỗ trợ kéo chuột, lăn chuột trên Web & vuốt chạm mượt trên Mobile
