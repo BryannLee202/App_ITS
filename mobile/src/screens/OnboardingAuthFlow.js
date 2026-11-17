@@ -17,6 +17,16 @@ import { Ionicons } from '@expo/vector-icons';
 import { FONTS, THEME_PRESETS } from '../styles/theme';
 import ApiService from '../services/api';
 import { useLanguage } from '../i18n';
+import {
+  normalizeVnPhone,
+  formatVnPhoneDisplay,
+  formatInternationalPhone,
+  formatNationalPhone,
+  isValidVnMobile,
+  getCarrierInfo,
+  toE164,
+  toNational
+} from '../utils/vietnamPhoneHelper';
 
 const ECOGO_LOGO = require('../../assets/logo.png');
 const GOOGLE_ICON = require('../../assets/google_icon.png');
@@ -76,6 +86,7 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [latestGeneratedOtp, setLatestGeneratedOtp] = useState('');
+  const [showCountryModal, setShowCountryModal] = useState(false);
 
   // State xác thực Google & Tự động đồng bộ hồ sơ
   const [showGoogleModal, setShowGoogleModal] = useState(false);
@@ -263,32 +274,36 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
       return;
     }
     if (key.isSymbol) return;
-    if (phone.length < 11) {
+    // Tự động bỏ qua số 0 ở đầu nếu người dùng bấm 0 đầu tiên (vì đã có mã vùng +84)
+    if (phone.length === 0 && key.num === '0') {
+      return;
+    }
+    // Giới hạn đúng 9 chữ số di động sau +84 theo chuẩn Bộ TT&TT
+    if (phone.length < 9) {
       setPhone((prev) => prev + key.num);
     }
   };
 
-  const cleanPhoneNumber = (p) => {
-    const raw = (p || '').replace(/\D/g, '');
-    if (raw.startsWith('84')) return '0' + raw.slice(2);
-    return raw;
-  };
-
-  const isValidPhone = cleanPhoneNumber(phone).length >= 9;
+  const isValidPhone = isValidVnMobile(phone);
+  const currentCarrier = getCarrierInfo(phone);
 
   // Request real OTP from backend
   const handleSendOtpRequest = async () => {
-    const targetPhone = cleanPhoneNumber(phone);
-    if (!targetPhone || targetPhone.length < 9) {
+    if (!isValidPhone) {
       triggerShake();
-      setErrorMessage('Vui lòng nhập số điện thoại hợp lệ (9-10 chữ số)');
+      setErrorMessage(
+        language === 'vi'
+          ? 'Vui lòng nhập đúng 9 chữ số di động Việt Nam (sau +84)'
+          : 'Please enter a valid 9-digit Vietnam mobile number'
+      );
       return;
     }
 
+    const nationalPhone = toNational(phone); // Định dạng nội địa 0386... để gửi SMS
     try {
       setLoading(true);
       setErrorMessage('');
-      const res = await ApiService.requestOtp(targetPhone, otpChannel);
+      const res = await ApiService.requestOtp(nationalPhone, otpChannel);
       if (res && res.generatedOtp) {
         setLatestGeneratedOtp(res.generatedOtp);
       }
@@ -304,7 +319,8 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
 
   // Verify entered OTP code
   const handleVerifyOtp = async (codeToVerify) => {
-    const targetPhone = cleanPhoneNumber(phone);
+    const nationalPhone = toNational(phone);
+    const e164Phone = toE164(phone);
     if (!codeToVerify || codeToVerify.length !== 4) return;
 
     const isMatchPushOtp = latestGeneratedOtp && codeToVerify === latestGeneratedOtp;
@@ -313,10 +329,10 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
     try {
       setLoading(true);
       setErrorMessage('');
-      const res = await ApiService.verifyOtp(targetPhone, codeToVerify);
+      const res = await ApiService.verifyOtp(nationalPhone, codeToVerify);
       if (res && res.success) {
         if (onComplete) {
-          onComplete(res.user || { fullName: 'Minh Tài', phone: targetPhone }, res.token);
+          onComplete(res.user || { fullName: 'Minh Tài', phone: e164Phone }, res.token);
         }
         return;
       }
@@ -325,10 +341,10 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
         const fallbackUser = {
           id: 'usr_demo_01',
           fullName: 'Minh Tài',
-          phone: targetPhone.startsWith('0') ? targetPhone : `0${targetPhone}`,
+          phone: e164Phone,
           isEkycVerified: true,
           memberRank: 'Eco Elite Ambassador',
-          membershipId: `ESG-ECOGO-2026-${targetPhone.slice(-4)}`,
+          membershipId: `ESG-ECOGO-2026-${phone.slice(-4)}`,
           walletBalance: 1500000,
           ecoPoints: 340,
           ecoCoins: 180
@@ -715,7 +731,7 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
             </View>
 
             <Text style={[styles.phonePlaceholderText, phone ? { color: '#1D1D1F', fontWeight: '700' } : {}]}>
-              {phone ? phone : t('step2.phone_placeholder')}
+              {phone ? formatVnPhoneDisplay(phone) : t('step2.phone_placeholder')}
             </Text>
           </TouchableOpacity>
 
@@ -968,29 +984,44 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
             style={[
               styles.phoneInputFocused,
               errorMessage ? { borderColor: '#EF4444' } : null,
+              isValidPhone ? { borderColor: '#10B981' } : null,
               { transform: [{ translateX: shakeAnim }] }
             ]}
           >
-            <View style={styles.countryCodePill}>
+            <TouchableOpacity
+              style={styles.countryCodePill}
+              activeOpacity={0.7}
+              onPress={() => setShowCountryModal(true)}
+            >
               <View style={styles.vnFlagBox}>
                 <Text style={styles.vnStar}>★</Text>
               </View>
               <Text style={styles.countryCodeText}>+84</Text>
               <Ionicons name="caret-down" size={12} color="#1E293B" />
-            </View>
+            </TouchableOpacity>
 
             <TextInput
               style={styles.phoneInputText}
-              value={phone}
+              value={formatVnPhoneDisplay(phone)}
               onChangeText={(txt) => {
                 setErrorMessage('');
-                setPhone(txt);
+                const normalized = normalizeVnPhone(txt);
+                setPhone(normalized);
               }}
               placeholder={t('step2.phone_placeholder')}
               placeholderTextColor="#94A3B8"
               keyboardType="phone-pad"
+              maxLength={11}
               autoFocus
             />
+
+            {currentCarrier ? (
+              <View style={[styles.carrierPillBadge, { backgroundColor: currentCarrier.bg, borderColor: currentCarrier.color }]}>
+                <Text style={[styles.carrierPillText, { color: currentCarrier.color }]}>
+                  {currentCarrier.name}
+                </Text>
+              </View>
+            ) : null}
 
             {phone.length > 0 && (
               <TouchableOpacity onPress={() => setPhone('')} style={{ padding: 4 }}>
@@ -999,9 +1030,27 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
             )}
           </Animated.View>
 
-          {errorMessage ? (
-            <Text style={styles.errorTextInline}>{errorMessage}</Text>
-          ) : null}
+          {/* Hàng trạng thái & Gợi ý chuẩn số Việt Nam */}
+          <View style={styles.phoneStatusFeedbackRow}>
+            {errorMessage ? (
+              <Text style={styles.errorTextInline}>{errorMessage}</Text>
+            ) : isValidPhone ? (
+              <View style={styles.validStatusRow}>
+                <Ionicons name="checkmark-circle" size={14} color="#10B981" />
+                <Text style={styles.validStatusText}>
+                  Số di động {currentCarrier?.name || 'Việt Nam'} hợp lệ (+84 {formatVnPhoneDisplay(phone)})
+                </Text>
+              </View>
+            ) : phone.length > 0 ? (
+              <Text style={styles.phoneHintCountText}>
+                Đã nhập {phone.length}/9 số sau +84 · Ví dụ: 908 123 456
+              </Text>
+            ) : (
+              <Text style={styles.phoneHintCountText}>
+                💡 Nhập 9 số di động sau +84 (tự động bỏ qua số 0 ở đầu)
+              </Text>
+            )}
+          </View>
         </View>
 
         <View style={styles.step3BottomDock}>
@@ -1016,7 +1065,11 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
             onPress={() => {
               if (!isValidPhone) {
                 triggerShake();
-                setErrorMessage(language === 'vi' ? 'Vui lòng nhập đủ số điện thoại của bạn' : 'Please enter a valid phone number');
+                setErrorMessage(
+                  language === 'vi'
+                    ? 'Vui lòng nhập đúng 9 chữ số di động Việt Nam (sau +84)'
+                    : 'Please enter a valid 9-digit Vietnam mobile number'
+                );
                 return;
               }
               setStep(4);
@@ -1159,6 +1212,87 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
             </View>
           </View>
         )}
+
+        {/* ============================================================
+            MODAL: MÃ VÙNG QUỐC GIA (VIỆT NAM +84)
+           ============================================================ */}
+        <Modal
+          visible={showCountryModal}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setShowCountryModal(false)}
+        >
+          <View style={styles.countryModalBackdrop}>
+            <View style={styles.countryModalContent}>
+              <View style={styles.countryModalHeader}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                  <Ionicons name="globe-outline" size={20} color="#4E3322" />
+                  <Text style={styles.countryModalTitle}>Mã vùng quốc tế</Text>
+                </View>
+                <TouchableOpacity onPress={() => setShowCountryModal(false)} style={styles.countryModalCloseBtn}>
+                  <Ionicons name="close" size={20} color="#1E293B" />
+                </TouchableOpacity>
+              </View>
+
+              <Text style={styles.countryModalSub}>
+                Hiện tại EcoGo Smart Mobility hỗ trợ gửi mã OTP qua các nhà mạng viễn thông tại Việt Nam (Mã vùng +84).
+              </Text>
+
+              {/* VN Option - Selected */}
+              <View style={styles.countryItemCardActive}>
+                <View style={styles.countryItemLeft}>
+                  <View style={styles.vnFlagBoxLarge}>
+                    <Text style={styles.vnStarLarge}>★</Text>
+                  </View>
+                  <View>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                      <Text style={styles.countryItemName}>Việt Nam (Vietnam)</Text>
+                      <View style={styles.defaultBadge}>
+                        <Text style={styles.defaultBadgeText}>Mặc định</Text>
+                      </View>
+                    </View>
+                    <Text style={styles.countryItemSub}>Viettel, MobiFone, VinaPhone, Vietnamobile, Wintel</Text>
+                  </View>
+                </View>
+                <View style={styles.countryCodeBadgeActive}>
+                  <Text style={styles.countryCodeBadgeTextActive}>+84</Text>
+                  <Ionicons name="checkmark-circle" size={18} color="#10B981" />
+                </View>
+              </View>
+
+              {/* Upcoming international regions */}
+              <View style={styles.countryItemCardDisabled}>
+                <View style={styles.countryItemLeft}>
+                  <Text style={{ fontSize: 20, marginRight: 10 }}>🇺🇸</Text>
+                  <View>
+                    <Text style={styles.countryItemNameDisabled}>Hoa Kỳ (United States)</Text>
+                    <Text style={styles.countryItemSubDisabled}>Chưa mở rộng vùng phủ</Text>
+                  </View>
+                </View>
+                <Text style={styles.countryCodeBadgeTextDisabled}>+1 (Sắp hỗ trợ)</Text>
+              </View>
+
+              <View style={styles.countryItemCardDisabled}>
+                <View style={styles.countryItemLeft}>
+                  <Text style={{ fontSize: 20, marginRight: 10 }}>🇯🇵</Text>
+                  <View>
+                    <Text style={styles.countryItemNameDisabled}>Nhật Bản (Japan)</Text>
+                    <Text style={styles.countryItemSubDisabled}>Chưa mở rộng vùng phủ</Text>
+                  </View>
+                </View>
+                <Text style={styles.countryCodeBadgeTextDisabled}>+81 (Sắp hỗ trợ)</Text>
+              </View>
+
+              <TouchableOpacity
+                style={[styles.closeCountryBtn, { backgroundColor: theme.primary }]}
+                activeOpacity={0.88}
+                onPress={() => setShowCountryModal(false)}
+              >
+                <Text style={styles.closeCountryBtnText}>Đã hiểu & Tiếp tục</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
       </View>
     );
   }
@@ -1166,7 +1300,8 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
   // ============================================================================
   // STEP 5: OTP 4-DIGIT SCREEN + NOTIFICATION BANNER (IMAGE 5)
   // ============================================================================
-  const displayPhone = phone.startsWith('0') ? phone : `0${phone}`;
+  const displayPhone = formatInternationalPhone(phone);
+  const nationalPhone = formatNationalPhone(phone);
 
   return (
     <View style={styles.step5Container}>
@@ -1232,9 +1367,9 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
         </Text>
 
         <View style={styles.otpPhoneRow}>
-          <Text style={styles.otpPhoneBold}>(+84) {displayPhone} </Text>
+          <Text style={styles.otpPhoneBold}>{displayPhone} ({nationalPhone}) </Text>
           <TouchableOpacity onPress={() => setStep(3)}>
-            <Text style={styles.changePhoneLink}>{language === 'vi' ? 'Đổi số điện thoại' : 'Change number'}</Text>
+            <Text style={styles.changePhoneLink}>{language === 'vi' ? 'Đổi số' : 'Change number'}</Text>
           </TouchableOpacity>
         </View>
 
@@ -2129,6 +2264,185 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginBottom: 10,
     textAlign: 'center'
+  },
+  carrierPillBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 8,
+    borderWidth: 1,
+    marginRight: 6
+  },
+  carrierPillText: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    fontWeight: '700'
+  },
+  phoneStatusFeedbackRow: {
+    marginTop: 8,
+    minHeight: 22
+  },
+  validStatusRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6
+  },
+  validStatusText: {
+    fontFamily: FONTS.family,
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#10B981'
+  },
+  phoneHintCountText: {
+    fontFamily: FONTS.family,
+    fontSize: 12,
+    color: '#64748B'
+  },
+
+  /* COUNTRY CODE MODAL */
+  countryModalBackdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.45)',
+    justifyContent: 'flex-end',
+    alignItems: 'center'
+  },
+  countryModalContent: {
+    width: '100%',
+    maxWidth: 500,
+    backgroundColor: '#FFFFFF',
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    padding: 20,
+    paddingBottom: Platform.OS === 'ios' ? 36 : 24
+  },
+  countryModalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 6
+  },
+  countryModalCloseBtn: {
+    padding: 6
+  },
+  countryModalTitle: {
+    fontFamily: FONTS.family,
+    fontSize: 18,
+    fontWeight: '800',
+    color: '#1E293B'
+  },
+  countryModalSub: {
+    fontFamily: FONTS.family,
+    fontSize: 13,
+    color: '#64748B',
+    marginBottom: 16,
+    lineHeight: 18
+  },
+  countryItemCardActive: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 12,
+    borderRadius: 14,
+    borderWidth: 1.5,
+    borderColor: '#10B981',
+    backgroundColor: '#F0FDF4',
+    marginBottom: 10
+  },
+  countryItemLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    flex: 1
+  },
+  vnFlagBoxLarge: {
+    width: 28,
+    height: 20,
+    backgroundColor: '#DA251D',
+    borderRadius: 3,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  vnStarLarge: {
+    color: '#FFFF00',
+    fontSize: 13,
+    lineHeight: 14
+  },
+  countryItemName: {
+    fontFamily: FONTS.family,
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#0F172A'
+  },
+  defaultBadge: {
+    backgroundColor: '#DCFCE7',
+    paddingHorizontal: 6,
+    paddingVertical: 1,
+    borderRadius: 4
+  },
+  defaultBadgeText: {
+    fontFamily: FONTS.family,
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#15803D'
+  },
+  countryItemSub: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    color: '#64748B',
+    marginTop: 2
+  },
+  countryCodeBadgeActive: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4
+  },
+  countryCodeBadgeTextActive: {
+    fontFamily: FONTS.family,
+    fontSize: 15,
+    fontWeight: '800',
+    color: '#10B981'
+  },
+  countryItemCardDisabled: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 12,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    backgroundColor: '#F8FAFC',
+    marginBottom: 8,
+    opacity: 0.65
+  },
+  countryItemNameDisabled: {
+    fontFamily: FONTS.family,
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#64748B'
+  },
+  countryItemSubDisabled: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    color: '#94A3B8',
+    marginTop: 2
+  },
+  countryCodeBadgeTextDisabled: {
+    fontFamily: FONTS.family,
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#94A3B8'
+  },
+  closeCountryBtn: {
+    marginTop: 12,
+    borderRadius: 14,
+    paddingVertical: 14,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  closeCountryBtnText: {
+    fontFamily: FONTS.family,
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#FFFFFF'
   },
   step3BottomDock: {
     width: '100%'
