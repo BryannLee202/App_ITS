@@ -20,7 +20,7 @@ export const getBackendHost = () => {
         hostname.includes('render.com') ||
         hostname.includes('netlify.app')
       ) {
-        return 'https://ecogo-backend.onrender.com';
+        return 'https://ecogo-m7ln.onrender.com';
       }
       return `http://${hostname}:5000`;
     }
