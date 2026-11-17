@@ -16,6 +16,7 @@ import { FONTS, THEME_PRESETS } from '../styles/theme';
 import VehicleCard from '../components/VehicleCard';
 import BookingModal from '../components/BookingModal';
 import VoucherWalletModal from '../components/VoucherWalletModal';
+import AiConciergeModal from '../components/AiConciergeModal';
 import ApiService from '../services/api';
 import { DEFAULT_VEHICLES } from '../data/defaultVehicles';
 import { useLanguage } from '../i18n';
@@ -326,6 +327,7 @@ export default function HomeScreen({
   const [savedVouchers, setSavedVouchers] = useState(['BANMOI30', 'ECOGO20', 'PRIME50K']);
   const [selectedVoucherForBooking, setSelectedVoucherForBooking] = useState('BANMOI30');
   const [activePromoIdx, setActivePromoIdx] = useState(0);
+  const [showAiConciergeModal, setShowAiConciergeModal] = useState(false);
   const [ecoCoins, setEcoCoins] = useState(180);
   const [ecoStreak, setEcoStreak] = useState(0);
   const [checkedInToday, setCheckedInToday] = useState(false);
@@ -872,6 +874,16 @@ export default function HomeScreen({
                   <Ionicons name="close-circle" size={16} color="#8C6239" />
                 </TouchableOpacity>
               )}
+              <TouchableOpacity
+                style={styles.aiConciergeTriggerPill}
+                activeOpacity={0.85}
+                onPress={() => setShowAiConciergeModal(true)}
+              >
+                <Ionicons name="sparkles" size={12} color="#D4AF37" />
+                <Text style={styles.aiConciergeTriggerText}>
+                  {isEn ? 'AI Advisor' : 'AI Tư vấn'}
+                </Text>
+              </TouchableOpacity>
             </View>
           </View>
         </View>
@@ -1816,6 +1828,20 @@ export default function HomeScreen({
         }}
       />
 
+      <AiConciergeModal
+        visible={showAiConciergeModal}
+        onClose={() => setShowAiConciergeModal(false)}
+        vehicles={vehicles}
+        language={language}
+        onSelectVehicleWithVoucher={(veh, code) => {
+          if (code) setSelectedVoucherForBooking(code);
+          setTimeout(() => {
+            setBookingVehicle(veh);
+            setShowBookingModal(true);
+          }, 120);
+        }}
+      />
+
       {/* Unified Voucher & Eco Coins Redemption Wallet Modal */}
       <VoucherWalletModal
         visible={showVoucherWalletModal}
@@ -2020,6 +2046,24 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '700',
     color: '#4E3322'
+  },
+  aiConciergeTriggerPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: '#2B180D',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 12,
+    marginLeft: 6,
+    borderWidth: 1,
+    borderColor: 'rgba(212, 175, 55, 0.45)'
+  },
+  aiConciergeTriggerText: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    fontWeight: '800',
+    color: '#FDE68A'
   },
   changeHubPill: {
     flexDirection: 'row',
