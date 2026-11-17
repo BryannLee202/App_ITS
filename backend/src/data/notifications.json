@@ -16,14 +16,14 @@
     "id": "notif_2",
     "category": "OFFERS",
     "categoryLabel": "Ưu đãi",
-    "title": "🎁 ĐỔI 50 ECOCOIN NHẬN DEAL TODAY COFFEE GIẢM 10%",
-    "body": "Đầu giờ chiều cần nạp năng lượng sáng tạo, tự thưởng cho mình một buổi cà phê đổi gió ngay thôi. Giảm 10% tại Highlands & Today Coffee toàn quốc.",
+    "title": "⚡ TẶNG 50.000Đ THUÊ Ô TÔ ĐIỆN VINFAST VF3",
+    "body": "Nạp năng lượng vi vu buổi chiều mát mẻ, khám phá phố phường cùng VinFast VF3 siêu tiết kiệm. Nhập mã VF3CHIEU giảm ngay 50K!",
     "timeAgo": "3 giờ trước",
     "createdAt": "2026-11-17T09:50:00.000Z",
-    "image": "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=400&q=80",
+    "image": "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?auto=format&fit=crop&w=400&q=80",
     "isRead": false,
-    "actionType": "OFFERS",
-    "actionPayload": "FOOD"
+    "actionType": "VEHICLES",
+    "actionPayload": "CAR"
   },
   {
     "id": "notif_3",

@@ -18,15 +18,15 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const PROMO_CAMPAIGNS = [
   {
     id: 'promo_bike_10k',
-    brand: 'MOOVTEK · ECOGO',
-    tagline: 'ĐẠI TIỆC ĐỒNG GIÁ THÁNG 11',
-    title: 'XE MÁY ĐỒNG GIÁ\nCHỈ 10K',
-    subtitle: 'VI VU THẢ GA\nKHÔNG LO VỀ GIÁ',
+    brand: 'ECOGO SMART',
+    tagline: 'TIỆC ĐỒNG GIÁ XE MÁY ĐIỆN',
+    title: 'XE MÁY ĐIỆN ĐỒNG GIÁ\nCHỈ TỪ 10K',
+    subtitle: 'VI VU PHỐ PHƯỜNG TIẾT KIỆM\nPIN ĐẦY 100% · MỞ KHÓA TỨC THÌ',
     bgGradient: ['#8B5CF6', '#7C3AED', '#6D28D9'],
     cardBg: '#7C3AED',
     btnBg: '#FACC15',
     btnTextColor: '#4C1D95',
-    btnText: 'ĐẶT CHUYẾN NGAY!',
+    btnText: 'THUÊ XE MÁY NGAY!',
     badge: 'ĐỒNG GIÁ 10K',
     badgeColor: '#F59E0B',
     type: 'BIKE',
@@ -38,16 +38,16 @@ const PROMO_CAMPAIGNS = [
     brand: 'ECOGO REWARDS',
     tagline: 'CHIA SẺ HÀNH TRÌNH XANH',
     title: 'GIỚI THIỆU BẠN MỚI\nNHẬN NGAY 500K',
-    subtitle: 'TẶNG 500.000Đ VÀO VÍ\n+ 100 ECOCOIN TÍCH LŨY',
+    subtitle: 'TẶNG 500.000Đ THUÊ XE VÀO VÍ\nKÈM 100 XU ĐỔI QUÀ DI CHUYỂN',
     bgGradient: ['#1E1B4B', '#312E81', '#4338CA'],
     cardBg: '#312E81',
     btnBg: '#FACC15',
     btnTextColor: '#1E1B4B',
-    btnText: 'NHẬN THƯỞNG 500K!',
+    btnText: 'NHẬN 500K THUÊ XE!',
     badge: 'THƯỞNG KHỦNG',
     badgeColor: '#10B981',
-    type: 'OFFERS',
-    image: 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=600&q=80',
+    type: 'CAR',
+    image: 'https://images.unsplash.com/photo-1539635278303-d4002c07eae3?auto=format&fit=crop&w=600&q=80',
     vectorType: 'GIFT'
   },
   {
@@ -68,21 +68,21 @@ const PROMO_CAMPAIGNS = [
     vectorType: 'CAR'
   },
   {
-    id: 'promo_urbox_deals',
-    brand: 'URBOX x ECOGO MOBILITY',
-    tagline: 'ĐỔI QUÀ ECOCOIN KHÔNG GIỚI HẠN',
-    title: 'ĐỔI VOUCHER CAO CẤP\nCHỈ TỪ 25 XU',
-    subtitle: 'HIGHLANDS · ALLUVIA CHOCOLATE\nVEXERE & CGV CINEMAS',
-    bgGradient: ['#065F46', '#047857', '#059669'],
-    cardBg: '#065F46',
+    id: 'promo_charging_free',
+    brand: 'V-GREEN x ECOGO MOBILITY',
+    tagline: 'TIẾP SỨC HÀNH TRÌNH KHÔNG LO HẾT PIN',
+    title: 'MIỄN PHÍ SẠC PIN 0Đ\nTẠI 3.000+ TRẠM SẠC',
+    subtitle: 'SẠC SIÊU NHANH TRÊN TOÀN QUỐC\nBẢN ĐỒ TÌM TRẠM THÔNG MINH',
+    bgGradient: ['#064E3B', '#047857', '#059669'],
+    cardBg: '#047857',
     btnBg: '#FACC15',
     btnTextColor: '#064E3B',
-    btnText: 'SĂN DEAL ĐỔI QUÀ!',
-    badge: 'GIỜ VÀNG SĂN DEAL',
-    badgeColor: '#F59E0B',
-    type: 'OFFERS',
-    image: 'https://images.unsplash.com/photo-1549007994-cb92caebd54b?auto=format&fit=crop&w=600&q=80',
-    vectorType: 'DEAL'
+    btnText: 'TÌM TRẠM SẠC NGAY!',
+    badge: 'SẠC PIN 0Đ',
+    badgeColor: '#10B981',
+    type: 'CAR',
+    image: 'https://images.unsplash.com/photo-1558441719-72f10b277c22?auto=format&fit=crop&w=600&q=80',
+    vectorType: 'CHARGE'
   },
   {
     id: 'promo_roadtrip_weekend',
@@ -212,10 +212,10 @@ export default function HomePromoPopupModal({
                     <Text style={styles.mascotSpeechText}>Thưởng 500K</Text>
                   </View>
                 )}
-                {currentAd.vectorType === 'DEAL' && (
+                {currentAd.vectorType === 'CHARGE' && (
                   <View style={styles.mascotSpeechBubble}>
-                    <Ionicons name="pricetag" size={18} color="#059669" />
-                    <Text style={styles.mascotSpeechText}>Deal từ 25 Xu</Text>
+                    <Ionicons name="flash" size={18} color="#059669" />
+                    <Text style={styles.mascotSpeechText}>Sạc Pin 0Đ</Text>
                   </View>
                 )}
                 {currentAd.vectorType === 'ROADTRIP' && (

@@ -27,33 +27,33 @@ const OFFER_CATEGORIES = [
   { id: 'FOOD', label: 'Ăn uống', icon: 'cafe-outline', color: '#DC2626', bg: '#FEE2E2' }
 ];
 
-// Danh mục bộ lọc UrBox
+// Danh mục bộ lọc Đổi quà Di chuyển & Năng lượng xanh
 const URBOX_FILTERS = [
   { id: 'ALL', label: 'Tất cả' },
-  { id: 'AIRPORT', label: 'Airport Service' },
-  { id: 'BEAUTY', label: 'Beauty - Health' },
-  { id: 'UTILITIES', label: 'Utilities' },
-  { id: 'FOOD', label: 'Ẩm thực & Cafe' }
+  { id: 'CAR', label: 'Thuê Ô tô điện' },
+  { id: 'BIKE', label: 'Xe máy điện' },
+  { id: 'CHARGE', label: 'Sạc pin & Trạm sạc' },
+  { id: 'ROAD', label: 'Dịch vụ & Cứu hộ' }
 ];
 
 // Danh sách Quà tặng độc quyền (Exclusive Gifts Carousel)
 const EXCLUSIVE_GIFTS = [
   {
-    id: 'ex_vexere',
-    brand: 'Vexere',
-    brandLogo: 'bus',
-    brandColor: '#0284C7',
-    title: 'Giảm 25% tối đa 50K dành cho khách hàng mới',
-    category: 'SERVICES',
-    coins: 50,
-    originalValue: '50.000đ',
-    badge: 'ĐỘC QUYỀN',
-    badgeBg: '#E0F2FE',
-    badgeColor: '#0369A1',
-    expiry: 'Còn 15 ngày',
-    image: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=600&q=80',
-    code: 'VEXERE50K',
-    desc: 'Áp dụng cho đặt vé xe khách, limousine, tàu hỏa và máy bay tại ứng dụng Vexere.'
+    id: 'ex_weekend_100k',
+    brand: 'EcoGo Weekend',
+    brandLogo: 'car-sport',
+    brandColor: '#D97706',
+    title: 'Giảm 100.000đ Thuê Xe Tự Lái Cuối Tuần',
+    category: 'ECOGO',
+    coins: 60,
+    originalValue: '100.000đ',
+    badge: 'HOT WEEKEND',
+    badgeBg: '#FEF3C7',
+    badgeColor: '#B45309',
+    expiry: 'Còn 25 ngày',
+    image: 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=600&q=80',
+    code: 'PHUOT100K',
+    desc: 'Áp dụng cho các chuyến thuê ô tô điện VinFast từ thứ Sáu đến Chủ Nhật hàng tuần.'
   },
   {
     id: 'ex_roadtrip_shield',
@@ -108,173 +108,143 @@ const EXCLUSIVE_GIFTS = [
   }
 ];
 
-// Danh sách Quà tặng UrBox (UrBox Partner Vouchers)
+// Danh sách Quà tặng Di chuyển & Năng lượng xanh
 const URBOX_GIFTS = [
   {
-    id: 'ub_alluvia_1000k',
-    brand: 'ALLUVIA',
-    filterCategory: 'FOOD',
-    title: '[UrBox Voucher] Alluvia Chocolate 1.000.000 đ',
-    coins: 1000,
-    originalValue: '1.000.000đ',
+    id: 'ub_vetc_100k',
+    brand: 'VETC / ePass',
+    filterCategory: 'ROAD',
+    title: 'Voucher 100.000đ Nạp Phí Cầu Đường Không Dừng VETC',
+    coins: 100,
+    originalValue: '100.000đ',
     expiry: 'Còn 45 ngày',
-    image: 'https://images.unsplash.com/photo-1549007994-cb92caebd54b?auto=format&fit=crop&w=600&q=80',
-    code: 'ALLUVIA1TR',
-    desc: 'Hộp quà socola thủ công nghệ nhân Alluvia Chocolatier chế tác từ hạt cacao thuần Việt.'
+    image: 'https://images.unsplash.com/photo-1545179605-1296651e9d43?auto=format&fit=crop&w=600&q=80',
+    code: 'VETC100K',
+    desc: 'Áp dụng nạp tài khoản thu phí tự động VETC/ePass qua mọi trạm BOT trên cao tốc toàn quốc.'
   },
   {
-    id: 'ub_alluvia_500k',
-    brand: 'ALLUVIA',
-    filterCategory: 'FOOD',
-    title: '[UrBox Voucher] Alluvia Chocolate 500.000 đ',
-    coins: 500,
-    originalValue: '500.000đ',
-    expiry: 'Còn 45 ngày',
-    image: 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=600&q=80',
-    code: 'ALLUVIA500K',
-    desc: 'Bộ sưu tập thanh socola đen cao cấp kết hợp hương vị hoa quả nhiệt đới phong phú.'
+    id: 'ub_carwash_50k',
+    brand: 'EcoGo Auto Care',
+    filterCategory: 'ROAD',
+    title: 'Gói Rửa Xe Bọt Tuyết & Vệ Sinh Nội Thất 0Đ',
+    coins: 80,
+    originalValue: '120.000đ',
+    expiry: 'Còn 30 ngày',
+    image: 'https://images.unsplash.com/photo-1601362840469-51e4d8d58785?auto=format&fit=crop&w=600&q=80',
+    code: 'AUTOSPA0D',
+    desc: 'Voucher rửa xe bọt tuyết và xông khử mùi diệt khuẩn tại hơn 200 điểm gara đối tác EcoGo.'
   },
   {
-    id: 'ub_alluvia_300k',
-    brand: 'ALLUVIA',
-    filterCategory: 'FOOD',
-    title: '[UrBox Voucher] Alluvia Chocolate 300.000 đ',
-    coins: 300,
-    originalValue: '300.000đ',
-    expiry: 'Còn 45 ngày',
-    image: 'https://images.unsplash.com/photo-1511381939415-e44015466834?auto=format&fit=crop&w=600&q=80',
-    code: 'ALLUVIA300K',
-    desc: 'Voucher thanh toán trực tiếp tại hệ thống showroom Alluvia Chocolate trên toàn quốc.'
+    id: 'ub_charge_50kwh',
+    brand: 'V-Green Fast Charge',
+    filterCategory: 'CHARGE',
+    title: 'Voucher 50kWh Sạc Siêu Nhanh Ô Tô Điện',
+    coins: 120,
+    originalValue: '190.000đ',
+    expiry: 'Còn 60 ngày',
+    image: 'https://images.unsplash.com/photo-1558441719-72f10b277c22?auto=format&fit=crop&w=600&q=80',
+    code: 'FASTCHARGE50',
+    desc: 'Nạp năng lượng cấp tốc tại các trụ sạc DC 60kW - 250kW khắp 63 tỉnh thành.'
   },
   {
-    id: 'ub_alluvia_200k',
-    brand: 'ALLUVIA',
-    filterCategory: 'FOOD',
-    title: '[UrBox Voucher] Alluvia Chocolate 200.000 đ',
+    id: 'ub_car_rental_200k',
+    brand: 'VinFast VF8 Luxury',
+    filterCategory: 'CAR',
+    title: 'Giảm 200.000đ Thuê Ô Tô Điện VinFast VF8 & VF9',
     coins: 200,
     originalValue: '200.000đ',
-    expiry: 'Còn 45 ngày',
-    image: 'https://images.unsplash.com/photo-1582293041079-7814c2f12063?auto=format&fit=crop&w=600&q=80',
-    code: 'ALLUVIA200K',
-    desc: 'Voucher áp dụng cho mọi đơn hàng socola viên tươi hảo hạng Alluvia.'
-  },
-  {
-    id: 'ub_airport_lounge',
-    brand: 'SASCO Lounge',
-    filterCategory: 'AIRPORT',
-    title: '[UrBox] Vé Phòng Chờ VIP Hạng Thương Gia TSN',
-    coins: 450,
-    originalValue: '450.000đ',
-    expiry: 'Còn 60 ngày',
-    image: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=600&q=80',
-    code: 'SASCOVIP',
-    desc: 'Trải nghiệm buffet ẩm thực quốc tế, ghế massage thư giãn và không gian làm việc sang trọng trước chuyến bay.'
-  },
-  {
-    id: 'ub_menard_spa',
-    brand: 'Menard Japan',
-    filterCategory: 'BEAUTY',
-    title: '[UrBox] Gói Chăm Sóc Da Mặt Cao Cấp Menard',
-    coins: 350,
-    originalValue: '550.000đ',
     expiry: 'Còn 30 ngày',
-    image: 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=600&q=80',
-    code: 'MENARDSPA',
-    desc: 'Liệu trình massage và chăm sóc chuyên sâu với tinh chất linh chi Nhật Bản tại Menard Spa.'
+    image: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=600&q=80',
+    code: 'LUXURYVF200',
+    desc: 'Áp dụng khi thuê xe phân khúc D & E hạng thương gia cho các chuyến công tác hoặc du lịch đường dài.'
+  },
+  {
+    id: 'ub_bike_month',
+    brand: 'EcoGo City E-Bike',
+    filterCategory: 'BIKE',
+    title: 'Gói Hội Viên Tháng Xe Máy Điện · Giảm 40%',
+    coins: 150,
+    originalValue: '300.000đ',
+    expiry: 'Còn 30 ngày',
+    image: 'https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=600&q=80',
+    code: 'CITYBIKE40',
+    desc: 'Tiết kiệm tối đa chi phí đi lại hàng ngày, đổi pin không giới hạn tại hệ thống tủ pin thông minh EcoGo.'
+  },
+  {
+    id: 'ub_roadside_free',
+    brand: 'Cứu Hộ Lốp & Pin 24/7',
+    filterCategory: 'ROAD',
+    title: 'Miễn Phí Dịch Vụ Cứu Hộ Vá Lốp & Kích Pin Tận Nơi',
+    coins: 60,
+    originalValue: '150.000đ',
+    expiry: 'Còn 45 ngày',
+    image: 'https://images.unsplash.com/photo-1486006920555-c77dce18193b?auto=format&fit=crop&w=600&q=80',
+    code: 'RESCUE247',
+    desc: 'Đội ngũ kỹ thuật hỗ trợ cứu hộ khẩn cấp trên các tuyến quốc lộ và nội đô 24/7.'
   }
 ];
 
 // Danh sách Quà tặng khác & EcoGo Perks
 const OTHER_GIFTS = [
   {
-    id: 'oth_w_facewash',
-    brand: 'W Facewash',
-    category: 'SERVICES',
-    title: 'W FACEWASH - VOUCHER ƯU ĐÃI 50% FACEWASH',
-    coins: 50,
-    originalValue: '150.000đ',
-    badge: 'GIẢM 50%',
-    badgeBg: '#FEE2E2',
-    badgeColor: '#DC2626',
-    expiry: 'Còn 12 ngày',
-    image: 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=600&q=80',
-    code: 'WFASH50',
-    desc: 'Voucher giảm 50% trọn gói dịch vụ rửa mặt và chăm sóc da thư giãn tại viện chăm sóc W Facewash.'
-  },
-  {
-    id: 'oth_yensao',
-    brand: 'Nhà Yến Ba Phi',
-    category: 'SHOPPING',
-    title: 'Voucher giảm 5% trên tổng hoá đơn Yến Sào',
-    coins: 50,
-    originalValue: '200.000đ',
-    badge: 'QUÀ CAO CẤP',
-    badgeBg: '#FEF3C7',
-    badgeColor: '#B45309',
-    expiry: 'Còn 25 ngày',
-    image: 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=600&q=80',
-    code: 'YENBAPHI5',
-    desc: 'Áp dụng cho các hộp quà yến sào tinh chế nguyên chất rút lông xuất khẩu của thương hiệu Ba Phi.'
-  },
-  {
-    id: 'oth_moovtek_5k',
+    id: 'oth_bike_5k',
     brand: 'EcoGo Mobility',
     category: 'ECOGO',
-    title: 'Ưu đãi 5K cho tất cả dịch vụ EcoGo Mobility',
-    coins: 50,
+    title: 'Ưu đãi 5.000đ cho chuyến thuê xe máy điện',
+    coins: 25,
     originalValue: '5.000đ',
-    badge: 'BẤT KỲ XE NÀO',
+    badge: 'TIẾT KIỆM',
     badgeBg: '#EDE9FE',
     badgeColor: '#7C3AED',
     expiry: 'Còn 30 ngày',
-    image: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=600&q=80',
-    code: 'ECOGO5K',
-    desc: 'Giảm 5.000đ cho mọi chuyến thuê xe máy điện hoặc ô tô điện tự lái EcoGo.'
+    image: 'https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=600&q=80',
+    code: 'ECOBIKE5K',
+    desc: 'Giảm 5.000đ trực tiếp khi bắt đầu hành trình xe máy điện qua phố.'
   },
   {
-    id: 'oth_moovtek_10k',
+    id: 'oth_car_10k',
     brand: 'EcoGo Mobility',
     category: 'ECOGO',
-    title: 'Ưu đãi 10K cho tất cả dịch vụ EcoGo Mobility',
-    coins: 100,
+    title: 'Ưu đãi 10.000đ cho chuyến thuê ô tô điện',
+    coins: 50,
     originalValue: '10.000đ',
     badge: 'GIẢM 10K',
     badgeBg: '#EDE9FE',
     badgeColor: '#7C3AED',
     expiry: 'Còn 30 ngày',
-    image: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=600&q=80',
-    code: 'ECOGO10K',
-    desc: 'Giảm trực tiếp 10.000đ khi thanh toán đơn thuê xe tự lái trong ngày.'
+    image: 'https://images.unsplash.com/photo-1593941707882-a5bba14938c7?auto=format&fit=crop&w=600&q=80',
+    code: 'ECOCAR10K',
+    desc: 'Giảm trực tiếp 10.000đ khi thanh toán đơn thuê ô tô điện trong ngày.'
   },
   {
-    id: 'oth_highlands',
-    brand: 'Highlands Coffee',
-    category: 'FOOD',
-    title: 'Voucher 30.000đ thưởng thức Phin Sữa Đá Highlands',
-    coins: 40,
+    id: 'oth_rush_hour_30k',
+    brand: 'EcoGo Giờ Cao Điểm',
+    category: 'ECOGO',
+    title: 'Voucher 30.000đ Thuê Ô Tô Tránh Nắng Giờ Tan Tầm',
+    coins: 70,
     originalValue: '30.000đ',
-    badge: 'COFFEE LOVER',
-    badgeBg: '#FEE2E2',
-    badgeColor: '#DC2626',
-    expiry: 'Còn 18 ngày',
-    image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=600&q=80',
-    code: 'HIGHLANDS30K',
-    desc: 'Áp dụng tại chuỗi Highlands Coffee toàn quốc khi mua đồ uống size M hoặc L.'
+    badge: 'NÉ NẮNG NÓNG',
+    badgeBg: '#FEF3C7',
+    badgeColor: '#B45309',
+    expiry: 'Còn 20 ngày',
+    image: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=600&q=80',
+    code: 'TANCA30K',
+    desc: 'Áp dụng cho mọi dòng xe VinFast VF3, VF5, VF8 tự lái trong khung giờ 16:30 - 19:30.'
   },
   {
-    id: 'oth_cgv',
-    brand: 'CGV Cinemas',
-    category: 'SERVICES',
-    title: 'Vé xem phim 2D kèm combo bắp nước cuối tuần',
-    coins: 120,
-    originalValue: '135.000đ',
-    badge: 'ENTERTAINMENT',
-    badgeBg: '#FEF2F2',
-    badgeColor: '#EF4444',
-    expiry: 'Còn 14 ngày',
-    image: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=600&q=80',
-    code: 'CGVFILM2D',
-    desc: 'Đổi vé xem phim chuẩn quốc tế 2D tại mọi cụm rạp CGV trên cả nước.'
+    id: 'oth_night_50k',
+    brand: 'EcoGo Đêm Trăng',
+    category: 'ECOGO',
+    title: 'Gói Thuê Xe Tự Lái Qua Đêm · Giảm 50.000đ',
+    coins: 90,
+    originalValue: '50.000đ',
+    badge: 'QUA ĐÊM 50K',
+    badgeBg: '#DBEAFE',
+    badgeColor: '#1E40AF',
+    expiry: 'Còn 30 ngày',
+    image: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=600&q=80',
+    code: 'QUADEM50K',
+    desc: 'Áp dụng khi nhận xe từ 20:00 và trả trước 08:00 sáng hôm sau, vi vu hóng gió đêm an toàn.'
   }
 ];
 
@@ -759,7 +729,7 @@ export default function OffersScreen({
                 SECTION 2: QUÀ TẶNG URBOX (GRID 2 CỘT - GIỐNG ẢNH 2)
                ============================================================ */}
             <View style={[styles.sectionHeaderRow, { marginTop: 24 }]}>
-              <Text style={styles.sectionMainTitle}>Quà tặng UrBox</Text>
+              <Text style={styles.sectionMainTitle}>Đổi quà Di chuyển & Trạm sạc</Text>
               <TouchableOpacity
                 onPress={() => setUrboxFilter('ALL')}
                 activeOpacity={0.7}
@@ -812,7 +782,7 @@ export default function OffersScreen({
                       resizeMode="cover"
                     />
                     <View style={styles.urboxLogoWatermark}>
-                      <Text style={styles.urboxWatermarkText}>UrBox eGIFT</Text>
+                      <Text style={styles.urboxWatermarkText}>EcoGo Pass</Text>
                     </View>
                   </View>
 
