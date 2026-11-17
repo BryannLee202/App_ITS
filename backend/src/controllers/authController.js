@@ -3,6 +3,7 @@ const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
 const { JWT_SECRET } = require('../config');
+const oauthConfig = require('../config/oauthConfig');
 const SmsService = require('../services/smsService');
 const { verifyVietnamTelecom } = require('../utils/telecomVerifier');
 
@@ -451,6 +452,140 @@ exports.googleLogin = (req, res) => {
   return res.json({
     success: true,
     message: 'Đăng nhập bằng tài khoản Google thành công! Thông tin cá nhân đã được đồng bộ.',
+    token,
+    user
+  });
+};
+
+// Trả về cấu hình OAuth (Google Client ID & Apple Services ID) để Frontend tự động kích hoạt popup thật khi có Key
+exports.getOAuthConfig = (req, res) => {
+  return res.json({
+    success: true,
+    googleClientId: oauthConfig.GOOGLE_CLIENT_ID || '',
+    appleClientId: oauthConfig.APPLE_CLIENT_ID || '',
+    googleEnabled: Boolean(oauthConfig.GOOGLE_CLIENT_ID),
+    appleEnabled: Boolean(oauthConfig.APPLE_CLIENT_ID)
+  });
+};
+
+// Xác thực Google OAuth 2.0 Thật (hỗ trợ cả accessToken từ Google Identity Services & idToken JWT)
+exports.googleOAuthVerify = async (req, res) => {
+  try {
+    const { accessToken, idToken } = req.body;
+    if (!accessToken && !idToken) {
+      return res.status(400).json({ success: false, message: 'Thiếu accessToken hoặc idToken từ Google' });
+    }
+
+    let googleProfile = null;
+    if (accessToken) {
+      const resp = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+        headers: { Authorization: `Bearer ${accessToken}` }
+      });
+      if (!resp.ok) {
+        return res.status(401).json({ success: false, message: 'Google accessToken không hợp lệ hoặc đã hết hạn' });
+      }
+      googleProfile = await resp.json();
+    } else if (idToken) {
+      const resp = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(idToken)}`);
+      if (!resp.ok) {
+        return res.status(401).json({ success: false, message: 'Google idToken không hợp lệ' });
+      }
+      googleProfile = await resp.json();
+    }
+
+    if (!googleProfile || !googleProfile.email) {
+      return res.status(400).json({ success: false, message: 'Không lấy được thông tin Email từ tài khoản Google' });
+    }
+
+    // Tái sử dụng logic đồng bộ/tạo user trong CSDL EcoGo
+    req.body = {
+      googleId: `gg_${googleProfile.sub || Date.now()}`,
+      email: googleProfile.email,
+      fullName: googleProfile.name || googleProfile.email.split('@')[0],
+      avatar: googleProfile.picture || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
+      birthYear: 1998,
+      phone: '+84386726647'
+    };
+    return exports.googleLogin(req, res);
+  } catch (err) {
+    return res.status(500).json({ success: false, message: `Lỗi xác thực Google OAuth: ${err.message}` });
+  }
+};
+
+// Đăng nhập bằng Apple ID (iOS) — Hỗ trợ cả idToken Apple thật lẫn Apple ID Email bất kỳ
+exports.appleLogin = (req, res) => {
+  const { appleId, idToken, email, fullName } = req.body;
+
+  let resolvedEmail = email;
+  let resolvedSub = appleId;
+  let resolvedName = fullName;
+
+  // Nếu có idToken JWT từ Apple JS SDK, giải mã payload lấy sub & email
+  if (idToken && typeof idToken === 'string' && idToken.includes('.')) {
+    try {
+      const parts = idToken.split('.');
+      if (parts.length === 3) {
+        const decoded = JSON.parse(Buffer.from(parts[1], 'base64url').toString('utf8'));
+        if (decoded.sub) resolvedSub = `apple_${decoded.sub}`;
+        if (decoded.email) resolvedEmail = decoded.email;
+      }
+    } catch (e) {}
+  }
+
+  if (!resolvedEmail && !resolvedSub) {
+    return res.status(400).json({ success: false, message: 'Vui lòng nhập Apple ID hoặc Email iCloud hợp lệ.' });
+  }
+
+  const users = loadUsers();
+  let userIndex = users.findIndex(u => {
+    if (resolvedEmail && u.email && u.email.toLowerCase() === resolvedEmail.toLowerCase()) return true;
+    if (resolvedSub && u.appleId === resolvedSub) return true;
+    return false;
+  });
+
+  const displayName = resolvedName || (resolvedEmail ? resolvedEmail.split('@')[0] : 'Khách hàng Apple');
+  let user;
+
+  if (userIndex !== -1) {
+    users[userIndex].fullName = displayName || users[userIndex].fullName;
+    if (resolvedEmail) users[userIndex].email = resolvedEmail;
+    users[userIndex].authProvider = 'APPLE';
+    if (resolvedSub) users[userIndex].appleId = resolvedSub;
+    saveUsers(users);
+    user = users[userIndex];
+  } else {
+    user = {
+      id: `usr_apple_${Date.now().toString().slice(-6)}`,
+      appleId: resolvedSub || `apple_${Date.now()}`,
+      phone: '+84386726647',
+      fullName: displayName,
+      email: resolvedEmail || 'apple.user@privaterelay.appleid.com',
+      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
+      birthYear: 1998,
+      age: 28,
+      authProvider: 'APPLE',
+      isEkycVerified: true,
+      drivingLicense: 'GPLX B2 - 790123456789',
+      licenseNumber: '790123456789',
+      drivingLicenseExpiry: '15/08/2032',
+      cccdNumber: '079201018891',
+      memberRank: 'Eco Elite Ambassador',
+      membershipId: `ESG-ECOGO-2026-AP${Date.now().toString().slice(-4)}`,
+      walletBalance: 1500000,
+      ecoPoints: 340,
+      ecoCoins: 180,
+      totalCo2SavedKg: 42.8,
+      memberTier: 'DIAMOND_GREEN',
+      createdAt: new Date().toISOString()
+    };
+    users.push(user);
+    saveUsers(users);
+  }
+
+  const token = jwt.sign(user, JWT_SECRET, { expiresIn: '7d' });
+  return res.json({
+    success: true,
+    message: 'Đăng nhập bằng Apple ID thành công!',
     token,
     user
   });

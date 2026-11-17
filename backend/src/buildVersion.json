@@ -1,5 +1,5 @@
 {
-  "version": "1.2.4",
-  "buildTime": "1794919800000",
-  "change": "Xoa o vuong mau den de len goc logo o man hinh yeu cau quyen vi tri"
+  "version": "1.2.5",
+  "buildTime": "1794920400000",
+  "change": "Tich hop ha tang Google OAuth 2.0 that, Apple ID Sign-In va sua nut Apple khong nhay sang nhap SDT"
 }

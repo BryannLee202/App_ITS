@@ -128,6 +128,32 @@ class ApiService {
     return data;
   }
 
+  async getOAuthConfig() {
+    return this.request('/auth/oauth-config', { method: 'GET' });
+  }
+
+  async googleOAuthVerify(payload) {
+    const data = await this.request('/auth/google-oauth', {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+    if (data.token && data.user) {
+      this.saveSession(data.token, data.user);
+    }
+    return data;
+  }
+
+  async appleLogin(payload) {
+    const data = await this.request('/auth/apple-login', {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+    if (data.token && data.user) {
+      this.saveSession(data.token, data.user);
+    }
+    return data;
+  }
+
   async updateAvatar(avatarUrl, userId = null) {
     const data = await this.request('/auth/update-avatar', {
       method: 'PUT',
