@@ -306,32 +306,32 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
       wheelRotation.setValue(0);
 
       Animated.parallel([
-        // 1. Chiếc xe cute chạy lướt qua màn hình êm ái, rõ nét (1700ms)
+        // 1. Chiếc xe chạy chậm vừa phải, êm ái để người dùng nhìn rõ xe trước (2200ms)
         Animated.timing(vehicleAnim, {
           toValue: 1,
-          duration: 1700,
-          easing: Easing.bezier(0.25, 1, 0.5, 1),
+          duration: 2200,
+          easing: Easing.inOut(Easing.cubic),
           useNativeDriver: useNative
         }),
         Animated.timing(wheelRotation, {
           toValue: 1,
-          duration: 1700,
+          duration: 2200,
           easing: Easing.linear,
           useNativeDriver: useNative
         }),
-        // 2. Khi xe vừa lướt qua tâm (700ms), Logo EcoGo Smart bung nhẹ ra
+        // 2. Sau khi xe chạy qua gần hết đường (1900ms), Logo EcoGo Smart mới bung ra
         Animated.sequence([
-          Animated.delay(700),
+          Animated.delay(1900),
           Animated.parallel([
             Animated.spring(splashScale, {
               toValue: 1,
-              friction: 5,
-              tension: 40,
+              friction: 6,
+              tension: 38,
               useNativeDriver: useNative
             }),
             Animated.timing(splashOpacity, {
               toValue: 1,
-              duration: 500,
+              duration: 550,
               useNativeDriver: useNative
             })
           ])
@@ -346,10 +346,10 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
       );
       glowLoop.start();
 
-      // Tự động chuyển cảnh sau 3.0s (đủ thời gian thấy rõ xe chạy và ngắm logo)
+      // Tự động chuyển cảnh sau 4.0s (đủ thời gian thấy rõ xe chạy rồi mới tới logo)
       const autoTimer = setTimeout(() => {
         handleProceedFromSplash();
-      }, 3000);
+      }, 4000);
 
       return () => {
         glowLoop.stop();
