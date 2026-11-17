@@ -12,16 +12,7 @@ import {
   useWindowDimensions,
   ActivityIndicator
 } from 'react-native';
-import * as Font from 'expo-font';
-import {
-  Ionicons,
-  MaterialCommunityIcons,
-  FontAwesome,
-  Feather,
-  AntDesign,
-  MaterialIcons
-} from '@expo/vector-icons';
-import { CLIENT_BUILD_TIME } from './src/buildVersion';
+import { Ionicons } from '@expo/vector-icons';
 import { FONTS, THEME_PRESETS } from './src/styles/theme';
 import ApiService from './src/services/api';
 import { LanguageProvider, useLanguage } from './src/i18n';
@@ -137,16 +128,16 @@ function AppContent() {
         if (res.ok) {
           const data = await res.json();
           if (data && data.buildTime) {
-            // So sánh buildTime trên máy chủ với CLIENT_BUILD_TIME của file bundle đang chạy
-            if (data.buildTime !== CLIENT_BUILD_TIME) {
-              setUpdateToast('🚀 EcoGo đã có bản cập nhật mới! Đang đồng bộ...');
+            if (!initialBuildRef.current) {
+              initialBuildRef.current = data.buildTime;
+            } else if (initialBuildRef.current !== data.buildTime) {
+              // Phiên bản mới đã được cập nhật trên máy chủ đám mây!
+              setUpdateToast('🚀 Hệ thống vừa có bản cập nhật mới! Đang tự động làm mới...');
               setTimeout(() => {
                 if (Platform.OS === 'web' && typeof window !== 'undefined') {
-                  const url = new URL(window.location.href);
-                  url.searchParams.set('v', data.buildTime);
-                  window.location.replace(url.toString());
+                  window.location.reload();
                 }
-              }, 800);
+              }, 1200);
             }
           }
         }
@@ -156,8 +147,8 @@ function AppContent() {
     };
 
     checkAppVersion();
-    // Tự động kiểm tra mỗi 8 giây ngầm
-    intervalId = setInterval(checkAppVersion, 8000);
+    // Tự động kiểm tra mỗi 10 giây ngầm
+    intervalId = setInterval(checkAppVersion, 10000);
 
     // Kiểm tra ngay lập tức khi người dùng mở lại điện thoại / chuyển tab
     if (Platform.OS === 'web' && typeof window !== 'undefined') {
@@ -170,29 +161,6 @@ function AppContent() {
         window.removeEventListener('focus', checkAppVersion);
       }
     };
-  }, []);
-
-  // Pre-load vector icons qua expo-font runtime
-  useEffect(() => {
-    async function loadFontsAsync() {
-      try {
-        await Font.loadAsync({
-          ...Ionicons.font,
-          'Ionicons': Ionicons.font.ionicons,
-          'ionicons': Ionicons.font.ionicons,
-          ...(MaterialCommunityIcons.font || {}),
-          'MaterialCommunityIcons': MaterialCommunityIcons.font['material-community'],
-          'material-community': MaterialCommunityIcons.font['material-community'],
-          ...(FontAwesome.font || {}),
-          ...(Feather.font || {}),
-          ...(AntDesign.font || {}),
-          ...(MaterialIcons.font || {})
-        });
-      } catch (e) {
-        // Fallback to CSS font-face
-      }
-    }
-    loadFontsAsync();
   }, []);
 
   const checkSavedSession = async () => {
