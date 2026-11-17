@@ -1245,9 +1245,12 @@ export default function ProfileScreen({
                 placeholderTextColor="#9A9FA5"
                 keyboardType="numeric"
               />
-              <Text style={styles.editFieldHelper}>
-                Độ tuổi hiện tại: {parseInt(formBirthYear, 10) ? `${new Date().getFullYear() - parseInt(formBirthYear, 10)} tuổi` : 'Chưa xác định'} (Đạt chuẩn pháp lý điều khiển ô tô)
-              </Text>
+              <View style={styles.editHelperContainer}>
+                <Ionicons name="checkmark-circle" size={13} color="#225A37" style={{ marginRight: 5 }} />
+                <Text style={styles.editFieldHelper}>
+                  Độ tuổi hiện tại: <Text style={{ fontWeight: '700' }}>{parseInt(formBirthYear, 10) ? `${new Date().getFullYear() - parseInt(formBirthYear, 10)} tuổi` : 'Chưa xác định'}</Text> (Đạt chuẩn pháp lý điều khiển ô tô)
+                </Text>
+              </View>
 
               <Text style={styles.editFieldLabel}>Số GPLX Hạng B2 *</Text>
               <TextInput
@@ -1288,7 +1291,7 @@ export default function ProfileScreen({
                 {isSavingProfile ? (
                   <ActivityIndicator size="small" color="#FFFFFF" />
                 ) : (
-                  <Text style={styles.saveEditBtnText}>Lưu vào CSDL</Text>
+                  <Text style={styles.saveEditBtnText}>Lưu</Text>
                 )}
               </TouchableOpacity>
             </View>
@@ -2966,13 +2969,25 @@ const styles = StyleSheet.create({
     fontSize: 11.5,
     fontWeight: '700'
   },
+  editHelperContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#EEF6F0',
+    paddingHorizontal: 10,
+    paddingVertical: 7,
+    borderRadius: 8,
+    marginTop: 6,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: '#D4EAD9'
+  },
   editFieldHelper: {
     fontFamily: FONTS.family,
-    fontSize: 11,
-    color: '#15803D',
-    marginTop: -8,
-    marginBottom: 12,
-    fontWeight: '500'
+    fontSize: 11.5,
+    color: '#225A37',
+    fontWeight: '500',
+    lineHeight: 16,
+    flex: 1
   },
 
   // Styles cho Modal Avatar Picker
