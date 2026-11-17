@@ -83,9 +83,38 @@ if (fs.existsSync(publicDir)) {
       }
     }
   }));
+
+  // Cứu hộ Standalone PWA iOS: nếu máy khách vẫn lưu index.html cũ đòi bundle JS hash cũ đã bị xóa,
+  // tự động phục vụ bundle JS mới nhất hiện tại thay vì trả về HTML gây SyntaxError (trắng màn hình)
+  app.get('/_expo/static/js/web/*', (req, res, next) => {
+    const jsDir = path.join(publicDir, '_expo/static/js/web');
+    if (fs.existsSync(jsDir)) {
+      const files = fs.readdirSync(jsDir).filter(f => f.endsWith('.js'));
+      if (files.length > 0) {
+        res.setHeader('Content-Type', 'application/javascript; charset=UTF-8');
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+        return res.sendFile(path.join(jsDir, files[0]));
+      }
+    }
+    next();
+  });
+
   app.get('*', (req, res, next) => {
     if (req.path.startsWith('/api') || req.path.startsWith('/socket.io')) {
       return next();
+    }
+    // Tránh gửi nhầm index.html cho các file tài nguyên tĩnh bị thiếu
+    if (
+      req.path.startsWith('/_expo/') ||
+      req.path.startsWith('/assets/') ||
+      req.path.startsWith('/fonts/') ||
+      req.path.endsWith('.js') ||
+      req.path.endsWith('.css') ||
+      req.path.endsWith('.ttf') ||
+      req.path.endsWith('.png') ||
+      req.path.endsWith('.ico')
+    ) {
+      return res.status(404).send('Asset not found');
     }
     const indexPath = path.join(publicDir, 'index.html');
     if (fs.existsSync(indexPath)) {
