@@ -407,6 +407,7 @@ function AppContent() {
         return (
           <HomeScreen
             theme={theme}
+            currentUser={currentUser}
             onNavigateToVehicles={(cat = 'CAR') => {
               setVehiclesInitialCategory(cat);
               setActiveTab('VEHICLES');

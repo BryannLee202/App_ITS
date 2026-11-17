@@ -1,5 +1,5 @@
 {
-  "version": "1.2.9",
-  "buildTime": "1794925300000",
-  "change": "Gan truc tiep GOOGLE_CLIENT_ID chinh chu de bat cua so Google OAuth 2.0 ngay lap tuc"
+  "version": "1.3.0",
+  "buildTime": "1794928600000",
+  "change": "Dong bo avatar va ten tai khoan tu Profile va Google OAuth len goc tren Trang chu"
 }

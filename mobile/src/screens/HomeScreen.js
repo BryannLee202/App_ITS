@@ -298,6 +298,7 @@ const SAVED_PLACES = [
 
 export default function HomeScreen({
   theme = THEME_PRESETS.BE_SUA_CAFE,
+  currentUser = null,
   onSelectVehicle,
   onNavigateToVehicles,
   onNavigateToKey,
@@ -703,7 +704,10 @@ export default function HomeScreen({
               activeOpacity={0.85}
               onPress={onNavigateToProfile}
             >
-              <Text style={styles.greetingSub}>Chào Minh Tài · GPLX B2</Text>
+              <Text style={styles.greetingSub} numberOfLines={1}>
+                Chào {currentUser?.fullName || 'Minh Tài'} ·{' '}
+                {currentUser?.drivingLicense ? currentUser.drivingLicense.split('-')[0].trim() : 'GPLX B2'}
+              </Text>
               <Text style={styles.greetingTitle}>Bạn cần thuê xe ở đâu?</Text>
             </TouchableOpacity>
 
@@ -737,7 +741,22 @@ export default function HomeScreen({
                 activeOpacity={0.85}
                 onPress={onNavigateToProfile}
               >
-                <Text style={styles.avatarInitials}>MT</Text>
+                {currentUser?.avatar ? (
+                  <Image
+                    source={{ uri: currentUser.avatar }}
+                    style={styles.avatarImage}
+                    resizeMode="cover"
+                  />
+                ) : (
+                  <Text style={styles.avatarInitials}>
+                    {(currentUser?.fullName || 'Minh Tài')
+                      .trim()
+                      .split(/\s+/)
+                      .slice(-2)
+                      .map((w) => w[0]?.toUpperCase() || '')
+                      .join('') || 'MT'}
+                  </Text>
+                )}
               </TouchableOpacity>
             </View>
           </View>
@@ -1881,11 +1900,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   avatarCircle: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 38,
+    height: 38,
+    borderRadius: 19,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    overflow: 'hidden',
+    borderWidth: 1.5,
+    borderColor: '#D4AF37'
+  },
+  avatarImage: {
+    width: '100%',
+    height: '100%'
   },
   avatarInitials: {
     fontFamily: FONTS.family,
