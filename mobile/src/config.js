@@ -12,17 +12,14 @@ export const getBackendHost = () => {
 
   // 2. Web & Mobile Web (Vercel, Render, or Localhost)
   if (Platform.OS === 'web') {
-    if (typeof window !== 'undefined' && window.location && window.location.hostname) {
-      const hostname = window.location.hostname;
-      // If deployed on Vercel or Cloud Domain (online 24/7)
-      if (
-        hostname.includes('vercel.app') ||
-        hostname.includes('render.com') ||
-        hostname.includes('netlify.app')
-      ) {
-        return 'https://ecogo-m7ln.onrender.com';
+    if (typeof window !== 'undefined' && window.location) {
+      // If deployed on Cloud with HTTPS (e.g. Render, Vercel)
+      if (window.location.protocol === 'https:') {
+        return window.location.origin;
       }
-      return `http://${hostname}:5000`;
+      if (window.location.hostname) {
+        return `http://${window.location.hostname}:5000`;
+      }
     }
     return 'http://localhost:5000';
   }
