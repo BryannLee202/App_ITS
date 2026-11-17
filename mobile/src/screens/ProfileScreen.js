@@ -496,13 +496,37 @@ export default function ProfileScreen({
   const [newMemberPhone, setNewMemberPhone] = useState('');
   const [newMemberRelation, setNewMemberRelation] = useState('Vợ / Chồng');
 
+  const showNotice = (title, message) => {
+    if (Platform.OS === 'web') {
+      if (typeof window !== 'undefined' && typeof window.alert === 'function') {
+        window.alert(`${title}\n\n${message}`);
+      }
+    } else {
+      Alert.alert(title, message);
+    }
+  };
+
+  const confirmAction = (title, message, onConfirm, confirmLabel = 'Xác nhận') => {
+    if (Platform.OS === 'web') {
+      const ok = typeof window !== 'undefined' && typeof window.confirm === 'function'
+        ? window.confirm(`${title}\n\n${message}`)
+        : true;
+      if (ok) onConfirm();
+    } else {
+      Alert.alert(title, message, [
+        { text: 'Hủy', style: 'cancel' },
+        { text: confirmLabel, style: 'destructive', onPress: onConfirm }
+      ]);
+    }
+  };
+
   const handleAddMember = () => {
     if (!newMemberName.trim() || !newMemberPhone.trim()) {
-      Alert.alert('Thiếu thông tin', 'Vui lòng nhập họ tên và số điện thoại người thân.');
+      showNotice('Thiếu thông tin', 'Vui lòng nhập họ tên và số điện thoại người thân.');
       return;
     }
     if (familyMembers.length >= 5) {
-      Alert.alert('Giới hạn nhóm', 'Nhóm gia đình hỗ trợ tối đa 5 thành viên.');
+      showNotice('Giới hạn nhóm', 'Nhóm gia đình hỗ trợ tối đa 5 thành viên.');
       return;
     }
     const newMember = {
@@ -518,26 +542,20 @@ export default function ProfileScreen({
     setNewMemberName('');
     setNewMemberPhone('');
     setShowAddMember(false);
-    Alert.alert(
+    showNotice(
       'Đã gửi lời mời',
       `Đã gửi tin nhắn SMS mời ${newMember.name} (${newMember.phone}) tham gia Nhóm Di Chuyển Gia Đình EcoGo!`
     );
   };
 
   const handleRemoveMember = (id, name) => {
-    Alert.alert(
+    confirmAction(
       'Xóa thành viên',
       `Bạn có chắc chắn muốn mời ${name} ra khỏi nhóm gia đình?`,
-      [
-        { text: 'Hủy', style: 'cancel' },
-        {
-          text: 'Xóa',
-          style: 'destructive',
-          onPress: () => {
-            setFamilyMembers(prev => prev.filter(m => m.id !== id));
-          }
-        }
-      ]
+      () => {
+        setFamilyMembers(prev => prev.filter(m => m.id !== id));
+      },
+      'Xóa'
     );
   };
 
@@ -2178,7 +2196,7 @@ export default function ProfileScreen({
                 style={styles.familySaveBtn}
                 onPress={() => {
                   setShowFamilyModal(false);
-                  Alert.alert('Đã lưu', 'Cấu hình nhóm gia đình đã được cập nhật thành công!');
+                  showNotice('Đã lưu', 'Cấu hình nhóm gia đình đã được cập nhật thành công!');
                 }}
                 activeOpacity={0.88}
               >
