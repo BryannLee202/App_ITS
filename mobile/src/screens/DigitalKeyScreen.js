@@ -90,6 +90,7 @@ export default function DigitalKeyScreen({ theme = THEME_PRESETS.MINT, onNavigat
       setStatusToast(res.message || 'Đã khóa xe và kết thúc chuyến đi.');
       setTimeout(() => {
         loadActiveTrip();
+        if (onNavigateHome) onNavigateHome();
       }, 1200);
     } catch (err) {
       setStatusToast(err.message);

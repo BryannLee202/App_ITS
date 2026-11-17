@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import {
   View,
   Text,
@@ -114,7 +114,52 @@ function AppContent() {
   const [vehiclesInitialCategory, setVehiclesInitialCategory] = useState('CAR');
   const [updateToast, setUpdateToast] = useState('');
   const [unreadNotifCount, setUnreadNotifCount] = useState(2);
+  const [hasActiveTrip, setHasActiveTrip] = useState(false);
   const initialBuildRef = useRef(null);
+
+  // Kiểm tra trạng thái chuyến xe đang hoạt động (Active Trip)
+  const checkActiveTripStatus = async () => {
+    try {
+      const res = await ApiService.getActiveTrip();
+      if (res && res.activeTrip && res.activeTrip.status === 'ACTIVE') {
+        setHasActiveTrip(true);
+      } else {
+        setHasActiveTrip(false);
+      }
+    } catch (e) {
+      setHasActiveTrip(false);
+    }
+  };
+
+  useEffect(() => {
+    checkActiveTripStatus();
+    const tripInterval = setInterval(checkActiveTripStatus, 4000);
+    return () => clearInterval(tripInterval);
+  }, [activeTab]);
+
+  // Thanh điều hướng đáy linh hoạt:
+  // - Khi CHƯA thuê xe: Chỉ hiện 5 biểu tượng cơ bản [ 🏠 | 🚗 | 🏷️ | 🔔 | 👤 ]
+  // - Khi ĐANG thuê xe: Tự động chèn thêm nút Chìa Khóa Số nổi bật [ 🔑 ] ở giữa dock
+  // - Đồng thời: Xóa 100% chữ dưới biểu tượng, đạt chuẩn tối giản & thanh lịch!
+  const currentDockTabs = useMemo(() => {
+    if (hasActiveTrip) {
+      return [
+        { id: 'HOME', icon: 'home-outline', activeIcon: 'home' },
+        { id: 'VEHICLES', icon: 'car-sport-outline', activeIcon: 'car-sport' },
+        { id: 'KEY', icon: 'key', activeIcon: 'key', isCenterKey: true },
+        { id: 'OFFERS', icon: 'pricetag-outline', activeIcon: 'pricetag' },
+        { id: 'NOTIFICATIONS', icon: 'notifications-outline', activeIcon: 'notifications', hasBadge: true },
+        { id: 'PROFILE', icon: 'person-outline', activeIcon: 'person' }
+      ];
+    }
+    return [
+      { id: 'HOME', icon: 'home-outline', activeIcon: 'home' },
+      { id: 'VEHICLES', icon: 'car-sport-outline', activeIcon: 'car-sport' },
+      { id: 'OFFERS', icon: 'pricetag-outline', activeIcon: 'pricetag' },
+      { id: 'NOTIFICATIONS', icon: 'notifications-outline', activeIcon: 'notifications', hasBadge: true },
+      { id: 'PROFILE', icon: 'person-outline', activeIcon: 'person' }
+    ];
+  }, [hasActiveTrip]);
 
   useEffect(() => {
     const fetchUnread = async () => {
@@ -507,12 +552,12 @@ function AppContent() {
           <View style={styles.mainContentArea}>{renderContent()}</View>
 
           {/* =========================================================================
-              UNIFIED FLOATING GLASS DOCK (5 TABS + CENTER SMART KEY)
+              UNIFIED FLOATING GLASS DOCK (ICON-ONLY MINIMALIST DOCK)
              ========================================================================= */}
           {isOnboarded && (
             <View style={styles.floatingBottomDock} pointerEvents="box-none">
               <View style={styles.unifiedGlassDock}>
-                {DOCK_TABS.map((tab) => {
+                {currentDockTabs.map((tab) => {
                   const isActive = activeTab === tab.id;
 
                   if (tab.isCenterKey) {
@@ -526,21 +571,12 @@ function AppContent() {
                         <View
                           style={[
                             styles.centerKeyCircle,
-                            { backgroundColor: '#4E3322', shadowColor: '#2B180D', borderColor: '#FAF7F2' },
-                            isActive && { backgroundColor: '#6F4E37', borderColor: '#D4AF37' }
+                            isActive && styles.centerKeyCircleActive
                           ]}
                         >
-                          <Ionicons name="key" size={20} color="#D4AF37" />
+                          <Ionicons name="key" size={22} color="#D4AF37" />
+                          <View style={styles.activeKeyGlowPulse} />
                         </View>
-                        <Text
-                          style={[
-                            styles.dockTabLabel,
-                            { marginTop: 3 },
-                            isActive && { color: '#6F4E37', fontWeight: '800' }
-                          ]}
-                        >
-                          {t(`tabs.${tab.id.toLowerCase()}`) || tab.label}
-                        </Text>
                       </TouchableOpacity>
                     );
                   }
@@ -549,18 +585,18 @@ function AppContent() {
                     <TouchableOpacity
                       key={tab.id}
                       style={styles.dockTabBtn}
-                      activeOpacity={0.8}
+                      activeOpacity={0.75}
                       onPress={() => setActiveTab(tab.id)}
                     >
                       <View
                         style={[
                           styles.dockIconPill,
-                          isActive && { backgroundColor: '#F5EFEB' }
+                          isActive && styles.dockIconPillActive
                         ]}
                       >
                         <Ionicons
                           name={isActive ? tab.activeIcon : tab.icon}
-                          size={20}
+                          size={22}
                           color={isActive ? '#7C3AED' : '#8C7A6B'}
                         />
                         {tab.hasBadge && unreadNotifCount > 0 && (
@@ -570,15 +606,8 @@ function AppContent() {
                             </Text>
                           </View>
                         )}
+                        {isActive && <View style={styles.dockActiveDot} />}
                       </View>
-                      <Text
-                        style={[
-                          styles.dockTabLabel,
-                          isActive && { color: '#6F4E37', fontWeight: '800' }
-                        ]}
-                      >
-                        {t(`tabs.${tab.id.toLowerCase()}`) || tab.label}
-                      </Text>
                     </TouchableOpacity>
                   );
                 })}
@@ -938,7 +967,7 @@ const styles = StyleSheet.create({
   },
 
   /* =========================================================================
-     UNIFIED FLOATING GLASS DOCK
+     UNIFIED FLOATING GLASS DOCK (ICON-ONLY MINIMALIST DOCK)
      ========================================================================= */
   floatingBottomDock: {
     position: 'absolute',
@@ -948,19 +977,19 @@ const styles = StyleSheet.create({
     zIndex: 50
   },
   unifiedGlassDock: {
-    height: 66,
-    borderRadius: 26,
-    backgroundColor: 'rgba(250, 247, 242, 0.96)',
+    height: 58,
+    borderRadius: 29,
+    backgroundColor: 'rgba(250, 247, 242, 0.97)',
     borderWidth: 1,
     borderColor: '#EBE3D7',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around',
-    paddingHorizontal: 6,
+    paddingHorizontal: 8,
     shadowColor: '#2B180D',
-    shadowOffset: { width: 0, height: 8 },
+    shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.12,
-    shadowRadius: 18,
+    shadowRadius: 16,
     elevation: 8
   },
   dockTabBtn: {
@@ -970,16 +999,27 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   dockIconPill: {
-    width: 42,
-    height: 30,
-    borderRadius: 15,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative'
   },
+  dockIconPillActive: {
+    backgroundColor: '#F3E8FF'
+  },
+  dockActiveDot: {
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: '#7C3AED',
+    position: 'absolute',
+    bottom: 4
+  },
   dockBadgeRed: {
     position: 'absolute',
-    top: -2,
+    top: 2,
     right: 2,
     backgroundColor: '#EF4444',
     minWidth: 16,
@@ -989,7 +1029,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 3,
     borderWidth: 1.5,
-    borderColor: '#FFFFFF'
+    borderColor: '#FFFFFF',
+    zIndex: 5
   },
   dockBadgeText: {
     fontFamily: FONTS.family,
@@ -997,31 +1038,43 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: '#FFFFFF'
   },
-  dockTabLabel: {
-    fontFamily: FONTS.family,
-    fontSize: 10,
-    fontWeight: '600',
-    color: '#64748B',
-    marginTop: 2
-  },
   centerKeySlot: {
-    flex: 1.1,
+    flex: 1.15,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: -18
+    marginTop: -12
   },
   centerKeyCircle: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    borderWidth: 3,
-    borderColor: '#FFFFFF',
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#4E3322',
+    borderWidth: 2,
+    borderColor: '#D4AF37',
     alignItems: 'center',
     justifyContent: 'center',
+    shadowColor: '#2B180D',
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.35,
     shadowRadius: 10,
-    elevation: 6
+    elevation: 8,
+    position: 'relative'
+  },
+  centerKeyCircleActive: {
+    backgroundColor: '#6F4E37',
+    borderColor: '#FACC15',
+    transform: [{ scale: 1.05 }]
+  },
+  activeKeyGlowPulse: {
+    position: 'absolute',
+    top: 3,
+    right: 3,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#22C55E',
+    borderWidth: 1.5,
+    borderColor: '#FFFFFF'
   },
 
   /* =========================================================================

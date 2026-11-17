@@ -11,9 +11,9 @@ let rentals = [
     pickupStationId: 'hub-landmark-01',
     returnStationId: 'hub-thuthiem-01',
     rentalType: 'HOURLY',
-    startTime: new Date(Date.now() - 45 * 60 * 1000).toISOString(), // 45 mins ago
-    endTime: null,
-    status: 'ACTIVE', // 'ACTIVE', 'COMPLETED', 'CANCELLED'
+    startTime: new Date(Date.now() - 45 * 60 * 1000).toISOString(),
+    endTime: new Date().toISOString(),
+    status: 'COMPLETED', // Bắt đầu ở trạng thái COMPLETED để người dùng chưa thuê xe thì không hiện khóa xe
     totalHours: 2,
     basePricePerHour: 120000,
     estimatedTotal: 240000,
