@@ -28,12 +28,44 @@ const io = new Server(server, {
 // Pass IO instance to Telematics engine
 telematicsService.setSocketIO(io);
 
-// Middleware
+// Middleware & Security Hardening
+app.disable('x-powered-by');
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('Permissions-Policy', 'camera=(self), geolocation=(self), microphone=()');
+  next();
+});
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '2mb' }));
+
+// Lightweight in-memory rate limiter for /api/auth to prevent brute-force & OTP abuse
+const authRateMap = new Map();
+const authRateLimiter = (req, res, next) => {
+  const ip = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.socket.remoteAddress || 'unknown';
+  const now = Date.now();
+  const windowMs = 60 * 1000;
+  const maxReqs = 30;
+  const entry = authRateMap.get(ip) || { count: 0, resetAt: now + windowMs };
+  if (now > entry.resetAt) {
+    entry.count = 1;
+    entry.resetAt = now + windowMs;
+  } else {
+    entry.count += 1;
+  }
+  authRateMap.set(ip, entry);
+  if (entry.count > maxReqs) {
+    return res.status(429).json({
+      success: false,
+      message: 'Quá nhiều yêu cầu xác thực. Vui lòng thử lại sau 1 phút.'
+    });
+  }
+  next();
+};
 
 // API Routes
-app.use('/api/auth', authRoutes);
+app.use('/api/auth', authRateLimiter, authRoutes);
 app.use('/api/vehicles', vehicleRoutes);
 app.use('/api/rentals', rentalRoutes);
 app.use('/api/its', itsRoutes);
