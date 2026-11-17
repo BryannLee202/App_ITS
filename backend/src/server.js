@@ -38,14 +38,22 @@ app.use('/api/rentals', rentalRoutes);
 app.use('/api/its', itsRoutes);
 app.use('/api/rewards', rewardRoutes);
 
-// Build timestamp tracking: auto-updates on every new deployment/restart
-const APP_BUILD_TIMESTAMP = Date.now().toString();
+// Build timestamp tracking: auto-updates on every new deployment/build
+let buildInfo = { buildTime: '1794890008153', version: '1.0.3' };
+try {
+  const versionFile = path.join(__dirname, 'buildVersion.json');
+  if (fs.existsSync(versionFile)) {
+    buildInfo = JSON.parse(fs.readFileSync(versionFile, 'utf8'));
+  }
+} catch (e) {}
 
 app.get('/api/app-version', (req, res) => {
   res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
   res.json({
-    version: '1.0.2',
-    buildTime: APP_BUILD_TIMESTAMP,
+    version: buildInfo.version,
+    buildTime: buildInfo.buildTime,
     timestamp: Date.now()
   });
 });

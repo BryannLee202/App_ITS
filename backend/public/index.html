@@ -3,20 +3,16 @@
   <head>
     <meta charset="utf-8" />
     <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, viewport-fit=cover" />
     <title>EcoGo Smart · Thuê Xe Tự Lái Đa Dạng 24/7</title>
-    <!-- The `react-native-web` recommended style reset: https://necolas.github.io/react-native-web/docs/setup/#root-element -->
     <style id="expo-reset">
-      /* These styles make the body full-height */
-      html,
-      body {
+      html, body {
         height: 100%;
       }
-      /* These styles disable body scrolling if you are using <ScrollView> */
       body {
         overflow: hidden;
+        -webkit-tap-highlight-color: transparent;
       }
-      /* These styles make the root element full-height */
       #root {
         display: flex;
         height: 100%;
@@ -25,15 +21,33 @@
     </style>
     <style id="expo-vector-icons">
       @font-face {
+        font-family: 'ionicons';
+        src: url('/fonts/Ionicons.ttf') format('truetype'),
+             url('https://cdn.jsdelivr.net/npm/@expo/vector-icons@14.0.0/build/vendor/react-native-vector-icons/Fonts/Ionicons.ttf') format('truetype');
+        font-display: swap;
+      }
+      @font-face {
         font-family: 'Ionicons';
         src: url('/fonts/Ionicons.ttf') format('truetype'),
              url('https://cdn.jsdelivr.net/npm/@expo/vector-icons@14.0.0/build/vendor/react-native-vector-icons/Fonts/Ionicons.ttf') format('truetype');
         font-display: swap;
       }
       @font-face {
+        font-family: 'material-community';
+        src: url('/fonts/MaterialCommunityIcons.ttf') format('truetype'),
+             url('https://cdn.jsdelivr.net/npm/@expo/vector-icons@14.0.0/build/vendor/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf') format('truetype');
+        font-display: swap;
+      }
+      @font-face {
         font-family: 'MaterialCommunityIcons';
         src: url('/fonts/MaterialCommunityIcons.ttf') format('truetype'),
              url('https://cdn.jsdelivr.net/npm/@expo/vector-icons@14.0.0/build/vendor/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf') format('truetype');
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'material';
+        src: url('/fonts/MaterialIcons.ttf') format('truetype'),
+             url('https://cdn.jsdelivr.net/npm/@expo/vector-icons@14.0.0/build/vendor/react-native-vector-icons/Fonts/MaterialIcons.ttf') format('truetype');
         font-display: swap;
       }
       @font-face {
@@ -49,21 +63,15 @@
         font-display: swap;
       }
       @font-face {
-        font-family: 'FontAwesome5_Solid';
-        src: url('/fonts/FontAwesome5_Solid.ttf') format('truetype'),
-             url('https://cdn.jsdelivr.net/npm/@expo/vector-icons@14.0.0/build/vendor/react-native-vector-icons/Fonts/FontAwesome5_Solid.ttf') format('truetype');
+        font-family: 'fontawesome';
+        src: url('/fonts/FontAwesome.ttf') format('truetype'),
+             url('https://cdn.jsdelivr.net/npm/@expo/vector-icons@14.0.0/build/vendor/react-native-vector-icons/Fonts/FontAwesome.ttf') format('truetype');
         font-display: swap;
       }
       @font-face {
-        font-family: 'FontAwesome5_Brands';
-        src: url('/fonts/FontAwesome5_Brands.ttf') format('truetype'),
-             url('https://cdn.jsdelivr.net/npm/@expo/vector-icons@14.0.0/build/vendor/react-native-vector-icons/Fonts/FontAwesome5_Brands.ttf') format('truetype');
-        font-display: swap;
-      }
-      @font-face {
-        font-family: 'FontAwesome6_Solid';
-        src: url('/fonts/FontAwesome6_Solid.ttf') format('truetype'),
-             url('https://cdn.jsdelivr.net/npm/@expo/vector-icons@14.0.0/build/vendor/react-native-vector-icons/Fonts/FontAwesome6_Solid.ttf') format('truetype');
+        font-family: 'feather';
+        src: url('/fonts/Feather.ttf') format('truetype'),
+             url('https://cdn.jsdelivr.net/npm/@expo/vector-icons@14.0.0/build/vendor/react-native-vector-icons/Fonts/Feather.ttf') format('truetype');
         font-display: swap;
       }
       @font-face {
@@ -73,37 +81,53 @@
         font-display: swap;
       }
       @font-face {
+        font-family: 'anticon';
+        src: url('/fonts/AntDesign.ttf') format('truetype'),
+             url('https://cdn.jsdelivr.net/npm/@expo/vector-icons@14.0.0/build/vendor/react-native-vector-icons/Fonts/AntDesign.ttf') format('truetype');
+        font-display: swap;
+      }
+      @font-face {
         font-family: 'AntDesign';
         src: url('/fonts/AntDesign.ttf') format('truetype'),
              url('https://cdn.jsdelivr.net/npm/@expo/vector-icons@14.0.0/build/vendor/react-native-vector-icons/Fonts/AntDesign.ttf') format('truetype');
         font-display: swap;
       }
       @font-face {
-        font-family: 'Entypo';
-        src: url('/fonts/Entypo.ttf') format('truetype'),
-             url('https://cdn.jsdelivr.net/npm/@expo/vector-icons@14.0.0/build/vendor/react-native-vector-icons/Fonts/Entypo.ttf') format('truetype');
-        font-display: swap;
-      }
-      @font-face {
-        font-family: 'Octicons';
+        font-family: 'octicons';
         src: url('/fonts/Octicons.ttf') format('truetype'),
              url('https://cdn.jsdelivr.net/npm/@expo/vector-icons@14.0.0/build/vendor/react-native-vector-icons/Fonts/Octicons.ttf') format('truetype');
         font-display: swap;
       }
       @font-face {
-        font-family: 'SimpleLineIcons';
+        font-family: 'simple-line-icons';
         src: url('/fonts/SimpleLineIcons.ttf') format('truetype'),
              url('https://cdn.jsdelivr.net/npm/@expo/vector-icons@14.0.0/build/vendor/react-native-vector-icons/Fonts/SimpleLineIcons.ttf') format('truetype');
         font-display: swap;
       }
+      @font-face {
+        font-family: 'entypo';
+        src: url('/fonts/Entypo.ttf') format('truetype'),
+             url('https://cdn.jsdelivr.net/npm/@expo/vector-icons@14.0.0/build/vendor/react-native-vector-icons/Fonts/Entypo.ttf') format('truetype');
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'evilicons';
+        src: url('/fonts/EvilIcons.ttf') format('truetype'),
+             url('https://cdn.jsdelivr.net/npm/@expo/vector-icons@14.0.0/build/vendor/react-native-vector-icons/Fonts/EvilIcons.ttf') format('truetype');
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'Fontisto';
+        src: url('/fonts/Fontisto.ttf') format('truetype'),
+             url('https://cdn.jsdelivr.net/npm/@expo/vector-icons@14.0.0/build/vendor/react-native-vector-icons/Fonts/Fontisto.ttf') format('truetype');
+        font-display: swap;
+      }
     </style>
-  <link rel="icon" href="/favicon.ico"/></head>
-
+    <link rel="icon" href="/favicon.ico"/>
+  </head>
   <body>
-    <!-- Use static rendering with Expo Router to support running without JavaScript. -->
-    <noscript> You need to enable JavaScript to run this app. </noscript>
-    <!-- The root element for your Expo app. -->
+    <noscript>Vui lòng kích hoạt JavaScript để chạy EcoGo Smart Mobility.</noscript>
     <div id="root"></div>
-  <script src="/_expo/static/js/web/index-01da19a9badceef5785de946b1173513.js" defer></script>
-</body>
+    <script src="/_expo/static/js/web/index-a0859e399831254de803dd9b8f80009f.js" defer></script>
+  </body>
 </html>
