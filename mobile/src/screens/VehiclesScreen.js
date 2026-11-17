@@ -19,17 +19,17 @@ import ApiService from '../services/api';
 import { DEFAULT_VEHICLES } from '../data/defaultVehicles';
 
 const SORT_OPTIONS = [
-  { id: 'PRICE_ASC', label: 'Giá thuê thấp nhất', shortLabel: 'Giá thấp nhất' },
-  { id: 'PRICE_DESC', label: 'Giá thuê cao nhất', shortLabel: 'Giá cao nhất' },
-  { id: 'RANGE_DESC', label: 'Quãng đường pin xa nhất', shortLabel: 'Pin xa nhất' },
-  { id: 'RATING_DESC', label: 'Đánh giá cao nhất (4.9+ ★)', shortLabel: 'Đánh giá cao' }
+  { id: 'PRICE_ASC', label: 'Giá thấp nhất', shortLabel: 'Giá thấp nhất', icon: 'arrow-down-outline' },
+  { id: 'PRICE_DESC', label: 'Giá cao nhất', shortLabel: 'Giá cao nhất', icon: 'arrow-up-outline' },
+  { id: 'RANGE_DESC', label: 'Pin đi xa nhất', shortLabel: 'Pin xa nhất', icon: 'battery-charging-outline' },
+  { id: 'RATING_DESC', label: 'Đánh giá cao nhất', shortLabel: 'Đánh giá cao', icon: 'star-outline' }
 ];
 
 const FUEL_OPTIONS = [
-  { id: 'ALL', label: 'Tất cả' },
-  { id: 'ELECTRIC', label: '⚡ Thuần điện (EV)' },
-  { id: 'HYBRID', label: '🍃 Hybrid (HEV)' },
-  { id: 'GASOLINE', label: '⛽ Xăng' }
+  { id: 'ALL', label: 'Tất cả', icon: null },
+  { id: 'ELECTRIC', label: 'Thuần điện (EV)', icon: 'flash-outline' },
+  { id: 'HYBRID', label: 'Hybrid (HEV)', icon: 'leaf-outline' },
+  { id: 'GASOLINE', label: 'Động cơ xăng', icon: 'flame-outline' }
 ];
 
 const SEAT_OPTIONS = [
@@ -684,38 +684,35 @@ export default function VehiclesScreen({
         animationType="slide"
         onRequestClose={() => setShowFilterDrawer(false)}
       >
-        <TouchableOpacity
-          style={styles.drawerOverlay}
-          activeOpacity={1}
-          onPress={() => setShowFilterDrawer(false)}
-        >
+        <View style={styles.drawerOverlay}>
           <TouchableOpacity
-            style={styles.drawerSheet}
+            style={StyleSheet.absoluteFillObject}
             activeOpacity={1}
-            onPress={(e) => e.stopPropagation && e.stopPropagation()}
-          >
+            onPress={() => setShowFilterDrawer(false)}
+          />
+          <View style={styles.drawerSheet}>
             {/* Sheet Handle */}
             <View style={styles.drawerHandleBar} />
 
             {/* Header */}
             <View style={styles.drawerHeader}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                <Ionicons name="options" size={18} color="#6F4E37" />
-                <Text style={styles.drawerTitle}>Bộ Lọc & Sắp Xếp Xe</Text>
+                <Ionicons name="options-outline" size={18} color="#4E3322" />
+                <Text style={styles.drawerTitle}>Bộ lọc & Sắp xếp</Text>
               </View>
               <TouchableOpacity
                 style={styles.drawerCloseBtn}
                 onPress={() => setShowFilterDrawer(false)}
                 activeOpacity={0.75}
               >
-                <Ionicons name="close" size={18} color="#2B180D" />
+                <Ionicons name="close" size={17} color="#2B180D" />
               </TouchableOpacity>
             </View>
 
             {/* Scrollable Filter Options */}
             <ScrollView style={styles.drawerBody} showsVerticalScrollIndicator={false}>
-              {/* 1. SẮP XẾP */}
-              <Text style={styles.filterSectionTitle}>1. Tiêu chí sắp xếp</Text>
+              {/* 1. SẮP XẾP (Lưới 2x2 gọn gàng) */}
+              <Text style={[styles.filterSectionTitle, { marginTop: 4 }]}>Tiêu chí sắp xếp</Text>
               <View style={styles.sortOptionsGrid}>
                 {SORT_OPTIONS.map((opt) => {
                   const isSelected = sortBy === opt.id;
@@ -727,11 +724,14 @@ export default function VehiclesScreen({
                       activeOpacity={0.8}
                     >
                       <Ionicons
-                        name={isSelected ? 'radio-button-on' : 'radio-button-off'}
-                        size={15}
-                        color={isSelected ? '#6F4E37' : '#94A3B8'}
+                        name={opt.icon}
+                        size={14}
+                        color={isSelected ? '#FAF7F2' : '#6F4E37'}
                       />
-                      <Text style={[styles.sortChipText, isSelected && styles.sortChipTextSelected]}>
+                      <Text
+                        style={[styles.sortChipText, isSelected && styles.sortChipTextSelected]}
+                        numberOfLines={1}
+                      >
                         {opt.label}
                       </Text>
                     </TouchableOpacity>
@@ -740,7 +740,7 @@ export default function VehiclesScreen({
               </View>
 
               {/* 2. LOẠI NĂNG LƯỢNG */}
-              <Text style={styles.filterSectionTitle}>2. Nhiên liệu & Năng lượng</Text>
+              <Text style={styles.filterSectionTitle}>Nhiên liệu & Năng lượng</Text>
               <View style={styles.filterChipsRow}>
                 {FUEL_OPTIONS.map((f) => {
                   const isSelected = fuelFilter === f.id;
@@ -751,6 +751,14 @@ export default function VehiclesScreen({
                       onPress={() => setFuelFilter(f.id)}
                       activeOpacity={0.8}
                     >
+                      {f.icon && (
+                        <Ionicons
+                          name={f.icon}
+                          size={12}
+                          color={isSelected ? '#FAF7F2' : '#6F4E37'}
+                          style={{ marginRight: 4 }}
+                        />
+                      )}
                       <Text style={[styles.drawerPillText, isSelected && styles.drawerPillTextActive]}>
                         {f.label}
                       </Text>
@@ -759,10 +767,10 @@ export default function VehiclesScreen({
                 })}
               </View>
 
-              {/* 3. SỐ CHỖ NGỒI (NẾU LÀ Ô TÔ / XE VIP) */}
+              {/* 3. SỐ CHỖ NGỒI (CHỈ HIỆN KHI CHỌN Ô TÔ / XE HẠNG SANG) */}
               {(categoryMode === 'CAR' || categoryMode === 'LUXURY') && (
                 <>
-                  <Text style={styles.filterSectionTitle}>3. Số chỗ ngồi</Text>
+                  <Text style={styles.filterSectionTitle}>Số chỗ ngồi</Text>
                   <View style={styles.filterChipsRow}>
                     {SEAT_OPTIONS.map((s) => {
                       const isSelected = seatsFilter === s.id;
@@ -784,9 +792,7 @@ export default function VehiclesScreen({
               )}
 
               {/* 4. MỨC GIÁ THUÊ */}
-              <Text style={styles.filterSectionTitle}>
-                {categoryMode === 'CAR' || categoryMode === 'LUXURY' ? '4. Khoảng giá thuê' : '3. Khoảng giá thuê'}
-              </Text>
+              <Text style={styles.filterSectionTitle}>Khoảng giá thuê</Text>
               <View style={styles.filterChipsRow}>
                 {PRICE_OPTIONS.map((p) => {
                   const isSelected = priceMaxFilter === p.id;
@@ -806,9 +812,7 @@ export default function VehiclesScreen({
               </View>
 
               {/* 5. HÃNG SẢN XUẤT */}
-              <Text style={styles.filterSectionTitle}>
-                {categoryMode === 'CAR' || categoryMode === 'LUXURY' ? '5. Hãng sản xuất' : '4. Hãng sản xuất'}
-              </Text>
+              <Text style={styles.filterSectionTitle}>Hãng sản xuất</Text>
               <View style={styles.filterChipsRow}>
                 {availableBrands.map((b) => {
                   const isSelected = brandFilter === b;
@@ -827,7 +831,7 @@ export default function VehiclesScreen({
                 })}
               </View>
 
-              <View style={{ height: 20 }} />
+              <View style={{ height: 14 }} />
             </ScrollView>
 
             {/* Sticky Bottom Actions */}
@@ -851,8 +855,8 @@ export default function VehiclesScreen({
                 </Text>
               </TouchableOpacity>
             </View>
-          </TouchableOpacity>
-        </TouchableOpacity>
+          </View>
+        </View>
       </Modal>
 
       {/* Booking Modal */}
@@ -1183,27 +1187,27 @@ const styles = StyleSheet.create({
   },
   drawerSheet: {
     width: '100%',
-    maxWidth: 460,
-    maxHeight: '85%',
+    maxWidth: 420,
+    maxHeight: '78%',
     backgroundColor: '#FAF7F2',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    paddingHorizontal: 16,
-    paddingTop: 8,
-    paddingBottom: 24,
+    paddingHorizontal: 18,
+    paddingTop: 10,
+    paddingBottom: 18,
     borderWidth: 1,
     borderColor: '#EBE3D7',
     shadowColor: '#2B180D',
     shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    elevation: 8
+    shadowOpacity: 0.16,
+    shadowRadius: 14,
+    elevation: 10
   },
   drawerHandleBar: {
-    width: 36,
+    width: 38,
     height: 4,
     borderRadius: 2,
-    backgroundColor: '#D1C7BD',
+    backgroundColor: '#D5C7B6',
     alignSelf: 'center',
     marginBottom: 10
   },
@@ -1213,75 +1217,81 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingBottom: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#EBE3D7'
+    borderBottomColor: '#EAE2D5'
   },
   drawerTitle: {
     fontFamily: FONTS.family,
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '800',
     color: '#2B180D'
   },
   drawerCloseBtn: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
     backgroundColor: '#F5EFEB',
     alignItems: 'center',
     justifyContent: 'center'
   },
   drawerBody: {
-    marginTop: 10
+    marginTop: 8,
+    flexShrink: 1
   },
   filterSectionTitle: {
     fontFamily: FONTS.family,
-    fontSize: 12,
+    fontSize: 12.5,
     fontWeight: '800',
-    color: '#6F4E37',
-    marginTop: 12,
+    color: '#4E3322',
+    marginTop: 14,
     marginBottom: 8,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5
+    letterSpacing: 0.1
   },
   sortOptionsGrid: {
-    gap: 6
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8
   },
   sortChipItem: {
+    width: '48.5%',
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 10,
-    paddingHorizontal: 12,
+    paddingHorizontal: 11,
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#EBE3D7',
-    gap: 8
+    borderColor: '#E5D6C9',
+    gap: 6
   },
   sortChipItemSelected: {
-    backgroundColor: '#F5EFEB',
-    borderColor: '#6F4E37'
+    backgroundColor: '#4E3322',
+    borderColor: '#4E3322'
   },
   sortChipText: {
     fontFamily: FONTS.family,
     fontSize: 12,
     fontWeight: '600',
-    color: '#5C4A3C'
+    color: '#5C4A3C',
+    flex: 1
   },
   sortChipTextSelected: {
-    fontWeight: '800',
-    color: '#2B180D'
+    fontWeight: '700',
+    color: '#FAF7F2'
   },
   filterChipsRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 6
+    gap: 7
   },
   drawerPill: {
-    paddingHorizontal: 11,
-    paddingVertical: 6,
-    borderRadius: 11,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderRadius: 12,
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#EBE3D7'
+    borderColor: '#E5D6C9'
   },
   drawerPillActive: {
     backgroundColor: '#6F4E37',
