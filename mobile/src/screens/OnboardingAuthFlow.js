@@ -144,10 +144,14 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
     }
 
     if (!clientId) {
-      Alert.alert(
-        'Chưa cấu hình Google Client ID',
-        'Máy chủ Render chưa có biến GOOGLE_CLIENT_ID. Vui lòng kiểm tra mục Environment trên Render và nhấn Save để kích hoạt cửa sổ Google chính chủ.'
-      );
+      const msg =
+        'Máy chủ Render chưa có biến GOOGLE_CLIENT_ID. Vui lòng vào Render -> Environment thêm GOOGLE_CLIENT_ID và nhấn Save để bật cửa sổ Google chính chủ.';
+      setErrorMessage(msg);
+      if (Platform.OS === 'web' && typeof window !== 'undefined' && window.alert) {
+        window.alert(msg);
+      } else {
+        Alert.alert('Chưa cấu hình Google Client ID', msg);
+      }
       return;
     }
 

@@ -1,5 +1,5 @@
 {
-  "version": "1.2.7",
-  "buildTime": "1794924700000",
-  "change": "Loai bo form nhap tay Google gia lap, chi su dung Google OAuth 2.0 chinh chu (Popup & Redirect)"
+  "version": "1.2.8",
+  "buildTime": "1794925000000",
+  "change": "Hien thi thong bao ro rang tren Web khi Render chua duoc dien GOOGLE_CLIENT_ID"
 }
