@@ -51,6 +51,7 @@ export const VN_CARRIERS = {
 
 // Danh sách các số Sandbox phục vụ kiểm thử hệ thống
 export const WHITELIST_DEMO_NUMBERS = [
+  '999999999',
   '386726647',
   '908123456',
   '912345678'

@@ -979,14 +979,14 @@ export default function ProfileScreen({
             activeOpacity={0.7}
             onPress={() => setShowOpsCenterModal(true)}
           >
-            <Ionicons name="pulse-outline" size={20} color="#15803D" />
+            <Ionicons name="shield-checkmark" size={20} color="#B45309" />
             <Text style={styles.menuListText}>
-              {language === 'en' ? 'EcoGo Operations Center (NOC)' : 'Trung tâm Vận hành Đội xe (NOC)'}
+              {language === 'en' ? 'Admin Root • Customers & Bookings DB' : '👑 Admin Root • Quan sát Khách & Đơn đặt'}
             </Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-              <View style={{ backgroundColor: '#DCFCE7', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 8 }}>
-                <Text style={{ fontSize: 10.5, color: '#15803D', fontWeight: '800', fontFamily: FONTS.family }}>
-                  LIVE
+              <View style={{ backgroundColor: '#FEF3C7', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 8, borderWidth: 1, borderColor: '#D4AF37' }}>
+                <Text style={{ fontSize: 10.5, color: '#92400E', fontWeight: '800', fontFamily: FONTS.family }}>
+                  ROOT
                 </Text>
               </View>
               <Ionicons name="chevron-forward" size={16} color="#9A9FA5" />

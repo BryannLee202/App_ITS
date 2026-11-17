@@ -1,9 +1,29 @@
+const fs = require('fs');
+const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 const telematicsService = require('../services/telematicsService');
 const ITSEngine = require('../services/itsEngine');
 
-// In-memory rentals store
-let rentals = [
+const RENTALS_DB_PATH = path.join(__dirname, '../data/rentals.json');
+
+const loadRentalsDb = () => {
+  try {
+    if (fs.existsSync(RENTALS_DB_PATH)) {
+      const parsed = JSON.parse(fs.readFileSync(RENTALS_DB_PATH, 'utf8'));
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch (e) {}
+  return null;
+};
+
+const saveRentalsDb = (list) => {
+  try {
+    fs.writeFileSync(RENTALS_DB_PATH, JSON.stringify(list, null, 2), 'utf8');
+  } catch (e) {}
+};
+
+// Persistent rentals store
+let rentals = loadRentalsDb() || [
   {
     id: 'trip_demo_101',
     userId: 'usr_demo_01',
@@ -345,7 +365,12 @@ exports.createRental = (req, res) => {
   const newTrip = {
     id: `trip_${uuidv4().substring(0, 8)}`,
     userId: req.user ? req.user.id : 'usr_demo_01',
+    customerName: req.user?.fullName || signedBy || 'Khách hàng EcoGo',
+    customerPhone: req.user?.phone || '+84386726647',
+    customerEmail: req.user?.email || '',
     vehicleId,
+    vehicleName: vehicle.name,
+    plateNumber: vehicle.plateNumber,
     pickupStationId: pickupStationId || vehicle.stationId,
     returnStationId: returnStationId || pickupStationId || vehicle.stationId,
     rentalType: rentalType || 'HOURLY',
@@ -384,6 +409,7 @@ exports.createRental = (req, res) => {
   };
 
   rentals.unshift(newTrip);
+  saveRentalsDb(rentals);
 
   // Trigger telematics trip simulation
   telematicsService.startTripSimulation(vehicleId, newTrip.id);
@@ -493,6 +519,7 @@ exports.completeTrip = (req, res) => {
   const eco = ITSEngine.calculateEcoImpact(trip.distanceTraveledKm, vehicle.powerType);
   trip.co2SavedKg = eco.co2SavedKg;
   trip.ecoPointsEarned = eco.ecoPointsEarned;
+  saveRentalsDb(rentals);
 
   return res.json({
     success: true,
@@ -580,10 +607,18 @@ exports.cancelRental = (req, res) => {
     ecoCoinsRestored: trip.ecoCoinsUsed || 0
   };
 
+  saveRentalsDb(rentals);
   return res.json({
     success: true,
     message: `Hủy đặt xe và khởi tạo lệnh hoàn tiền ${totalRefund.toLocaleString('vi-VN')}đ thành công!`,
     trip,
     refundDetails: trip.refundDetails
   });
+};
+
+exports.getAllRentalsRaw = () => rentals;
+exports.saveRentalsDb = () => saveRentalsDb(rentals);
+exports.removeRentalById = (id) => {
+  rentals = rentals.filter((r) => r.id !== id);
+  saveRentalsDb(rentals);
 };

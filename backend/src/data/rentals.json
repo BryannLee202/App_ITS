@@ -1,0 +1,26 @@
+[
+  {
+    "id": "trip_demo_101",
+    "userId": "usr_demo_01",
+    "customerName": "Khách hàng EcoGo",
+    "customerPhone": "+84386726647",
+    "vehicleId": "veh-ioniq5-001",
+    "vehicleName": "Hyundai Ioniq 5 Prestige",
+    "plateNumber": "51K-889.99",
+    "pickupStationId": "hub-landmark-01",
+    "returnStationId": "hub-thuthiem-01",
+    "rentalType": "HOURLY",
+    "startTime": "2026-11-17T10:00:00.000Z",
+    "endTime": "2026-11-17T12:00:00.000Z",
+    "status": "COMPLETED",
+    "totalHours": 2,
+    "basePricePerHour": 120000,
+    "estimatedTotal": 240000,
+    "distanceTraveledKm": 14.2,
+    "co2SavedKg": 1.7,
+    "ecoPointsEarned": 17,
+    "digitalKeyActivated": false,
+    "eContractSigned": true,
+    "contractNumber": "HD-ECOGO-2026-9812"
+  }
+]

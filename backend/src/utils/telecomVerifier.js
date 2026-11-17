@@ -58,6 +58,7 @@ const VALID_VN_PREFIXES = {
 
 // Danh sách các số Sandbox phục vụ kiểm thử hệ thống
 const WHITELIST_DEMO_NUMBERS = [
+  '0999999999',
   '0386726647',
   '0908123456',
   '0912345678'

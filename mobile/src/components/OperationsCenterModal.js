@@ -14,10 +14,90 @@ import ApiService from '../services/api';
 
 export default function OperationsCenterModal({ visible, onClose, language = 'vi' }) {
   const isEn = language === 'en';
+  const [activeTab, setActiveTab] = useState('BOOKINGS'); // 'BOOKINGS' | 'CUSTOMERS' | 'FLEET'
   const [loading, setLoading] = useState(false);
   const [opsData, setOpsData] = useState(null);
+  const [adminData, setAdminData] = useState({
+    totalRevenue: 240000,
+    bookings: [],
+    customers: []
+  });
+  const [noticeText, setNoticeText] = useState(null);
   const [aiDispatchLogs, setAiDispatchLogs] = useState(null);
   const [runningAiDispatch, setRunningAiDispatch] = useState(false);
+
+  const showToast = (msg) => {
+    setNoticeText(msg);
+    setTimeout(() => setNoticeText(null), 2500);
+  };
+
+  const fetchAllAdminData = async () => {
+    setLoading(true);
+    try {
+      const baseUrl = ApiService.getBaseUrl ? ApiService.getBaseUrl() : '/api';
+      const [opsRes, admRes] = await Promise.all([
+        fetch(`${baseUrl}/ops/overview`),
+        fetch(`${baseUrl}/admin/dashboard`)
+      ]);
+      if (opsRes.ok) {
+        setOpsData(await opsRes.json());
+      }
+      if (admRes.ok) {
+        const adm = await admRes.json();
+        setAdminData({
+          totalRevenue: adm.totalRevenue || 0,
+          bookings: adm.bookings || [],
+          customers: adm.customers || []
+        });
+      }
+    } catch (e) {} finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (visible) {
+      fetchAllAdminData();
+    }
+  }, [visible]);
+
+  const handleBookingAction = async (tripId, action) => {
+    try {
+      const baseUrl = ApiService.getBaseUrl ? ApiService.getBaseUrl() : '/api';
+      const res = await fetch(`${baseUrl}/admin/rentals/${tripId}/status`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action })
+      });
+      if (res.ok) {
+        showToast(
+          action === 'DELETE'
+            ? (isEn ? 'Deleted booking from Database' : 'Đã xóa đơn khỏi Database')
+            : (isEn ? 'Revoked key & completed trip' : 'Đã thu hồi khóa số & kết thúc chuyến')
+        );
+        fetchAllAdminData();
+      }
+    } catch (e) {}
+  };
+
+  const handleCustomerAction = async (userId, action) => {
+    try {
+      const baseUrl = ApiService.getBaseUrl ? ApiService.getBaseUrl() : '/api';
+      const res = await fetch(`${baseUrl}/admin/users/${userId}/privilege`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action })
+      });
+      if (res.ok) {
+        showToast(
+          action === 'ADD_COINS'
+            ? (isEn ? 'Added +100 EcoCoins to customer' : 'Đã cộng +100 EcoXu cho khách hàng')
+            : (isEn ? 'Granted VIP status to customer' : 'Đã nâng hạng Eco Elite VIP cho khách')
+        );
+        fetchAllAdminData();
+      }
+    } catch (e) {}
+  };
 
   const handleRunAiDispatch = async () => {
     setRunningAiDispatch(true);
@@ -31,52 +111,22 @@ export default function OperationsCenterModal({ visible, onClose, language = 'vi
       if (res.ok) {
         const data = await res.json();
         setAiDispatchLogs(data.actions || []);
+        setRunningAiDispatch(false);
         return;
       }
     } catch (e) {}
-    setAiDispatchLogs(
-      isEn
-        ? [
-            'Rebalanced 2 VinFast VF 5 units from Thu Duc Hub → Landmark 81 Hub (peak demand +34%).',
-            'Prioritized 250kW Supercharging slot for VF 8 (SOC 28% → 90% in 18 mins).',
-            'Activated Golden Hour -20% voucher for off-peak stations.'
-          ]
-        : [
-            'Điều phối tự động 2 xe VinFast VF 5 từ Hub Thủ Đức → Hub Landmark 81 (dự báo nhu cầu +34%).',
-            'Ưu tiên cổng sạc siêu nhanh 250kW cho VF 8 (nạp từ 28% → 90% trong 18 phút).',
-            'Kích hoạt ưu đãi Giờ Vàng -20% tại các trạm thấp điểm để cân bằng đội xe.'
-          ]
-    );
+    setAiDispatchLogs([
+      'Điều phối tự động 2 xe VinFast VF 5 từ Hub Thủ Đức → Hub Landmark 81 (dự báo nhu cầu +34%).',
+      'Ưu tiên cổng sạc siêu nhanh 250kW cho VF 8 (nạp từ 28% → 90% trong 18 phút).',
+      'Kích hoạt ưu đãi Giờ Vàng -20% tại các trạm thấp điểm để cân bằng đội xe.'
+    ]);
     setRunningAiDispatch(false);
   };
 
-  const fetchOps = async () => {
-    setLoading(true);
-    try {
-      const baseUrl = ApiService.getBaseUrl ? ApiService.getBaseUrl() : '/api';
-      const res = await fetch(`${baseUrl}/ops/overview`);
-      if (res.ok) {
-        const data = await res.json();
-        setOpsData(data);
-      }
-    } catch (e) {
-      // Fallback local telemetry snapshot
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (visible) {
-      fetchOps();
-    }
-  }, [visible]);
-
   const fleet = opsData?.fleet || {
     totalVehicles: 28,
-    available: 24,
+    available: 25,
     inUse: 3,
-    charging: 1,
     avgBatteryPct: 89,
     activeStations: 10
   };
@@ -88,170 +138,262 @@ export default function OperationsCenterModal({ visible, onClose, language = 'vi
           {/* Header */}
           <View style={styles.headerBanner}>
             <View style={styles.headerTopRow}>
-              <View style={styles.liveStatusPill}>
-                <View style={styles.liveGreenDot} />
-                <Text style={styles.liveStatusText}>
-                  {isEn ? 'ALL SYSTEMS OPERATIONAL' : 'HỆ THỐNG VẬN HÀNH ỔN ĐỊNH'}
-                </Text>
+              <View style={styles.rootBadgePill}>
+                <MaterialCommunityIcons name="crown" size={13} color="#D4AF37" />
+                <Text style={styles.rootBadgeText}>ADMIN ROOT • DATABASE LIVE</Text>
               </View>
               <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
                 <Ionicons name="close" size={18} color="#FAF7F2" />
               </TouchableOpacity>
             </View>
             <Text style={styles.headerTitle}>
-              {isEn ? 'EcoGo Operations Center' : 'Trung tâm Vận hành Đội xe'}
+              {isEn ? 'Admin Root Command Center' : 'Trung tâm Quản trị Admin Root'}
             </Text>
             <Text style={styles.headerSub}>
               {isEn
-                ? 'Real-time AVL Telematics, Charging Grid & Security Monitor'
-                : 'Giám sát định vị AVL, Trạm sạc nhanh & An toàn hệ thống 24/7'}
+                ? 'Observe customer bookings, manage users & control fleet DB'
+                : 'Quan sát đơn đặt xe của khách, quản lý tài khoản & điều hành Database'}
             </Text>
-          </View>
 
-          <ScrollView style={styles.bodyScroll} showsVerticalScrollIndicator={false}>
-            {/* 4 KPI Bento Grid */}
-            <View style={styles.kpiGrid}>
-              <View style={styles.kpiTile}>
-                <View style={[styles.kpiIconBox, { backgroundColor: '#EFE7DF' }]}>
-                  <MaterialCommunityIcons name="car-electric" size={18} color="#4E3322" />
-                </View>
-                <Text style={styles.kpiValue}>{fleet.totalVehicles}</Text>
-                <Text style={styles.kpiLabel}>
-                  {isEn ? 'Total Fleet' : 'Tổng đội xe'} ({fleet.available} {isEn ? 'ready' : 'sẵn sàng'})
-                </Text>
-              </View>
-
-              <View style={styles.kpiTile}>
-                <View style={[styles.kpiIconBox, { backgroundColor: '#E6F2EB' }]}>
-                  <Ionicons name="battery-charging" size={18} color="#1E5631" />
-                </View>
-                <Text style={[styles.kpiValue, { color: '#1E5631' }]}>{fleet.avgBatteryPct}%</Text>
-                <Text style={styles.kpiLabel}>
-                  {isEn ? 'Avg Fleet Battery' : 'Mức pin TB toàn đội'}
-                </Text>
-              </View>
-
-              <View style={styles.kpiTile}>
-                <View style={[styles.kpiIconBox, { backgroundColor: '#FEF3C7' }]}>
-                  <MaterialCommunityIcons name="ev-station" size={18} color="#92400E" />
-                </View>
-                <Text style={styles.kpiValue}>{fleet.activeStations} Hub</Text>
-                <Text style={styles.kpiLabel}>
-                  {isEn ? '250kW Superchargers' : 'Trạm Hub & Sạc 250kW'}
-                </Text>
-              </View>
-
-              <View style={styles.kpiTile}>
-                <View style={[styles.kpiIconBox, { backgroundColor: '#DBEAFE' }]}>
-                  <Ionicons name="pulse" size={18} color="#1E40AF" />
-                </View>
-                <Text style={[styles.kpiValue, { color: '#1E40AF' }]}>14 ms</Text>
-                <Text style={styles.kpiLabel}>
-                  {isEn ? 'BLE & IoT Latency' : 'Độ trễ khóa số & IoT'}
-                </Text>
-              </View>
-            </View>
-
-            {/* Apple-Style Service Health Rows */}
-            <Text style={styles.sectionHeading}>
-              {isEn ? 'CORE SERVICES & SECURITY' : 'TRẠNG THÁI DỊCH VỤ & BẢO MẬT'}
-            </Text>
-            <View style={styles.serviceListCard}>
+            {/* 3 Tabs Switcher */}
+            <View style={styles.tabRow}>
               {[
                 {
-                  icon: 'key-outline',
-                  name: isEn ? 'Apple CarKey & BLE 5.3 Digital Key' : 'Khóa số BLE 5.3 & Apple CarKey',
-                  status: isEn ? 'Encrypted • Active' : 'Mã hóa AES-256 • Hoạt động'
+                  id: 'BOOKINGS',
+                  label: isEn
+                    ? `Bookings (${adminData.bookings.length})`
+                    : `Đơn đặt xe (${adminData.bookings.length})`,
+                  icon: 'receipt-outline'
                 },
                 {
-                  icon: 'flash-outline',
-                  name: isEn ? 'V-Green 250kW DC Charging Grid' : 'Lưới trạm sạc nhanh V-Green 250kW',
-                  status: isEn ? '98.4% Availability' : '98.4% Trụ sẵn sàng'
+                  id: 'CUSTOMERS',
+                  label: isEn
+                    ? `Customers (${adminData.customers.length})`
+                    : `Khách hàng (${adminData.customers.length})`,
+                  icon: 'people-outline'
                 },
                 {
-                  icon: 'shield-checkmark-outline',
-                  name: isEn ? 'OWASP API Firewall & Rate Limiter' : 'Tường lửa API OWASP & Chống Brute-Force',
-                  status: isEn ? 'Protected' : 'Đang bảo vệ'
-                },
-                {
-                  icon: 'sync-outline',
-                  name: isEn ? 'OTA Live Sync & Auto-Update Engine' : 'Đồng bộ OTA & Tự động cập nhật PWA',
-                  status: `v${opsData?.version || '1.4.4'}`
+                  id: 'FLEET',
+                  label: isEn ? 'Fleet & AI' : 'Đội xe & AI',
+                  icon: 'pulse-outline'
                 }
-              ].map((srv, idx) => (
-                <View
-                  key={idx}
-                  style={[styles.serviceRow, idx === 3 && { borderBottomWidth: 0 }]}
-                >
-                  <Ionicons name={srv.icon} size={18} color="#4E3322" />
-                  <View style={{ flex: 1, marginLeft: 10 }}>
-                    <Text style={styles.serviceName}>{srv.name}</Text>
-                    <Text style={styles.serviceSub}>{srv.status}</Text>
+              ].map((t) => {
+                const active = activeTab === t.id;
+                return (
+                  <TouchableOpacity
+                    key={t.id}
+                    style={[styles.tabPill, active && styles.tabPillActive]}
+                    activeOpacity={0.85}
+                    onPress={() => setActiveTab(t.id)}
+                  >
+                    <Ionicons
+                      name={t.icon}
+                      size={13}
+                      color={active ? '#2B180D' : 'rgba(255,255,255,0.8)'}
+                    />
+                    <Text style={[styles.tabPillText, active && styles.tabPillTextActive]}>
+                      {t.label}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          </View>
+
+          {noticeText && (
+            <View style={styles.toastBanner}>
+              <Ionicons name="checkmark-circle" size={15} color="#FDE68A" />
+              <Text style={styles.toastText}>{noticeText}</Text>
+            </View>
+          )}
+
+          <ScrollView style={styles.bodyScroll} showsVerticalScrollIndicator={false}>
+            {activeTab === 'BOOKINGS' && (
+              <>
+                <View style={styles.revenueBar}>
+                  <View>
+                    <Text style={styles.revenueLabel}>
+                      {isEn ? 'TOTAL DB BOOKING REVENUE' : 'TỔNG DOANH THU ĐƠN ĐẶT TRONG DB'}
+                    </Text>
+                    <Text style={styles.revenueValue}>
+                      {(adminData.totalRevenue || 0).toLocaleString('vi-VN')}đ
+                    </Text>
                   </View>
-                  <View style={styles.okBadge}>
-                    <Ionicons name="checkmark-circle" size={13} color="#15803D" />
-                    <Text style={styles.okBadgeText}>OK</Text>
+                  <View style={styles.dbSyncBadge}>
+                    <Ionicons name="server-outline" size={12} color="#15803D" />
+                    <Text style={styles.dbSyncText}>rentals.json</Text>
                   </View>
                 </View>
-              ))}
-            </View>
 
-            {/* Autonomous AI Fleet Dispatch Engine */}
-            <Text style={[styles.sectionHeading, { marginTop: 6 }]}>
-              {isEn ? 'AUTONOMOUS AI FLEET DISPATCH' : 'AI TỰ ĐỘNG ĐIỀU PHỐI ĐỘI XE'}
-            </Text>
-            <View style={[styles.serviceListCard, { padding: 12, marginBottom: 14 }]}>
-              <Text style={styles.serviceSub}>
-                {isEn
-                  ? 'Predict station demand spikes and automatically rebalance EVs & charging slots.'
-                  : 'Dự báo nhu cầu theo giờ cao điểm và tự động điều phối xe, trụ sạc 250kW giữa 10 Hub.'}
-              </Text>
-              <TouchableOpacity
-                style={[styles.doneBtn, { marginTop: 10, flexDirection: 'row', gap: 6, backgroundColor: '#2B180D' }]}
-                activeOpacity={0.85}
-                onPress={async () => {
-                  await handleRunAiDispatch();
-                  setRunningAiDispatch(false);
-                }}
-              >
-                <Ionicons name="sparkles" size={14} color="#D4AF37" />
-                <Text style={[styles.doneBtnText, { color: '#FDE68A' }]}>
-                  {runningAiDispatch
-                    ? (isEn ? 'Optimizing Fleet...' : 'Đang tối ưu đội xe...')
-                    : (isEn ? 'Run AI Auto-Dispatch' : 'Kích hoạt AI Tối ưu Đội xe')}
-                </Text>
-              </TouchableOpacity>
+                {adminData.bookings.length === 0 ? (
+                  <Text style={styles.emptyText}>
+                    {isEn ? 'No bookings recorded yet.' : 'Chưa có đơn đặt xe nào trong Database.'}
+                  </Text>
+                ) : (
+                  adminData.bookings.map((b) => {
+                    const isActive = b.status === 'ACTIVE';
+                    return (
+                      <View key={b.id} style={styles.recordCard}>
+                        <View style={styles.recordHeaderRow}>
+                          <Text style={styles.recordTitle} numberOfLines={1}>
+                            {b.vehicleName || b.vehicleId} ({b.plateNumber || '51K-889.99'})
+                          </Text>
+                          <View
+                            style={[
+                              styles.statusBadge,
+                              { backgroundColor: isActive ? '#DCFCE7' : '#F3EEE7' }
+                            ]}
+                          >
+                            <Text
+                              style={[
+                                styles.statusBadgeText,
+                                { color: isActive ? '#15803D' : '#6F4E37' }
+                              ]}
+                            >
+                              {isActive ? 'ĐANG THUÊ' : b.status}
+                            </Text>
+                          </View>
+                        </View>
 
-              {aiDispatchLogs && (
-                <View style={{ marginTop: 10, gap: 6 }}>
-                  {aiDispatchLogs.map((log, i) => (
-                    <View key={i} style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 6 }}>
-                      <Ionicons name="checkmark-done-circle" size={15} color="#15803D" style={{ marginTop: 1 }} />
-                      <Text style={{ flex: 1, fontFamily: FONTS.family, fontSize: 11.5, color: '#2B180D', lineHeight: 16 }}>
-                        {log}
+                        <Text style={styles.recordMeta}>
+                          👤 {b.customerName || b.signedBy || 'Khách hàng'} · 📞 {b.customerPhone || '+84386726647'}
+                        </Text>
+                        <Text style={styles.recordMeta}>
+                          📄 HĐ: {b.contractNumber || b.id} · 💰 {(b.estimatedTotal || 0).toLocaleString('vi-VN')}đ
+                        </Text>
+
+                        <View style={styles.actionRow}>
+                          {isActive && (
+                            <TouchableOpacity
+                              style={styles.revokeBtn}
+                              onPress={() => handleBookingAction(b.id, 'COMPLETE')}
+                            >
+                              <Ionicons name="key-outline" size={13} color="#FFFFFF" />
+                              <Text style={styles.revokeBtnText}>
+                                {isEn ? 'Revoke Key / Complete' : 'Thu hồi khóa / Kết thúc'}
+                              </Text>
+                            </TouchableOpacity>
+                          )}
+                          <TouchableOpacity
+                            style={styles.deleteBtn}
+                            onPress={() => handleBookingAction(b.id, 'DELETE')}
+                          >
+                            <Ionicons name="trash-outline" size={13} color="#DC2626" />
+                            <Text style={styles.deleteBtnText}>
+                              {isEn ? 'Delete' : 'Xóa đơn'}
+                            </Text>
+                          </TouchableOpacity>
+                        </View>
+                      </View>
+                    );
+                  })
+                )}
+              </>
+            )}
+
+            {activeTab === 'CUSTOMERS' && (
+              <>
+                {adminData.customers.map((u) => (
+                  <View key={u.id} style={styles.recordCard}>
+                    <View style={styles.recordHeaderRow}>
+                      <Text style={styles.recordTitle}>
+                        {u.fullName} {u.role === 'ADMIN_ROOT' ? '👑' : ''}
                       </Text>
+                      <View style={[styles.statusBadge, { backgroundColor: '#FEF3C7' }]}>
+                        <Text style={[styles.statusBadgeText, { color: '#92400E' }]}>
+                          {u.ecoCoins || 0} Xu
+                        </Text>
+                      </View>
                     </View>
-                  ))}
+                    <Text style={styles.recordMeta}>
+                      📞 {u.phone || 'Google OAuth'} · ✉️ {u.email || 'Chưa cập nhật'}
+                    </Text>
+                    <Text style={styles.recordMeta}>
+                      🪪 {u.drivingLicense || 'GPLX B2'} · 🏅 {u.memberRank || 'Eco Member'}
+                    </Text>
+                    <View style={styles.actionRow}>
+                      <TouchableOpacity
+                        style={styles.coinActionBtn}
+                        onPress={() => handleCustomerAction(u.id, 'ADD_COINS')}
+                      >
+                        <Text style={styles.coinActionText}>+100 EcoXu</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={styles.vipActionBtn}
+                        onPress={() => handleCustomerAction(u.id, 'GRANT_VIP')}
+                      >
+                        <Text style={styles.vipActionText}>
+                          {isEn ? 'Grant VIP' : 'Nâng hạng VIP'}
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                ))}
+              </>
+            )}
+
+            {activeTab === 'FLEET' && (
+              <>
+                <View style={styles.kpiGrid}>
+                  <View style={styles.kpiTile}>
+                    <Text style={styles.kpiValue}>{fleet.totalVehicles} Xe</Text>
+                    <Text style={styles.kpiLabel}>
+                      {fleet.available} sẵn sàng · {fleet.inUse} đang thuê
+                    </Text>
+                  </View>
+                  <View style={styles.kpiTile}>
+                    <Text style={[styles.kpiValue, { color: '#15803D' }]}>{fleet.avgBatteryPct}%</Text>
+                    <Text style={styles.kpiLabel}>Mức pin TB toàn đội</Text>
+                  </View>
                 </View>
-              )}
-            </View>
+
+                <View style={[styles.recordCard, { padding: 12 }]}>
+                  <Text style={styles.recordTitle}>
+                    {isEn ? 'AI Autonomous Fleet Dispatch' : 'AI Tự động Điều phối Đội xe'}
+                  </Text>
+                  <Text style={[styles.recordMeta, { marginTop: 4 }]}>
+                    {isEn
+                      ? 'Predict station demand spikes and rebalance EVs across 10 Hubs.'
+                      : 'Dự báo nhu cầu giờ cao điểm và tự động cân bằng xe giữa 10 trạm Hub.'}
+                  </Text>
+                  <TouchableOpacity
+                    style={[styles.doneBtn, { marginTop: 10, flexDirection: 'row', gap: 6, backgroundColor: '#2B180D' }]}
+                    onPress={handleRunAiDispatch}
+                  >
+                    <Ionicons name="sparkles" size={14} color="#D4AF37" />
+                    <Text style={[styles.doneBtnText, { color: '#FDE68A' }]}>
+                      {runningAiDispatch ? 'Đang tối ưu...' : 'Kích hoạt AI Tối ưu Đội xe'}
+                    </Text>
+                  </TouchableOpacity>
+                  {aiDispatchLogs && (
+                    <View style={{ marginTop: 10, gap: 5 }}>
+                      {aiDispatchLogs.map((log, i) => (
+                        <Text key={i} style={styles.recordMeta}>
+                          ✓ {log}
+                        </Text>
+                      ))}
+                    </View>
+                  )}
+                </View>
+              </>
+            )}
           </ScrollView>
 
           <View style={styles.footerBar}>
-            <TouchableOpacity style={styles.refreshBtn} onPress={fetchOps} activeOpacity={0.8}>
+            <TouchableOpacity style={styles.refreshBtn} onPress={fetchAllAdminData} activeOpacity={0.8}>
               {loading ? (
                 <ActivityIndicator size="small" color="#4E3322" />
               ) : (
                 <>
                   <Ionicons name="refresh" size={15} color="#4E3322" />
                   <Text style={styles.refreshBtnText}>
-                    {isEn ? 'Refresh Telemetry' : 'Làm mới thông số'}
+                    {isEn ? 'Sync DB' : 'Đồng bộ DB'}
                   </Text>
                 </>
               )}
             </TouchableOpacity>
             <TouchableOpacity style={styles.doneBtn} onPress={onClose} activeOpacity={0.85}>
-              <Text style={styles.doneBtnText}>{isEn ? 'Done' : 'Đóng'}</Text>
+              <Text style={styles.doneBtnText}>{isEn ? 'Close' : 'Đóng'}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -263,15 +405,15 @@ export default function OperationsCenterModal({ visible, onClose, language = 'vi
 const styles = StyleSheet.create({
   backdrop: {
     flex: 1,
-    backgroundColor: 'rgba(18, 12, 8, 0.72)',
+    backgroundColor: 'rgba(18, 12, 8, 0.75)',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 16
   },
   modalCard: {
     width: '100%',
-    maxWidth: 385,
-    maxHeight: '88%',
+    maxWidth: 390,
+    maxHeight: '90%',
     backgroundColor: '#FAF7F2',
     borderRadius: 24,
     overflow: 'hidden',
@@ -280,86 +422,262 @@ const styles = StyleSheet.create({
   },
   headerBanner: {
     backgroundColor: '#2B180D',
-    padding: 18
+    padding: 16
   },
   headerTopRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 8
+    marginBottom: 6
   },
-  liveStatusPill: {
+  rootBadgePill: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    backgroundColor: 'rgba(34, 197, 94, 0.16)',
+    gap: 5,
+    backgroundColor: 'rgba(212, 175, 55, 0.2)',
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: 'rgba(34, 197, 94, 0.35)'
+    borderColor: 'rgba(212, 175, 55, 0.5)'
   },
-  liveGreenDot: {
-    width: 7,
-    height: 7,
-    borderRadius: 3.5,
-    backgroundColor: '#22C55E'
-  },
-  liveStatusText: {
+  rootBadgeText: {
     fontFamily: FONTS.family,
     fontSize: 10,
     fontWeight: '800',
-    color: '#86EFAC',
+    color: '#FDE68A',
     letterSpacing: 0.5
   },
   closeBtn: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    backgroundColor: 'rgba(255, 255, 255, 0.12)',
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: 'rgba(255, 255, 255, 0.14)',
     alignItems: 'center',
     justifyContent: 'center'
   },
   headerTitle: {
     fontFamily: FONTS.family,
-    fontSize: 19,
+    fontSize: 18,
     fontWeight: '900',
     color: '#FFFFFF'
   },
   headerSub: {
     fontFamily: FONTS.family,
+    fontSize: 11,
+    color: 'rgba(255, 255, 255, 0.76)',
+    marginTop: 2
+  },
+  tabRow: {
+    flexDirection: 'row',
+    gap: 6,
+    marginTop: 12
+  },
+  tabPill: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 4,
+    paddingVertical: 7,
+    borderRadius: 12,
+    backgroundColor: 'rgba(255,255,255,0.12)'
+  },
+  tabPillActive: {
+    backgroundColor: '#D4AF37'
+  },
+  tabPillText: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    fontWeight: '700',
+    color: 'rgba(255,255,255,0.85)'
+  },
+  tabPillTextActive: {
+    color: '#2B180D',
+    fontWeight: '800'
+  },
+  toastBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: '#1E5631',
+    paddingHorizontal: 14,
+    paddingVertical: 8
+  },
+  toastText: {
+    fontFamily: FONTS.family,
     fontSize: 11.5,
-    color: 'rgba(255, 255, 255, 0.75)',
-    marginTop: 3
+    fontWeight: '700',
+    color: '#FFFFFF'
   },
   bodyScroll: {
-    padding: 16
+    padding: 14
+  },
+  revenueBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#EFE7DF',
+    padding: 12,
+    borderRadius: 14,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#DFD0C0'
+  },
+  revenueLabel: {
+    fontFamily: FONTS.family,
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#6F4E37'
+  },
+  revenueValue: {
+    fontFamily: FONTS.family,
+    fontSize: 18,
+    fontWeight: '900',
+    color: '#2B180D',
+    marginTop: 2
+  },
+  dbSyncBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: '#DCFCE7',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8
+  },
+  dbSyncText: {
+    fontFamily: FONTS.family,
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#15803D'
+  },
+  emptyText: {
+    fontFamily: FONTS.family,
+    fontSize: 12,
+    color: '#6F767E',
+    textAlign: 'center',
+    marginVertical: 20
+  },
+  recordCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 12,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#EAE2D7'
+  },
+  recordHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 4
+  },
+  recordTitle: {
+    flex: 1,
+    fontFamily: FONTS.family,
+    fontSize: 13,
+    fontWeight: '800',
+    color: '#2B180D',
+    marginRight: 8
+  },
+  statusBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 8
+  },
+  statusBadgeText: {
+    fontFamily: FONTS.family,
+    fontSize: 10,
+    fontWeight: '800'
+  },
+  recordMeta: {
+    fontFamily: FONTS.family,
+    fontSize: 11.5,
+    color: '#5C4D42',
+    marginTop: 2
+  },
+  actionRow: {
+    flexDirection: 'row',
+    gap: 8,
+    marginTop: 10
+  },
+  revokeBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 5,
+    backgroundColor: '#4E3322',
+    paddingVertical: 8,
+    borderRadius: 10
+  },
+  revokeBtnText: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#FFFFFF'
+  },
+  deleteBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 4,
+    backgroundColor: '#FEE2E2',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 10
+  },
+  deleteBtnText: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#DC2626'
+  },
+  coinActionBtn: {
+    flex: 1,
+    backgroundColor: '#EFE7DF',
+    paddingVertical: 7,
+    borderRadius: 10,
+    alignItems: 'center'
+  },
+  coinActionText: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    fontWeight: '800',
+    color: '#4E3322'
+  },
+  vipActionBtn: {
+    flex: 1,
+    backgroundColor: '#FEF3C7',
+    paddingVertical: 7,
+    borderRadius: 10,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#D4AF37'
+  },
+  vipActionText: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    fontWeight: '800',
+    color: '#92400E'
   },
   kpiGrid: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
     gap: 10,
-    marginBottom: 16
+    marginBottom: 10
   },
   kpiTile: {
-    width: '48%',
+    flex: 1,
     backgroundColor: '#FFFFFF',
-    borderRadius: 16,
+    borderRadius: 14,
     padding: 12,
     borderWidth: 1,
     borderColor: '#EAE2D7'
   },
-  kpiIconBox: {
-    width: 34,
-    height: 34,
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 8
-  },
   kpiValue: {
     fontFamily: FONTS.family,
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: '900',
     color: '#2B180D'
   },
@@ -369,61 +687,11 @@ const styles = StyleSheet.create({
     color: '#6F767E',
     marginTop: 2
   },
-  sectionHeading: {
-    fontFamily: FONTS.family,
-    fontSize: 11,
-    fontWeight: '800',
-    color: '#6F4E37',
-    letterSpacing: 0.6,
-    marginBottom: 8
-  },
-  serviceListCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    paddingHorizontal: 12,
-    borderWidth: 1,
-    borderColor: '#EAE2D7',
-    marginBottom: 8
-  },
-  serviceRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 11,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F2ECE4'
-  },
-  serviceName: {
-    fontFamily: FONTS.family,
-    fontSize: 12.5,
-    fontWeight: '700',
-    color: '#2B180D'
-  },
-  serviceSub: {
-    fontFamily: FONTS.family,
-    fontSize: 11,
-    color: '#6F767E',
-    marginTop: 1
-  },
-  okBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 3,
-    backgroundColor: '#DCFCE7',
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 8
-  },
-  okBadgeText: {
-    fontFamily: FONTS.family,
-    fontSize: 10,
-    fontWeight: '800',
-    color: '#15803D'
-  },
   footerBar: {
     flexDirection: 'row',
     gap: 10,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 11,
     borderTopWidth: 1,
     borderTopColor: '#EAE2D7',
     backgroundColor: '#FAF7F2'
@@ -434,7 +702,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 6,
-    paddingVertical: 11,
+    paddingVertical: 10,
     borderRadius: 12,
     borderWidth: 1,
     borderColor: '#DFD0C0',
@@ -442,7 +710,7 @@ const styles = StyleSheet.create({
   },
   refreshBtnText: {
     fontFamily: FONTS.family,
-    fontSize: 12.5,
+    fontSize: 12,
     fontWeight: '700',
     color: '#4E3322'
   },
@@ -450,13 +718,13 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 11,
+    paddingVertical: 10,
     borderRadius: 12,
     backgroundColor: '#4E3322'
   },
   doneBtnText: {
     fontFamily: FONTS.family,
-    fontSize: 12.5,
+    fontSize: 12,
     fontWeight: '700',
     color: '#FFFFFF'
   }

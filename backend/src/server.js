@@ -13,6 +13,7 @@ const itsRoutes = require('./routes/itsRoutes');
 const rewardRoutes = require('./routes/rewardRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
 const telematicsService = require('./services/telematicsService');
+const rentalController = require('./controllers/rentalController');
 
 const app = express();
 const server = http.createServer(app);
@@ -200,6 +201,102 @@ app.post('/api/ops/ai-dispatch', (req, res) => {
           'Kích hoạt ưu đãi Giờ Vàng -20% tại các trạm thấp điểm để cân bằng đội xe.'
         ]
   });
+});
+
+// =========================================================================
+// ADMIN ROOT PRIVILEGED API (CUSTOMERS, LIVE BOOKINGS DB & INTERVENTION)
+// =========================================================================
+const USERS_DB_PATH = path.join(__dirname, 'data/users.json');
+
+const readUsersDb = () => {
+  try {
+    if (fs.existsSync(USERS_DB_PATH)) {
+      return JSON.parse(fs.readFileSync(USERS_DB_PATH, 'utf8')) || [];
+    }
+  } catch (e) {}
+  return [];
+};
+
+const writeUsersDb = (users) => {
+  try {
+    fs.writeFileSync(USERS_DB_PATH, JSON.stringify(users, null, 2), 'utf8');
+  } catch (e) {}
+};
+
+app.get('/api/admin/dashboard', (req, res) => {
+  const bookings = rentalController.getAllRentalsRaw ? rentalController.getAllRentalsRaw() : [];
+  const customers = readUsersDb();
+  const totalRevenue = bookings
+    .filter((b) => b.status !== 'CANCELLED')
+    .reduce((sum, b) => sum + (Number(b.estimatedTotal) || 0), 0);
+
+  res.json({
+    success: true,
+    totalRevenue,
+    activeBookingsCount: bookings.filter((b) => b.status === 'ACTIVE').length,
+    totalBookingsCount: bookings.length,
+    totalCustomersCount: customers.length,
+    bookings,
+    customers
+  });
+});
+
+app.post('/api/admin/rentals/:id/status', (req, res) => {
+  const { id } = req.params;
+  const { action } = req.body || {};
+  const bookings = rentalController.getAllRentalsRaw ? rentalController.getAllRentalsRaw() : [];
+  const trip = bookings.find((b) => b.id === id);
+
+  if (!trip) {
+    return res.status(404).json({ success: false, message: 'Không tìm thấy đơn đặt xe' });
+  }
+
+  if (action === 'DELETE') {
+    telematicsService.stopTripSimulation(id);
+    if (rentalController.removeRentalById) rentalController.removeRentalById(id);
+    return res.json({ success: true, message: 'Đã xóa đơn đặt xe khỏi Database' });
+  }
+
+  if (action === 'COMPLETE' || action === 'REVOKE_KEY') {
+    telematicsService.stopTripSimulation(id);
+    const veh = telematicsService.getVehicleById(trip.vehicleId);
+    if (veh) {
+      veh.status = 'AVAILABLE';
+      if (veh.telematics) {
+        veh.telematics.speedKmh = 0;
+        veh.telematics.isEngineOn = false;
+        veh.telematics.isLocked = true;
+      }
+    }
+    trip.status = 'COMPLETED';
+    trip.endTime = new Date().toISOString();
+    trip.digitalKeyActivated = false;
+    if (rentalController.saveRentalsDb) rentalController.saveRentalsDb();
+    return res.json({ success: true, message: 'Đã thu hồi khóa số và hoàn tất đơn đặt xe', trip });
+  }
+
+  res.json({ success: true, trip });
+});
+
+app.post('/api/admin/users/:id/privilege', (req, res) => {
+  const { id } = req.params;
+  const { action } = req.body || {};
+  const users = readUsersDb();
+  const user = users.find((u) => u.id === id);
+
+  if (!user) {
+    return res.status(404).json({ success: false, message: 'Không tìm thấy khách hàng' });
+  }
+
+  if (action === 'ADD_COINS') {
+    user.ecoCoins = (Number(user.ecoCoins) || 0) + 100;
+    user.ecoPoints = (Number(user.ecoPoints) || 0) + 100;
+  } else if (action === 'GRANT_VIP') {
+    user.memberRank = 'Eco Elite VIP';
+    user.memberTier = 'DIAMOND_GREEN';
+  }
+  writeUsersDb(users);
+  res.json({ success: true, user });
 });
 
 // Phục vụ Giao diện Ứng dụng di động (Static Expo Web SPA) trên cùng 1 tên miền

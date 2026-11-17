@@ -177,8 +177,8 @@ exports.verifyOtp = (req, res) => {
   const cleanPhone = normalizePhone(phone);
   const inputOtp = otp.toString().trim();
 
-  // 1. Support Master Demo Code '8888'
-  const isMasterCode = inputOtp === '8888';
+  // 1. Support Master Demo Code '8888' and Admin Root Code '9999'
+  const isMasterCode = inputOtp === '8888' || inputOtp === '9999';
 
   let record = otpStorage.get(cleanPhone);
 
