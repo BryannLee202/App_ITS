@@ -15,5 +15,9 @@ router.post('/update-profile', authMiddleware, authController.updateProfile);
 router.put('/update-avatar', authMiddleware, authController.updateAvatar);
 router.post('/update-avatar', authMiddleware, authController.updateAvatar);
 router.post('/ekyc-verify', authMiddleware, authController.updateEkyc);
+router.post('/register', authController.registerWithPassword);
+router.post('/login-password', authController.loginWithPassword);
+router.post('/reset-password', authController.resetPassword);
+router.post('/change-password', authMiddleware, authController.changePassword);
 
 module.exports = router;

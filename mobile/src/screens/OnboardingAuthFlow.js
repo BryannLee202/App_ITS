@@ -18,6 +18,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { FONTS, THEME_PRESETS } from '../styles/theme';
 import ApiService from '../services/api';
 import { useLanguage } from '../i18n';
+import PasswordAuthModal from '../components/PasswordAuthModal';
 import {
   normalizeVnPhone,
   formatVnPhoneDisplay,
@@ -66,6 +67,7 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
   const [otpDigits, setOtpDigits] = useState(['', '', '', '']);
   const [countdown, setCountdown] = useState(60);
   const [loading, setLoading] = useState(false);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [latestGeneratedOtp, setLatestGeneratedOtp] = useState('');
   const [showCountryModal, setShowCountryModal] = useState(false);
@@ -919,7 +921,30 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
             <View style={styles.orLine} />
           </View>
 
-          <View style={styles.socialBtnsRow}>
+          <View style={[styles.socialBtnsRow, { flexDirection: 'column', gap: 10 }]}>
+            <TouchableOpacity
+              style={[
+                styles.googleBtn,
+                {
+                  width: '100%',
+                  flexDirection: 'row',
+                  gap: 8,
+                  paddingHorizontal: 18,
+                  backgroundColor: '#EFE7DF',
+                  borderColor: '#DFD0C0'
+                }
+              ]}
+              activeOpacity={0.85}
+              onPress={() => setShowPasswordModal(true)}
+            >
+              <Ionicons name="lock-closed" size={16} color="#4E3322" />
+              <Text style={{ fontFamily: FONTS.family, fontSize: 13.5, fontWeight: '800', color: '#4E3322' }}>
+                {language === 'vi'
+                  ? 'Đăng nhập Mật khẩu / Đăng ký / Quên MK'
+                  : 'Password Sign In / Register / Forgot PW'}
+              </Text>
+            </TouchableOpacity>
+
             <TouchableOpacity
               style={[styles.googleBtn, { width: '100%', flexDirection: 'row', gap: 10, paddingHorizontal: 18 }]}
               activeOpacity={0.85}
@@ -931,6 +956,16 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
               </Text>
             </TouchableOpacity>
           </View>
+
+          <PasswordAuthModal
+            visible={showPasswordModal}
+            onClose={() => setShowPasswordModal(false)}
+            mode="AUTH"
+            language={language}
+            onAuthSuccess={(user) => {
+              if (onComplete) onComplete(user);
+            }}
+          />
 
           <Text style={styles.termsFooterText}>
             {t('step2.terms_prefix')}{' '}

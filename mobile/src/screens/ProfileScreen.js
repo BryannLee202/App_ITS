@@ -19,6 +19,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { FONTS, THEME_PRESETS } from '../styles/theme';
 import VoucherWalletModal from '../components/VoucherWalletModal';
 import OperationsCenterModal from '../components/OperationsCenterModal';
+import PasswordAuthModal from '../components/PasswordAuthModal';
 import {
   createGplxFrontSvg,
   createGplxBackSvg,
@@ -460,6 +461,7 @@ export default function ProfileScreen({
   const [showFamilyModal, setShowFamilyModal] = useState(false);
   const [showBusinessModal, setShowBusinessModal] = useState(false);
   const [showOpsCenterModal, setShowOpsCenterModal] = useState(false);
+  const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
 
   // Gia đình State
   const [familyShareWallet, setFamilyShareWallet] = useState(true);
@@ -993,6 +995,18 @@ export default function ProfileScreen({
             </View>
           </TouchableOpacity>
 
+          <TouchableOpacity
+            style={styles.menuListRow}
+            activeOpacity={0.7}
+            onPress={() => setShowChangePasswordModal(true)}
+          >
+            <Ionicons name="lock-closed-outline" size={20} color="#4E3322" />
+            <Text style={styles.menuListText}>
+              {language === 'en' ? 'Change Password & Security' : 'Đổi mật khẩu & Bảo mật tài khoản'}
+            </Text>
+            <Ionicons name="chevron-forward" size={16} color="#9A9FA5" />
+          </TouchableOpacity>
+
           <TouchableOpacity style={styles.menuListRow} activeOpacity={0.7} onPress={toggleLanguage}>
             <Ionicons name="language-outline" size={20} color={theme.primary} />
             <Text style={styles.menuListText}>
@@ -1037,6 +1051,14 @@ export default function ProfileScreen({
       <OperationsCenterModal
         visible={showOpsCenterModal}
         onClose={() => setShowOpsCenterModal(false)}
+        language={language}
+      />
+
+      <PasswordAuthModal
+        visible={showChangePasswordModal}
+        onClose={() => setShowChangePasswordModal(false)}
+        mode="CHANGE"
+        currentUser={user}
         language={language}
       />
 
