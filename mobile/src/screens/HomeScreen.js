@@ -804,9 +804,22 @@ export default function HomeScreen({
                   </View>
                   <Text style={[styles.stationSubLabel, { color: theme.primary }]}>ĐIỂM NHẬN & TRẢ XE</Text>
                 </View>
-                <View style={[styles.changeHubPill, { backgroundColor: theme.primarySoft }]}>
-                  <Text style={[styles.changeHubLink, { color: theme.primary }]}>Đổi trạm</Text>
-                  <Ionicons name="chevron-forward" size={11} color={theme.primary} />
+                <View style={styles.stationHeaderActionsRow}>
+                  <TouchableOpacity
+                    style={styles.mapShortcutPill}
+                    activeOpacity={0.8}
+                    onPress={(e) => {
+                      if (e && e.stopPropagation) e.stopPropagation();
+                      if (onNavigateToMap) onNavigateToMap();
+                    }}
+                  >
+                    <Ionicons name="map-outline" size={12} color="#4E3322" />
+                    <Text style={styles.mapShortcutText}>Bản đồ</Text>
+                  </TouchableOpacity>
+                  <View style={[styles.changeHubPill, { backgroundColor: theme.primarySoft }]}>
+                    <Text style={[styles.changeHubLink, { color: theme.primary }]}>Đổi trạm</Text>
+                    <Ionicons name="chevron-forward" size={11} color={theme.primary} />
+                  </View>
                 </View>
               </View>
 
@@ -1990,6 +2003,28 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: '700',
     letterSpacing: 0.6
+  },
+  stationHeaderActionsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6
+  },
+  mapShortcutPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 9,
+    paddingVertical: 4,
+    borderRadius: 12,
+    backgroundColor: '#EFE7DF',
+    borderWidth: 1,
+    borderColor: '#DFD0C0'
+  },
+  mapShortcutText: {
+    fontFamily: FONTS.family,
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#4E3322'
   },
   changeHubPill: {
     flexDirection: 'row',
