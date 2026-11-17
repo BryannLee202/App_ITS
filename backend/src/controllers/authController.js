@@ -4,6 +4,10 @@ const fs = require('fs');
 const path = require('path');
 const { JWT_SECRET } = require('../config');
 const SmsService = require('../services/smsService');
+const { verifyVietnamTelecom } = require('../utils/telecomVerifier');
+
+// Rate limiting map: Lưu trữ số lần yêu cầu OTP chống spam
+const requestRateMap = new Map();
 
 const USERS_FILE = path.join(__dirname, '../data/users.json');
 
@@ -74,18 +78,61 @@ function saveOtpCache(map) {
 
 const otpStorage = loadOtpCache();
 
+// Endpoint kiểm tra tính xác thực viễn thông của số điện thoại
+exports.validatePhone = (req, res) => {
+  const { phone } = req.body;
+  const result = verifyVietnamTelecom(phone);
+  if (!result.isValid || !result.isRealSubscriber) {
+    return res.status(400).json({
+      success: false,
+      code: result.code,
+      message: result.message
+    });
+  }
+  return res.json({
+    success: true,
+    telecom: result
+  });
+};
+
 exports.requestOtp = async (req, res) => {
   const { phone, channel = 'ZALO' } = req.body;
   if (!phone) {
     return res.status(400).json({ success: false, message: 'Số điện thoại không được để trống' });
   }
 
-  const cleanPhone = normalizePhone(phone);
-  if (cleanPhone.length < 8) {
-    return res.status(400).json({ success: false, message: 'Số điện thoại không hợp lệ' });
+  // 1. Xác minh viễn thông 5 lớp: Chặn số ảo, số rác, số không có thật, đầu số không hợp lệ
+  const telecomCheck = verifyVietnamTelecom(phone);
+  if (!telecomCheck.isValid || !telecomCheck.isRealSubscriber) {
+    return res.status(400).json({
+      success: false,
+      code: telecomCheck.code || 'TELECOM_NUMBER_NOT_FOUND',
+      message: telecomCheck.message || 'Số điện thoại không tồn tại trên mạng viễn thông hoặc chứa chuỗi số ảo không hợp lệ.'
+    });
   }
 
-  // Generate dynamic random 4-digit OTP
+  const cleanPhone = telecomCheck.nationalPhone; // '0386726647'
+
+  // 2. Chống gian lận & Rate Limit (Tối đa 3 lần gửi OTP trong vòng 5 phút)
+  const now = Date.now();
+  const rateRecord = requestRateMap.get(cleanPhone) || { count: 0, firstTime: now };
+  if (now - rateRecord.firstTime > 5 * 60 * 1000) {
+    rateRecord.count = 1;
+    rateRecord.firstTime = now;
+  } else {
+    rateRecord.count += 1;
+    if (rateRecord.count > 3) {
+      const waitSec = Math.ceil((5 * 60 * 1000 - (now - rateRecord.firstTime)) / 1000);
+      return res.status(429).json({
+        success: false,
+        code: 'RATE_LIMIT_EXCEEDED',
+        message: `Bạn đã yêu cầu gửi mã OTP quá 3 lần. Vui lòng đợi ${waitSec} giây để bảo vệ an toàn tài khoản.`
+      });
+    }
+  }
+  requestRateMap.set(cleanPhone, rateRecord);
+
+  // 3. Khởi tạo mã OTP 4 chữ số ngẫu nhiên
   const randomOtp = Math.floor(1000 + Math.random() * 9000).toString();
   const expiresAt = Date.now() + 300 * 1000; // 5 minutes TTL (300s)
 
@@ -93,13 +140,14 @@ exports.requestOtp = async (req, res) => {
     code: randomOtp,
     channel,
     expiresAt,
+    carrier: telecomCheck.carrier,
     attempts: 0
   };
 
   otpStorage.set(cleanPhone, otpRecord);
   saveOtpCache(otpStorage);
 
-  // Dispatch via SMS / Zalo / Telegram / Webhook provider
+  // 4. Phát lệnh gửi qua SMS Gateway / Zalo ZNS
   const dispatchResult = await SmsService.sendOtp({
     phone: cleanPhone,
     otp: randomOtp,
@@ -110,9 +158,12 @@ exports.requestOtp = async (req, res) => {
     success: true,
     message: dispatchResult.message,
     phone: cleanPhone,
+    e164: telecomCheck.e164Phone,
+    carrier: telecomCheck.carrier,
+    network: telecomCheck.network,
     channel,
     expiresInSec: 300,
-    generatedOtp: randomOtp // Returned to facilitate live in-app push simulation while also dispatching
+    generatedOtp: randomOtp
   });
 };
 

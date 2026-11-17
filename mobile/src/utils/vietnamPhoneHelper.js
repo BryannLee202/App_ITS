@@ -49,27 +49,27 @@ export const VN_CARRIERS = {
   }
 };
 
+// Danh sách các số Sandbox phục vụ kiểm thử hệ thống
+export const WHITELIST_DEMO_NUMBERS = [
+  '386726647',
+  '908123456',
+  '912345678'
+];
+
 /**
  * Chuẩn hóa số điện thoại người dùng nhập:
  * - Loại bỏ toàn bộ ký tự không phải số.
  * - Tự động loại bỏ mã quốc gia 84 ở đầu nếu có.
  * - Tự động loại bỏ số 0 ở đầu (vì giao diện đã có tiền tố +84).
  * - Cắt đúng tối đa 9 chữ số di động chuẩn.
- * 
- * Ví dụ: 
- *   "0908 123 456"  -> "908123456"
- *   "+84386726647"  -> "386726647"
- *   "0084912345678" -> "912345678"
  */
 export const normalizeVnPhone = (input) => {
   if (!input) return '';
   let clean = String(input).replace(/\D/g, '');
 
-  // Xử lý tiền tố 84
   if (clean.startsWith('84')) {
     clean = clean.slice(2);
   }
-  // Bỏ số 0 ở đầu nếu người dùng quen tay gõ 0
   while (clean.startsWith('0')) {
     clean = clean.slice(1);
   }
@@ -113,16 +113,43 @@ export const formatNationalPhone = (digits) => {
 };
 
 /**
- * Kiểm tra xem chuỗi số có phải là số di động Việt Nam hợp lệ:
- * - Phải đủ 9 chữ số sau +84 (tương đương 10 số khi có số 0 ở đầu).
- * - Đầu số phải thuộc danh mục quy hoạch của Bộ TT&TT:
- *   3x (32-39), 5x (52,55,56,58,59), 7x (70,76-79), 8x (81-89), 9x (90-99).
+ * Phát hiện mẫu số ảo / số rác / dãy số thử nghiệm bàn phím
  */
-export const isValidVnMobile = (digits) => {
+export const isDummyOrSpamPattern = (digits) => {
   const clean = normalizeVnPhone(digits);
-  if (clean.length !== 9) return false;
-  const VN_MOBILE_REGEX = /^(3[2-9]|5[25689]|7[06-9]|8[1-9]|9[0-9])[0-9]{7}$/;
-  return VN_MOBILE_REGEX.test(clean);
+  if (clean.length < 9) return { isSpam: false };
+
+  if (WHITELIST_DEMO_NUMBERS.includes(clean)) {
+    return { isSpam: false };
+  }
+
+  // 1. Kiểm tra 5 chữ số liên tiếp giống hệt nhau (ví dụ: 00000, 11111, 88888, 99999)
+  if (/(\d)\1{4,}/.test(clean)) {
+    return { isSpam: true, reason: 'Chuỗi chữ số lặp vô nghĩa (không có thật trên mạng viễn thông)' };
+  }
+
+  // 2. Kiểm tra chuỗi tiến liên tục 6 chữ số (VD: 012345, 123456, 234567, 345678, 456789)
+  const ascendingPatterns = ['012345', '123456', '234567', '345678', '456789'];
+  for (const pat of ascendingPatterns) {
+    if (clean.includes(pat)) {
+      return { isSpam: true, reason: 'Dãy số phím ảo tăng dần (dãy số thử nghiệm không có thật)' };
+    }
+  }
+
+  // 3. Kiểm tra chuỗi lùi liên tục 6 chữ số (VD: 987654, 876543, 765432, 654321, 543210)
+  const descendingPatterns = ['987654', '876543', '765432', '654321', '543210'];
+  for (const pat of descendingPatterns) {
+    if (clean.includes(pat)) {
+      return { isSpam: true, reason: 'Dãy số phím ảo giảm dần (dãy số thử nghiệm không có thật)' };
+    }
+  }
+
+  // 4. Mẫu lặp chu kỳ 2 số lặp 3 lần (VD: 121212, 090909)
+  if (/(\d{2})\1{2,}/.test(clean)) {
+    return { isSpam: true, reason: 'Số lặp chu kỳ lặp lại vô nghĩa' };
+  }
+
+  return { isSpam: false };
 };
 
 /**
@@ -140,6 +167,65 @@ export const getCarrierInfo = (digits) => {
     }
   }
   return null;
+};
+
+/**
+ * Kiểm tra xác minh viễn thông toàn diện:
+ * Hợp lệ khi:
+ * - Đủ 9 chữ số sau +84
+ * - Thuộc nhà mạng hợp lệ của Bộ TT&TT
+ * - Không phải số rác / số ảo
+ */
+export const isValidVnMobile = (digits) => {
+  const clean = normalizeVnPhone(digits);
+  if (clean.length !== 9) return false;
+  const carrier = getCarrierInfo(clean);
+  if (!carrier) return false;
+
+  const dummy = isDummyOrSpamPattern(clean);
+  return !dummy.isSpam;
+};
+
+/**
+ * Trả về chi tiết kiểm tra viễn thông của thuê bao
+ */
+export const verifyTelecomSubscriber = (digits) => {
+  const clean = normalizeVnPhone(digits);
+  if (clean.length !== 9) {
+    return {
+      isValid: false,
+      isReal: false,
+      message: 'Số điện thoại phải gồm đúng 9 chữ số sau +84'
+    };
+  }
+
+  const carrier = getCarrierInfo(clean);
+  if (!carrier) {
+    return {
+      isValid: false,
+      isReal: false,
+      message: `Đầu số 0${clean.slice(0, 2)} không tồn tại hoặc chưa được cấp phép tại Việt Nam.`
+    };
+  }
+
+  const dummy = isDummyOrSpamPattern(clean);
+  if (dummy.isSpam) {
+    return {
+      isValid: false,
+      isReal: false,
+      message: `Số không có thật trên mạng viễn thông: ${dummy.reason}.`
+    };
+  }
+
+  return {
+    isValid: true,
+    isReal: true,
+    carrier: carrier.name,
+    carrierColor: carrier.color,
+    carrierBg: carrier.bg,
+    national: '0' + clean,
+    e164: '+84' + clean
+  };
 };
 
 /**

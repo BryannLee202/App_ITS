@@ -1,5 +1,5 @@
 {
-  "version": "1.0.9",
-  "buildTime": "1794897800000",
-  "change": "Chuan hoa so dien thoai Viet Nam 9 so sau +84, tu dong bo so 0 dau va popup ma vung quoc gia"
+  "version": "1.1.0",
+  "buildTime": "1794898600000",
+  "change": "He thong xac thuc vien thong 5 lop: Chan so ao, so khong co that, kiem tra HLR va rate limiting"
 }

@@ -3,6 +3,7 @@ const router = express.Router();
 const authController = require('../controllers/authController');
 const authMiddleware = require('../middleware/authMiddleware');
 
+router.post('/validate-phone', authController.validatePhone);
 router.post('/request-otp', authController.requestOtp);
 router.post('/verify-otp', authController.verifyOtp);
 router.post('/google-login', authController.googleLogin);

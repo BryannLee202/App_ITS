@@ -92,6 +92,13 @@ class ApiService {
   }
 
   // Auth endpoints
+  async validatePhone(phone) {
+    return this.request('/auth/validate-phone', {
+      method: 'POST',
+      body: JSON.stringify({ phone })
+    });
+  }
+
   async requestOtp(phone, channel = 'ZALO') {
     return this.request('/auth/request-otp', {
       method: 'POST',

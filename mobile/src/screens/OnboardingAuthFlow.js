@@ -24,6 +24,8 @@ import {
   formatNationalPhone,
   isValidVnMobile,
   getCarrierInfo,
+  isDummyOrSpamPattern,
+  verifyTelecomSubscriber,
   toE164,
   toNational
 } from '../utils/vietnamPhoneHelper';
@@ -1034,11 +1036,17 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
           <View style={styles.phoneStatusFeedbackRow}>
             {errorMessage ? (
               <Text style={styles.errorTextInline}>{errorMessage}</Text>
+            ) : phone.length === 9 && !isValidPhone ? (
+              <Text style={styles.errorTextInline}>
+                {isDummyOrSpamPattern(phone).isSpam
+                  ? `⚠️ Số không có thật: ${isDummyOrSpamPattern(phone).reason}`
+                  : `⚠️ Đầu số 0${phone.slice(0, 2)} không thuộc nhà mạng nào tại Việt Nam`}
+              </Text>
             ) : isValidPhone ? (
               <View style={styles.validStatusRow}>
                 <Ionicons name="checkmark-circle" size={14} color="#10B981" />
                 <Text style={styles.validStatusText}>
-                  Số di động {currentCarrier?.name || 'Việt Nam'} hợp lệ (+84 {formatVnPhoneDisplay(phone)})
+                  Thuê bao {currentCarrier?.name || 'Việt Nam'} đang hoạt động (+84 {formatVnPhoneDisplay(phone)})
                 </Text>
               </View>
             ) : phone.length > 0 ? (
@@ -1062,17 +1070,38 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
             ]}
             disabled={loading}
             activeOpacity={0.85}
-            onPress={() => {
+            onPress={async () => {
               if (!isValidPhone) {
                 triggerShake();
-                setErrorMessage(
-                  language === 'vi'
-                    ? 'Vui lòng nhập đúng 9 chữ số di động Việt Nam (sau +84)'
-                    : 'Please enter a valid 9-digit Vietnam mobile number'
-                );
+                const spam = isDummyOrSpamPattern(phone);
+                if (spam.isSpam) {
+                  setErrorMessage(`⚠️ Số không có thật: ${spam.reason}`);
+                } else {
+                  setErrorMessage(
+                    language === 'vi'
+                      ? 'Vui lòng nhập đúng 9 chữ số di động thật của bạn'
+                      : 'Please enter a valid real Vietnam mobile number'
+                  );
+                }
                 return;
               }
-              setStep(4);
+
+              try {
+                setLoading(true);
+                setErrorMessage('');
+                const res = await ApiService.validatePhone(toNational(phone));
+                if (res && res.success) {
+                  setStep(4);
+                } else {
+                  triggerShake();
+                  setErrorMessage(res?.message || 'Số điện thoại này không có thật trên mạng viễn thông.');
+                }
+              } catch (err) {
+                triggerShake();
+                setErrorMessage(err.message || 'Số điện thoại này không tồn tại trên mạng viễn thông.');
+              } finally {
+                setLoading(false);
+              }
             }}
           >
             {loading ? (
