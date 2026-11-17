@@ -550,6 +550,40 @@ function AppContent() {
               <Text style={styles.updateToastText}>{updateToast}</Text>
             </View>
           ) : null}
+          {isOnboarded && hasActiveTrip && activeTab !== 'KEY' ? (
+            <TouchableOpacity
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                backgroundColor: '#1C1410',
+                marginHorizontal: 18,
+                marginTop: 8,
+                marginBottom: 4,
+                paddingHorizontal: 14,
+                paddingVertical: 9,
+                borderRadius: 22,
+                borderWidth: 1,
+                borderColor: 'rgba(212, 175, 55, 0.45)',
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.25,
+                shadowRadius: 8,
+                elevation: 5
+              }}
+              activeOpacity={0.88}
+              onPress={() => setActiveTab('KEY')}
+            >
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: '#22C55E' }} />
+                <Ionicons name="key" size={14} color="#D4AF37" />
+                <Text style={{ fontFamily: FONTS.family, fontSize: 12, fontWeight: '700', color: '#FAF7F2' }}>
+                  {language === 'en' ? 'Active Trip • Digital Key Ready' : 'Chuyến đi đang mở • Chìa khóa số BLE'}
+                </Text>
+              </View>
+              <Ionicons name="chevron-forward" size={14} color="#D4AF37" />
+            </TouchableOpacity>
+          ) : null}
           <View style={styles.mainContentArea}>{renderContent()}</View>
 
           {/* =========================================================================

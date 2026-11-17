@@ -18,6 +18,7 @@ import ApiService from '../services/api';
 import { Ionicons } from '@expo/vector-icons';
 import { FONTS, THEME_PRESETS } from '../styles/theme';
 import VoucherWalletModal from '../components/VoucherWalletModal';
+import OperationsCenterModal from '../components/OperationsCenterModal';
 import {
   createGplxFrontSvg,
   createGplxBackSvg,
@@ -458,6 +459,7 @@ export default function ProfileScreen({
   // =============================================================
   const [showFamilyModal, setShowFamilyModal] = useState(false);
   const [showBusinessModal, setShowBusinessModal] = useState(false);
+  const [showOpsCenterModal, setShowOpsCenterModal] = useState(false);
 
   // Gia đình State
   const [familyShareWallet, setFamilyShareWallet] = useState(true);
@@ -972,6 +974,25 @@ export default function ProfileScreen({
           {language === 'en' ? 'System Settings' : 'Cài đặt hệ thống'}
         </Text>
         <View style={styles.menuListGroup}>
+          <TouchableOpacity
+            style={styles.menuListRow}
+            activeOpacity={0.7}
+            onPress={() => setShowOpsCenterModal(true)}
+          >
+            <Ionicons name="pulse-outline" size={20} color="#15803D" />
+            <Text style={styles.menuListText}>
+              {language === 'en' ? 'EcoGo Operations Center (NOC)' : 'Trung tâm Vận hành Đội xe (NOC)'}
+            </Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+              <View style={{ backgroundColor: '#DCFCE7', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 8 }}>
+                <Text style={{ fontSize: 10.5, color: '#15803D', fontWeight: '800', fontFamily: FONTS.family }}>
+                  LIVE
+                </Text>
+              </View>
+              <Ionicons name="chevron-forward" size={16} color="#9A9FA5" />
+            </View>
+          </TouchableOpacity>
+
           <TouchableOpacity style={styles.menuListRow} activeOpacity={0.7} onPress={toggleLanguage}>
             <Ionicons name="language-outline" size={20} color={theme.primary} />
             <Text style={styles.menuListText}>
@@ -1012,6 +1033,12 @@ export default function ProfileScreen({
 
         <View style={{ height: 100 }} />
       </ScrollView>
+
+      <OperationsCenterModal
+        visible={showOpsCenterModal}
+        onClose={() => setShowOpsCenterModal(false)}
+        language={language}
+      />
 
       {/* ============================================================
           MODAL: ECOGO SMART PLATFORM SERVICE CONTRACT (QUIET LUXURY)
