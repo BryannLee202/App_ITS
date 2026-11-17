@@ -249,7 +249,7 @@ exports.verifySession = (req, res) => {
 
 exports.updateProfile = (req, res) => {
   const userId = req.user ? req.user.id : null;
-  const { fullName, email, phone, licenseNumber, cccdNumber, avatar, birthYear, age } = req.body;
+  const { fullName, email, phone, licenseNumber, cccdNumber, avatar, birthYear, age, licenseFrontPhoto, licenseBackPhoto } = req.body;
 
   const users = loadUsers();
   let userIndex = users.findIndex(u => (userId && u.id === userId) || (phone && u.phone === phone));
@@ -262,6 +262,8 @@ exports.updateProfile = (req, res) => {
     if (fullName && fullName.trim()) users[userIndex].fullName = fullName.trim();
     if (email && email.trim()) users[userIndex].email = email.trim();
     if (avatar && avatar.trim()) users[userIndex].avatar = avatar.trim();
+    if (licenseFrontPhoto) users[userIndex].licenseFrontPhoto = licenseFrontPhoto;
+    if (licenseBackPhoto) users[userIndex].licenseBackPhoto = licenseBackPhoto;
     if (birthYear) {
       users[userIndex].birthYear = parseInt(birthYear, 10);
       users[userIndex].age = age ? parseInt(age, 10) : (new Date().getFullYear() - parseInt(birthYear, 10));
@@ -405,7 +407,7 @@ exports.googleLogin = (req, res) => {
 
 exports.updateEkyc = (req, res) => {
   const userId = req.user ? req.user.id : null;
-  const { fullName, cccdNumber, licenseNumber, licenseType } = req.body;
+  const { fullName, cccdNumber, licenseNumber, licenseType, licenseFrontPhoto, licenseBackPhoto } = req.body;
   
   const users = loadUsers();
   let userIndex = users.findIndex(u => (userId && u.id === userId));
@@ -416,6 +418,8 @@ exports.updateEkyc = (req, res) => {
   if (userIndex !== -1) {
     if (fullName) users[userIndex].fullName = fullName;
     if (cccdNumber) users[userIndex].cccdNumber = cccdNumber;
+    if (licenseFrontPhoto) users[userIndex].licenseFrontPhoto = licenseFrontPhoto;
+    if (licenseBackPhoto) users[userIndex].licenseBackPhoto = licenseBackPhoto;
     if (licenseNumber) {
       users[userIndex].licenseNumber = licenseNumber;
       users[userIndex].drivingLicense = `GPLX ${licenseType || 'B2'} - ${licenseNumber}`;
