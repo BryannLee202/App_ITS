@@ -28,6 +28,7 @@ import OffersScreen from './src/screens/OffersScreen';
 import NotificationsScreen from './src/screens/NotificationsScreen';
 import OnboardingAuthFlow from './src/screens/OnboardingAuthFlow';
 import VoucherWalletModal from './src/components/VoucherWalletModal';
+import HomePromoPopupModal from './src/components/HomePromoPopupModal';
 
 const DOCK_TABS = [
   { id: 'HOME', icon: 'home-outline', activeIcon: 'home', label: 'Trang chủ' },
@@ -795,6 +796,18 @@ function AppContent() {
           setActiveTab('HOME');
         }}
       />
+
+      {/* Pop-up quảng cáo ngẫu nhiên khi vào app & khi THỰC SỰ OUT RA APP VÀO LẠI */}
+      {isOnboarded && (
+        <HomePromoPopupModal
+          onNavigateToVehicles={(cat = 'BIKE') => {
+            setVehiclesInitialCategory(cat);
+            setActiveTab('VEHICLES');
+          }}
+          onNavigateToOffers={() => setActiveTab('OFFERS')}
+          onOpenReferral={() => setShowRewardsModal(true)}
+        />
+      )}
     </View>
   );
 }

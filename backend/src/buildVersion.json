@@ -1,5 +1,5 @@
 {
-  "version": "1.1.6",
-  "buildTime": "1794903800000",
-  "change": "Thiet ke lai 100% quang cao popup theo phong cach do hoa vector va mascot cute khong dung anh AI xau"
+  "version": "1.1.7",
+  "buildTime": "1794904100000",
+  "change": "Chi hien popup quang cao khi khoi dong hoac thiet bi out ra app roi vao lai, tuyet doi khong hien khi chuyen tab trong app"
 }

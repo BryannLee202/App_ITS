@@ -6,12 +6,19 @@ import {
   TouchableOpacity,
   Modal,
   Dimensions,
-  Platform
+  Platform,
+  AppState
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { FONTS } from '../styles/theme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
+
+// Biến phiên toàn cục: Đảm bảo quảng cáo chỉ hiện 1 lần lúc vào app,
+// và TUYỆT ĐỐI KHÔNG hiện lại khi người dùng chuyển qua lại các chức năng/tab trong app.
+// CHỈ HIỆN KHI THIẾT BỊ THỰC SỰ OUT RA KHỎI APP VÀ VÀO LẠI!
+let hasShownInitialAdOnSession = false;
+let wasAppBackgrounded = false;
 
 // 5 Chiến dịch Quảng cáo đồ họa Vector Cute chuẩn thuần EcoGo Smart
 const PROMO_CAMPAIGNS = [
@@ -123,26 +130,56 @@ export default function HomePromoPopupModal({
   };
 
   useEffect(() => {
-    // Hiển thị sau 600ms khi mở trang chủ
-    const timer = setTimeout(() => {
-      pickRandomAd();
-    }, 600);
+    // 1. Chỉ hiện MỘT LẦN DUY NHẤT khi người dùng khởi động/vào app ban đầu
+    if (!hasShownInitialAdOnSession) {
+      hasShownInitialAdOnSession = true;
+      const timer = setTimeout(() => {
+        pickRandomAd();
+      }, 700);
+      return () => clearTimeout(timer);
+    }
+  }, []);
 
-    // Lắng nghe khi người dùng out ra (chuyển tab/thu nhỏ ứng dụng) rồi quay lại (focus)
-    const handleWindowFocus = () => {
-      const randomIndex = Math.floor(Math.random() * PROMO_CAMPAIGNS.length);
-      setCurrentAd(PROMO_CAMPAIGNS[randomIndex]);
-      setVisible(true);
+  useEffect(() => {
+    // 2. Lắng nghe sự kiện THIẾT BỊ OUT RA APP VÀ VÀO LẠI
+    // (Bấm Home, chuyển sang app khác, khóa màn hình, hoặc chuyển tab trình duyệt)
+    // Tuyệt đối KHÔNG kích hoạt khi chuyển qua lại giữa các màn hình trong nội bộ app!
+    const handleAppStateChange = (nextAppState) => {
+      if (nextAppState === 'background' || nextAppState === 'inactive') {
+        wasAppBackgrounded = true;
+      } else if (nextAppState === 'active') {
+        if (wasAppBackgrounded) {
+          wasAppBackgrounded = false;
+          // Người dùng vừa thực sự out ra app rồi quay lại -> Đổi ngẫu nhiên quảng cáo khác
+          pickRandomAd();
+        }
+      }
     };
 
-    if (Platform.OS === 'web' && typeof window !== 'undefined') {
-      window.addEventListener('focus', handleWindowFocus);
+    const appStateSub = AppState.addEventListener('change', handleAppStateChange);
+
+    // Xử lý trên nền tảng Web: document.visibilityState
+    const handleVisibilityChange = () => {
+      if (typeof document !== 'undefined') {
+        if (document.visibilityState === 'hidden') {
+          wasAppBackgrounded = true;
+        } else if (document.visibilityState === 'visible') {
+          if (wasAppBackgrounded) {
+            wasAppBackgrounded = false;
+            pickRandomAd();
+          }
+        }
+      }
+    };
+
+    if (Platform.OS === 'web' && typeof document !== 'undefined') {
+      document.addEventListener('visibilitychange', handleVisibilityChange);
     }
 
     return () => {
-      clearTimeout(timer);
-      if (Platform.OS === 'web' && typeof window !== 'undefined') {
-        window.removeEventListener('focus', handleWindowFocus);
+      appStateSub.remove();
+      if (Platform.OS === 'web' && typeof document !== 'undefined') {
+        document.removeEventListener('visibilitychange', handleVisibilityChange);
       }
     };
   }, []);
