@@ -423,7 +423,7 @@ exports.googleLogin = (req, res) => {
       id: `usr_gg_${Date.now().toString().slice(-6)}`,
       googleId: googleId || `gid_${Date.now()}`,
       phone: formattedPhone,
-      fullName: fullName || 'Minh Tài',
+      fullName: fullName || 'Khách hàng EcoGo',
       email: email || 'minhtai.ecogo@gmail.com',
       avatar: avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
       birthYear: parsedBirthYear,

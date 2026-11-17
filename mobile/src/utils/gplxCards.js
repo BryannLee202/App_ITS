@@ -1,8 +1,8 @@
 // Tiện ích hiển thị phôi ảnh chuẩn Giấy phép Lái xe (GPLX PET) cho EcoGo eKYC
 // Hỗ trợ hiển thị ảnh mô phỏng chất lượng cao định dạng SVG Data URI chuẩn
 
-export const createGplxFrontSvg = (name = 'MINH TÀI', licenseNo = '790123456789', birthYear = '1998') => {
-  const safeName = (name || 'MINH TÀI').toUpperCase();
+export const createGplxFrontSvg = (name = 'KHÁCH HÀNG', licenseNo = '790123456789', birthYear = '1998') => {
+  const safeName = (name || 'KHÁCH HÀNG').toUpperCase();
   const safeLicense = licenseNo || '790123456789';
   const safeYear = birthYear || '1998';
 
@@ -174,5 +174,5 @@ export const createGplxBackSvg = (licenseNo = '790123456789') => {
   return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
 };
 
-export const SAMPLE_GPLX_FRONT = createGplxFrontSvg('MINH TÀI', '790123456789', '1998');
+export const SAMPLE_GPLX_FRONT = createGplxFrontSvg('KHÁCH HÀNG', '790123456789', '1998');
 export const SAMPLE_GPLX_BACK = createGplxBackSvg('790123456789');

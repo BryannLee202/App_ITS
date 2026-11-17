@@ -727,7 +727,7 @@ function AppContent() {
                     { rank: 1, name: 'Nguyễn Hoàng Nam', km: '1,420 km', trees: '680 Pts', badge: '🏆' },
                     { rank: 2, name: 'Trần Minh Anh', km: '1,180 km', trees: '540 Pts', badge: '🥈' },
                     { rank: 3, name: 'Lê Quốc Bảo', km: '940 km', trees: '420 Pts', badge: '🥉' },
-                    { rank: 18, name: 'Minh Tài (Bạn)', km: '142 km', trees: '340 Pts', badge: '⭐', isMe: true }
+                    { rank: 18, name: `${currentUser?.fullName || 'Bạn'} (Bạn)`, km: '142 km', trees: '340 Pts', badge: '⭐', isMe: true }
                   ].map((row) => (
                     <View
                       key={row.rank}

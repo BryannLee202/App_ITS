@@ -157,7 +157,7 @@ export const TRANSLATIONS = {
       subtitle: 'A 4-digit code was sent via',
       resend_wait: 'Resend code in',
       resend_now: 'Resend code now',
-      autofill: 'Autofill Demo OTP',
+      autofill: 'Quick Fill OTP',
       btn_verify: 'Verify & Enter App'
     },
     tabs: {

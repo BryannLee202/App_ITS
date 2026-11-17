@@ -51,7 +51,7 @@ function getUserRecord(userId = 'user-001') {
   if (!allData[userId]) {
     allData[userId] = {
       userId,
-      userName: 'Minh Tài',
+      userName: 'Khách hàng EcoGo',
       ecoCoins: 180,
       currentStreak: 0,
       lastCheckInDate: null,

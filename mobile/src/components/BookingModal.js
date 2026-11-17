@@ -75,12 +75,14 @@ const DEPOSIT_OPTIONS = [
 export default function BookingModal({
   visible,
   vehicle,
+  currentUser = null,
   onClose,
   onBookingSuccess,
   initialVoucherCode = 'CHAOXANH',
   initialDeliveryMode = 'STATION',
   onSwitchVehicle
 }) {
+  const signerName = currentUser?.fullName || 'Khách hàng EcoGo';
   // Navigation Steps: 'CONFIG' -> 'CONTRACT' -> 'PAYMENT' -> 'SUCCESS'
   const [currentStep, setCurrentStep] = useState('CONFIG');
 
@@ -277,7 +279,7 @@ export default function BookingModal({
         paymentMethod,
         ecoCoinsUsed: useEcoCoins ? 250 : 0,
         contractNumber: contractCode,
-        signatureData: 'Nguyễn Minh Tài - E-Signature verified by EcoGo CA'
+        signatureData: `${signerName} - E-Signature verified by EcoGo CA`
       });
 
       const finalResult = res?.trip ? res : {
@@ -923,7 +925,7 @@ export default function BookingModal({
                       <Text style={styles.verifiedGreenText}>Đã eKYC</Text>
                     </View>
                   </View>
-                  <Text style={styles.partyName}>NGUYỄN MINH TÀI</Text>
+                  <Text style={styles.partyName}>{signerName.toUpperCase()}</Text>
                   <Text style={styles.partyDetail}>• Số CCCD gắn chip: 079204018899 (Đã xác thực chip NFC Bộ Công An)</Text>
                   <Text style={styles.partyDetail}>
                     • Giấy phép lái xe: GPLX Hạng B2 - Số 790184429 (Có hiệu lực đến năm 2030)
@@ -997,7 +999,7 @@ export default function BookingModal({
                   >
                     {signedContract ? (
                       <View style={styles.signedContent}>
-                        <Text style={styles.cursiveSignature}>Nguyễn Minh Tài</Text>
+                        <Text style={styles.cursiveSignature}>{signerName}</Text>
                         <View style={styles.stampBox}>
                           <Ionicons name="checkmark-circle" size={14} color="#D4AF37" />
                           <Text style={styles.stampText}>ECOGO CA • ĐÃ KÝ SỐ</Text>
@@ -1010,7 +1012,7 @@ export default function BookingModal({
                       <View style={styles.unsignedPrompt}>
                         <Ionicons name="pencil" size={24} color="#6F4E37" />
                         <Text style={styles.unsignedPromptText}>
-                          Chạm vào đây để ký tên số: "Nguyễn Minh Tài"
+                          Chạm vào đây để ký tên số: "{signerName}"
                         </Text>
                         <Text style={styles.unsignedSubText}>Khởi tạo chứng thư số cá nhân tức thì</Text>
                       </View>

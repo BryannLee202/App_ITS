@@ -365,14 +365,6 @@ export default function NotificationsScreen({
                   ? 'Bạn đã đọc hết mọi thông báo hoặc chưa có tin mới.'
                   : `Chưa có thông báo nào trong mục ${NOTIF_FILTERS.find((f) => f.id === activeFilter)?.label}.`}
               </Text>
-              <TouchableOpacity
-                style={styles.simulateTestBtn}
-                activeOpacity={0.85}
-                onPress={handleTriggerSimulatedNotif}
-              >
-                <Ionicons name="notifications" size={16} color="#FFFFFF" />
-                <Text style={styles.simulateTestBtnText}>Gửi thử 1 thông báo chuông</Text>
-              </TouchableOpacity>
             </View>
           ) : (
             filteredList.map((item, idx) => {

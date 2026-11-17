@@ -374,7 +374,7 @@ exports.createRental = (req, res) => {
     eContractSigned: true,
     contractNumber: finalContractNumber,
     signatureData: signatureData || 'Digital Signature verified by EcoGo CA',
-    signedBy: 'Nguyễn Minh Tài',
+    signedBy: req.user?.fullName || 'Khách hàng EcoGo',
     renterCccd: '079204018899',
     renterLicense: 'GPLX B2-79018442',
     distanceTraveledKm: 0,

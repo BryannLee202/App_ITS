@@ -705,7 +705,7 @@ export default function HomeScreen({
               onPress={onNavigateToProfile}
             >
               <Text style={styles.greetingSub} numberOfLines={1}>
-                Chào {currentUser?.fullName || 'Minh Tài'} ·{' '}
+                Chào {currentUser?.fullName || 'Quý khách'} ·{' '}
                 {currentUser?.drivingLicense ? currentUser.drivingLicense.split('-')[0].trim() : 'GPLX B2'}
               </Text>
               <Text style={styles.greetingTitle}>Bạn cần thuê xe ở đâu?</Text>
@@ -749,12 +749,12 @@ export default function HomeScreen({
                   />
                 ) : (
                   <Text style={styles.avatarInitials}>
-                    {(currentUser?.fullName || 'Minh Tài')
+                    {(currentUser?.fullName || 'EcoGo')
                       .trim()
                       .split(/\s+/)
                       .slice(-2)
                       .map((w) => w[0]?.toUpperCase() || '')
-                      .join('') || 'MT'}
+                      .join('') || 'EG'}
                   </Text>
                 )}
               </TouchableOpacity>
@@ -1294,13 +1294,6 @@ export default function HomeScreen({
               );
             })}
 
-            {/* Sandbox Notice Banner */}
-            <View style={styles.demoNoticeBox}>
-              <Ionicons name="shield-checkmark-outline" size={18} color="#6F4E37" />
-              <Text style={styles.demoNoticeText}>
-                Hệ thống trạm thực tế TP.HCM phục vụ demo: Sau khi chọn điểm nhận xe, bạn có thể hoàn tất quy trình đặt xe và trải nghiệm tính năng cấp mã khóa Bluetooth BLE trực tiếp trên ứng dụng.
-              </Text>
-            </View>
             <View style={{ height: 40 }} />
           </ScrollView>
         </View>
@@ -1799,6 +1792,7 @@ export default function HomeScreen({
       <BookingModal
         visible={showBookingModal}
         vehicle={bookingVehicle}
+        currentUser={currentUser}
         onClose={() => setShowBookingModal(false)}
         onBookingSuccess={handleBookingSuccess}
         initialVoucherCode={selectedVoucherForBooking}

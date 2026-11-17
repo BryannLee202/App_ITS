@@ -7,7 +7,7 @@ function authMiddleware(req, res, next) {
     // For demo/development convenience, provide default authenticated user if no token
     req.user = {
       id: 'usr_demo_01',
-      fullName: 'Minh Tài',
+      fullName: 'Khách hàng EcoGo',
       phone: '0901234567',
       isEkycVerified: true,
       drivingLicense: 'GPLX B2 - 790123456789',

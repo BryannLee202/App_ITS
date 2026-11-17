@@ -119,7 +119,7 @@ export default function ProfileScreen({
   const [isSavingGplx, setIsSavingGplx] = useState(false);
 
   const user = {
-    fullName: activeUser.fullName || 'Minh Tài',
+    fullName: activeUser.fullName || 'Khách hàng EcoGo',
     phone: activeUser.phone || '+84386726647',
     email: activeUser.email || 'minhtai@ecogo.vn',
     avatar: activeUser.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
@@ -465,29 +465,11 @@ export default function ProfileScreen({
   const [familyMembers, setFamilyMembers] = useState([
     {
       id: 'fm_1',
-      name: user.fullName || 'Minh Tài',
+      name: user.fullName || 'Chủ tài khoản',
       relation: 'Chủ nhóm (Bạn)',
-      phone: user.phone || '+84386726647',
+      phone: user.phone || 'Chưa cập nhật SĐT',
       status: 'Quản trị viên',
       isOwner: true,
-      hasLicense: true
-    },
-    {
-      id: 'fm_2',
-      name: 'Nguyễn Thu Trang',
-      relation: 'Vợ',
-      phone: '+84912345678',
-      status: 'Đã liên kết ví',
-      isOwner: false,
-      hasLicense: false
-    },
-    {
-      id: 'fm_3',
-      name: 'Lê Văn Hùng',
-      relation: 'Ba',
-      phone: '+84903456789',
-      status: 'GPLX B2 Đã duyệt',
-      isOwner: false,
       hasLicense: true
     }
   ]);
@@ -1560,18 +1542,6 @@ export default function ProfileScreen({
                 </TouchableOpacity>
               </View>
 
-              {/* Demo Sample Button for Instant Test */}
-              <TouchableOpacity
-                style={styles.demoLicenseBtn}
-                activeOpacity={0.8}
-                onPress={() => handleUseDemoLicense(scannerSide)}
-              >
-                <Ionicons name="sparkles" size={16} color="#D4AF37" />
-                <Text style={styles.demoLicenseBtnText}>
-                  Thử nghiệm Thẻ mẫu chuẩn AI (Không cần thẻ cứng)
-                </Text>
-              </TouchableOpacity>
-
               {/* OCR Results Details Card */}
               {ocrExtractedData && (
                 <View style={styles.ocrResultCard}>
@@ -1971,7 +1941,9 @@ export default function ProfileScreen({
                   </View>
                   <View style={{ flex: 1 }}>
                     <Text style={styles.familyHeroTag}>GIA ĐÌNH ECOGO PRIME</Text>
-                    <Text style={styles.familyHeroName}>Nhóm Gia Đình Minh Tài</Text>
+                    <Text style={styles.familyHeroName}>
+                      Nhóm Gia Đình {user.fullName || 'EcoGo'}
+                    </Text>
                   </View>
                   <View style={styles.familyStatusPill}>
                     <View style={styles.familyStatusDot} />
@@ -2357,7 +2329,7 @@ export default function ProfileScreen({
                   </View>
                   <Text style={styles.corpCardNumber}>•••• •••• •••• 8821</Text>
                   <View style={styles.corpCardFooter}>
-                    <Text style={styles.corpCardHolder}>{user.fullName || 'MINH TÀI'}</Text>
+                    <Text style={styles.corpCardHolder}>{user.fullName || 'KHÁCH HÀNG ECOGO'}</Text>
                     <Text style={styles.corpCardExp}>EXP: 12/28</Text>
                   </View>
                 </View>
