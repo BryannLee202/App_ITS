@@ -306,22 +306,22 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
       wheelRotation.setValue(0);
 
       Animated.parallel([
-        // 1. Chiếc xe chạy chậm vừa phải, êm ái để người dùng nhìn rõ xe trước (2200ms)
+        // 1. Chiếc xe lăn bánh ngay lập tức (không delay) với tốc độ đều vừa phải (1800ms)
         Animated.timing(vehicleAnim, {
           toValue: 1,
-          duration: 2200,
-          easing: Easing.inOut(Easing.cubic),
+          duration: 1800,
+          easing: Easing.linear,
           useNativeDriver: useNative
         }),
         Animated.timing(wheelRotation, {
           toValue: 1,
-          duration: 2200,
+          duration: 1800,
           easing: Easing.linear,
           useNativeDriver: useNative
         }),
-        // 2. Sau khi xe chạy qua gần hết đường (1900ms), Logo EcoGo Smart mới bung ra
+        // 2. Ngay khi xe chạy qua (1500ms), Logo EcoGo Smart bung ra
         Animated.sequence([
-          Animated.delay(1900),
+          Animated.delay(1500),
           Animated.parallel([
             Animated.spring(splashScale, {
               toValue: 1,
@@ -331,7 +331,7 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
             }),
             Animated.timing(splashOpacity, {
               toValue: 1,
-              duration: 550,
+              duration: 500,
               useNativeDriver: useNative
             })
           ])
@@ -346,10 +346,10 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
       );
       glowLoop.start();
 
-      // Tự động chuyển cảnh sau 4.0s (đủ thời gian thấy rõ xe chạy rồi mới tới logo)
+      // Tự động chuyển cảnh sau 3.5s
       const autoTimer = setTimeout(() => {
         handleProceedFromSplash();
-      }, 4000);
+      }, 3500);
 
       return () => {
         glowLoop.stop();
@@ -557,7 +557,7 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
                   {
                     translateX: vehicleAnim.interpolate({
                       inputRange: [0, 1],
-                      outputRange: [-260, SCREEN_WIDTH + 260]
+                      outputRange: [-110, SCREEN_WIDTH + 140]
                     })
                   }
                 ]
