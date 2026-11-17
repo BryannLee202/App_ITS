@@ -38,12 +38,24 @@ app.use('/api/rentals', rentalRoutes);
 app.use('/api/its', itsRoutes);
 app.use('/api/rewards', rewardRoutes);
 
+// Build timestamp tracking: auto-updates on every new deployment/restart
+const APP_BUILD_TIMESTAMP = Date.now().toString();
+
+app.get('/api/app-version', (req, res) => {
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.json({
+    version: '1.0.2',
+    buildTime: APP_BUILD_TIMESTAMP,
+    timestamp: Date.now()
+  });
+});
+
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'ONLINE',
     system: 'EcoGo Smart Mobility Platform',
-    version: '1.0.0-PROD',
+    version: '1.0.2-PROD',
     telematicsOnline: true,
     activeVehicles: telematicsService.getAllVehicles().length,
     activeStations: telematicsService.getAllStations().length,
@@ -54,13 +66,24 @@ app.get('/api/health', (req, res) => {
 // Phục vụ Giao diện Ứng dụng di động (Static Expo Web SPA) trên cùng 1 tên miền
 const publicDir = path.join(__dirname, '../public');
 if (fs.existsSync(publicDir)) {
-  app.use(express.static(publicDir));
+  app.use(express.static(publicDir, {
+    setHeaders: (res, filePath) => {
+      if (filePath.endsWith('.html')) {
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+        res.setHeader('Pragma', 'no-cache');
+        res.setHeader('Expires', '0');
+      }
+    }
+  }));
   app.get('*', (req, res, next) => {
     if (req.path.startsWith('/api') || req.path.startsWith('/socket.io')) {
       return next();
     }
     const indexPath = path.join(publicDir, 'index.html');
     if (fs.existsSync(indexPath)) {
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
       return res.sendFile(indexPath);
     }
     next();

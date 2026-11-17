@@ -108,11 +108,59 @@ function AppContent() {
   const [copiedCode, setCopiedCode] = useState(null);
   const [appliedVoucherFromWallet, setAppliedVoucherFromWallet] = useState(null);
   const [vehiclesInitialCategory, setVehiclesInitialCategory] = useState('CAR');
+  const [updateToast, setUpdateToast] = useState('');
+  const initialBuildRef = useRef(null);
 
   const theme = THEME_PRESETS[themeKey] || THEME_PRESETS.BE_SUA_CAFE;
 
   useEffect(() => {
     checkSavedSession();
+  }, []);
+
+  // Auto-Update & Live Sync Engine:
+  // Tự động phát hiện khi bạn sửa code và deploy bản mới -> tự động làm mới màn hình trên điện thoại
+  useEffect(() => {
+    let intervalId = null;
+
+    const checkAppVersion = async () => {
+      try {
+        const res = await fetch(`${API_BASE_URL}/app-version?t=${Date.now()}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.buildTime) {
+            if (!initialBuildRef.current) {
+              initialBuildRef.current = data.buildTime;
+            } else if (initialBuildRef.current !== data.buildTime) {
+              // Phiên bản mới đã được cập nhật trên máy chủ đám mây!
+              setUpdateToast('🚀 Hệ thống vừa có bản cập nhật mới! Đang tự động làm mới...');
+              setTimeout(() => {
+                if (Platform.OS === 'web' && typeof window !== 'undefined') {
+                  window.location.reload();
+                }
+              }, 1200);
+            }
+          }
+        }
+      } catch (e) {
+        // Bỏ qua lỗi mạng chập chờn
+      }
+    };
+
+    checkAppVersion();
+    // Tự động kiểm tra mỗi 12 giây ngầm
+    intervalId = setInterval(checkAppVersion, 12000);
+
+    // Kiểm tra ngay lập tức khi người dùng mở lại điện thoại / chuyển tab
+    if (Platform.OS === 'web' && typeof window !== 'undefined') {
+      window.addEventListener('focus', checkAppVersion);
+    }
+
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+      if (Platform.OS === 'web' && typeof window !== 'undefined') {
+        window.removeEventListener('focus', checkAppVersion);
+      }
+    };
   }, []);
 
   const checkSavedSession = async () => {
@@ -333,6 +381,12 @@ function AppContent() {
         ]}
       >
         <SafeAreaView style={[styles.safeArea, isMobile && styles.safeAreaMobile]}>
+          {updateToast ? (
+            <View style={styles.updateToastBar}>
+              <ActivityIndicator size="small" color="#FFFFFF" style={{ marginRight: 8 }} />
+              <Text style={styles.updateToastText}>{updateToast}</Text>
+            </View>
+          ) : null}
           <View style={styles.mainContentArea}>{renderContent()}</View>
 
           {/* =========================================================================
@@ -1219,5 +1273,29 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: '#8C6239',
     lineHeight: 15
+  },
+  updateToastBar: {
+    position: 'absolute',
+    top: 10,
+    left: 16,
+    right: 16,
+    zIndex: 9999,
+    backgroundColor: '#1E293B',
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+    elevation: 8
+  },
+  updateToastText: {
+    fontFamily: FONTS.family,
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '700'
   }
 });
