@@ -829,10 +829,11 @@ function AppContent() {
       {/* Pop-up quảng cáo ngẫu nhiên khi vào app & khi THỰC SỰ OUT RA APP VÀO LẠI */}
       {isOnboarded && (
         <HomePromoPopupModal
-          onNavigateToVehicles={(cat = 'BIKE') => {
+          onNavigateToVehicles={(cat = 'CAR') => {
             setVehiclesInitialCategory(cat);
             setActiveTab('VEHICLES');
           }}
+          onNavigateToMap={() => setActiveTab('MAP')}
           onNavigateToOffers={() => setActiveTab('OFFERS')}
           onOpenReferral={() => setShowRewardsModal(true)}
         />

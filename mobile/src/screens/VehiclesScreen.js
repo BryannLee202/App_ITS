@@ -124,6 +124,12 @@ export default function VehiclesScreen({
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [categoryMode, setCategoryMode] = useState(initialCategory || 'CAR');
+
+  useEffect(() => {
+    if (initialCategory) {
+      setCategoryMode(initialCategory);
+    }
+  }, [initialCategory]);
   
   // Advanced Filter states
   const [brandFilter, setBrandFilter] = useState('ALL');
