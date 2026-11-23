@@ -915,6 +915,35 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
             </Text>
           </TouchableOpacity>
 
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginTop: 8,
+              marginBottom: 2,
+              paddingHorizontal: 4
+            }}
+          >
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => setShowPasswordModal(true)}
+            >
+              <Text style={{ fontFamily: FONTS.family, fontSize: 12.5, fontWeight: '600', color: '#64748B' }}>
+                {language === 'vi' ? 'Đăng nhập bằng mật khẩu' : 'Sign in with password'}
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => setShowPasswordModal(true)}
+            >
+              <Text style={{ fontFamily: FONTS.family, fontSize: 12.5, fontWeight: '700', color: theme.primary }}>
+                {language === 'vi' ? 'Quên mật khẩu?' : 'Forgot password?'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+
           <View style={styles.orDividerRow}>
             <View style={styles.orLine} />
             <Text style={styles.orText}>{t('step2.or_continue')}</Text>
@@ -922,29 +951,6 @@ export default function OnboardingAuthFlow({ onComplete, theme = THEME_PRESETS.S
           </View>
 
           <View style={[styles.socialBtnsRow, { flexDirection: 'column', gap: 10 }]}>
-            <TouchableOpacity
-              style={[
-                styles.googleBtn,
-                {
-                  width: '100%',
-                  flexDirection: 'row',
-                  gap: 8,
-                  paddingHorizontal: 18,
-                  backgroundColor: '#EFE7DF',
-                  borderColor: '#DFD0C0'
-                }
-              ]}
-              activeOpacity={0.85}
-              onPress={() => setShowPasswordModal(true)}
-            >
-              <Ionicons name="lock-closed" size={16} color="#4E3322" />
-              <Text style={{ fontFamily: FONTS.family, fontSize: 13.5, fontWeight: '800', color: '#4E3322' }}>
-                {language === 'vi'
-                  ? 'Đăng nhập Mật khẩu / Đăng ký / Quên MK'
-                  : 'Password Sign In / Register / Forgot PW'}
-              </Text>
-            </TouchableOpacity>
-
             <TouchableOpacity
               style={[styles.googleBtn, { width: '100%', flexDirection: 'row', gap: 10, paddingHorizontal: 18 }]}
               activeOpacity={0.85}
