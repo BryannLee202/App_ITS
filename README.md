@@ -2,7 +2,7 @@
 
 <div align="center">
 
-<img src="./docs/screenshots/ui_00_logo_splash.png" alt="EcoGo Smart Logo" width="220" style="border-radius: 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.12);" />
+<img src="./docs/logo.png" alt="EcoGo Smart Logo" width="180" style="border-radius: 28px; box-shadow: 0 10px 28px rgba(0,0,0,0.18);" />
 
 ### **Hệ Thống Giao Thông Thông Minh Đô Thị — Nền Tảng Đặt & Quản Lý Thuê Phương Tiện Giao Thông Xanh 24/7**
 
@@ -12,7 +12,7 @@
 [![ITS Telematics](https://img.shields.io/badge/ITS%20Standard-Level%204%20Mobility-bc7155?style=for-the-badge&logo=google-maps)](./docs)
 [![Academic Project](https://img.shields.io/badge/Course-UTH%20ITS%202026-blue?style=for-the-badge)](https://uth.edu.vn)
 
-[📖 Tổng Quan](#-tổng-quan-dự-án) • [🏛️ Kiến Trúc](#-kiến-trúc-hệ-thống) • [✨ Tính Năng Nổi Bật](#-tính-năng-nổi-bật) • [🖼️ Giao Diện Màn Hình](#-giao-diện-ứng-dụng-thực-tế) • [📊 Sơ Đồ Thiết Kế](#-sơ-đồ-thiết-kế-hệ-thống-uml) • [🚀 Cài Đặt & Chạy](#-hướng-dẫn-cài-đặt--khởi-động-nhanh) • [🔐 Tài Khoản Demo](#-tài-khoản-demo-sẵn-có) • [📁 Cấu Trúc Thư Mục](#-cấu-trúc-thư-mục-dự-án) • [👥 Đội Ngũ](#-phân-công-thực-hiện-đề-tài)
+[📖 Tổng Quan](#-tổng-quan-dự-án) • [🏛️ Kiến Trúc](#-kiến-trúc-hệ-thống) • [✨ Tính Năng Nổi Bật](#-tính-năng-nổi-bật) • [🖼️ Giao Diện Màn Hình](#-giao-diện-ứng-dụng-thực-tế) • [📊 Sơ Đồ Thiết Kế](#-sơ-đồ-thiết-kế-hệ-thống-uml) • [🚀 Cài Đặt & Chạy](#-hướng-dẫn-cài-đặt--khởi-động-nhanh) • [🔐 Tài Khoản Demo](#-tài-khoản-demo-sẵn-có) • [📁 Cấu Trúc Thư Mục](#-cấu-trúc-thư-mục-dự-án) • [📜 Báo Cáo](#-tài-liệu-báo-cáo-đính-kèm)
 
 </div>
 
@@ -285,21 +285,6 @@ App_ITS/
 ├── README.md                                  # Tài liệu giới thiệu dự án chính
 └── .gitignore
 ```
-
----
-
-## 👥 Phân Công Thực Hiện Đề Tài
-
-Dự án được thực hiện bởi nhóm sinh viên **Trường Đại học Giao thông Vận tải TP.HCM (UTH)**:
-
-| STT | Sinh Viên Thực Hiện | Mã Sinh Viên | Vai Trò & Phân Hệ Phụ Trách Chính |
-|:---:|---|:---:|---|
-| **1** | **Lê Minh Tài** | *Trưởng nhóm* | Kiến trúc hệ thống, Phát triển phân hệ Đặt xe, Hợp đồng điện tử, Quản trị Admin, Viết báo cáo cuối kỳ |
-| **2** | **Thành viên nhóm** | *Thành viên* | Khảo sát nhu cầu người dùng, Thiết kế sơ đồ Use Case & Class Diagram, Xây dựng kịch bản kiểm thử |
-| **3** | **Thành viên nhóm** | *Thành viên* | Xây dựng giao diện ứng dụng di động, Tích hợp bản đồ số GPS trạm xe, Tính toán điểm thưởng EcoXu |
-
-* **Giảng viên hướng dẫn:** **thầy Vũ Đình Long**
-* **Khoa / Viện:** Viện Công nghệ Thông tin và Điện, Điện tử — Trường ĐH Giao thông Vận tải TP.HCM.
 
 ---
 
